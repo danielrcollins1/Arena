@@ -4,7 +4,10 @@ ARENA - Java Package for Simulating Original D&D Combat
 This code package provides routines for simulating combat in
 a tabletop Fantasy Role-Playing Game (FRPG) similar to Original D&D
 or closely-related games. In most cases, the intent is to output
-statistics based on many trials of the game between men and monsters.
+aggregate statistics based on many trials of the game between men and 
+monsters. This package provides only command-line, text output; there 
+are no graphics or visualizations, and generally few options for output 
+regarding individual combats. 
 
 The package currently includes three top-level main programs:
 
@@ -37,10 +40,13 @@ GPJ project files for use with jGRASP are included for each of these
 three applications.
 
 Note that at the current time, combat is primarily melee only; no sense
-of space, location, or movement is simulated. One round of special
-attacks is allowed at the start of combat (e.g., dragon breath, 
-giant boulders, medusa gaze, etc.). Targets of attacks are determined
-randomly (as per AD&D DMG p. 63 and 70), with each strike. 
+of space, location, or movement is simulated. Targets of attacks are 
+determined randomly (as per AD&D DMG p. 63 and 70), with each strike. 
+
+While common monster special abilities are modeled, we have not implemented 
+magic-user/wizard spells (so: no mixed PC parties with wizards, nor NPC wizard 
+opponents). One round of special attacks is allowed for monster abilities
+at the start of combat (e.g., dragon breath, giant boulders, medusa gaze, etc.). 
 
 To the extent that the original rules are ambiguous or in need of DM
 adjudication (as in many cases), the author has attempted to research 
