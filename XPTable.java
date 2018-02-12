@@ -96,8 +96,13 @@ public class XPTable {
 	*  Compute Sup-I awards to give by EHD.
 	*/
 	int getAwardSteps (Monster monster) {
-		return monster.getEquivalentHitDice()
-			/ monster.getHitDiceNum() - 1;
+		int EHD = monster.getEquivalentHitDice();
+		if (EHD == Monster.UNDEFINED_EHD) {
+			return 0;
+		}
+		else {
+			return EHD / monster.getHitDiceNum() - 1;
+		}
 	}
 
 	/**
@@ -174,12 +179,11 @@ public class XPTable {
 		System.out.println();
 		
 		// Print monster XP awards
-		MonsterDatabase db = MonsterDatabase.getInstance();
 		System.out.println("Monster XP Awards");
-		for (int i = 0; i < db.size(); i++) {
-			Monster m = db.get(i);
+		for (Monster m: MonsterDatabase.getInstance()) {
 			System.out.println(m.getRace() + ": " + m.getXPAward()); 					
 		}
+		System.out.println();
 	}
 }
 
