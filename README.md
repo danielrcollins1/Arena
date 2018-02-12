@@ -10,7 +10,7 @@ The package currently includes three top-level main programs:
 
 -----------------------------------------------------------------
 
-ARENA -- Simulates a population of fighters, battling regularly for
+ARENA -- Simulates a population of fighters, battling for
 experience and treasure over some amount of time (broadly inspired by 
 Roman arena-style events). Combat can be man vs. man or man vs.
 monster, including simulated excursions against dungeon random 
@@ -38,8 +38,8 @@ three applications.
 
 Note that at the current time, combat is primarily melee only; no sense
 of space, location, or movement is simulated. One round of special
-attacks is allowed at the start of combat (e.g., giant boulders, 
-basilisk gaze, vampire charm, etc.). Targets of attacks are determined
+attacks is allowed at the start of combat (e.g., dragon breath, 
+giant boulders, medusa gaze, etc.). Targets of attacks are determined
 randomly (as per AD&D DMG p. 63 and 70), with each strike. 
 
 To the extent that the original rules are ambiguous or in need of DM
