@@ -60,6 +60,5 @@ in a spreadsheet external to this package, MonsterDatabase.ods. Changes
 to the database should be made there first, and then exported to the CSV 
 file in this software package. See www.oedgames.com/addons/houserules.
 
-- Daniel R. Collins, 2018-02-11
-delta@superdan.net
+- Daniel R. Collins ("Delta")
 www.oedgames.com
