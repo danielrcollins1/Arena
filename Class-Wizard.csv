@@ -1,0 +1,13 @@
+Level,Title,Experience
+0,Apprentice,-1200
+1,Medium,0
+2,Seer,2500
+3,Conjurer,5000
+4,Theurgist,10000
+5,Thaumaturgist,20000
+6,Magician,35000
+7,Enchanter,50000
+8,Warlock,75000
+9,Sorcerer,100000
+10,Necromancer,200000
+11,Wizard,300000
