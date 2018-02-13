@@ -1306,9 +1306,5 @@ public class Monster {
 		Monster c = new Monster(5, 9, 4);
 		System.out.println(c);
 	}
-
-	/*--------------------------------------------------------------------------
-	* TODO:
-	*  Distinct attack forms (in ArrayList, characters might register/swap)
-	*-------------------------------------------------------------------------*/
 }
+

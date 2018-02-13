@@ -80,12 +80,5 @@ public class Attack {
 		atk = new Attack("Claw", 2, 6, new Dice(1, 6));
 		System.out.println(atk);
 	}
-	
-	/*--------------------------------------------------------------------------
-	*  TODO:
-	*  Ranged attacks (add field int range?)
-	*  Special effects tags (poison, swallow, etc.)
-	*  Half-rate attacks (giant rock-hurling)
-	*-------------------------------------------------------------------------*/
 }
 

@@ -208,10 +208,5 @@ public class ClassType {
 			+ "(HD d" + hitDiceType 
 			+ ", Atk " + atkBonusNumer + "/" + atkBonusDenom + ")";
 	}	
-
-	/*--------------------------------------------------------------------------
-	*  TODO: 
-	*  Armor & weapons allowed, special abilities (feats, skills, spells).
-	*-------------------------------------------------------------------------*/
 }
 

@@ -780,12 +780,5 @@ public class Character extends Monster {
 		p.drawBestWeapon(null);
 		System.out.println(p);
 	}
-	
-	/*--------------------------------------------------------------------------
-	*  TODO:
-	*  Feat of TwoWeaponFighting not handled (any others?)
-	*  Languages, class abilities, other equipment, encumbrance.
-	*  Possibly use base Monster.hitDice, as classes overwrite top HD.
-	*-------------------------------------------------------------------------*/
 }
 
