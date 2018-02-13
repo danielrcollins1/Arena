@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /******************************************************************************
 *  Index of supported character class types (singleton pattern).
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 *  @version  1.1
 ******************************************************************************/
 
-public class ClassIndex {
+public class ClassIndex implements Iterable<ClassType> {
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -49,8 +50,6 @@ public class ClassIndex {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-	public int size() { return classTypeList.size(); }
-	public ClassType get (int index) { return classTypeList.get(index); }
 
 	/**
 	*  Access the singleton class instance.
@@ -68,10 +67,17 @@ public class ClassIndex {
 	}
 
 	/**
+	*	Return iterator for the iterable interface.
+	*/
+	public Iterator<ClassType> iterator() {
+		return classTypeList.iterator();
+	}
+
+	/**
 	*  Get ClassType for a given class name.
 	*/
 	public ClassType getTypeFromName (String name) {
-		for (ClassType type: classTypeList) {
+		for (ClassType type: this) {
 			if (type.getName().equals(name)) {
 				return type;
 			}		
@@ -83,7 +89,7 @@ public class ClassIndex {
 	*  Get ClassType for a given class title.
 	*/
 	public ClassType getTypeFromTitle (String title) {
-		for (ClassType type: classTypeList) {
+		for (ClassType type: this) {
 			if (type.getLevelFromTitle(title) > -1) {
 				return type;			
 			}
@@ -97,18 +103,17 @@ public class ClassIndex {
 	public static void main (String[] args) {
 		ClassIndex cl = ClassIndex.getInstance();
 
-		// Print basics of entire list
-		for (int i = 0; i < cl.size(); i++) {
-			System.out.println(cl.get(i));
-		}
-		System.out.println();
-		
-		// Print specifics for Fighter class
-		ClassType type = cl.getTypeFromName("Fighter");
-		System.out.println(type);
-		for (int i = 0; i <= 20; i++) {
-			System.out.println(i + "|" + type.getTitleFromLevel(i) + "|" 
-				+ type.getXpReq(i) + "|" + type.getAttackBonus(i));
+		// Print table for each class
+		for (ClassType type: cl) {
+			System.out.println(type);
+			for (int i = 0; i <= 16; i++) {
+				System.out.println(i + "|"
+					+ type.getTitleFromLevel(i) + "|"
+					+ type.getXpReq(i) + "|"
+					+ type.getHitDiceTotal(i) + "|+"
+					+ type.getAttackBonus(i));
+			}
+			System.out.println();
 		}
 	}
 }

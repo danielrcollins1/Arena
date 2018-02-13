@@ -28,6 +28,9 @@ public class Marshal {
 	/** Force all leaders to carry swords. */
 	boolean swordsOnly;
 
+	/** Use revised XP awards (per Sup-I). */
+	boolean useRevisedXPAwards;
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
 
@@ -43,6 +46,7 @@ public class Marshal {
 		menType = null;
 		menTotal = 0;
 		swordsOnly = false;
+		useRevisedXPAwards = false;
 		exitAfterArgs = false;		
 	}
 
@@ -72,7 +76,7 @@ public class Marshal {
 				switch (s.charAt(1)) {
 					case 'f': Character.setFeatUsage(true); break;
 					case 's': swordsOnly = true; break;
-					case 'x': XPTable.setRevisedXpAwards(true); break;
+					case 'x': useRevisedXPAwards = true; break;
 					default: exitAfterArgs = true; break;
 				}
 			}
@@ -136,6 +140,7 @@ public class Marshal {
 	void reportLeaders () {
 		Arena arena = new Arena(false, menTotal);
 		arena.setBaseArmor(menType.getLeaderArmor());
+		arena.setUseRevisedXPAwards(useRevisedXPAwards);
 		if (swordsOnly) {
 			arena.setBaseWeapon(new Weapon("Sword", new Dice(8), 1));		
 		}

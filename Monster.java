@@ -4,17 +4,17 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /******************************************************************************
-*	Monster (hostile or benign	creature).
+* Monster (hostile or benign creature).
 *
-*	@author	 Daniel R. Collins (dcollins@superdan.net)
-*	@since	 2014-05-20
-*	@version	 1.01
+* @author   Daniel R. Collins (dcollins@superdan.net)
+* @since    2014-05-20
+* @version  1.01
 ******************************************************************************/
 
-public class Monster	{
+public class Monster {
 
 	//--------------------------------------------------------------------------
-	//	 Constants
+	//  Constants
 	//--------------------------------------------------------------------------
 
 	/** Sides on standard hit dice. */
@@ -27,7 +27,7 @@ public class Monster	{
 	public static final int UNDEFINED_EHD = Integer.MIN_VALUE;
 
 	//--------------------------------------------------------------------------
-	//	 Fields
+	//  Fields
 	//--------------------------------------------------------------------------
 
 	String name;
@@ -54,63 +54,63 @@ public class Monster	{
 	Monster charmer;
 	ArrayList<SpecialAbility> specialList;
 	ArrayList<SpecialAbility> conditionList;
-	
+
 	//--------------------------------------------------------------------------
-	//	 Constructors
+	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*	Constructor	(primitive stats).
+	* Constructor (primitive stats).
 	*/
-	public Monster	(int AC,	int MV, int	HD) {
-		this(null, "Monster", Alignment.Neutral, AC,	MV,
-			new Dice(HD, 6), new	Attack(HD, 1));
+	public Monster (int AC, int MV, int HD) {
+		this(null, "Monster", Alignment.Neutral, AC, MV,
+			new Dice(HD, 6), new Attack(HD, 1));
 	}
 
 	/**
-	*	Constructor	(primitive stats,	attack rate, damage dice).
+	* Constructor (primitive stats, attack rate, damage dice).
 	*/
-	public Monster	(int AC,	int MV, int	HD, int atkRate, int	damDice)	{
-		this(null, "Monster", Alignment.Neutral, AC,	MV,
-			new Dice(HD, 6), new	Attack(atkRate, HD, damDice));
+	public Monster (int AC, int MV, int HD, int atkRate, int damDice) {
+		this(null, "Monster", Alignment.Neutral, AC, MV,
+			new Dice(HD, 6), new Attack(atkRate, HD, damDice));
 	}
 
 	/**
-	*	Constructor	(most	fields; no special abilities).
+	* Constructor (most fields; no special abilities).
 	*/
-	public Monster	(String name, String	race, Alignment alignment,	
-			int AC, int	MV, Dice	hitDice,	Attack attack)	{
-		this.name =	name;
-		this.race =	race;
-		this.alignment	= alignment;
-		this.armorClass =	AC;
-		this.moveInches =	MV;
-		this.hitDice =	hitDice;
-		this.attack	= attack;
+	public Monster (String name, String race, Alignment alignment, 
+			int AC, int MV, Dice hitDice, Attack attack) {
+		this.name = name;
+		this.race = race;
+		this.alignment = alignment;
+		this.armorClass = AC;
+		this.moveInches = MV;
+		this.hitDice = hitDice;
+		this.attack = attack;
 		equivalentHitDice = hitDice.getNum();
-		specialList	= new	ArrayList<SpecialAbility>(); 
+		specialList = new ArrayList<SpecialAbility>(); 
 		conditionList = new ArrayList<SpecialAbility>(); 
 		rollHitPoints();
 	}
 
 	/**
-	*	Constructor	(from	String array).
-	*	@param s	String array.
+	* Constructor (from String array).
+	* @param s String array.
 	*/
-	public Monster	(String[] s) {
+	public Monster (String[] s) {
 
 		// Primary fields
 		name = null;
 		race = s[0];
-		numberAppearing =	new Dice(s[1]);
+		numberAppearing = new Dice(s[1]);
 		armorClass = CSVReader.parseInt(s[2]);
 		moveInches = CSVReader.parseInt(s[3]);
 		hitDice = parseHitDice(s[4]);
-		inLairPct =	CSVReader.parseInt(s[5]);
-		treasureType =	s[6].charAt(0);
+		inLairPct = CSVReader.parseInt(s[5]);
+		treasureType = s[6].charAt(0);
 		attack = parseAttackRoutine(s[7], s[8]);
 		specialList = parseSpecialAbilityList(s[9]);
-		alignment =	Alignment.getFromChar(s[10].charAt(0));
+		alignment = Alignment.getFromChar(s[10].charAt(0));
 		type = s[11].charAt(0);
 		equivalentHitDice = parseEHD(s[12]);
 		environment = CSVReader.parseInt(s[13]);
@@ -124,48 +124,48 @@ public class Monster	{
 	}
 
 	/**
-	*	Constructor	(copy).
+	* Constructor (copy).
 	*/
-	public Monster	(Monster	src) {
+	public Monster (Monster src) {
 		name = src.name;
 		race = src.race;
-		numberAppearing =	src.numberAppearing;
+		numberAppearing = src.numberAppearing;
 		armorClass = src.armorClass;
 		moveInches = src.moveInches;
 		hitDice = src.hitDice;
-		inLairPct =	src.inLairPct;
-		treasureType =	src.treasureType;
-		attack =	src.attack;
-		alignment =	src.alignment;
+		inLairPct = src.inLairPct;
+		treasureType = src.treasureType;
+		attack = src.attack;
+		alignment = src.alignment;
 		type = src.type;
 		equivalentHitDice = src.equivalentHitDice;
 		sourceBook = src.sourceBook;
 		killTally = src.killTally;
 		host = src.host;
 		charmer = src.charmer;
-		specialList	= new	ArrayList<SpecialAbility>(src.specialList); 
-		conditionList = new ArrayList<SpecialAbility>(src.conditionList);	
-		maxHitPoints =	src.maxHitPoints;
-		hitPoints =	src.hitPoints;
+		specialList = new ArrayList<SpecialAbility>(src.specialList); 
+		conditionList = new ArrayList<SpecialAbility>(src.conditionList); 
+		maxHitPoints = src.maxHitPoints;
+		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
 		tableLevel = src.tableLevel;
 	}
 
 	//--------------------------------------------------------------------------
-	//	 Methods
+	//  Methods
 	//--------------------------------------------------------------------------
 
-	//	Primary accessors
-	public String getName ()	{ return	name;	}
-	public String getRace ()	{ return	race;	}
-	public String getSourceBook ()	{ return sourceBook; }
-	public Dice	getNumberAppearing ()	{ return	numberAppearing; }
-	public int getArmorClass ()	{ return	armorClass;	}
+	// Primary accessors
+	public String getName () { return name; }
+	public String getRace () { return race; }
+	public String getSourceBook () { return sourceBook; }
+	public Dice getNumberAppearing () { return numberAppearing; }
+	public int getArmorClass () { return armorClass; }
 	public int getHitPoints () { return hitPoints; }
 	public int getMaxHitPoints () { return maxHitPoints; }
 	public int getInLairPct () { return inLairPct; }
-	public Dice	getHitDice () {	return hitDice; }
-	public int getHitDiceNum ()	{ return	hitDice.getNum();	}
+	public Dice getHitDice () { return hitDice; }
+	public int getHitDiceNum () { return hitDice.getNum(); }
 	public int getLevel () { return getHitDiceNum(); }
 	public char getTreasureType () { return treasureType; }
 	public Attack getAttack () { return attack; }
@@ -173,42 +173,42 @@ public class Monster	{
 	public char getType () { return type; }
 	public int getEquivalentHitDice () { return equivalentHitDice; }
 	public int getTableLevel () { return tableLevel; }
-	public int getEnvironment ()	{ return	environment;	}
-	public int getKillTally ()	{ return	killTally;	}
+	public int getEnvironment () { return environment; }
+	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
-	public Monster	getHost () {	return host; }
-	public boolean	isCharmed ()	{ return	charmer != null; }
+	public Monster getHost () { return host; }
+	public boolean isCharmed () { return charmer != null; }
 
-	//	Shortcut	accessors
-	public int getAC () {	return getArmorClass();	}
-	public int getHD () {	return getHitDiceNum();	}
-	public int getHP () {	return getHitPoints(); }
-	public int getMV () {	return getMoveInches();	}
-	public int getEHD () {	return getEquivalentHitDice(); }
+	// Shortcut accessors
+	public int getAC () { return getArmorClass(); }
+	public int getHD () { return getHitDiceNum(); }
+	public int getHP () { return getHitPoints(); }
+	public int getMV () { return getMoveInches(); }
+	public int getEHD () { return getEquivalentHitDice(); }
 
-	//	Basic	mutators
-	public void	setRace (String race) {	this.race =	race;	}
-	public void	setAlignment (Alignment	align) {	alignment =	align; }
-	public void	clearTimesMeleed ()	{ timesMeleed = 0; }
-	public void	incTimesMeleed () { timesMeleed++; }
+	// Basic mutators
+	public void setRace (String race) { this.race = race; }
+	public void setAlignment (Alignment align) { alignment = align; }
+	public void clearTimesMeleed () { timesMeleed = 0; }
+	public void incTimesMeleed () { timesMeleed++; }
 
-	//	Null methods for Character	inheritance
+	// Null methods for Character inheritance
 	public Armor getArmor () { return null; }
 	public Armor getShield () { return null; }
-	public Weapon getWeapon	()	{ return	null;	}
+	public Weapon getWeapon () { return null; }
 	public void setArmor (Armor a) {}
-	public void	drawBestWeapon	(Monster	m)	{}
-	public void	sheatheWeapon () {}
+	public void drawBestWeapon (Monster m) {}
+	public void sheatheWeapon () {}
 	public void checkMagicArmsBoost (int pct) {}
 	public int getAbilityScore (Ability ability) { return 0; }
 	public void takeAbilityDamage (Ability a, int n) {} 
-	public void zeroAbilityDamage () {}	
+	public void zeroAbilityDamage () {} 
 	public boolean hasNullAbilityScore () { return false; }
 	public boolean hasFeat (Character.Feat feat) { return false; }
 	public void addXP (int xp) {}
 
 	/**
-	*	Parse hit dice record from short descriptor.
+	* Parse hit dice record from short descriptor.
 	*/
 	private Dice parseHitDice (String s) {
 		Pattern p = Pattern.compile("(\\d+)([x/]\\d+)?([+-]\\d+)?");
@@ -216,13 +216,13 @@ public class Monster	{
 		if (m.matches()) {
 			int mul = 1, add = 0;
 			int num = Integer.parseInt(m.group(1));
-			if	(m.group(2)	!=	null)	{
-				 boolean	positive	= m.group(2).startsWith("x");
-				 int val	= Integer.parseInt(m.group(2).substring(1));
-				 mul = positive ? val : -val;
+			if (m.group(2) != null) {
+				boolean positive = m.group(2).startsWith("x");
+				int val = Integer.parseInt(m.group(2).substring(1));
+				mul = positive ? val : -val;
 			}
-			if	(m.group(3)	!=	null)	{
-				 add = Integer.parseInt(m.group(3));
+			if (m.group(3) != null) {
+				add = Integer.parseInt(m.group(3));
 			}
 			return new Dice(num, BASE_HIT_DIE, mul, add);
 		}
@@ -231,45 +231,45 @@ public class Monster	{
 	}
 
 	/**
-	*	Parse attack routine from rate and damage.
+	* Parse attack routine from rate and damage.
 	*/
 	private Attack parseAttackRoutine (String atkRate, String damageDesc) {
-		int attackBonus =	hitDice.getNum();
-		int attackRate	= Integer.parseInt(atkRate);
+		int attackBonus = hitDice.getNum();
+		int attackRate = Integer.parseInt(atkRate);
 		return new Attack(null, attackRate, attackBonus, new Dice(damageDesc));
 	}
 
 	/**
-	*	Parse special ability list from descriptor string.
+	* Parse special ability list from descriptor string.
 	*/
 	private ArrayList<SpecialAbility> parseSpecialAbilityList (String s) {
 		ArrayList<SpecialAbility> list = new ArrayList<SpecialAbility>(); 
 		if (s.length() > 1) {
-			String parts[]	= s.split(", ");
-			for (String	part: parts) {
+			String parts[] = s.split(", ");
+			for (String part: parts) {
 				SpecialAbility ability = 
 					SpecialAbility.createFromString(part);
 				if (ability != null) {
 					list.add(ability);
 				}
-			}					
+			}     
 		}
 		return list;
 	}
 
 	/**
-	*	Parse the EHD value (possibly undefined).
+	* Parse the EHD value (possibly undefined).
 	*/
 	private int parseEHD (String s) {
 		return s.equals("*") ? UNDEFINED_EHD : Integer.parseInt(s);
 	}
 
 	/**
-	*	Spawn	a new	monster of this type, with	different hit points.
+	* Spawn a new monster of this type, with different hit points.
 	*/
-	public Monster	spawn	()	{
-		if	(hasSpecial(SpecialType.NPC))	{
-			Character c	= Character.newNPCFromTitle(
+	public Monster spawn () {
+		if (hasSpecial(SpecialType.NPC)) {
+			Character c = Character.newNPCFromTitle(
 				getRace(), Alignment.Chaotic);
 			c.race = race;
 			c.tableLevel = tableLevel;
@@ -279,249 +279,249 @@ public class Monster	{
 			return c;
 		}
 		else {
-			Monster m =	new Monster(this);
+			Monster m = new Monster(this);
 			m.rollHitPoints();
 			return m;
 		}
 	}
 
 	/**
-	*	Roll hit	points from	hit dice.
+	* Roll hit points from hit dice.
 	*/
-	private void rollHitPoints	()	{
-		if	(race.contains("Dragon")) {
+	private void rollHitPoints () {
+		if (race.contains("Dragon")) {
 			int age = Dice.roll(hitDice.getSides());
-			maxHitPoints =	age *	hitDice.getNum();
+			maxHitPoints = age * hitDice.getNum();
 		}
 		else if (hasSpecial(SpecialType.Multiheads)) {
-			maxHitPoints =	hitDice.maxRoll();
+			maxHitPoints = hitDice.maxRoll();
 		}
 		else {
-			maxHitPoints =	Math.max(1, hitDice.roll());
+			maxHitPoints = Math.max(1, hitDice.roll());
 		}
-		hitPoints =	maxHitPoints;
+		hitPoints = maxHitPoints;
 	}
 
 	/**
-	*	Take damage	(minimum	0 hp).
+	* Take damage (minimum 0 hp).
 	*/
-	public void	takeDamage (int damage)	{
+	public void takeDamage (int damage) {
 		hitPoints -= damage;
 		boundHitPoints();
 		headCount();
 	}
 
 	/**
-	*	Kill this monster	(reduce to 0 hp).
+	* Kill this monster (reduce to 0 hp).
 	*/
-	public void	instaKill () {
-		hitPoints =	0;
+	public void instaKill () {
+		hitPoints = 0;
 	}
 
 	/**
-	*	Check	if	the monster	is	out of the fight.
+	* Check if the monster is out of the fight.
 	*/
-	public boolean	horsDeCombat()	{
+	public boolean horsDeCombat() {
 		return hitPoints <= 0
 			|| hasNullAbilityScore()
-			||	hasDisablingCondition()
-			||	isCharmed();
+			|| hasDisablingCondition()
+			|| isCharmed();
 	}
 
 	/**
-	*	Set to perfect health.
+	* Set to perfect health.
 	*/
-	public void	setPerfectHealth () {
-		hitPoints =	getMaxHitPoints();
+	public void setPerfectHealth () {
+		hitPoints = getMaxHitPoints();
 		conditionList.clear();
 		zeroAbilityDamage();
 	}
 
 	/**
-	*	Bound	current hit	points.
+	* Bound current hit points.
 	*/
-	public void	boundHitPoints	()	{
+	public void boundHitPoints () {
 		int min = 0;
 		int max = getMaxHitPoints();
-		if	(hitPoints < min)	hitPoints =	min;
-		if	(hitPoints > max)	hitPoints =	max;
+		if (hitPoints < min) hitPoints = min;
+		if (hitPoints > max) hitPoints = max;
 	}
 
 	/**
-	*	Check if we are subject to more melee attacks.
+	* Check if we are subject to more melee attacks.
 	*/
 	public boolean isOpenToMelee () { 
 		return !horsDeCombat() && (timesMeleed < MAX_MELEERS); 
 	}
 
 	/**
-	*	Carry	out full	attack routine	on	another creature.
+	* Carry out full attack routine on another creature.
 	*/
-	public void	fullAttack (Attack attack,	Monster target) {
-		for (int	i = 0; i	< attack.getRate(); i++) {
-			boolean last =	(i	==	attack.getRate() - 1); 
-			singleAttack(attack,	target, last);
+	public void fullAttack (Attack attack, Monster target) {
+		for (int i = 0; i < attack.getRate(); i++) {
+			boolean last = (i == attack.getRate() - 1); 
+			singleAttack(attack, target, last);
 		}
 	}
 
 	/**
-	*	Make one	attack on another	creature.
+	* Make one attack on another creature.
 	*/
-	public void	singleAttack (Attack	attack, Monster target,	boolean last) {
-		int naturalRoll =	Dice.roll(20);
-		int totalRoll = naturalRoll +	attack.getBonus()	
+	public void singleAttack (Attack attack, Monster target, boolean last) {
+		int naturalRoll = Dice.roll(20);
+		int totalRoll = naturalRoll + attack.getBonus() 
 			+ target.getAC() + hitModifier(target);
-		if	(canAttack(target) && (naturalRoll == 20 || totalRoll	>=	20)) {
+		if (canAttack(target) && (naturalRoll == 20 || totalRoll >= 20)) {
 			int damage = attack.getDamage().roll();
 			if (damage < 1 && attack.getDamage().getNum() > 0)
 				damage = 1;
-			damage =	checkDamageReduction(target, damage);
+			damage = checkDamageReduction(target, damage);
 			target.takeDamage(damage);
 			checkSpecialOnHit(target, totalRoll, last);
 		}
 	}
 
 	/**
-	*	Can we feasibly attack this target?
+	* Can we feasibly attack this target?
 	*/
-	public boolean	canAttack (Monster target)	{
-		SpecialAbility	special;
+	public boolean canAttack (Monster target) {
+		SpecialAbility special;
 
-		//	Check	silver to hit
+		// Check silver to hit
 		special = target.findSpecial(SpecialType.SilverToHit);
-		if	(special	!=	null)	{
-			boolean silverWeapon	= (getWeapon()	!=	null 
-				&&	getWeapon().getMaterial() == Weapon.Material.Silver);
-			return silverWeapon || getMagicHitLevel()	> 0;
+		if (special != null) {
+			boolean silverWeapon = (getWeapon() != null 
+				&& getWeapon().getMaterial() == Weapon.Material.Silver);
+			return silverWeapon || getMagicHitLevel() > 0;
 		}
 
-		//	Check	magic	to	hit
+		// Check magic to hit
 		special = target.findSpecial(SpecialType.MagicToHit);
-		if	(special	!=	null)	{
+		if (special != null) {
 			return getMagicHitLevel() >= special.getParam();
 		}
-		
+
 		// Check total weapon immunity
 		if (target.hasSpecial(SpecialType.WeaponImmunity)) {
 			return false;
 		}
-		
+
 		// Check phasing (3-in-6 to be out of phase)
 		if (target.hasSpecial(SpecialType.Phasing) 
 				&& new Dice(6).roll() <= 3) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	/**
-	*	Find what level of magic-to-hit we can	strike.
+	* Find what level of magic-to-hit we can strike.
 	*/
 	public int getMagicHitLevel () {
 
-		//	Check	if	we	are also	magic-to-hit
-		SpecialAbility	special = findSpecial(SpecialType.MagicToHit);
-		int magicHitLevel	= (special == null ?	0 : special.getParam());
+		// Check if we are also magic-to-hit
+		SpecialAbility special = findSpecial(SpecialType.MagicToHit);
+		int magicHitLevel = (special == null ? 0 : special.getParam());
 
-		//	Check	if	we	have high hit dice
-		int fractionHD	= getHD() /	4;
+		// Check if we have high hit dice
+		int fractionHD = getHD() / 4;
 		return Math.max(magicHitLevel, fractionHD);
 	}
 
 	/**
-	*	Return hit modifier against a	target.
-	*	@return Modifier to hit.
+	* Return hit modifier against a target.
+	* @return Modifier to hit.
 	*/
 	public int hitModifier (Monster target) {
-		int modifier =	0;
+		int modifier = 0;
 
-		//	General hit bonus
-		if	(hasSpecial(SpecialType.HitBonus)) {
+		// General hit bonus
+		if (hasSpecial(SpecialType.HitBonus)) {
 			modifier += findSpecial(SpecialType.HitBonus).getParam();
 		}
 
-		//	Berserker bonus
-		if	(hasSpecial(SpecialType.Berserking) 
+		// Berserker bonus
+		if (hasSpecial(SpecialType.Berserking) 
 				|| hasCondition(SpecialType.Berserking)
 				|| hasFeat(Character.Feat.Berserking)) {
-			modifier	+=	2;
+			modifier += 2;
 		}
 
 		// Giant & target dodges giants
 		if (getType() == 'H' && getHD() >= 4
 				&& target.hasSpecial(SpecialType.DodgeGiants)) {
-			modifier -= 4;				
+			modifier -= 4;    
 		}
 
-		//	Blinking (2-in-6 for rear attack)
-		if	(hasSpecial(SpecialType.Blinking) && new Dice(6).roll() <= 2) {
-			modifier	+=	2;
+		// Blinking (2-in-6 for rear attack)
+		if (hasSpecial(SpecialType.Blinking) && new Dice(6).roll() <= 2) {
+			modifier += 2;
 		}
 
-		//	Phasing (3-in-6 for rear attack)
-		if	(hasSpecial(SpecialType.Phasing) && new Dice(6).roll() <= 3) {
-			modifier	+=	2;
+		// Phasing (3-in-6 for rear attack)
+		if (hasSpecial(SpecialType.Phasing) && new Dice(6).roll() <= 3) {
+			modifier += 2;
 		}
 
 		// Target displacement
 		if (target.hasSpecial(SpecialType.Displacement)) {
 			modifier -= 2;
 		}
-		
+
 		// Target invisibility
 		if (target.hasSpecial(SpecialType.Invisibility)
 				&& !hasSpecial(SpecialType.Detection)) {
-			modifier -= 4;				
+			modifier -= 4;    
 		}
-	
+
 		// Target gaze attack (assume we look aside)
-		if	(target.getGazeWeapon() != null) {
-			modifier	-=	4;
+		if (target.getGazeWeapon() != null) {
+			modifier -= 4;
 		}
 
 		return modifier;
 	}
 
 	/**
-	*	Check	for damage reduction	on	target.
-	*	@return Adjusted damage.
+	* Check for damage reduction on target.
+	* @return Adjusted damage.
 	*/
 	public int checkDamageReduction (Monster target, int damage) {
 
 		// Damage reduction ability
-		if	(target.hasSpecial(SpecialType.DamageReduction)) {
+		if (target.hasSpecial(SpecialType.DamageReduction)) {
 			damage /= 2;
 		}
-		
+
 		// Corroding oozes delay damage until bare flesh
 		if (hasSpecial(SpecialType.Corrosion)
 				&& target.getArmor() != null){
 			damage = 0;
 		}
-		
+
 		return damage;
 	}
 
 	/**
-	*	Check	for special	ability triggers when we hit.
+	* Check for special ability triggers when we hit.
 	*/
-	public void	checkSpecialOnHit	(Monster	target, int	totalRoll, boolean isLastAttack)	{
+	public void checkSpecialOnHit (Monster target, int totalRoll, boolean isLastAttack) {
 
 		// Special abilities of this attacking monster
-		for (SpecialAbility s: specialList)	{
+		for (SpecialAbility s: specialList) {
 			switch (s.getType()) {
 
 				case Poison:
-					if	(isLastAttack) {
+					if (isLastAttack) {
 						castCondition(target, SpecialType.Poison, -s.getParam());
 					}
 					break;
-			
+
 				case Paralysis:
 					castCondition(target, SpecialType.Paralysis);
 					break;
-			
+
 				case Petrification:
 					castCondition(target, SpecialType.Petrification);
 					break;
@@ -529,8 +529,8 @@ public class Monster	{
 				case EnergyDrain:
 					boolean saved = SavingThrows.ENERGY_DRAIN_SAVE
 						&& target.rollSave(SavingThrows.SaveType.Death);
-					if (!saved) {						
-						for (int	j = 0; j	< s.getParam(); j++)	{
+					if (!saved) {      
+						for (int j = 0; j < s.getParam(); j++) {
 							target.loseLevel();
 						}
 					}
@@ -551,7 +551,7 @@ public class Monster	{
 				case SappingStrands:
 					if (!isLastAttack && !target.hasCondition(SpecialType.SappingStrands)
 							&& !target.rollSave(SavingThrows.SaveType.Death)) {
-						int strength = target.getAbilityScore(Ability.Str);							
+						int strength = target.getAbilityScore(Ability.Str);       
 						target.takeAbilityDamage(Ability.Str, strength/2);
 						target.addCondition(SpecialType.SappingStrands);
 					}
@@ -570,7 +570,7 @@ public class Monster	{
 				case CharmTouch:
 					castCharm(target, -s.getParam());
 					break;
-					
+
 				case Corrosion:
 					corrodeArmor(target);
 					break;
@@ -582,7 +582,7 @@ public class Monster	{
 				case Constriction:
 					setHost(target);
 					break;
-					
+
 				case BloodDrain: 
 					setHost(target);
 					break;
@@ -593,23 +593,23 @@ public class Monster	{
 		if (target.hasSpecial(SpecialType.SporeCloud)) {
 			if (Dice.roll(100) <= 50) {
 				target.castCondition(this, SpecialType.SporeCloud);
-			}		
+			}  
 		}
 	}
 
 	/**
-	*	Make a special	attack on an enemy party.
-	*	Ranged/outside	of	melee	specials	should go here.
+	* Make a special attack on an enemy party.
+	* Ranged/outside of melee specials should go here.
 	*  Uses all abilities possessed.
 	*/
 	void makeSpecialAttack (Party enemy) {
 		Monster target;
 		Attack attack;
 		int modifier;
-	
-		for (SpecialAbility s: specialList)	{
+
+		for (SpecialAbility s: specialList) {
 			switch (s.getType()) {
-			
+
 				case RockHurling: 
 					target = enemy.random();
 					attack = new Attack("Rock", 1, getHD(), new Dice(2, 6));
@@ -633,19 +633,19 @@ public class Monster	{
 				case Fear:
 					Dice moraleDice = new Dice(2, 6); 
 					for (Monster targetFear: enemy) {
-						if	(moraleDice.rollPlus(targetFear.getHD()) < 9) {
+						if (moraleDice.rollPlus(targetFear.getHD()) < 9) {
 							targetFear.addCondition(SpecialType.Fear);
 						}
 					}
 					break;
-					
+
 				case WallOfFire:
 					Dice fireDamage = new Dice(1, 6); 
 					for (Monster targetFire: enemy) {
 						targetFire.takeDamage(fireDamage.roll());
 					}
 					break;
-					
+
 				case ConeOfCold:
 					int damage = new Dice(8, 6).roll();
 					int maxVictims = getMaxVictimsInCone(6);
@@ -658,7 +658,7 @@ public class Monster	{
 					attack = new Attack("Acid Spit", 1, getHD(), new Dice(2, 6));
 					singleAttack(attack, target, false);
 					break;
-					
+
 				case Whirlwind:
 					int diameter = s.getParam();
 					int numVictims = diameter * diameter;
@@ -666,10 +666,10 @@ public class Monster	{
 					for (Monster m: victims) {
 						if (m.getHD() < 2) {
 							m.instaKill();
-						}					
+						}     
 					}
 					break;
-					
+
 				case Confusion:
 					target = enemy.random();
 					modifier = -s.getParam();
@@ -680,8 +680,8 @@ public class Monster	{
 				case MindBlast: 
 					maxVictims = getMaxVictimsInCone(6);
 					mindBlastArea(enemy, maxVictims);
-					break;				
-					
+					break;    
+
 				case SappingStrands:
 					attack = new Attack("Sapping Strand", 1, getHD(), new Dice(0, 6));
 					for (int i = 0; i < 6; i++) {
@@ -689,20 +689,20 @@ public class Monster	{
 						singleAttack(attack, target, false);
 					}
 					break;
-					
+
 				case Charm:
 					castCharm(enemy.random(), -s.getParam());
 					break;
-			}					
+			}     
 		}
 	}
 
 	/**
-	*	Find if we have a	given	type of special ability.
+	* Find if we have a given type of special ability.
 	*/
 	public SpecialAbility findSpecial (SpecialType type) {
-		for (SpecialAbility s: specialList)	{
-			if	(s.getType() == type) {
+		for (SpecialAbility s: specialList) {
+			if (s.getType() == type) {
 				return s;
 			}
 		}
@@ -710,25 +710,25 @@ public class Monster	{
 	}
 
 	/**
-	*	Check	if	this monster has a given type	of	special ability.
+	* Check if this monster has a given type of special ability.
 	*/
-	public boolean	hasSpecial (SpecialType	type)	{
+	public boolean hasSpecial (SpecialType type) {
 		return findSpecial(type) != null;
 	}
 
 	/**
-	*	Add a	condition suffered from	a special ability.
+	* Add a condition suffered from a special ability.
 	*/
-	public void	addCondition (SpecialType type) {
+	public void addCondition (SpecialType type) {
 		conditionList.add(new SpecialAbility(type));
 	}
 
 	/**
-	*	Find if we suffer	from a given condition.
+	* Find if we suffer from a given condition.
 	*/
-	public SpecialAbility findCondition	(SpecialType type) {
+	public SpecialAbility findCondition (SpecialType type) {
 		for (SpecialAbility s: conditionList) {
-			if	(s.getType() == type) {
+			if (s.getType() == type) {
 				return s;
 			}
 		}
@@ -736,18 +736,18 @@ public class Monster	{
 	}
 
 	/**
-	*	Check	if	we suffer from a given condition.
+	* Check if we suffer from a given condition.
 	*/
-	public boolean	hasCondition (SpecialType type) {
-		return findCondition(type)	!=	null;	
+	public boolean hasCondition (SpecialType type) {
+		return findCondition(type) != null; 
 	}
 
 	/**
-	*	Check	if	we suffer from a disabling condition.
+	* Check if we suffer from a disabling condition.
 	*/
-	public boolean	hasDisablingCondition () {
+	public boolean hasDisablingCondition () {
 		for (SpecialAbility s: conditionList) {
-			if	(s.getType().isDisabling())	{
+			if (s.getType().isDisabling()) {
 				return true;
 			}
 		}
@@ -755,11 +755,11 @@ public class Monster	{
 	}
 
 	/**
-	*	Get our breath weapon (if any).
+	* Get our breath weapon (if any).
 	*/
 	public SpecialAbility getBreathWeapon () {
-		for (SpecialAbility s: specialList)	{
-			if	(s.getType().isBreathWeapon()) {
+		for (SpecialAbility s: specialList) {
+			if (s.getType().isBreathWeapon()) {
 				return s;
 			}
 		}
@@ -767,11 +767,11 @@ public class Monster	{
 	}
 
 	/**
-	*	Get our gaze weapon (if any).
+	* Get our gaze weapon (if any).
 	*/
 	public SpecialAbility getGazeWeapon () {
-		for (SpecialAbility s: specialList)	{
-			if	(s.getType().isGazeWeapon()) {
+		for (SpecialAbility s: specialList) {
+			if (s.getType().isGazeWeapon()) {
 				return s;
 			}
 		}
@@ -779,11 +779,11 @@ public class Monster	{
 	}
 
 	/**
-	*	Get our summons ability (if any).
+	* Get our summons ability (if any).
 	*/
 	public SpecialAbility getSummonsAbility () {
-		for (SpecialAbility s: specialList)	{
-			if	(s.getType().isSummonsAbility()) {
+		for (SpecialAbility s: specialList) {
+			if (s.getType().isSummonsAbility()) {
 				return s;
 			}
 		}
@@ -791,11 +791,11 @@ public class Monster	{
 	}
 
 	/**
-	*	Regenerate hit	points if appropriate.
+	* Regenerate hit points if appropriate.
 	*/
-	public void	checkRegeneration	()	{
-		SpecialAbility	special = findSpecial(SpecialType.Regeneration);
-		if	(special	!=	null)	{
+	public void checkRegeneration () {
+		SpecialAbility special = findSpecial(SpecialType.Regeneration);
+		if (special != null) {
 			hitPoints += special.getParam();
 			boundHitPoints();
 		}
@@ -803,15 +803,15 @@ public class Monster	{
 
 	/**
 	*  Drain blood from host if appropriate.
-	*	@return Did	we	drain	blood?
+	* @return Did we drain blood?
 	*/
-	public boolean	checkDrainBlood () {
-		SpecialAbility	special = findSpecial(SpecialType.BloodDrain);
-		if	(special	!=	null && host != null) {
+	public boolean checkDrainBlood () {
+		SpecialAbility special = findSpecial(SpecialType.BloodDrain);
+		if (special != null && host != null) {
 			int maxDamage = special.getParam();
-			int drain =	new Dice(1,	maxDamage).roll();
+			int drain = new Dice(1, maxDamage).roll();
 			host.takeDamage(drain);
-			if	(host.horsDeCombat()) {
+			if (host.horsDeCombat()) {
 				host = null;
 			}
 			return true;
@@ -820,16 +820,16 @@ public class Monster	{
 	}
 
 	/**
-	*	Constrict host	if	appropriate.
-	*	@return Did	we	constrict?
+	* Constrict host if appropriate.
+	* @return Did we constrict?
 	*/
-	public boolean	checkConstriction	()	{
-		SpecialAbility	special = findSpecial(SpecialType.Constriction);
-		if	(special	!=	null && host != null) {
+	public boolean checkConstriction () {
+		SpecialAbility special = findSpecial(SpecialType.Constriction);
+		if (special != null && host != null) {
 			int damage = new Dice(1, 6).roll();
 			host.takeDamage(damage);
-			if	(host.horsDeCombat()) {
-				host = null;			
+			if (host.horsDeCombat()) {
+				host = null;   
 			}
 			return true;
 		}
@@ -837,12 +837,12 @@ public class Monster	{
 	}
 
 	/**
-	*	Grab host if appropriate.
-	*	@return Did	we	grab?
+	* Grab host if appropriate.
+	* @return Did we grab?
 	*/
-	public boolean	checkGrabbing () {
-		SpecialAbility	special = findSpecial(SpecialType.Grabbing);
-		if	(special	!=	null && host != null) {
+	public boolean checkGrabbing () {
+		SpecialAbility special = findSpecial(SpecialType.Grabbing);
+		if (special != null && host != null) {
 
 			// Absorption: game over, man.
 			if (hasSpecial(SpecialType.Absorption)) {
@@ -856,22 +856,22 @@ public class Monster	{
 				if (Dice.roll(10) <= 4) {
 					host.instaKill();
 					host = null;
-				}			
+				}   
 				return true;
 			}
 
 			// Corrosion: must dissolve armor before damage.
 			if (hasSpecial(SpecialType.Corrosion)) {
 				if (host.getArmor() != null) {
-					corrodeArmor(host);				
-					return true;				
-				}			
+					corrodeArmor(host);    
+					return true;    
+				}   
 			}
 
 			// Automatic damage per attack form
 			int damage = attack.getDamage().roll();
 			host.takeDamage(damage);
-			if	(host.horsDeCombat()) {
+			if (host.horsDeCombat()) {
 				host = null;
 			}
 			return true;
@@ -880,17 +880,17 @@ public class Monster	{
 	}
 
 	/**
-	*	Check	for a	breath weapon attack.
+	* Check for a breath weapon attack.
 	*  Estimates max number hit for given area.
-	*	@return Did	we	make a breath attack?
+	* @return Did we make a breath attack?
 	*/
-	public boolean	checkBreathWeapon	(Party enemy) {
+	public boolean checkBreathWeapon (Party enemy) {
 		if (breathCharges > 0 && new Dice(2, 6).roll() >= 7) {
 			SpecialAbility breath = getBreathWeapon();
 			int param = breath.getParam();
 			int damage, maxVictims, numVictims;
 			switch (breath.getType()) {
-				
+
 				case FireBreath: 
 					// As a data simplifying assumption, 
 					// we assume damage dice = length of cone.
@@ -937,7 +937,7 @@ public class Monster	{
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castConditionArea(enemy, numVictims, SpecialType.Petrification);
 					break;
-					
+
 				case PoisonBreath: 
 					if (param == 0) { // Dragon
 						maxVictims = 10;
@@ -961,7 +961,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Compute maximum number of victims in a cone area.
+	* Compute maximum number of victims in a cone area.
 	*
 	*  Following red dragon breath, cone width is one-third the length.
 	*  We assume that number of targets is same as area.
@@ -973,7 +973,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Compute number of victims hit by breath weapon.
+	* Compute number of victims hit by breath weapon.
 	*
 	*  After melee is engaged, we assume party is spread out,
 	*  so at most we can hit half of enemy party (rounded up).
@@ -984,7 +984,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Apply energy damage to multiple enemy party numbers.
+	* Apply energy damage to multiple enemy party numbers.
 	*/
 	void castEnergyArea (Party enemy, int number, int damage, 
 			EnergyType energy, SavingThrows.SaveType saveType) {
@@ -995,18 +995,18 @@ public class Monster	{
 	}
 
 	/**
-	*	Apply energy damage to one enemy monster.
+	* Apply energy damage to one enemy monster.
 	*/
 	void castEnergy (Monster target, int damage, 
 			EnergyType energy, SavingThrows.SaveType saveType) {
-		if (!target.isImmuneToEnergy(energy)) {			
-			boolean saved = (saveType != null && target.rollSave(saveType));			
+		if (!target.isImmuneToEnergy(energy)) {   
+			boolean saved = (saveType != null && target.rollSave(saveType));   
 			target.takeDamage(saved ? damage/2 : damage);
 		}
 	}
 
 	/**
-	*	Is this monster immune to this energy type?
+	* Is this monster immune to this energy type?
 	*/
 	boolean isImmuneToEnergy (EnergyType energy) {
 		switch (energy) {
@@ -1016,10 +1016,10 @@ public class Monster	{
 			case Lightning: return hasSpecial(SpecialType.LightningImmunity);
 			default: return false;
 		}
-	}	
+	} 
 
 	/**
-	*	Apply condition to multiple enemy party numbers.
+	* Apply condition to multiple enemy party numbers.
 	*/
 	void castConditionArea (Party enemy, int number, SpecialType condition) {
 		ArrayList<Monster> targets = enemy.randomGroup(number);
@@ -1029,14 +1029,14 @@ public class Monster	{
 	}
 
 	/**
-	*	Apply condition to one enemy monster (no save modifier).
+	* Apply condition to one enemy monster (no save modifier).
 	*/
 	void castCondition (Monster target, SpecialType condition) {
 		castCondition(target, condition, 0);
 	}
 
 	/**
-	*	Apply condition to one enemy monster.
+	* Apply condition to one enemy monster.
 	*/
 	void castCondition (Monster target, SpecialType condition, int saveMod) {
 		if (!target.rollSave(condition.getSaveType(), saveMod)) {
@@ -1045,7 +1045,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Cast a charm on one enemy monster.
+	* Cast a charm on one enemy monster.
 	*/
 	void castCharm (Monster target, int saveMod) {
 		if (target.hasFeat(Character.Feat.IronWill)) saveMod += 4;
@@ -1055,7 +1055,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Apply mind blast to enemy party numbers.
+	* Apply mind blast to enemy party numbers.
 	*  
 	*  Saving throws simplified; assume at long range.
 	*  Any result other than Confusion/Enrage takes
@@ -1068,7 +1068,7 @@ public class Monster	{
 			if (intel > 0) {
 				if (Dice.roll(20) + intel < 20) {
 					if (intel < 5) {
-						m.instaKill();					
+						m.instaKill();     
 					}
 					else if (intel < 13) {
 						m.addCondition(SpecialType.MindBlast);
@@ -1083,12 +1083,12 @@ public class Monster	{
 						m.addCondition(SpecialType.MindBlast);
 					}
 				}
-			}		
+			}  
 		}
 	}
 
 	/**
-	*	Cast slow on one of the enemy.
+	* Cast slow on one of the enemy.
 	*/
 	public void checkSlowing (Party enemy) {
 		Monster target = enemy.random();
@@ -1099,7 +1099,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Summon any minions to our party.
+	* Summon any minions to our party.
 	*/
 	public void summonMinions (Party party) {
 		SpecialAbility summons = getSummonsAbility();
@@ -1113,25 +1113,25 @@ public class Monster	{
 				case SummonTrees:
 					party.addMonsters("Tree", 2);
 					break;
-					
+
 				default:
 					System.err.println("Error: Summons type not found: " 
 						+ summons.getType());
-			}		
+			}  
 		}
 	}
 
 	/**
-	*	Check if we are confused on our turn to attack.
+	* Check if we are confused on our turn to attack.
 	*/
-	public boolean	checkConfused (Party party) {
+	public boolean checkConfused (Party party) {
 		if (hasCondition(SpecialType.Confusion)) {
 			int reaction = new Dice(2, 6).roll();
-			if (reaction <= 5) 		// act normally
+			if (reaction <= 5)   // act normally
 				return false; 
-			else if (reaction <= 8)	// stand motionless
+			else if (reaction <= 8) // stand motionless
 				return true;
-			else { 						// make one attack on own party
+			else {       // make one attack on own party
 				Monster target = party.randomMelee();
 				if (target != null && target != this) {
 					singleAttack(getAttack(), target, true);
@@ -1143,7 +1143,7 @@ public class Monster	{
 	}
 
 	/**
-	*	Corrode target's armor (metal or leather).
+	* Corrode target's armor (metal or leather).
 	*/
 	public void corrodeArmor (Monster target) {
 		Armor armor = target.getArmor();
@@ -1158,65 +1158,65 @@ public class Monster	{
 	}
 
 	/**
-	*	Attach ourselves to some creature (e.g., blood drain).
+	* Attach ourselves to some creature (e.g., blood drain).
 	*/
-	public void	setHost (Monster host) {
-		this.host =	host;	
+	public void setHost (Monster host) {
+		this.host = host; 
 	}
 
 	/**
-	*	Indicate	that we are	charmed by some other creature.
+	* Indicate that we are charmed by some other creature.
 	*/
-	public void	setCharmed (Monster charmer) {
-		this.charmer =	charmer;
+	public void setCharmed (Monster charmer) {
+		this.charmer = charmer;
 	}
 
 	/**
-	*	Count	current heads for	multiheaded	types.
-	*	Set one attack	per full	hit die.
+	* Count current heads for multiheaded types.
+	* Set one attack per full hit die.
 	*/
-	void headCount	()	{
-		if	(hasSpecial(SpecialType.Multiheads)) {
-			int hitDieSides =	getHitDice().getSides();
-			int newRate	= (getHP() - 1) /	hitDieSides	+ 1;
+	void headCount () {
+		if (hasSpecial(SpecialType.Multiheads)) {
+			int hitDieSides = getHitDice().getSides();
+			int newRate = (getHP() - 1) / hitDieSides + 1;
 			getAttack().setRate(newRate);
 		}
 	}
 
 	/**
-	*	Lose a level (e.g., energy	drain).
+	* Lose a level (e.g., energy drain).
 	*/
-	public void	loseLevel () {
-		int HD =	getHitDiceNum();
-		if	(HD <= 1) {
-			maxHitPoints =	0;
+	public void loseLevel () {
+		int HD = getHitDiceNum();
+		if (HD <= 1) {
+			maxHitPoints = 0;
 			hitDice.setNum(0);
 		}
 		else {
-			maxHitPoints =	maxHitPoints *	(HD - 1)/HD;
-			hitDice.setNum(HD	- 1);
+			maxHitPoints = maxHitPoints * (HD - 1)/HD;
+			hitDice.setNum(HD - 1);
 		}
 		boundHitPoints();
 	}
 
 	/**
-	*	Roll a saving throw with no modifier.
+	* Roll a saving throw with no modifier.
 	*/
-	public boolean	rollSave	(SavingThrows.SaveType type) {
+	public boolean rollSave (SavingThrows.SaveType type) {
 		return rollSave(type, 0);
 	}
 
 	/**
-	*	Roll a saving throw with modifier.
+	* Roll a saving throw with modifier.
 	*/
-	public boolean	rollSave	(SavingThrows.SaveType type, int modifier) {
+	public boolean rollSave (SavingThrows.SaveType type, int modifier) {
 		modifier += getFixedSaveModifiers(type);
 		return SavingThrows.getInstance().rollSave(
 			type, "Fighter", getHD(), modifier);
 	}
 
 	/**
-	*	Add up fixed save modifiers for this monster.
+	* Add up fixed save modifiers for this monster.
 	*/
 	public int getFixedSaveModifiers (SavingThrows.SaveType type) {
 		int modifier = 0;
@@ -1224,63 +1224,63 @@ public class Monster	{
 		// Save bonus special ability
 		SpecialAbility saveBonus = findSpecial(SpecialType.SaveBonus);
 		if (saveBonus != null) {
-			modifier += saveBonus.getParam();		
-		}
-		
-		// Displacement effect
-		if (hasSpecial(SpecialType.Displacement)) {
-			modifier += 2;		
+			modifier += saveBonus.getParam();  
 		}
 
-		// Great Fortitude feat vs. death saves	
+		// Displacement effect
+		if (hasSpecial(SpecialType.Displacement)) {
+			modifier += 2;  
+		}
+
+		// Great Fortitude feat vs. death saves 
 		if (type == SavingThrows.SaveType.Death && 
 				hasFeat(Character.Feat.GreatFortitude))
-			modifier += 4;		
+			modifier += 4;  
 
 		return modifier;
 	}
 
 	/**
-	*	Add to kill tally.
+	* Add to kill tally.
 	*/
 	public void addToKillTally (int num) {
-		killTally += num;	
+		killTally += num; 
 	}
 
 	/**
-	*	Get the XP award value for defeating this monster.
+	* Get the XP award value for defeating this monster.
 	*/
 	int getXPAward () {
 		return XPTable.getInstance().getXPAward(this);
 	}
 
 	/**
-	*	Return if this monster has an undefined EHD.
+	* Return if this monster has an undefined EHD.
 	*/
 	boolean hasUndefinedEHD () {
 		return getEHD() == UNDEFINED_EHD;
 	}
 
 	/**
-	*	Get current movement rate.
+	* Get current movement rate.
 	*/
 	public int getMoveInches () {
 		return hasCondition(SpecialType.Slowing) ? moveInches/2 : moveInches;
 	}
 
 	/**
-	*	Initialize breath weapon charges.
+	* Initialize breath weapon charges.
 	*/
 	public void initBreathCharges () {
-		if	(getBreathWeapon() != null)	{
+		if (getBreathWeapon() != null) {
 			breathCharges = 3;
 		}
 	}
 
 	/**
-	*	Identify	this object	as	a string.
+	* Identify this object as a string.
 	*/
-   public String toString() {
+	public String toString() {
 		return (getName() == null ? "" : getName() + ", ") + getRace() 
 			+ ": AC "   + getAC() + ", MV " + getMV() 
 			+ ", HD "   + getHD() + ", hp " + getHP() 
@@ -1288,28 +1288,27 @@ public class Monster	{
 			+ ", Dam " + getAttack().getDamage()
 			+ (specialList.isEmpty() ? "" : "; SA " + specialString())
 			+ ".";
-   }
+	}
 
 	/**
-	*	Identify	special abilities	as	a string.
+	* Identify special abilities as a string.
 	*/
-	public String specialString()	{
+	public String specialString() {
 		String s = specialList.toString();
 		return s.substring(1, s.length()-1);
 	}
 
 	/**
-	*	Main test method.
+	* Main test method.
 	*/
-	public static void main	(String[] args) {
+	public static void main (String[] args) {
 		Dice.initialize();
-		Monster c =	new Monster(5,	9,	4);
+		Monster c = new Monster(5, 9, 4);
 		System.out.println(c);
 	}
 
 	/*--------------------------------------------------------------------------
-	*	TODO:
+	* TODO:
 	*  Distinct attack forms (in ArrayList, characters might register/swap)
 	*-------------------------------------------------------------------------*/
 }
-

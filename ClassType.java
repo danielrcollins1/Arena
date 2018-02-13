@@ -87,8 +87,12 @@ public class ClassType {
 			xpReqs[i] = CSVReader.parseInt(levelData[i+1][2]);
 		}
 		
-		// Compute advancedXpInc from last two levels
-		advancedXpInc = xpReqs[arraySize - 1] - xpReqs[arraySize - 2];
+		// Compute advancedXpInc from last level:
+		// See M. Mornard's recollection that Gygax extrapolated
+		//   XP based on value at Name Level (blog 4/24/17). 
+		// NOTE: Currently name level, max HD, and last array entry
+		//   all synchronize; if that changes, this may need an edit.
+		advancedXpInc = xpReqs[arraySize - 1];
 	}
 
 	//--------------------------------------------------------------------------

@@ -8,7 +8,7 @@ import java.io.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20
-*  @version  1.11
+*  @version  1.12
 ******************************************************************************/
 
 public class Arena {
@@ -521,7 +521,6 @@ public class Arena {
    *  Print simulation ending info.
    */
 	public void reportEnd () {
-		System.out.println();
 		reportFighterStatistics();
 		reportFighterData();
 		reportMonsterKills();
@@ -702,6 +701,13 @@ public class Arena {
    */
 	public void setBaseWeapon (Weapon weapon) {
 		baseWeaponType = weapon;	
+	}
+
+   /**
+   *  Set use of revised XP awards (per Sup-I).
+   */
+	public void setUseRevisedXPAwards (boolean use) {
+		useRevisedXPAwards = use;	
 	}
 
    /**

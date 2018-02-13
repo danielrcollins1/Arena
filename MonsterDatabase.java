@@ -89,7 +89,6 @@ public class MonsterDatabase implements Iterable<Monster> {
 	public static void main (String[] args) {
 		Dice.initialize();		
 		MonsterDatabase db = MonsterDatabase.getInstance();
-		System.out.println();
 		for (Monster m: db) {
 			System.out.println(m);
 		}

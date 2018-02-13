@@ -146,7 +146,7 @@ public class TreasureTypes {
 		TreasureTypes tts = TreasureTypes.getInstance();
 
 		// Random sample values
-		System.out.println("\nTreasure Sample Values");
+		System.out.println("Treasure Sample Values");
 		for (int i = 0; i < tts.size(); i++) {
 			char code = tts.get(i).code;
 			System.out.print(code + ": ");
@@ -155,9 +155,10 @@ public class TreasureTypes {
 			}
 			System.out.println();
 		}
+		System.out.println();
 		
 		// Estimated average values
-		System.out.println("\nEstimated Average Values");
+		System.out.println("Estimated Average Values");
 		final int SAMPLE_SIZE = 10000;
 		for (int i = 0; i < tts.size(); i++) {
 			char code = tts.get(i).code;
@@ -167,6 +168,7 @@ public class TreasureTypes {
 			}
 			System.out.println(code + ": " + total/SAMPLE_SIZE);
 		}
+		System.out.println();
 	}
 }
 

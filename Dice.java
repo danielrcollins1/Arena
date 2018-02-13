@@ -18,13 +18,13 @@ public class Dice {
 
 	/** Number of dice. */
 	private int number;
-	
+
 	/** Sides on the dice. */
 	private int sides;
 
 	/** Multiplier to the dice (negative = divisor). */
 	private int multiplier;
-	
+
 	/** Addition to the dice (negative = subtraction). */
 	private int addition;
 
@@ -41,42 +41,42 @@ public class Dice {
 	//  Constructors
 	//--------------------------------------------------------------------------
 
-	/**	
+	/** 
 	*  Constructor (one die only).
 	*/
 	Dice (int sides) {
 		this(1, sides, 1, 0);
 	}
 
-	/**	
+	/** 
 	*  Constructor (number, sides).
 	*/
 	Dice (int num, int sides) {
 		this(num, sides, 1, 0);
 	}
 
-	/**	
+	/** 
 	*  Constructor (number, sides, addition).
 	*/
 	Dice (int num, int sides, int add) {
 		this(num, sides, 1, add);
 	}
 
-	/**	
+	/** 
 	*  Constructor (all fields).
 	*/
 	Dice (int number, int sides, int mul, int add) {
 		this.number = number;
 		this.sides = sides;
 		this.multiplier = mul;
-		this.addition = add;	
+		this.addition = add; 
 	}
 
-	/**	
+	/** 
 	*  Constructor (read from string descriptor).
 	*
 	*  RegEx code from @user1803551 on StackExchange:
-	*	http://stackoverflow.com/questions/35020687/
+	* http://stackoverflow.com/questions/35020687/
 	*  how-to-parse-dice-notation-with-a-java-regular-expression
 	*/
 	Dice (String s) {
@@ -87,15 +87,15 @@ public class Dice {
 		if(m.matches()) {
 			number = (m.group(1) != null ? Integer.parseInt(m.group(1)) : 1);
 			sides = Integer.parseInt(m.group(2));
-			if	(m.group(3)	!=	null)	{
-				 boolean	positive	= m.group(3).startsWith("x");
-				 int val	= Integer.parseInt(m.group(3).substring(1));
-				 multiplier	= positive ? val : -val;
+			if (m.group(3) != null) {
+				boolean positive = m.group(3).startsWith("x");
+				int val = Integer.parseInt(m.group(3).substring(1));
+				multiplier = positive ? val : -val;
 			}
-			if	(m.group(4)	!=	null)	{
-				 boolean	positive	= m.group(4).startsWith("+");
-				 int val	= Integer.parseInt(m.group(4).substring(1));
-				 addition = positive ?	val :	-val;
+			if (m.group(4) != null) {
+				boolean positive = m.group(4).startsWith("+");
+				int val = Integer.parseInt(m.group(4).substring(1));
+				addition = positive ? val : -val;
 			}
 		}
 		else {
@@ -111,7 +111,7 @@ public class Dice {
 		this.number = d.number;
 		this.sides = d.sides;
 		this.multiplier = d.multiplier;
-		this.addition = d.addition;	
+		this.addition = d.addition; 
 	}
 
 	//--------------------------------------------------------------------------
@@ -130,7 +130,7 @@ public class Dice {
 	public void setMul (int mul) { multiplier = mul; }
 	public void setAdd (int add) { addition = add; }
 
-	/**	
+	/** 
 	*  Initialize the dice random generator.
 	*  Must call this before any roll() methods.
 	*/
@@ -138,7 +138,7 @@ public class Dice {
 		random = new Random();
 	}
 
-	/**	
+	/** 
 	*  Roll one die from a static context.
 	*  @return The die-roll.
 	*/
@@ -146,7 +146,7 @@ public class Dice {
 		return random.nextInt(sides) + 1;
 	}
 
-	/**	
+	/** 
 	*  Apply adjustments after raw dice roll.
 	*  @return Roll after modifiers.
 	*/
@@ -155,12 +155,12 @@ public class Dice {
 			roll *= multiplier;
 		else {
 			roll = (roll - 1)/(-multiplier) + 1;
-		}			
+		}   
 		roll += addition;
 		return roll;
 	}
 
-	/**	
+	/** 
 	*  Rolls the dice.
 	*  @return The dice-roll.
 	*/
@@ -172,7 +172,7 @@ public class Dice {
 		return adjustRoll(total);
 	}
 
-	/**	
+	/** 
 	*  Rolls the dice with added modifier.
 	*  @return The dice-roll.
 	*/
@@ -180,7 +180,7 @@ public class Dice {
 		return roll() + modifier;
 	}
 
-	/**	
+	/** 
 	*  Compute the minimum possible roll.
 	*  @return Minimum possible roll.
 	*/
@@ -188,7 +188,7 @@ public class Dice {
 		return adjustRoll(number);
 	}
 
-	/**	
+	/** 
 	*  Compute the maximum possible roll.
 	*  @return Maximum possible roll.
 	*/
@@ -196,7 +196,7 @@ public class Dice {
 		return adjustRoll(number * sides);
 	}
 
-	/**	
+	/** 
 	*  Compute average roll.
 	*  @return Average roll.
 	*/
@@ -216,12 +216,12 @@ public class Dice {
 			}
 			if (addition != 0) {
 				s += (addition > 0) ?
-					"+" + addition : "" + addition;			
+					"+" + addition : "" + addition;   
 			}
-			return s;			
+			return s;   
 		}
 		else {
-			return "" + addition;		
+			return "" + addition;  
 		}
 	}
 
@@ -236,7 +236,7 @@ public class Dice {
 		}
 		System.out.println();
 	}
-	
+
 	/**
 	*  Main test function.
 	*/
@@ -253,8 +253,8 @@ public class Dice {
 		new Dice("d6/2").test();
 		new Dice("2").test();
 		System.out.println();
-		
-		
+
+
 		// Test the division operator for bias
 		System.out.println("Test d6/2 for Bias");
 		Dice d = new Dice("1d6/2");
@@ -271,4 +271,3 @@ public class Dice {
 		System.out.println();
 	}
 }
-
