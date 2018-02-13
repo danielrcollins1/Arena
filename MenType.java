@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /******************************************************************************
 *  One type of NPC men encounter.
@@ -79,30 +81,43 @@ public class MenType {
 	*  Create separate unit components for this type of men.
 	*/
 	public Component[] createComponents (int total) {
-		String[] unitType = composition.split("; ");
-		ArrayList<Component> components = new ArrayList<Component>();
 		int remainder = total;
+		ArrayList<Component> components = new ArrayList<Component>();
+		String[] unitType = composition.split("; ");
 		for (int i = 0; i < unitType.length; i++) {
+			String unitName;
+			int percent, armorClass, moveRate;
 
-			// Determine unit number
-			int unitNum;
-			String[] part = unitType[i].split("% ");
+			// Parse the component descriptor
+			Pattern p = Pattern.compile("(\\d+)% (.+) \\x28AC (\\d+), MV (\\d+)\\x29");
+			Matcher m = p.matcher(unitType[i]);
+			if (m.matches()) {
+				unitName = m.group(2);
+				percent = Integer.parseInt(m.group(1));
+				armorClass = Integer.parseInt(m.group(3));
+				moveRate = Integer.parseInt(m.group(4));
+			}
+			else {
+				System.err.println("Error: Could not parse men type descriptor: " + unitType[i]);
+				continue;
+			}
+
+			// Set component number, rounding to tens
+			int unitNum = remainder;
 			if (i < unitType.length - 1) {
-				int percent = Integer.parseInt(part[0]);
 				int baseNum = total * percent / 100;
 				int roundNum = (baseNum + 5)/10 * 10;
 				unitNum = Math.min(roundNum, remainder);
 			}
-			else {
-				unitNum = remainder;							
-			}
+			remainder -= unitNum;
 
 			// Create description
 			if (unitNum > 0) {
-				String desc = part[1].substring(0, part[1].length() - 1)
-					+ ", HD " + HDStr + ")";
+				String desc = unitName
+					+ ": AC " + armorClass
+					+ ", MV " + moveRate
+					+ ", HD " + HDStr;
 				components.add(new Component(unitNum, desc));
-				remainder -= unitNum;
 			}
 		}		
 		return components.toArray(new Component[components.size()]);
