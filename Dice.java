@@ -76,7 +76,7 @@ public class Dice {
 	*  Constructor (read from string descriptor).
 	*
 	*  RegEx code from @user1803551 on StackExchange:
-	* http://stackoverflow.com/questions/35020687/
+	*    http://stackoverflow.com/questions/35020687/
 	*  how-to-parse-dice-notation-with-a-java-regular-expression
 	*/
 	Dice (String s) {
