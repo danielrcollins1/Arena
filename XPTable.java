@@ -23,7 +23,7 @@ public class XPTable {
 	//  Inner class
 	//--------------------------------------------------------------------------
 
-	class XPRecord {
+	private class XPRecord {
 		String HDStr;
 		int baseValue, specialAward;
 
@@ -43,10 +43,10 @@ public class XPTable {
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static XPTable instance = null;
+	private static XPTable instance = null;
 	
 	/** Array of XPRecords. */
-	ArrayList<XPRecord> xpRecordArray;
+	private ArrayList<XPRecord> xpRecordArray;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -86,7 +86,7 @@ public class XPTable {
 	*  Get total XP for monster as per Sup-I.
 	*  Monster xpBonuses give special addition each.
 	*/
-	int getXPAward (Monster monster) {
+	public int getXPAward (Monster monster) {
 		XPRecord record = getXPRecord(monster.getHitDice());
 		return record.baseValue 
 			+ record.specialAward * getAwardSteps(monster);
@@ -95,7 +95,7 @@ public class XPTable {
 	/**
 	*  Compute Sup-I awards to give by EHD.
 	*/
-	int getAwardSteps (Monster monster) {
+	private int getAwardSteps (Monster monster) {
 		int EHD = monster.getEquivalentHitDice();
 		if (EHD == Monster.UNDEFINED_EHD) {
 			return 0;
@@ -108,7 +108,7 @@ public class XPTable {
 	/**
 	*  Lookup XP record in table, as per Sup-I. 
 	*/
-	XPRecord getXPRecord (Dice HD) {
+	private XPRecord getXPRecord (Dice HD) {
 
 		// If no dice, convert from fixed hp
 		int num = HD.getNum();
@@ -144,7 +144,7 @@ public class XPTable {
 	/**
 	*  Get record by hit dice text.
 	*/
-	XPRecord getRecordByText (String text) {
+	private XPRecord getRecordByText (String text) {
 		for (XPRecord record: xpRecordArray) {
 			if (record.HDStr.equals(text))
 				return record;		
@@ -155,7 +155,7 @@ public class XPTable {
 	/**
 	*  Get record by high hit die number.
 	*/
-	XPRecord getRecordByNum (int num) {
+	private XPRecord getRecordByNum (int num) {
 		assert (num >= 9);
 		for (int i = xpRecordArray.size() - 1; i > 0; i--) {
 			XPRecord record = xpRecordArray.get(i);
