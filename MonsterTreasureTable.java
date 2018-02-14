@@ -70,7 +70,7 @@ public class MonsterTreasureTable {
 	*/
 	private TreasureType getByCode (char code) {
 		for (TreasureType tt: treasureTable) {
-			if (tt.letterCode == code) {
+			if (tt.getKey() == code) {
 				return tt;
 			}
 		}
@@ -82,29 +82,7 @@ public class MonsterTreasureTable {
 	*/
 	public int randomValueByCode (char code) {
 		TreasureType tt = getByCode(code);
-		if (tt != null) {		
-			int total = 0;
-			Dice pct = new Dice(100);
-			if (pct.roll() <= tt.copperPct)
-				total += tt.copperDice.roll() * 1000 / 50;
-			if (pct.roll() <= tt.silverPct)
-				total += tt.silverDice.roll() * 1000 / 10;
-			if (pct.roll() <= tt.goldPct)
-				total += tt.goldDice.roll() * 1000;
-			if (pct.roll() <= tt.gemsPct)
-				total += tt.gemsDice.roll() 
-					* GemsAndJewelry.randomGemValue();
-			if (pct.roll() <= tt.jewelryPct) {
-				int number = tt.jewelryDice.roll();
-				Dice valueClass = 
-					GemsAndJewelry.randomJewelryClass(); 
-				for (int i = 0; i < number; i++) {
-					total += valueClass.roll();			
-				}
-			}
-			return total;
-		}
-		else return 0;
+		return tt == null ? 0 : tt.randomValue();
 	}
 
 	/**
@@ -124,7 +102,7 @@ public class MonsterTreasureTable {
 		// Random sample values
 		System.out.println("Treasure Sample Values");
 		for (TreasureType tt: table.treasureTable) {
-			char code = tt.letterCode;
+			char code = tt.getKey();
 			System.out.print(code + ": ");
 			for (int j = 0; j < 6; j++) {
 				System.out.print(table.randomValueByCode(code) + " ");
@@ -138,7 +116,7 @@ public class MonsterTreasureTable {
 		final int SAMPLE_SIZE = 10000;
 		for (TreasureType tt: table.treasureTable) {
 			long total = 0;
-			char code = tt.letterCode;
+			char code = tt.getKey();
 			for (int j = 0; j < SAMPLE_SIZE; j++) {
 				total += table.randomValueByCode(code);
 			}
