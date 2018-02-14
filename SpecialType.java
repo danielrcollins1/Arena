@@ -4,7 +4,7 @@
 *  Adding new types:
 *  - Only add here if you also implement in code.
 *  - All names here should be nouns or noun phrases.
-*  - Add to category cases as appropriate.
+*  - Add to category case methods as appropriate.
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-07-24
