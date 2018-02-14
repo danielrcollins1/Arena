@@ -254,7 +254,6 @@ public class Dice {
 		new Dice("2").test();
 		System.out.println();
 
-
 		// Test the division operator for bias
 		System.out.println("Test d6/2 for Bias");
 		Dice d = new Dice("1d6/2");
