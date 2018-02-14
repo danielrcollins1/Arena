@@ -1,6 +1,7 @@
 import java.io.*; 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /******************************************************************************
 *  Tables of monsters organized by level.
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 *  @version  1.1
 ******************************************************************************/
 
-public class MonsterTables {
+public class MonsterTables implements Iterable<ArrayList<Monster>> {
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -65,6 +66,13 @@ public class MonsterTables {
 	}
 
 	/**
+	*	Return iterator for the iterable interface.
+	*/
+	public Iterator<ArrayList<Monster>> iterator() {
+		return monsterTables.iterator();
+	}
+
+	/**
 	*  Read in the monster level matrix.
 	*/
 	private void readMonsterLevelMatrix () throws IOException {
@@ -113,7 +121,7 @@ public class MonsterTables {
 	*  Access one of the monster tables (1-based).
 	*/
 	public ArrayList<Monster> getTable (int level) {
-		return monsterTables.get(level-1);
+		return monsterTables.get(level - 1);
 	}
 
 	/**
@@ -193,41 +201,13 @@ public class MonsterTables {
 	public static void main (String[] args) {
 		Dice.initialize();
 		MonsterTables tables = MonsterTables.getInstance();
-	
-		// Five random monsters from 1st-level table
-		System.out.println("Monsters from 1st-level table:");
-		for (int i = 0; i < 5; i++) {
-			System.out.println(tables.randomMonsterByTableLevel(1));
+		for (int level = 1; level <= tables.getNumTables(); level++) {
+			System.out.println("Level " + level + " Monsters");
+			for (Monster m: tables.getTable(level)) {
+				System.out.println(m);
+			}
+			System.out.println();			
 		}
-		System.out.println();
-
-		// Five random monsters from 4th-level table
-		System.out.println("Monsters from 4th-level table:");
-		for (int i = 0; i < 5; i++) {
-			System.out.println(tables.randomMonsterByTableLevel(4));
-		}
-		System.out.println();
-
-		// Five random monsters from 5th-level table
-		System.out.println("Monsters from 5th-level table:");
-		for (int i = 0; i < 5; i++) {
-			System.out.println(tables.randomMonsterByTableLevel(5));
-		}
-		System.out.println();
-		
-		// Five random monsters on dungeon level 7
-		System.out.println("Monsters from dungeon level 7:");
-		for (int i = 0; i < 5; i++) {
-			System.out.println(tables.randomMonsterByDungeonLevel(7));
-		}
-		System.out.println();
-	
-		// Five random monsters on dungeon level 20
-		System.out.println("Monsters from dungeon level 20:");
-		for (int i = 0; i < 5; i++) {
-			System.out.println(tables.randomMonsterByDungeonLevel(20));
-		}
-		System.out.println();
 	}
 }
 

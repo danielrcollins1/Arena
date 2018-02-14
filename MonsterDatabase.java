@@ -46,8 +46,6 @@ public class MonsterDatabase implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-	public int size() { return monsterList.size(); }
-	public Monster get (int index) { return monsterList.get(index); }
 
 	/**
 	*  Access the singleton class instance.
@@ -65,6 +63,13 @@ public class MonsterDatabase implements Iterable<Monster> {
 	}
 
 	/**
+	*	Return iterator for the iterable interface.
+	*/
+	public Iterator<Monster> iterator() {        
+		return monsterList.iterator();
+	}
+
+	/**
 	*  Get a monster by matching its race.
 	*/
 	public Monster getByRace (String race) {
@@ -74,13 +79,6 @@ public class MonsterDatabase implements Iterable<Monster> {
 			}
 		}
 		return null;
-	}
-
-	/**
-	*	Return iterator for the iterable interface.
-	*/
-	public Iterator<Monster> iterator() {        
-		return monsterList.iterator();
 	}
 
 	/**
