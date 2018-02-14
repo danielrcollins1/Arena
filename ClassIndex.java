@@ -10,7 +10,7 @@ import java.util.Iterator;
 *  @version  1.1
 ******************************************************************************/
 
-public class ClassIndex implements Iterable<ClassType> {
+public class ClassIndex {
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -67,17 +67,10 @@ public class ClassIndex implements Iterable<ClassType> {
 	}
 
 	/**
-	*	Return iterator for the iterable interface.
-	*/
-	public Iterator<ClassType> iterator() {
-		return classTypeList.iterator();
-	}
-
-	/**
 	*  Get ClassType for a given class name.
 	*/
 	public ClassType getTypeFromName (String name) {
-		for (ClassType type: this) {
+		for (ClassType type: classTypeList) {
 			if (type.getName().equals(name)) {
 				return type;
 			}		
@@ -89,7 +82,7 @@ public class ClassIndex implements Iterable<ClassType> {
 	*  Get ClassType for a given class title.
 	*/
 	public ClassType getTypeFromTitle (String title) {
-		for (ClassType type: this) {
+		for (ClassType type: classTypeList) {
 			if (type.getLevelFromTitle(title) > -1) {
 				return type;			
 			}
@@ -104,7 +97,7 @@ public class ClassIndex implements Iterable<ClassType> {
 		ClassIndex cl = ClassIndex.getInstance();
 
 		// Print table for each class
-		for (ClassType type: cl) {
+		for (ClassType type: cl.classTypeList) {
 			System.out.println(type);
 			for (int i = 0; i <= 16; i++) {
 				System.out.println(i + ", "
