@@ -39,9 +39,6 @@ public class ClassType {
 	/** Save as this class. */
 	String saveAsClass;
 
-	/** XP increment needed for advanced levels. */
-	int advancedXpInc;
-	
 	/** Array of low-level XP requirements. */
 	int[] xpReqs;
 	
@@ -86,13 +83,6 @@ public class ClassType {
 			titles[i] = levelData[i+1][1];
 			xpReqs[i] = CSVReader.parseInt(levelData[i+1][2]);
 		}
-		
-		// Compute advancedXpInc from last level:
-		// See M. Mornard's recollection that Gygax extrapolated
-		//   XP based on value at Name Level (blog 4/24/17). 
-		// NOTE: Currently name level, max HD, and last array entry
-		//   all synchronize; if that changes, this may need an edit.
-		advancedXpInc = xpReqs[arraySize - 1];
 	}
 
 	//--------------------------------------------------------------------------
@@ -102,22 +92,30 @@ public class ClassType {
 	/**
 	*  Get the class name.
 	*/
-	public String getName () { return name; }
+	public String getName () { 
+		return name; 
+	}
 
 	/**
 	*  Get the class abbreviation.
 	*/
-	public String getAbbreviation () { return abbreviation; }
+	public String getAbbreviation () { 
+		return abbreviation; 
+	}
 
 	/**
 	*  Get the prime requisite.
 	*/
-	public Ability getPrimeRequisite () { return primeRequisite; }
+	public Ability getPrimeRequisite () { 
+		return primeRequisite; 
+	}
 
 	/**
 	*  Get the hit dice type.
 	*/
-	public int getHitDiceType () { return hitDiceType; }
+	public int getHitDiceType () { 
+		return hitDiceType; 
+	}
 
 	/**
 	*  Compute the attack bonus.
@@ -178,12 +176,18 @@ public class ClassType {
 	*  Compute the experience required for a level.
 	*/
 	public int getXpReq (int level) {
-		int maxTable = xpReqs.length;
-		if (level < maxTable)
+		if (level < xpReqs.length) {
 			return xpReqs[level];
-		else
-			return xpReqs[maxTable-1]
-				+ advancedXpInc * (level - maxTable + 1);
+		}
+		else {
+
+			// Additional increments are equal to total XP at name level,
+			// that is, what should be the last value in our array.
+			// For this ruling, see M. Mornard recollection (blog 4/24/17).
+			int nameLevel = xpReqs.length;
+			int increment = xpReqs[nameLevel - 1];
+			return increment * (level - nameLevel + 2);
+		}
 	}
 
 	/**

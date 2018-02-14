@@ -107,10 +107,10 @@ public class ClassIndex implements Iterable<ClassType> {
 		for (ClassType type: cl) {
 			System.out.println(type);
 			for (int i = 0; i <= 16; i++) {
-				System.out.println(i + "|"
-					+ type.getTitleFromLevel(i) + "|"
-					+ type.getXpReq(i) + "|"
-					+ type.getHitDiceTotal(i) + "|+"
+				System.out.println(i + ", "
+					+ type.getTitleFromLevel(i) + ", "
+					+ type.getXpReq(i) + ", "
+					+ type.getHitDiceTotal(i) + ", +"
 					+ type.getAttackBonus(i));
 			}
 			System.out.println();
