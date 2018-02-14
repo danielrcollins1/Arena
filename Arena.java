@@ -149,7 +149,7 @@ public class Arena {
 		System.out.println("\t\td detailed data\t\tk monster kills");
 		System.out.println("\t\tt total monster kills\tx xp award ratios");
 		System.out.println("\t-s start level for fighters (default =0)");		
-		System.out.println("\t-t awards by monster treasure type (default by level)");
+		System.out.println("\t-t treasure awards by monster (default by dungeon)");
 		System.out.println("\t-v man-vs-monster (default man-vs-man)");
 		System.out.println("\t-x use revised XP award table (from Sup-I)");
 		System.out.println("\t-y number of years to simulate (default =" + DEFAULT_NUM_YEARS + ")");
@@ -393,7 +393,7 @@ public class Arena {
 
 		// Compute total awards 
 		int monsterXP = partyFallenXPValue(loser);
-		int treasureXP = treasureGPValue(loser, level);
+		int treasureXP = treasureValue(loser, level);
 		totalMonsterXP += monsterXP;
 		totalTreasureXP += treasureXP;
 		
@@ -420,46 +420,48 @@ public class Arena {
 	}
 
    /**
-   *  GP award value from treasure.
+   *  Value of treasure award (nominally in gold pieces).
 	*  Conditional on using monster treasure type.
    */
-	int treasureGPValue (Party party, int level) {
+	int treasureValue (Party party, int level) {
 		if (useMonsterTreasureType)
-			return valueByTreasureType(party);
+			return treasureValueByMonster(party);
 		else
-			return valueByTreasureLevel(party, level);
+			return treasureValueByDungeon(party, level);
 	}
 
    /**
-   *  Get GP award by treasure type for fallen party.
+   *  Get treasure value as per monster treasure type.
+	*  (Officially valid for wilderness only.)
    */
-	int valueByTreasureType (Party party) {
+	int treasureValueByMonster (Party party) {
 		Monster chief = party.getFallen(0);
-		TreasureTypes tt = TreasureTypes.getInstance();
+		MonsterTreasureTable table = MonsterTreasureTable.getInstance();
 
 		// For characters, type 'A' scaled by level & size
 		if (chief instanceof Character) {
-			int baseGP = tt.randomValueByCode('A');
+			int baseGP = table.randomValueByCode('A');
 			int level = Math.max(chief.getLevel(), 1);
 			return baseGP * level * party.sizeFallen() / 165;
 		}
 
 		// For monsters, treasure type scaled by size
 		else {
-			int baseGP = tt.randomValueByCode(chief.getTreasureType());
+			int baseGP = table.randomValueByCode(chief.getTreasureType());
 			int avgNum = chief.getNumberAppearing().avgRoll();
 			return baseGP * party.sizeFallen() / avgNum;
 		}	
 	}
 
    /**
-   *  Get GP award by dungeon level for fallen party.
+   *  Get treasure value as per level beneath surface.
+	*  (Officially valid for underworld only.)
    */
-	int valueByTreasureLevel (Party party, int level) {
+	int treasureValueByDungeon (Party party, int level) {
 		if (level < 1) { // dummy by leader level
 			level = Math.max(party.getFallen(0).getLevel(), 1);
 		}
-		return TreasureByLevel.getInstance()
+		return DungeonTreasureTable.getInstance()
 			.randomValueByLevel(level);
 	}	
 
@@ -513,7 +515,7 @@ public class Arena {
 			+ ", numYears " + numYears
 			+ ", fights/year " + fightsPerYear 
 			+ ", party size " + fighterPartySize
-			+ ", treasure by " + (useMonsterTreasureType ? "monster" : "level")
+			+ ", treasure by " + (useMonsterTreasureType ? "monster" : "dungeon")
 			+ "\n");
 	}
 
