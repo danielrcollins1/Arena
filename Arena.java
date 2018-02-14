@@ -13,20 +13,20 @@ import java.io.*;
 
 public class Arena {
 
-   //--------------------------------------------------------------------------
-   //  Constants
-   //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//  Constants
+	//--------------------------------------------------------------------------
 
 	final int DEFAULT_NUM_YEARS = 50;
 	final int DEFAULT_FIGHTS_PER_YEAR = 24;
-   final int DEFAULT_NUM_FIGHTERS = 100;
-   final int DEFAULT_PARTY_SIZE = 1;
-   final int DEFAULT_PCT_MAGIC_PER_LEVEL = 15;
+	final int DEFAULT_NUM_FIGHTERS = 100;
+	final int DEFAULT_PARTY_SIZE = 1;
+	final int DEFAULT_PCT_MAGIC_PER_LEVEL = 15;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Plate;
 
-   //--------------------------------------------------------------------------
-   //  Fields
-   //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//  Fields
+	//--------------------------------------------------------------------------
 
 	/** List of fighters for the arena. */
 	Party fighterList;
@@ -93,21 +93,21 @@ public class Arena {
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
-	
+
 	/** Total awarded monster XP. */
 	long totalMonsterXP;
 
 	/** Total awarded treasure XP. */
 	long totalTreasureXP;
 
-   //--------------------------------------------------------------------------
-   //  Constructors
-   //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//  Constructors
+	//--------------------------------------------------------------------------
 
-   /**
-   *  Constructor.
-   */
-   public Arena () {
+	/**
+	*  Constructor.
+	*/
+	public Arena () {
 		Dice.initialize();
 		numYears = DEFAULT_NUM_YEARS;
 		fightsPerYear = DEFAULT_FIGHTS_PER_YEAR;
@@ -116,20 +116,20 @@ public class Arena {
 		pctMagicPerLevel = DEFAULT_PCT_MAGIC_PER_LEVEL;
 		baseArmorType = DEFAULT_ARMOR;
 		fighterList = new Party(); 
-   }
+	}
 
-   /**
-   *  Constructor (set mode, size).
-   */
+	/**
+	*  Constructor (set mode, size).
+	*/
 	public Arena (boolean fightManVsMonster, int numFighters) {
 		this();
 		this.fightManVsMonster = fightManVsMonster;
 		this.numFighters = numFighters;
 	}
 
-   //--------------------------------------------------------------------------
-   //  Methods
-   //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//  Methods
+	//--------------------------------------------------------------------------
 
 	/**
 	*  Print usage.
@@ -143,12 +143,12 @@ public class Arena {
 		System.out.println("\t-f fights per year (default =" + DEFAULT_FIGHTS_PER_YEAR + ")");
 		System.out.println("\t-m magic per level chance (default = " + DEFAULT_PCT_MAGIC_PER_LEVEL + ")");
 		System.out.println("\t-n number of men fighting (default =" + DEFAULT_NUM_FIGHTERS + ")");
-		System.out.println("\t-p play-by-play reporting");		
+		System.out.println("\t-p play-by-play reporting");  
 		System.out.println("\t-r reporting types");
 		System.out.println("\t\ts summary statistics\ty year-end info");
 		System.out.println("\t\td detailed data\t\tk monster kills");
 		System.out.println("\t\tt total monster kills\tx xp award ratios");
-		System.out.println("\t-s start level for fighters (default =0)");		
+		System.out.println("\t-s start level for fighters (default =0)");  
 		System.out.println("\t-t treasure awards by monster (default by dungeon)");
 		System.out.println("\t-v man-vs-monster (default man-vs-man)");
 		System.out.println("\t-x use revised XP award table (from Sup-I)");
@@ -217,7 +217,7 @@ public class Arena {
 			case 2: baseArmorType = Armor.Type.Chain; break;
 			case 3: baseArmorType = Armor.Type.Plate; break;
 			default: exitAfterArgs = true; break;
-		}	
+		} 
 	}
 
 	/**
@@ -232,26 +232,26 @@ public class Arena {
 				case 't': reportTotalMonsterKills = true; break;
 				case 'x': reportXPAwards = true; break;
 				case 'y': reportYearEnd = true; break;
-				default: exitAfterArgs = true;			
+				default: exitAfterArgs = true;   
 			}
-		}	
+		} 
 	}
 
-   /**
-   *  Run the arena's top-level algorithm.
-   */
-   public void runSim () {
+	/**
+	*  Run the arena's top-level algorithm.
+	*/
+	public void runSim () {
 		for (int year = 1; year <= numYears; year++) {
 			for (int i = 0; i < fightsPerYear; i++) {
-				runOneCycle();		
+				runOneCycle();  
 			}
 			yearEnd(year);
 		}
-   }
+	}
 
-   /**
-   *  Run one cycle of fights for the whole list.
-   */
+	/**
+	*  Run one cycle of fights for the whole list.
+	*/
 	public void runOneCycle () {
 		recruitNewFighters();
 		fighterList.shuffleMembers();
@@ -261,55 +261,55 @@ public class Arena {
 		fighterList.healAll();
 	}
 
-   /**
-   *  Fill out the fighter list.
-   */
-   void recruitNewFighters() {
-      while (fighterList.size() < numFighters) {
-         fighterList.add(newFighter(startLevel));
-      }
-   }
+	/**
+	*  Fill out the fighter list.
+	*/
+	void recruitNewFighters() {
+		while (fighterList.size() < numFighters) {
+			fighterList.add(newFighter(startLevel));
+		}
+	}
 
-   /**
-   *  Create a new fighter of the indicated level.
-   */
-   Character newFighter (int level) {
+	/**
+	*  Create a new fighter of the indicated level.
+	*/
+	Character newFighter (int level) {
 		String name = NameGenerator.getInstance().getRandom();
-      Character f = new Character(name, "Human", "Fighter", level, null); 
+		Character f = new Character(name, "Human", "Fighter", level, null); 
 		if (baseArmorType != null) {
-	      f.setArmor(Armor.makeType(baseArmorType));
+			f.setArmor(Armor.makeType(baseArmorType));
 		}
 		Weapon primaryWeapon = (baseWeaponType == null) ?
 			Weapon.randomPrimary() : new Weapon(baseWeaponType);
 		f.drawWeapon(primaryWeapon);
 		f.addEquipment(Weapon.randomSecondary());
 		if (primaryWeapon.getHandsUsed() <= 1) {
-	      f.setShield(Armor.makeType(Armor.Type.Shield));
+			f.setShield(Armor.makeType(Armor.Type.Shield));
 		}
 		if (fightManVsMonster) {
-	      f.addEquipment(Weapon.silverDagger());
+			f.addEquipment(Weapon.silverDagger());
 		}
-      for (int i = 0; i <= level; i++) {
-         f.checkMagicArmsBoost(pctMagicPerLevel);
-      }
-      return f;
-   }
+		for (int i = 0; i <= level; i++) {
+			f.checkMagicArmsBoost(pctMagicPerLevel);
+		}
+		return f;
+	}
 
-   /**
-   *  Fight duels for all fighters in list.
-   */
-   void fightDuels () {
+	/**
+	*  Fight duels for all fighters in list.
+	*/
+	void fightDuels () {
 		if (fightManVsMonster)
 			fightDuelsManVsMonster();
 		else
 			fightDuelsManVsMan();
-   }
+	}
 
-   /**
-   *  Duel each pair of fighters.
-   */
-   void fightDuelsManVsMan () {
-      for (int i = 0; i < fighterList.size() - 1; i += 2) {
+	/**
+	*  Duel each pair of fighters.
+	*/
+	void fightDuelsManVsMan () {
+		for (int i = 0; i < fighterList.size() - 1; i += 2) {
 			Party party1 = new Party(fighterList.get(i));
 			Party party2 = new Party(fighterList.get(i+1));
 			if (reportEveryEncounter) {
@@ -318,13 +318,13 @@ public class Arena {
 			}
 			FightManager.fight(party1, party2);
 			grantFightAwards(party1, party2, -1);
-      }
-   }
+		}
+	}
 
-   /**
-   *  Duel each fighter against random monsters.
-   */
-   void fightDuelsManVsMonster () {
+	/**
+	*  Duel each fighter against random monsters.
+	*/
+	void fightDuelsManVsMonster () {
 		for (Monster fighter: fighterList) {
 			int dungeonLevel = Math.max(fighter.getLevel(), 1);
 			Party fighters = createFighterParty(fighter, fighterPartySize);
@@ -339,23 +339,23 @@ public class Arena {
 			if (fighter.horsDeCombat()) {
 				addToKillTally(chiefMonster);
 			}
-      }
-   }
+		}
+	}
 
-   /**
-   *  Create a party for a given fighter of same level.
-   */
+	/**
+	*  Create a party for a given fighter of same level.
+	*/
 	Party createFighterParty (Monster fighter, int numFighters) {
 		Party fighterParty = new Party(fighter);
 		for (int i = 1; i < numFighters; i++) {
 			fighterParty.add(newFighter(fighter.getLevel()));
 		}
 		return fighterParty;
-	}	
+	} 
 
-   /**
-   *  Create a monster party to confront a number of fighters.
-   */
+	/**
+	*  Create a monster party to confront a number of fighters.
+	*/
 	Party createMonsterParty (int dungeonLevel, int numFighters) {
 		Party monsterParty = new Party();
 		Monster monster = MonsterTables.getInstance()
@@ -363,32 +363,32 @@ public class Arena {
 		int numMonsters = getMonsterNumber(
 			monster, dungeonLevel, numFighters);
 		for (int i = 0; i < numMonsters; i++) {
-			monsterParty.add(monster.spawn());			
+			monsterParty.add(monster.spawn());   
 		}
 		return monsterParty;
 	}
 
-   /**
-   *  Get number of monsters for encounter (a la Vol-3, p. 11).
-   */
+	/**
+	*  Get number of monsters for encounter (a la Vol-3, p. 11).
+	*/
 	int getMonsterNumber (Monster monster, int dungeonLevel, int numFighters) {
 		int numMonsters = numFighters * dungeonLevel / monster.getEHD();
 		return Math.max(1, numMonsters);
 	}
 
-   /**
-   *  Grant post-fight awards.
-   */
+	/**
+	*  Grant post-fight awards.
+	*/
 	void grantFightAwards (Party party1, Party party2, int level) {
 		if (party1.isLive())
 			grantVictorAwards(party1, party2, level);
 		else if (party2.isLive())
 			grantVictorAwards(party2, party1, level);
 	}
-	
-   /**
-   *  Grant awards from fight to victorious party.
-   */
+
+	/**
+	*  Grant awards from fight to victorious party.
+	*/
 	void grantVictorAwards (Party victor, Party loser, int level) {
 
 		// Compute total awards 
@@ -396,7 +396,7 @@ public class Arena {
 		int treasureXP = treasureValue(loser, level);
 		totalMonsterXP += monsterXP;
 		totalTreasureXP += treasureXP;
-		
+
 		// Divide into shares per member
 		int sharePerMember = (monsterXP + treasureXP) / victor.size();
 		for (Monster member: victor) {
@@ -404,10 +404,10 @@ public class Arena {
 		}
 	}
 
-   /**
-   *  XP award value for given fallen party.
+	/**
+	*  XP award value for given fallen party.
 	*  Conditional on Vol-1 or Sup-I method.
-   */
+	*/
 	int partyFallenXPValue (Party party) {
 		int total = 0;
 		XPTable xpt = XPTable.getInstance();
@@ -416,13 +416,13 @@ public class Arena {
 			total += useRevisedXPAwards ? 
 				xpt.getXPAward(monster) : monster.getEHD() * 100;
 		}
-		return total;	
+		return total; 
 	}
 
-   /**
-   *  Value of treasure award (nominally in gold pieces).
+	/**
+	*  Value of treasure award (nominally in gold pieces).
 	*  Conditional on using monster treasure type.
-   */
+	*/
 	int treasureValue (Party party, int level) {
 		if (useMonsterTreasureType)
 			return treasureValueByMonster(party);
@@ -430,10 +430,10 @@ public class Arena {
 			return treasureValueByDungeon(party, level);
 	}
 
-   /**
-   *  Get treasure value as per monster treasure type.
+	/**
+	*  Get treasure value as per monster treasure type.
 	*  (Officially valid for wilderness only.)
-   */
+	*/
 	int treasureValueByMonster (Party party) {
 		Monster chief = party.getFallen(0);
 		MonsterTreasureTable table = MonsterTreasureTable.getInstance();
@@ -450,64 +450,64 @@ public class Arena {
 			int baseGP = table.randomValueByCode(chief.getTreasureType());
 			int avgNum = chief.getNumberAppearing().avgRoll();
 			return baseGP * party.sizeFallen() / avgNum;
-		}	
+		} 
 	}
 
-   /**
-   *  Get treasure value as per level beneath surface.
+	/**
+	*  Get treasure value as per level beneath surface.
 	*  (Officially valid for underworld only.)
-   */
+	*/
 	int treasureValueByDungeon (Party party, int level) {
 		if (level < 1) { // dummy by leader level
 			level = Math.max(party.getFallen(0).getLevel(), 1);
 		}
 		return DungeonTreasureTable.getInstance()
 			.randomValueByLevel(level);
-	}	
+	} 
 
-   /**
-   *  Award XP and magic to one creature/character.
-   */
+	/**
+	*  Award XP and magic to one creature/character.
+	*/
 	void awardXP (Monster monster, int xp) {
 
 		// Add XP
-      int startLevel = monster.getLevel();
-      monster.addXP(xp);
-		
+		int startLevel = monster.getLevel();
+		monster.addXP(xp);
+
 		// Check for level-up
 		if (monster.getLevel() > startLevel) {
-         monster.checkMagicArmsBoost(pctMagicPerLevel);
-      }
+			monster.checkMagicArmsBoost(pctMagicPerLevel);
+		}
 	}
 
-   /**
-   *  Add to the kill tally for winning monster type.
-   */
-   void addToKillTally (Monster monster) {
+	/**
+	*  Add to the kill tally for winning monster type.
+	*/
+	void addToKillTally (Monster monster) {
 		Monster prototype = MonsterDatabase.getInstance()
 			.getByRace(monster.getRace());
 		if (prototype != null) {
-      	prototype.addToKillTally(1);
-		}		
+			prototype.addToKillTally(1);
+		}  
 		else {
 			System.err.println("Failed to find prototype: " + monster);
 		}
-   }
+	}
 
-   /**
-   *  End the year.
-   */
+	/**
+	*  End the year.
+	*/
 	void yearEnd (int year) {
 		for (Monster fighter: fighterList) {
-			((Character)fighter).incrementAge(applyAgingEffects);	
+			((Character)fighter).incrementAge(applyAgingEffects); 
 			fighter.setPerfectHealth();
-		}		
+		}  
 		reportYearEnd(year);
 	}
 
-   /**
-   *  Print simulation starting info.
-   */
+	/**
+	*  Print simulation starting info.
+	*/
 	public void reportStart () {
 		System.out.println("ARENA: "
 			+ (fightManVsMonster ? "man-vs-monster" : "man-vs-man")
@@ -519,9 +519,9 @@ public class Arena {
 			+ "\n");
 	}
 
-   /**
-   *  Print simulation ending info.
-   */
+	/**
+	*  Print simulation ending info.
+	*/
 	public void reportEnd () {
 		reportFighterStatistics();
 		reportFighterData();
@@ -530,31 +530,31 @@ public class Arena {
 		reportXPAwards();
 	}
 
-   /**
-   *  Print every individual fighter (for testing small groups).
-   */
-   void reportFighterData () {
-      if (reportFighterData) {
+	/**
+	*  Print every individual fighter (for testing small groups).
+	*/
+	void reportFighterData () {
+		if (reportFighterData) {
 			fighterList.sortMembers();
 			for (Monster fighter: fighterList) {
 				System.out.println(fighter);
-         }
-         System.out.println();
-      }
-   }
+			}
+			System.out.println();
+		}
+	}
 
-   /**
-   *  Generate and print statistics for the fighter list.
-   */
-   void reportFighterStatistics () {
-	 	if (reportFighterStats) {
+	/**
+	*  Generate and print statistics for the fighter list.
+	*/
+	void reportFighterStatistics () {
+		if (reportFighterStats) {
 			StatBin statBins[] = compileStatBins();
 			System.out.println("Level Number Age HPs Str Int Wis Dex Con Cha");
 			System.out.println("----- ------ --- --- --- --- --- --- --- ---");
 			int maxLevel = fighterList.getMaxLevels();
 			for (int level = 0; level <= maxLevel; level++) {
 				StatBin bin = statBins[level];
-				if	(bin.size()	> 0) {
+				if (bin.size() > 0) {
 					System.out.print(String.format("%3d   %5d  %3d %3d ",
 						level, bin.size(), bin.getMeanAge(), bin.getMeanHp())); 
 					for (Ability a: Ability.values())
@@ -564,17 +564,17 @@ public class Arena {
 			}
 			System.out.println();
 		}
-   }
+	}
 
-   /**
-   *  Compile fighters into statistical bins by level.
-   */
+	/**
+	*  Compile fighters into statistical bins by level.
+	*/
 	StatBin[] compileStatBins () {
 		int maxLevel = fighterList.getMaxLevels();
 		StatBin statBins[] = new StatBin[maxLevel+1];
-		for (int	i = 0; i	<= maxLevel; i++)	{
+		for (int i = 0; i <= maxLevel; i++) {
 			statBins[i] = new StatBin();
-		}			
+		}   
 		for (Monster fighter: fighterList) {
 			statBins[fighter.getLevel()]
 				.addCharacter((Character)fighter);
@@ -582,25 +582,25 @@ public class Arena {
 		return statBins;
 	}
 
-   /**
-   *  Prints number killed by each monster type.
-   */
-   void reportMonsterKills () {
-      if (fightManVsMonster && reportMonsterKills) {
+	/**
+	*  Prints number killed by each monster type.
+	*/
+	void reportMonsterKills () {
+		if (fightManVsMonster && reportMonsterKills) {
 			MonsterTables tables = MonsterTables.getInstance();
 			int maxLevel = tables.getNumTables();
-         for (int level = 1; level <= maxLevel; level++) {
+			for (int level = 1; level <= maxLevel; level++) {
 				if (tables.getTotalKillsAtLevel(level) > 0) {
 					reportMonsterKillsAtLevel(level);
 				}
 			}
-      }
-   }
+		}
+	}
 
-   /**
-   *  Prints number killed by each monster at given level.
-   */
-   void reportMonsterKillsAtLevel (int level) {
+	/**
+	*  Prints number killed by each monster at given level.
+	*/
+	void reportMonsterKillsAtLevel (int level) {
 
 		// Get list & sort
 		MonsterTables tables = MonsterTables.getInstance();
@@ -609,7 +609,7 @@ public class Arena {
 		levelList.sort(Comparator.comparing(Monster::getKillTally));
 		int totalKills = tables.getTotalKillsAtLevel(level);
 
-		// Print the list			
+		// Print the list   
 		System.out.println("Level " + level + " Monsters");
 		for (Monster m: levelList) {
 			float killPct = (float) m.getKillTally() / totalKills * 100;
@@ -619,9 +619,9 @@ public class Arena {
 		System.out.println();
 	}
 
-   /**
-   *  Prints total kills at each monster level.
-   */
+	/**
+	*  Prints total kills at each monster level.
+	*/
 	void reportTotalMonsterKills () {
 		if (fightManVsMonster && reportTotalMonsterKills) {
 			MonsterTables tables = MonsterTables.getInstance();
@@ -639,9 +639,9 @@ public class Arena {
 		}
 	}
 
-   /**
-   *  Report XP award ratios.
-   */
+	/**
+	*  Report XP award ratios.
+	*/
 	void reportXPAwards () {
 		long totalXP = totalMonsterXP + totalTreasureXP;
 		double treasPct = (double) totalTreasureXP / totalXP * 100;
@@ -650,9 +650,9 @@ public class Arena {
 		System.out.println();
 	}
 
-   /**
-   *  Report year-end summary. 
-   */
+	/**
+	*  Report year-end summary. 
+	*/
 	void reportYearEnd (int year) {
 		if (reportYearEnd) {
 			Character oldest = getOldestFighter();
@@ -662,12 +662,12 @@ public class Arena {
 				+ ", oldest age " + oldest.getAge()
 				+ ", oldest level " + oldest.getLevel()
 				+ ", supMaxAge " + supMaxAge);
-		}	
+		} 
 	}
 
-   /**
-   *  Find oldest fighter the list.
-   */
+	/**
+	*  Find oldest fighter the list.
+	*/
 	Character getOldestFighter () {
 		Character oldest = null;
 		for (Monster fighter: fighterList) {
@@ -677,45 +677,45 @@ public class Arena {
 		return oldest;
 	}
 
-   /**
-   *  Counts fighters at a given level or above.
-   */
+	/**
+	*  Counts fighters at a given level or above.
+	*/
 	public int countMenAboveLevel (int level) {
 		return fighterList.countAboveLevel(level);
 	}
 
-   /**
-   *  Prints fighters at a given level or above.
-   */
+	/**
+	*  Prints fighters at a given level or above.
+	*/
 	public void printMenAboveLevel (int level) {
 		fighterList.printAboveLevel(level);
 	}
 
-   /**
-   *  Set the base armor type.
-   */
+	/**
+	*  Set the base armor type.
+	*/
 	public void setBaseArmor (Armor.Type type) {
 		baseArmorType = type;
 	}
 
-   /**
-   *  Set the base weapon type.
-   */
+	/**
+	*  Set the base weapon type.
+	*/
 	public void setBaseWeapon (Weapon weapon) {
-		baseWeaponType = weapon;	
+		baseWeaponType = weapon; 
 	}
 
-   /**
-   *  Set use of revised XP awards (per Sup-I).
-   */
+	/**
+	*  Set use of revised XP awards (per Sup-I).
+	*/
 	public void setUseRevisedXPAwards (boolean use) {
-		useRevisedXPAwards = use;	
+		useRevisedXPAwards = use; 
 	}
 
-   /**
-   *  Main application method.
-   */
-   public static void main (String[] args) {
+	/**
+	*  Main application method.
+	*/
+	public static void main (String[] args) {
 		Arena arena = new Arena();
 		arena.parseArgs(args);
 		if (arena.exitAfterArgs()) {
@@ -727,6 +727,5 @@ public class Arena {
 			arena.reportEnd();
 		}
 		//Toolkit.getDefaultToolkit().beep();
-   }
+	}
 }
-
