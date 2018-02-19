@@ -26,7 +26,7 @@ MONSTER METRICS -- Performs a binary search at each fighter level 1-12
 to determine how many fighters represent a matched challenge against
 each monster in the database (i.e., closest to a 50/50 victory chance).
 Output is the balanced number of fighters at each level, and a suggested
-Equivalent Hit Dice (EHD) which can be used for balancing and
+Equivalent Hit Dice (EHD) value which can be used for balancing and
 experience purposes.
 
 MARSHAL -- Creates random bands of men as encountered in the wilderness
