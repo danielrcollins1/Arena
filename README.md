@@ -20,7 +20,7 @@ monster, including simulated excursions against dungeon random
 encounters; individual combats can by one-on-one or in groups. Statistics
 at end show level-based demographics of the overall surviving population,
 percent of experience from treasure, and number and ratio of deaths
-caused by each type monster in the database. 
+caused by each type of monster in the database. 
 
 MONSTER METRICS -- Performs a binary search at each fighter level 1-12
 to determine how many fighters represent a matched challenge against
