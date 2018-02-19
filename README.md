@@ -31,7 +31,7 @@ experience purposes.
 
 MARSHAL -- Creates random bands of men as encountered in the wilderness
 (e.g., bandits, brigands, buccaneers, nomads, etc., in numbers 30-300),
-with leaders of appropriate levels, in which the leaders are generated
+with leaders of appropriate levels. Leaders are generated
 by simulating their entire combat history in the Arena. 
 
 -----------------------------------------------------------------
