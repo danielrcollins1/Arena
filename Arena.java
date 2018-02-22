@@ -141,7 +141,7 @@ public class Arena {
 		System.out.println("\t-b base type of armor (=0-3, default 3)");
 		System.out.println("\t-e report every encounter");
 		System.out.println("\t-f fights per year (default =" + DEFAULT_FIGHTS_PER_YEAR + ")");
-		System.out.println("\t-m magic per level chance (default = " + DEFAULT_PCT_MAGIC_PER_LEVEL + ")");
+		System.out.println("\t-m magic per level chance (default =" + DEFAULT_PCT_MAGIC_PER_LEVEL + ")");
 		System.out.println("\t-n number of men fighting (default =" + DEFAULT_NUM_FIGHTERS + ")");
 		System.out.println("\t-p play-by-play reporting");  
 		System.out.println("\t-r reporting types");
