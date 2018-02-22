@@ -117,13 +117,6 @@ public class MonsterMetrics {
 	}
 
 	/**
-	*  Should we exit after parsing arguments?
-	*/
-	public boolean exitAfterArgs () {
-		return exitAfterArgs;
-	}
-
-	/**
 	*  Get integer following equals sign in command parameter.
 	*/
 	int getParamInt (String s) {
@@ -367,7 +360,7 @@ public class MonsterMetrics {
 	public static void main (String[] args) {
 		MonsterMetrics metrics = new MonsterMetrics();
 		metrics.parseArgs(args);
-		if (metrics.exitAfterArgs()) {
+		if (metrics.exitAfterArgs) {
 			metrics.printUsage();
 		}
 		else {

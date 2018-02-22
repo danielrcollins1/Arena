@@ -8,7 +8,7 @@ import java.io.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20
-*  @version  1.12
+*  @version  1.13
 ******************************************************************************/
 
 public class Arena {
@@ -183,13 +183,6 @@ public class Arena {
 				}
 			}
 		}
-	}
-
-	/**
-	*  Should we exit after parsing arguments?
-	*/
-	public boolean exitAfterArgs () {
-		return exitAfterArgs;
 	}
 
 	/**
@@ -718,7 +711,7 @@ public class Arena {
 	public static void main (String[] args) {
 		Arena arena = new Arena();
 		arena.parseArgs(args);
-		if (arena.exitAfterArgs()) {
+		if (arena.exitAfterArgs) {
 			arena.printUsage();
 		}
 		else {
