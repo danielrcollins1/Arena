@@ -678,6 +678,18 @@ public class Character extends Monster {
 	}
 
 	/**
+	*  Generate random treasure value by men type "A",
+	*  scaled by level and nominal men number appearing.
+	*  (Recommended for wilderness encounters only.)
+	*/
+	int getTreasureValue () {
+		final int avgNum = 165;
+		int level = Math.max(getLevel(), 1);
+		return MonsterTreasureTable.getInstance()
+			.randomValueByCode('A') * level / avgNum;
+	}
+
+	/**
 	*  Identify this object as a string.
 	*/
 	public String toString () {

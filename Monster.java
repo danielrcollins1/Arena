@@ -1225,6 +1225,17 @@ public class Monster {
 	}
 
 	/**
+	* Generate random treasure value by treasure type, 
+	* for one monster, scaled by nominal number appearing.
+	* (Recommended for wilderness encounters only.)
+	*/
+	int getTreasureValue () {
+		int avgNum = numberAppearing.avgRoll();
+		return MonsterTreasureTable.getInstance()
+			.randomValueByCode(treasureType) / avgNum;
+	}
+
+	/**
 	* Return if this monster has an undefined EHD.
 	*/
 	boolean hasUndefinedEHD () {

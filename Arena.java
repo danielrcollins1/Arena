@@ -424,25 +424,11 @@ public class Arena {
 
 	/**
 	*  Get treasure value as per monster treasure type.
-	*  (Officially valid for wilderness only.)
+	*  (Recommended for wilderness encounters only.)
 	*/
 	int treasureValueByMonster (Party party) {
-		Monster chief = party.getFallen(0);
-		MonsterTreasureTable table = MonsterTreasureTable.getInstance();
-
-		// For characters, type 'A' scaled by level & size
-		if (chief instanceof Character) {
-			int baseGP = table.randomValueByCode('A');
-			int level = Math.max(chief.getLevel(), 1);
-			return baseGP * level * party.sizeFallen() / 165;
-		}
-
-		// For monsters, treasure type scaled by size
-		else {
-			int baseGP = table.randomValueByCode(chief.getTreasureType());
-			int avgNum = chief.getNumberAppearing().avgRoll();
-			return baseGP * party.sizeFallen() / avgNum;
-		} 
+		return party.getFallen(0).getTreasureValue() 
+			* party.sizeFallen();
 	}
 
 	/**
@@ -450,7 +436,7 @@ public class Arena {
 	*  (Officially valid for underworld only.)
 	*/
 	int treasureValueByDungeon (Party party, int level) {
-		if (level < 1) { // dummy by leader level
+		if (level < 1) { // mock arena prize by leader level
 			level = Math.max(party.getFallen(0).getLevel(), 1);
 		}
 		return DungeonTreasureTable.getInstance()
