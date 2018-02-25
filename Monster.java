@@ -30,7 +30,6 @@ public class Monster {
 	//  Fields
 	//--------------------------------------------------------------------------
 
-	String name;
 	String race;
 	String sourceBook;
 	char type;
@@ -60,33 +59,15 @@ public class Monster {
 	//--------------------------------------------------------------------------
 
 	/**
-	* Constructor (primitive stats).
+	* Constructor (basic).
 	*/
-	public Monster (int AC, int MV, int HD) {
-		this(null, "Monster", Alignment.Neutral, AC, MV,
-			new Dice(HD, 6), new Attack(HD, 1));
-	}
-
-	/**
-	* Constructor (primitive stats, attack rate, damage dice).
-	*/
-	public Monster (int AC, int MV, int HD, int atkRate, int damDice) {
-		this(null, "Monster", Alignment.Neutral, AC, MV,
-			new Dice(HD, 6), new Attack(atkRate, HD, damDice));
-	}
-
-	/**
-	* Constructor (most fields; no special abilities).
-	*/
-	public Monster (String name, String race, Alignment alignment, 
-			int AC, int MV, Dice hitDice, Attack attack) {
-		this.name = name;
+	public Monster (String race, int AC, int MV, Dice hitDice, Attack attack) {
 		this.race = race;
-		this.alignment = alignment;
 		this.armorClass = AC;
 		this.moveInches = MV;
 		this.hitDice = hitDice;
 		this.attack = attack;
+		this.alignment = Alignment.Neutral;
 		equivalentHitDice = hitDice.getNum();
 		specialList = new ArrayList<SpecialAbility>(); 
 		conditionList = new ArrayList<SpecialAbility>(); 
@@ -100,7 +81,6 @@ public class Monster {
 	public Monster (String[] s) {
 
 		// Primary fields
-		name = null;
 		race = s[0];
 		numberAppearing = new Dice(s[1]);
 		armorClass = CSVReader.parseInt(s[2]);
@@ -127,7 +107,6 @@ public class Monster {
 	* Constructor (copy).
 	*/
 	public Monster (Monster src) {
-		name = src.name;
 		race = src.race;
 		numberAppearing = src.numberAppearing;
 		armorClass = src.armorClass;
@@ -156,7 +135,6 @@ public class Monster {
 	//--------------------------------------------------------------------------
 
 	// Primary accessors
-	public String getName () { return name; }
 	public String getRace () { return race; }
 	public String getSourceBook () { return sourceBook; }
 	public Dice getNumberAppearing () { return numberAppearing; }
@@ -187,7 +165,6 @@ public class Monster {
 	public int getEHD () { return getEquivalentHitDice(); }
 
 	// Basic mutators
-	public void setRace (String race) { this.race = race; }
 	public void setAlignment (Alignment align) { alignment = align; }
 	public void clearTimesMeleed () { timesMeleed = 0; }
 	public void incTimesMeleed () { timesMeleed++; }
@@ -259,7 +236,7 @@ public class Monster {
 
 	/**
 	* Parse the EHD value (possibly undefined).
-	*/
+8	*/
 	private int parseEHD (String s) {
 		return s.equals("*") ? UNDEFINED_EHD : Integer.parseInt(s);
 	}
@@ -269,9 +246,8 @@ public class Monster {
 	*/
 	public Monster spawn () {
 		if (hasSpecial(SpecialType.NPC)) {
-			Character c = Character.newNPCFromTitle(
-				getRace(), Alignment.Chaotic);
-			c.race = race;
+			Character c = Character.newNPCFromTitle(race, Alignment.Chaotic);
+			c.race = race; // Reset monster race/title
 			c.tableLevel = tableLevel;
 			for (SpecialAbility s: specialList) {
 				c.specialList.add(s);
@@ -1281,7 +1257,7 @@ public class Monster {
 	* Identify this object as a string.
 	*/
 	public String toString() {
-		return (getName() == null ? "" : getName() + ", ") + getRace() 
+		return getRace() 
 			+ ": AC "   + getAC() + ", MV " + getMV() 
 			+ ", HD "   + getHD() + ", hp " + getHP() 
 			+ ", Atk " + getAttack().getRate() 
@@ -1303,8 +1279,9 @@ public class Monster {
 	*/
 	public static void main (String[] args) {
 		Dice.initialize();
-		Monster c = new Monster(5, 9, 4);
-		System.out.println(c);
+		Monster m = new Monster("Orc", 6, 9, 
+			new Dice(1, 6), new Attack(1, 1));
+		System.out.println(m);
 	}
 }
 

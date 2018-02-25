@@ -267,8 +267,7 @@ public class Arena {
 	*  Create a new fighter of the indicated level.
 	*/
 	Character newFighter (int level) {
-		String name = NameGenerator.getInstance().getRandom();
-		Character f = new Character(name, "Human", "Fighter", level, null); 
+		Character f = new Character("Human", "Fighter", level, null); 
 		if (baseArmorType != null) {
 			f.setArmor(Armor.makeType(baseArmorType));
 		}

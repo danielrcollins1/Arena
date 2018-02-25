@@ -36,8 +36,14 @@ public class Character extends Monster {
 	//  Fields
 	//--------------------------------------------------------------------------
 
+	/** Personal name of the character. */
+	String name;
+
 	/** The six ability scores. */
 	int[] abilityScore;
+
+	/** Ability score damage. */
+	int[] abilityScoreDamage;
 
 	/** List of classes with XP scores. */
 	ArrayList<ClassRecord> classList;
@@ -62,9 +68,6 @@ public class Character extends Monster {
 
 	/** Age in years */
 	int age;
-
-	/** Ability score damage. */
-	int[] abilityScoreDamage;
 
 	//--------------------------------------------------------------------------
 	//  Enumerations
@@ -97,20 +100,20 @@ public class Character extends Monster {
 	/**
 	*  Constructor (single class, no equipment).
 	*/
-	public Character (String name, String type, 
-			String className, int level, Alignment align) {
-		super(name, type, align, BASE_ARMOR_CLASS, 
-			BASE_MOVEMENT, new Dice(Monster.BASE_HIT_DIE), null);
+	public Character (String race, String classn, int level, Alignment align) {
+		super(race, BASE_ARMOR_CLASS, BASE_MOVEMENT, 
+			new Dice(Monster.BASE_HIT_DIE), null);
 
 		assert(level >= 0); 
-		assert(align != null);
 		age = STARTING_AGE;
+		name = NameGenerator.getInstance().getRandom();
+		alignment = (align != null) ? align : Alignment.random();
 		abilityScore = newAbilityScores();
 		abilityScoreDamage = new int[Ability.length];
 		classList = new ArrayList<ClassRecord>(1);
 		equipList = new ArrayList<Equipment>(4);
 		featList = new ArrayList<Feat>(0);
-		ClassType classType = ClassIndex.getInstance().getTypeFromName(className);
+		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
 		classList.add(new ClassRecord(this, classType, level));
 		updateStats();
 		setPerfectHealth();
@@ -476,7 +479,7 @@ public class Character extends Monster {
 		ClassType classType = ClassIndex.getInstance().getTypeFromTitle(title);
 		if (classType != null) {
 			int level = classType.getLevelFromTitle(title);
-			Character c = new Character(null, "Human", classType.getName(), level, align);
+			Character c = new Character("Human", classType.getName(), level, align);
 			c.setBasicEquipment();
 			for (int i = 1; i <= level; i++) {
 				c.checkMagicArmsBoost(NPC_PCT_MAGIC_PER_LEVEL);			
@@ -680,9 +683,7 @@ public class Character extends Monster {
 	public String toString () {
 
 		// Header
-		String s = (name == null ? "" : name + ", ");
-		s += (race == null ? "" : race + " ");
-		s += classString();
+		String s = name + ", " + race + " " + classString();
 
 		// Stat block
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
@@ -775,7 +776,7 @@ public class Character extends Monster {
 	*/
 	public static void main (String[] args) {
 		Dice.initialize();
-		Character p = new Character(null, "Human", "Fighter", 1, null);
+		Character p = new Character("Human", "Fighter", 1, null);
 		p.setBasicEquipment();
 		p.drawBestWeapon(null);
 		System.out.println(p);

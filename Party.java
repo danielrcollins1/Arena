@@ -346,7 +346,8 @@ public class Party implements Iterable<Monster> {
 	*/
 	public static void main (String[] args) {
 		Dice.initialize();
-		Monster m = new Monster(5, 9, 4);
+		Monster m = new Monster("Orc", 6, 9, 
+			new Dice(1, 6), new Attack(1, 1));
 
 		// Create various size parties
 		Party p0 = new Party();
