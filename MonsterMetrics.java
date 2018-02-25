@@ -322,7 +322,7 @@ public class MonsterMetrics {
 	*  Create a new fighter of the indicated level.
 	*/
 	Character newFighter (int level) {
-		Character f = new Character(null, "Human", "Fighter", level, null); 
+		Character f = new Character("Human", "Fighter", level, null); 
 		f.setArmor(Armor.makeType(armorType));
 		f.setShield(Armor.makeType(Armor.Type.Shield));
 		f.addEquipment(newSword(level));
