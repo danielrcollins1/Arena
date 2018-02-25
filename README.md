@@ -37,7 +37,8 @@ by simulating their entire combat history in the Arena.
 -----------------------------------------------------------------
 
 GPJ project files for use with jGRASP are included for each of these
-three applications.
+three applications. Consider also inspecting the UMLDiagram image for a 
+visual look at the relations between code modules here.
 
 Note that at the current time, combat is primarily melee only; no sense
 of space, location, or movement is simulated. Targets of attacks are 
