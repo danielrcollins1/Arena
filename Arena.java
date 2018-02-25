@@ -402,7 +402,7 @@ public class Arena {
 	*/
 	int partyFallenXPValue (Party party) {
 		int total = 0;
-		XPTable xpt = XPTable.getInstance();
+		XPAwardTable xpt = XPAwardTable.getInstance();
 		for (int i = 0; i < party.sizeFallen(); i++) {
 			Monster monster = party.getFallen(i);
 			total += useRevisedXPAwards ? 

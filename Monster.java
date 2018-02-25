@@ -1221,7 +1221,7 @@ public class Monster {
 	* Get the XP award value for defeating this monster.
 	*/
 	int getXPAward () {
-		return XPTable.getInstance().getXPAward(this);
+		return XPAwardTable.getInstance().getXPAward(this);
 	}
 
 	/**
