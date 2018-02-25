@@ -42,7 +42,6 @@ public class Monster {
 	Attack attack;
 	Alignment alignment;
 	int equivalentHitDice;
-	int tableLevel;
 	int environment;
 	int hitPoints;
 	int maxHitPoints;
@@ -98,8 +97,6 @@ public class Monster {
 
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
-		tableLevel = EHDToTables.getInstance()
-			.mapEHDToTable(equivalentHitDice);
 		rollHitPoints();
 	}
 
@@ -127,7 +124,6 @@ public class Monster {
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
-		tableLevel = src.tableLevel;
 	}
 
 	//--------------------------------------------------------------------------
@@ -150,7 +146,6 @@ public class Monster {
 	public Alignment getAlignment () { return alignment; }
 	public char getType () { return type; }
 	public int getEquivalentHitDice () { return equivalentHitDice; }
-	public int getTableLevel () { return tableLevel; }
 	public int getEnvironment () { return environment; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
@@ -247,8 +242,7 @@ public class Monster {
 	public Monster spawn () {
 		if (hasSpecial(SpecialType.NPC)) {
 			Character c = Character.newNPCFromTitle(race, Alignment.Chaotic);
-			c.race = race; // Reset monster race/title
-			c.tableLevel = tableLevel;
+			c.race = race; // Reset monster race/title for kill tally
 			for (SpecialAbility s: specialList) {
 				c.specialList.add(s);
 			}

@@ -102,7 +102,8 @@ public class MonsterTables implements Iterable<ArrayList<Monster>> {
 		// Sort monster database into these tables
 		for (Monster monster: MonsterDatabase.getInstance()) {
 			if (monster.getEnvironment() == 1) {
-				int tableLevel = monster.getTableLevel();
+				int tableLevel = EHDToTables.getInstance()
+					.mapEHDToTable(monster.getEHD());
 				if (1 <= tableLevel && tableLevel <= maxLevel) {
 					monsterTables.get(tableLevel - 1).add(monster);
 				}		
