@@ -85,7 +85,7 @@ Hippogriff,2d8,5,18,3+1,-,-,2,1d6,Flight (36),L,F,3,0,O,3,-
 Centaur,2d10,5,18,4,5,A,2,1d6,-,L,F,4,0,O,4,30
 Unicorn,1d4,2,24,4,-,-,2,1d6,"SaveBonus (6), Detection (24), DimensionDoor (36)",L,F,5,0,O,4,-
 Dryad,1d6,5,12,2,20,D,1,1d6,Charm (2),N,F,7,0,O,2,-
-Roc,1d20,4,6,6,20,I,3,1d6,Flight (48),L,F,7,0,O,6,-
+Roc,1d20,4,6,6,20,I,3,1d6,"Flight (48), Detection",L,F,7,0,O,6,-
 Griffon,2d8,3,12,7,10,E,3,1d6,Flight (30),N,F,8,0,O,7,104
 Tree,1d2,2,3,8,-,-,2,2d6,-,L,F,11,0,O,8,-
 Treant,2d10,2,6,8,-,-,2,2d6,SummonTrees,L,F,33,0,O,8,420
@@ -121,8 +121,8 @@ Yellow Mold,1,9,0,1,-,-,1,1d6,"WeaponImmunity, LightningImmunity, ColdImmunity, 
 Green Slime,1,9,0,2,-,-,1,1d6,"WeaponImmunity, LightningImmunity, Corrosion, Grabbing, Absorption",N,O,*,1,O,2,-
 Ochre Jelly,1,8,3,5,-,-,1,1d6,"WeaponImmunity, LightningImmunity, Splitting, Grabbing",N,O,*,1,O,5,32
 Black Pudding,1,6,6,10,-,-,1,3d6,"WeaponImmunity, LightningImmunity, ColdImmunity, Splitting, Corrosion, Grabbing",N,O,*,1,O,10,203
-Skeleton,3d10,7,6,1/2,-,-,1,1d6,-,N,U,1,1,O,0.5,1
-Zombie,3d10,8,6,1,-,-,1,1d6,-,N,U,1,1,O,1,2
+Skeleton,3d10,7,6,1,-,-,1,1d6,-,N,U,1,1,O,1,1
+Zombie,3d10,8,6,2,-,-,1,1d6,-,N,U,2,1,O,2,2
 Wight,2d12,5,9,3,60,B,1,1d6,"SilverToHit, EnergyDrain (1), Spawn",C,U,3,1,O,3,70
 Ghoul,2d12,6,9,2,20,B,1,1d6,"Paralysis, Spawn",C,U,4,1,O,2,7
 Wraith,2d8,3,12,4,20,E,1,1d6,"Flight (24), SilverToHit, EnergyDrain (1), Spawn",C,U,4,1,O,4,76
