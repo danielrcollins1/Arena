@@ -18,7 +18,7 @@ public class Arena {
 	//--------------------------------------------------------------------------
 
 	final int DEFAULT_NUM_YEARS = 50;
-	final int DEFAULT_FIGHTS_PER_YEAR = 24;
+	final int DEFAULT_FIGHTS_PER_YEAR = 12;
 	final int DEFAULT_NUM_FIGHTERS = 100;
 	final int DEFAULT_PARTY_SIZE = 1;
 	final int DEFAULT_PCT_MAGIC_PER_LEVEL = 15;
@@ -364,7 +364,8 @@ public class Arena {
 	*  Get number of monsters for encounter (a la Vol-3, p. 11).
 	*/
 	int getMonsterNumber (Monster monster, int dungeonLevel, int numFighters) {
-		int numMonsters = numFighters * dungeonLevel / monster.getEHD();
+		int scaleFactor = numFighters;
+		int numMonsters = scaleFactor * dungeonLevel / monster.getEHD();
 		return Math.max(1, numMonsters);
 	}
 
@@ -610,8 +611,8 @@ public class Arena {
 			for (int i = 1; i <= maxLevel; i++) {
 				int kills = tables.getTotalKillsAtLevel(i);
 				float killPct = (float) kills / grandTotal * 100;
-				System.out.println("Level " + i + ": " + kills
-					+ " (" + String.format("%.0f", killPct) + "%)");
+ 				System.out.println("Level " + i + ": " + kills
+ 					+ " (" + String.format("%.0f", killPct) + "%)");
 			}
 			System.out.println();
 		}
