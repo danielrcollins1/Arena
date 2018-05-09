@@ -19,6 +19,8 @@ public class MonsterMetrics {
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
+	final int GRAPH_MAX_Y = 20;
+	final int GRAPH_GRAIN_Y = 3;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -43,6 +45,9 @@ public class MonsterMetrics {
 	/** Flag to display only revised EHD values. */
 	boolean displayOnlyRevisions; 
 
+	/** Flag to graph fighter level * numbers. */
+	boolean displayLevelGraphs; 
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
 
@@ -61,6 +66,7 @@ public class MonsterMetrics {
 		armorType = DEFAULT_ARMOR;
 		displayUnknownSpecials = false;
 		displayOnlyRevisions = false;
+		displayLevelGraphs = false;
 		exitAfterArgs = false;
 	}
 
@@ -84,6 +90,7 @@ public class MonsterMetrics {
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
 		System.out.println("\t-f number of fights per point in search space " 
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
+		System.out.println("\t-g graph fighter level * number for each monster");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println();
@@ -99,6 +106,7 @@ public class MonsterMetrics {
 					case 'a': armorType = getArmorType(s); break;
 					case 'b': magicPerLevelPct = getParamInt(s); break;
 					case 'f': numberOfFights = getParamInt(s); break;
+					case 'g': displayLevelGraphs = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					default: exitAfterArgs = true; break;
@@ -162,15 +170,6 @@ public class MonsterMetrics {
 	*/
 	void reportAllMonsters () {
 		MonsterDatabase db = MonsterDatabase.getInstance();
-
-		// Header
-		System.out.print("\nMonster");
-		for (int level = 0; level <= MAX_LEVEL; level++) {
-			System.out.print("\t" + level);
-		}
-		System.out.println("\tEHD");
-
-		// Body
 		for (Monster m: db) {
 			if (!m.hasUndefinedEHD()) {
 				reportOneMonster(m);
@@ -187,13 +186,45 @@ public class MonsterMetrics {
 		int newEHD = computeEHD(monsterLevels);
 		boolean revised = !isEHDClose(newEHD, monster.getEHD());
 		if (revised || !displayOnlyRevisions || spotlightMonster == monster) {
-			System.out.print(monster.getRace());
+			System.out.print(monster.getRace() + ": ");
 			for (int level = 1; level <= MAX_LEVEL; level++) {
 				int val = monsterLevels[level - 1];
-				System.out.print("\t" + (val > 0 ? val : "1/" + (-val)));
+				System.out.print(val > 0 ? val : "1/" + (-val));
+				if (level < MAX_LEVEL) System.out.print(", ");
 			}
-			System.out.println("\t" + newEHD);
+			System.out.println("; Weighted Average: " + newEHD);
+			if (displayLevelGraphs) {
+				printGraphMonsterLevels(monsterLevels);
+			}
 		}
+	}
+
+	/**
+	*  Print a graph showing level * numFighters.
+	*/
+	void printGraphMonsterLevels (int[] monsterLevels) {
+		System.out.println();
+		int[] products = createProductLevelsArray(monsterLevels);
+
+		// Graph body
+		for (int y = GRAPH_MAX_Y; y > 0; y -= GRAPH_GRAIN_Y) {
+			System.out.print("|");
+			for (int x = 1; x <= MAX_LEVEL; x++) {
+				int product = products[x - 1];
+				boolean inRange = 
+					(y - GRAPH_GRAIN_Y < product && product <= y);
+				System.out.print(inRange ? "*" : " ");
+			}
+			System.out.println();
+		}
+		
+		// X-axis
+		System.out.print("+");
+		for (int x = 1; x <= MAX_LEVEL; x++) {
+			System.out.print("-");
+		}
+		System.out.println();
+		System.out.println();
 	}
 
 	/**
@@ -205,6 +236,18 @@ public class MonsterMetrics {
 			array[level - 1] = matchMonsterToFighters(monster, level);
 		}  
 		return array;
+	}
+
+	/**
+	*  Create an array of products of fighters * level.
+	*/
+	int[] createProductLevelsArray (int[] monsterLevels) {
+		int[] array = new int[MAX_LEVEL];
+		for (int level = 1; level <= MAX_LEVEL; level++) {
+			int val = monsterLevels[level - 1];
+			array[level - 1] = (val > 0 ? level * val : level / (-val));
+		}  
+		return array;	
 	}
 
 	/**
