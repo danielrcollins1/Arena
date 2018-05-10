@@ -231,7 +231,7 @@ public class Monster {
 
 	/**
 	* Parse the EHD value (possibly undefined).
-8	*/
+	*/
 	private int parseEHD (String s) {
 		return s.equals("*") ? UNDEFINED_EHD : Integer.parseInt(s);
 	}
