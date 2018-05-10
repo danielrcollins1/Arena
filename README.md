@@ -5,9 +5,9 @@ This code package provides routines for simulating combat in
 a tabletop Fantasy Role-Playing Game (FRPG) similar to Original D&D
 or closely-related games. In most cases, the intent is to output
 aggregate statistics based on many trials of the game between men and 
-monsters. This package provides only command-line, text output; there 
-are no graphics or visualizations, and generally few options for output 
-regarding individual combats. 
+monsters (a "Monte Carlo method"). This package provides mostly 
+command-line, text output; there are no graphics, and generally few 
+options for output regarding individual combats. 
 
 The package currently includes three top-level main programs:
 
