@@ -19,8 +19,7 @@ public class MonsterMetrics {
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
-	final int GRAPH_MAX_Y = 20;
-	final int GRAPH_GRAIN_Y = 3;
+	final int GRAPH_INC_Y = 5;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -46,7 +45,7 @@ public class MonsterMetrics {
 	boolean displayOnlyRevisions; 
 
 	/** Flag to graph fighter level * numbers. */
-	boolean displayLevelGraphs; 
+	boolean displayPowerGraphs; 
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
@@ -66,7 +65,7 @@ public class MonsterMetrics {
 		armorType = DEFAULT_ARMOR;
 		displayUnknownSpecials = false;
 		displayOnlyRevisions = false;
-		displayLevelGraphs = false;
+		displayPowerGraphs = false;
 		exitAfterArgs = false;
 	}
 
@@ -106,7 +105,7 @@ public class MonsterMetrics {
 					case 'a': armorType = getArmorType(s); break;
 					case 'b': magicPerLevelPct = getParamInt(s); break;
 					case 'f': numberOfFights = getParamInt(s); break;
-					case 'g': displayLevelGraphs = true; break;
+					case 'g': displayPowerGraphs = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					default: exitAfterArgs = true; break;
@@ -193,7 +192,7 @@ public class MonsterMetrics {
 				if (level < MAX_LEVEL) System.out.print(", ");
 			}
 			System.out.println("; Weighted Average: " + newEHD);
-			if (displayLevelGraphs) {
+			if (displayPowerGraphs) {
 				printGraphMonsterLevels(monsterLevels);
 			}
 		}
@@ -205,15 +204,15 @@ public class MonsterMetrics {
 	void printGraphMonsterLevels (int[] monsterLevels) {
 		System.out.println();
 		int[] products = createProductLevelsArray(monsterLevels);
+		int maxStepY = findArrayMax(products) / GRAPH_INC_Y;
 
 		// Graph body
-		for (int y = GRAPH_MAX_Y; y > 0; y -= GRAPH_GRAIN_Y) {
+		for (int ystep = maxStepY; ystep >= 0; ystep--) {
 			System.out.print("|");
 			for (int x = 1; x <= MAX_LEVEL; x++) {
 				int product = products[x - 1];
-				boolean inRange = 
-					(y - GRAPH_GRAIN_Y < product && product <= y);
-				System.out.print(inRange ? "*" : " ");
+				System.out.print(
+					product/GRAPH_INC_Y == ystep ? "*" : " ");
 			}
 			System.out.println();
 		}
@@ -248,6 +247,18 @@ public class MonsterMetrics {
 			array[level - 1] = (val > 0 ? level * val : level / (-val));
 		}  
 		return array;	
+	}
+
+	/**
+	*  Find maximum of an integer array.
+	*/
+	int findArrayMax (int[] array) {
+		int max = Integer.MIN_VALUE;
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] > max)
+				max = array[i];
+		}	
+		return max;
 	}
 
 	/**
