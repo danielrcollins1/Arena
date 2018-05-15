@@ -299,8 +299,9 @@ public class Party implements Iterable<Monster> {
 		for (int i = members.size() - 1; i >= 0; i--) {
 			Monster m = members.get(i);
 			if (m.getLevel() >= level)
-				System.out.println(m + "\n");
+				System.out.println(m);
 		}
+		System.out.println();
 	}
 
 	/**

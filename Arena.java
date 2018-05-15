@@ -4,7 +4,7 @@ import java.awt.Toolkit;
 import java.io.*; 
 
 /******************************************************************************
-*  Arena of battling gladiators (fighters).
+*  Arena of battling fighters (as gladiators).
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20

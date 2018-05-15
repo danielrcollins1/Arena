@@ -106,7 +106,6 @@ public class Marshal {
 		if (menTotal == 0) {
 			menTotal = NUMBER_APPEARING_DICE.roll();
 		}
-		System.out.println();
 		reportHeader();
 		reportGrunts();
 		reportLeaders();
@@ -120,7 +119,8 @@ public class Marshal {
 		String header = menType + ", " 
 			+ menType.determineAlignment() + ", "
 			+ menTotal + " Total ";
-		System.out.println(header + "\n");
+		System.out.println(header);
+		System.out.println();
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class Marshal {
 	void reportGrunts () {
 		MenType.Component[] comp = menType.createComponents(menTotal);
 		for (MenType.Component c: comp) {
-			System.out.println("- " + c.number + " " + c.description);			
+			System.out.println(c.number + " " + c.description);			
 		}
 		System.out.println();
 	}
@@ -173,7 +173,8 @@ public class Marshal {
 		if (casterString.length() > 1)
 			notes += casterString;
 		if (notes.length() > 1)
-			System.out.println("Notes: " + notes + "\n");
+			System.out.println("Notes: " + notes);
+		System.out.println();
 	}
 
 	/**

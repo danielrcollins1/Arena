@@ -41,6 +41,8 @@ public class Monster {
 	char treasureType;
 	Attack attack;
 	Alignment alignment;
+	float hitDiceAsFloat;
+	boolean isEHDSetManually;
 	int equivalentHitDice;
 	int environment;
 	int hitPoints;
@@ -94,6 +96,8 @@ public class Monster {
 		equivalentHitDice = parseEHD(s[12]);
 		environment = CSVReader.parseInt(s[13]);
 		sourceBook = s[14];
+		hitDiceAsFloat = parseFloat(s[15]);
+		isEHDSetManually = parseIntAsBool(s[16]);
 
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
@@ -116,6 +120,8 @@ public class Monster {
 		type = src.type;
 		equivalentHitDice = src.equivalentHitDice;
 		sourceBook = src.sourceBook;
+		hitDiceAsFloat = src.hitDiceAsFloat;
+		isEHDSetManually = src.isEHDSetManually;
 		killTally = src.killTally;
 		host = src.host;
 		charmer = src.charmer;
@@ -147,6 +153,8 @@ public class Monster {
 	public char getType () { return type; }
 	public int getEquivalentHitDice () { return equivalentHitDice; }
 	public int getEnvironment () { return environment; }
+	public float getHitDiceAsFloat () { return hitDiceAsFloat; }
+	public boolean isEHDSetManually () { return isEHDSetManually; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }
@@ -1277,6 +1285,28 @@ public class Monster {
 	public String specialString() {
 		String s = specialList.toString();
 		return s.substring(1, s.length()-1);
+	}
+
+	/**
+	* Parse a floating-point string safely.
+	*/
+	private float parseFloat (String s) {
+		float f;
+		try {
+			f = Float.parseFloat(s);							
+		}	
+		catch (Exception e) {
+			f = 0.0f;
+		}
+		return f;
+	}
+
+	/**
+	* Parse a 0 or 1 as a boolean.
+	*/
+	private boolean parseIntAsBool (String s) {
+		int i = Integer.parseInt(s);
+		return i != 0;
 	}
 
 	/**

@@ -16,10 +16,11 @@ public class MonsterMetrics {
 
 	final int MAX_LEVEL = 12;
 	final int MAX_ENEMIES = 64;
+	final int GRAPH_Y_INTERVAL = 5;
+	final double ERR_BAR_COEFF = 0.5;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
-	final int GRAPH_INC_Y = 5;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -44,8 +45,14 @@ public class MonsterMetrics {
 	/** Flag to display only revised EHD values. */
 	boolean displayOnlyRevisions; 
 
-	/** Flag to graph fighter level * numbers. */
-	boolean displayPowerGraphs; 
+	/** Flag to display equated fighters per level. */
+	boolean displayEquatedFighters; 
+
+	/** Flag to display equated fighters HD per level. */
+	boolean displayEquatedFightersHD; 
+
+	/** Flag to graph equated fighters HD. */
+	boolean graphEquatedFightersHD; 
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
@@ -63,10 +70,6 @@ public class MonsterMetrics {
 		numberOfFights = DEFAULT_FIGHTS_GENERAL;
 		magicPerLevelPct = DEFAULT_MAGIC_PER_LEVEL_PCT;
 		armorType = DEFAULT_ARMOR;
-		displayUnknownSpecials = false;
-		displayOnlyRevisions = false;
-		displayPowerGraphs = false;
-		exitAfterArgs = false;
 	}
 
 	//--------------------------------------------------------------------------
@@ -87,9 +90,11 @@ public class MonsterMetrics {
 			+ "(default " + DEFAULT_ARMOR + ")");
 		System.out.println("\t-b chance for magic weapon bonus per level " 
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
+		System.out.println("\t-d display equated fighter hit dice per level");
+		System.out.println("\t-e display equated fighters per level");
 		System.out.println("\t-f number of fights per point in search space " 
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
-		System.out.println("\t-g graph fighter level * number for each monster");
+		System.out.println("\t-g graph power per level for each monster");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println();
@@ -104,8 +109,10 @@ public class MonsterMetrics {
 				switch (s.charAt(1)) {
 					case 'a': armorType = getArmorType(s); break;
 					case 'b': magicPerLevelPct = getParamInt(s); break;
+					case 'd': displayEquatedFightersHD = true; break;
+					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
-					case 'g': displayPowerGraphs = true; break;
+					case 'g': graphEquatedFightersHD = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					default: exitAfterArgs = true; break;
@@ -178,41 +185,147 @@ public class MonsterMetrics {
 	}
 
 	/**
-	*  Report number of fighters at each level to match one monster.
+	*  Report equated fighters and estimated EHD for one monster.
 	*/
 	void reportOneMonster (Monster monster) {
-		int[] monsterLevels = createMonsterLevelsArray(monster);
-		int newEHD = computeEHD(monsterLevels);
-		boolean revised = !isEHDClose(newEHD, monster.getEHD());
-		if (revised || !displayOnlyRevisions || spotlightMonster == monster) {
-			System.out.print(monster.getRace() + ": ");
-			for (int level = 1; level <= MAX_LEVEL; level++) {
-				int val = monsterLevels[level - 1];
-				System.out.print(val > 0 ? val : "1/" + (-val));
-				if (level < MAX_LEVEL) System.out.print(", ");
-			}
-			System.out.println("; Weighted Average: " + newEHD);
-			if (displayPowerGraphs) {
-				printGraphMonsterLevels(monsterLevels);
-			}
+
+		// Compute stats
+		double[] eqFighters = getEquatedFighters(monster);
+		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
+		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
+		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD)
+			&& !monster.isEHDSetManually();
+
+		// Print stats as requested
+		if (!displayOnlyRevisions || reviseEHD || spotlightMonster == monster) {
+			System.out.println(monster.getRace() + ": "
+				+ "Old EHD " + monster.getEHD() + ", "
+				+ "New EHD " + Math.round(estEHD) 
+				+ " (" + roundDbl(estEHD, 2) + ")");
+			if (displayEquatedFighters)
+				System.out.println("\tEF " + toString(eqFighters, 1));
+			if (displayEquatedFightersHD)
+				System.out.println("\tEFHD " + toString(eqFightersHD, 1));
+ 			if (graphEquatedFightersHD)
+ 				graphDblArray(eqFightersHD);
+			if (anySpecialPrinting())
+				System.out.println();
 		}
 	}
 
 	/**
-	*  Print a graph showing level * numFighters.
+	*  Determine if EHDs are relatively close.
 	*/
-	void printGraphMonsterLevels (int[] monsterLevels) {
+	boolean isEHDClose (double oldEHD, double newEHD) {
+		double errBar = ERR_BAR_COEFF * Math.pow(oldEHD, 0.5);
+		errBar = Math.max(errBar, 0.5);
+		return Math.abs(oldEHD - newEHD) <= errBar;
+	} 
+
+	/**
+	*  Any special printing done per monster?
+	*/
+	boolean anySpecialPrinting () {
+		return displayEquatedFighters	|| displayEquatedFightersHD 
+			|| graphEquatedFightersHD;
+	}
+
+	/**
+	*  Get equated fighters per level for a monster.
+	*/
+	double[] getEquatedFighters (Monster monster) {
+		double[] array = new double[MAX_LEVEL];
+		for (int level = 1; level <= MAX_LEVEL; level++) {
+			int match = matchMonsterToFighters(monster, level);
+			array[level - 1] = (match > 0 ? match : 1./(-match));
+		}  
+		return array;
+	}
+
+	/**
+	*  Get equated fighter hit dice for a monster.
+	*/
+	double[] getEquatedFightersHD (double[] equatedFighters) {
+		double[] array = new double[MAX_LEVEL];
+		for (int level = 1; level <= MAX_LEVEL; level++) {
+			array[level - 1] = level * equatedFighters[level - 1];
+		}
+		return array;
+	}
+
+	/**
+	*  Create string from a double array, to given precision.
+	*/
+	String toString(double[] array, int precision) {
+		String s = "[";
+		for (int i = 0; i < array.length; i++) {
+			s += roundDbl(array[i], precision);
+			if (i < array.length - 1) {
+				s += ", ";
+			}
+		}
+		s += "]";
+		return s;		
+	}
+
+	/**
+	*  Round a double to an indicated precision.
+	*/
+	double roundDbl (double val, int precision) {
+		double div = Math.pow(10, precision);
+		return Math.round(val * div) / div;
+	}
+	
+	/**
+	*  Get the maximum of a double array.
+	*/
+	double getDblArrayMax (double[] array) {
+		double max = Double.MIN_VALUE;
+		for (double val: array) {
+			if (val > max)
+				max = val;
+		}
+		return max;
+	}
+
+	/**
+	*  Get the mean of a double array.
+	*/
+	double getDblArrayMean (double[] array) {
+		double sum = 0.0;
+		for (double val: array) {
+			sum += val;
+		}
+		return sum / array.length;
+	}
+
+	/**
+	*  Get the harmonic mean of a double array.
+	*/
+	double getDblArrayHarmonicMean (double[] array) {
+		double sum = 0.0;
+		for (double val: array) {
+			sum += 1/val;
+		}
+		return array.length / sum;
+	}
+
+	/**
+	*  Print a graph of a double array.
+	*/
+	void graphDblArray (double[] array) {
 		System.out.println();
-		int[] products = createProductLevelsArray(monsterLevels);
-		int maxStepY = findArrayMax(products) / GRAPH_INC_Y;
+		double maxVal = getDblArrayMax(array);
+		long maxStepY = Math.round(maxVal / GRAPH_Y_INTERVAL);
 
 		// Graph body
-		for (int ystep = maxStepY; ystep >= 0; ystep--) {
+		for (long ystep = maxStepY; ystep >= 0; ystep--) {
 			System.out.print("|");
 			for (int x = 1; x <= MAX_LEVEL; x++) {
-				int product = products[x - 1];
-				System.out.print(
-					product/GRAPH_INC_Y == ystep ? "*" : " ");
+				double val = array[x - 1];
+				long valStep = Math.round(val / GRAPH_Y_INTERVAL);
+				boolean atThisHeight = (valStep == ystep);
+				System.out.print(atThisHeight ? "*" : " ");
 			}
 			System.out.println();
 		}
@@ -222,87 +335,26 @@ public class MonsterMetrics {
 		for (int x = 1; x <= MAX_LEVEL; x++) {
 			System.out.print("-");
 		}
-		System.out.println();
-		System.out.println();
+		System.out.println("\n");
 	}
-
-	/**
-	*  Create an array of fighters at each level that match this monster.
-	*/
-	int[] createMonsterLevelsArray (Monster monster) {
-		int[] array = new int[MAX_LEVEL];
-		for (int level = 1; level <= MAX_LEVEL; level++) {
-			array[level - 1] = matchMonsterToFighters(monster, level);
-		}  
-		return array;
-	}
-
-	/**
-	*  Create an array of products of fighters * level.
-	*/
-	int[] createProductLevelsArray (int[] monsterLevels) {
-		int[] array = new int[MAX_LEVEL];
-		for (int level = 1; level <= MAX_LEVEL; level++) {
-			int val = monsterLevels[level - 1];
-			array[level - 1] = (val > 0 ? level * val : level / (-val));
-		}  
-		return array;	
-	}
-
-	/**
-	*  Find maximum of an integer array.
-	*/
-	int findArrayMax (int[] array) {
-		int max = Integer.MIN_VALUE;
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] > max)
-				max = array[i];
-		}	
-		return max;
-	}
-
-	/**
-	*  Compute the recommended EHD from monster levels array.
-	*/
-	int computeEHD (int[] monsterLevels) {
-		double sumVal = 0.0;
-		for (int level = 1; level <= MAX_LEVEL; level++) {
-			double val = monsterLevels[level - 1];
-			sumVal += (val > 0 ? level * val : level / (-val));
-		}
-		return (int) Math.round(sumVal / MAX_LEVEL);
-	}
-
-	/**
-	*  Determine if EHDs are relatively close.
-	*  Simulates percentage margin-of-error on integers.
-	*/
-	boolean isEHDClose (int a, int b) {
-		if (a <= 5)
-			return a == b;
-		else {
-			int dist = Math.abs(a - b);
-			return dist <= 1;
-		}
-	} 
 
 	/**
 	*  Match fighters of given level to monster of one type.
 	*  @param monster Type of monster.
-	*  @param level Level of fighter.
+	*  @param fighterLevel Level of fighter.
 	*  @return If positive, one monster to many fighters; 
 	*     if negative, one fighter to many monsters. 
 	*/
-	int matchMonsterToFighters (Monster monster, int level) {
+	int matchMonsterToFighters (Monster monster, int fighterLevel) {
 
 		// Consider one monster to many fighters
 		int numFighters = matchFight(
-			n -> ratioMonstersBeatFighters(monster, 1, level, n, true)); 
+			n -> ratioMonstersBeatFighters(monster, 1, fighterLevel, n, true)); 
 		if (numFighters > 1) return numFighters;
 
 		// Consider one fighter to many monsters.
 		int numMonsters = matchFight(
-			n -> ratioMonstersBeatFighters(monster, n, level, 1, false));
+			n -> ratioMonstersBeatFighters(monster, n, fighterLevel, 1, false));
 		if (numMonsters > 1) return -numMonsters;
 
 		// One monster to one fighter
