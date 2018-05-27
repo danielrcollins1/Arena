@@ -42,7 +42,6 @@ public class Monster {
 	Attack attack;
 	Alignment alignment;
 	float hitDiceAsFloat;
-	boolean isEHDSetManually;
 	int equivalentHitDice;
 	int environment;
 	int hitPoints;
@@ -97,7 +96,6 @@ public class Monster {
 		environment = CSVReader.parseInt(s[13]);
 		sourceBook = s[14];
 		hitDiceAsFloat = parseFloat(s[15]);
-		isEHDSetManually = parseIntAsBool(s[16]);
 
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
@@ -121,7 +119,6 @@ public class Monster {
 		equivalentHitDice = src.equivalentHitDice;
 		sourceBook = src.sourceBook;
 		hitDiceAsFloat = src.hitDiceAsFloat;
-		isEHDSetManually = src.isEHDSetManually;
 		killTally = src.killTally;
 		host = src.host;
 		charmer = src.charmer;
@@ -154,7 +151,6 @@ public class Monster {
 	public int getEquivalentHitDice () { return equivalentHitDice; }
 	public int getEnvironment () { return environment; }
 	public float getHitDiceAsFloat () { return hitDiceAsFloat; }
-	public boolean isEHDSetManually () { return isEHDSetManually; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }
@@ -1299,14 +1295,6 @@ public class Monster {
 			f = 0.0f;
 		}
 		return f;
-	}
-
-	/**
-	* Parse a 0 or 1 as a boolean.
-	*/
-	private boolean parseIntAsBool (String s) {
-		int i = Integer.parseInt(s);
-		return i != 0;
 	}
 
 	/**
