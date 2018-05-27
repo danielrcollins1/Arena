@@ -17,7 +17,7 @@ public class MonsterMetrics {
 	final int MAX_LEVEL = 12;
 	final int MAX_ENEMIES = 64;
 	final int GRAPH_Y_INTERVAL = 5;
-	final double ERR_BAR_COEFF = 0.5;
+	final double ERR_BAR_COEFF = 0.6;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
@@ -193,8 +193,7 @@ public class MonsterMetrics {
 		double[] eqFighters = getEquatedFighters(monster);
 		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
 		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
-		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD)
-			&& !monster.isEHDSetManually();
+		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD);
 
 		// Print stats as requested
 		if (!displayOnlyRevisions || reviseEHD || spotlightMonster == monster) {
