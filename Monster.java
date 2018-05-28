@@ -264,15 +264,15 @@ public class Monster {
 	*/
 	private void rollHitPoints () {
 		if (race.contains("Dragon")) {
-			int age = Dice.roll(hitDice.getSides());
-			maxHitPoints = age * hitDice.getNum();
+			maxHitPoints = hitDice.getNum() * getDragonAge();
 		}
 		else if (hasSpecial(SpecialType.Multiheads)) {
 			maxHitPoints = hitDice.maxRoll();
 		}
 		else {
-			maxHitPoints = Math.max(1, hitDice.roll());
+			maxHitPoints = hitDice.roll();
 		}
+		maxHitPoints = Math.max(maxHitPoints, 1);
 		hitPoints = maxHitPoints;
 	}
 
@@ -1295,6 +1295,20 @@ public class Monster {
 			f = 0.0f;
 		}
 		return f;
+	}
+
+	/**
+	* Get a dragon's age category from the name.
+	* If no descriptor match, return a random age.
+	*/
+	int getDragonAge () {
+		String ageDesc[] = {"Very Young", "Young", 
+			"Sub-Adult", "Adult", "Old", "Very Old"};
+		for (int i = 0; i < ageDesc.length; i++) {
+			if (race.endsWith(", " + ageDesc[i]))
+				return i + 1;
+		}
+		return Dice.roll(BASE_HIT_DIE);
 	}
 
 	/**
