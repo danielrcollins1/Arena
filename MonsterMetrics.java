@@ -201,6 +201,8 @@ public class MonsterMetrics {
 				+ "Old EHD " + monster.getEHD() + ", "
 				+ "New EHD " + Math.round(estEHD) 
 				+ " (" + roundDbl(estEHD, 2) + ")");
+			if (estEHD * 2 > getDblArrayMin(eqFightersHD) * MAX_LEVEL)
+				System.out.println("\tEHD over half of harmonic mean threshold.");
 			if (displayEquatedFighters)
 				System.out.println("\tEF " + toString(eqFighters, 1));
 			if (displayEquatedFightersHD)
@@ -285,6 +287,18 @@ public class MonsterMetrics {
 				max = val;
 		}
 		return max;
+	}
+
+	/**
+	*  Get the minimum of a double array.
+	*/
+	double getDblArrayMin (double[] array) {
+		double min = Double.MAX_VALUE;
+		for (double val: array) {
+			if (val < min)
+				min = val;
+		}
+		return min;
 	}
 
 	/**
