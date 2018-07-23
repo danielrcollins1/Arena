@@ -90,12 +90,12 @@ public class Monster {
 		treasureType = s[6].charAt(0);
 		attack = parseAttackRoutine(s[7], s[8]);
 		specialList = parseSpecialAbilityList(s[9]);
-		alignment = Alignment.getFromChar(s[10].charAt(0));
-		type = s[11].charAt(0);
-		equivalentHitDice = parseEHD(s[12]);
-		environment = CSVReader.parseInt(s[13]);
-		sourceBook = s[14];
-		hitDiceAsFloat = parseFloat(s[15]);
+		type = s[10].charAt(0);
+		alignment = Alignment.getFromChar(s[11].charAt(0));
+		hitDiceAsFloat = parseFloat(s[12]);
+		equivalentHitDice = parseEHD(s[13]);
+		environment = CSVReader.parseInt(s[14]);
+		sourceBook = s[15];
 
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
@@ -237,7 +237,7 @@ public class Monster {
 	* Parse the EHD value (possibly undefined).
 	*/
 	private int parseEHD (String s) {
-		return s.equals("*") ? UNDEFINED_EHD : Integer.parseInt(s);
+		return s.equals("?") ? UNDEFINED_EHD : Integer.parseInt(s);
 	}
 
 	/**
@@ -1267,8 +1267,11 @@ public class Monster {
 	*/
 	public String toString() {
 		return getRace() 
-			+ ": AC "   + getAC() + ", MV " + getMV() 
-			+ ", HD "   + getHD() + ", hp " + getHP() 
+			+ ": AC "   + getAC() 
+			+ ", MV " + getMV() 
+			+ ", HD "   + getHD() 
+			+ (getHD() == getEHD() ? "" : "; EHD " + EHDString())
+			+ ", hp " + getHP() 
 			+ ", Atk " + getAttack().getRate() 
 			+ ", Dam " + getAttack().getDamage()
 			+ (specialList.isEmpty() ? "" : "; SA " + specialString())
@@ -1281,6 +1284,14 @@ public class Monster {
 	public String specialString() {
 		String s = specialList.toString();
 		return s.substring(1, s.length()-1);
+	}
+
+	/**
+	* Identify EHD as a string.
+	*/
+	public String EHDString() {
+		int EHD = getEHD();
+		return (EHD == UNDEFINED_EHD ? "?" : String.valueOf(EHD));
 	}
 
 	/**
