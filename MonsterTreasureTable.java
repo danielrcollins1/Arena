@@ -1,5 +1,4 @@
-import java.io.*; 
-import java.util.*;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Treasure based on monster type association (Vol-2, p. 22).
@@ -28,7 +27,7 @@ public class MonsterTreasureTable {
 	private static MonsterTreasureTable instance = null;
 	
 	/** Array of TreasureType records. */
-	private ArrayList<TreasureType> treasureTable;
+	private TreasureType[] treasureTable;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -38,10 +37,10 @@ public class MonsterTreasureTable {
 	*  Constructor (read from dedicated file).
 	*/
 	protected MonsterTreasureTable () throws IOException {
-		treasureTable = new ArrayList<TreasureType>();
 		String[][] table = CSVReader.readFile(MONSTER_TREASURE_FILE);
+		treasureTable = new TreasureType[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			treasureTable.add(new TreasureType(table[i]));
+			treasureTable[i - 1] = new TreasureType(table[i]);
 		}
 	}
 

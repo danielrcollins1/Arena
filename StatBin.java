@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 
 /******************************************************************************
@@ -13,8 +14,8 @@ public class StatBin {
 	//  Fields
 	//--------------------------------------------------------------------------
 
-	/** Array of characters included. */
-	ArrayList<Character> bin; 
+	/** List of characters included. */
+	List<Character> bin; 
 
 	//--------------------------------------------------------------------------
 	//  Constructors

@@ -20,7 +20,7 @@ public class MonsterMetrics {
 	final double ERR_BAR_COEFF = 0.6;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
-	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
+	final int DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL = 15;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -33,11 +33,11 @@ public class MonsterMetrics {
 	/** Number of fights to run per search space point. */
 	int numberOfFights;
 
-	/** Percent chance of magic boost per level. */
-	int magicPerLevelPct;
-
 	/** Armor type for battling fighters. */
 	Armor.Type armorType;
+
+	/** Chance per level for magic sword. */
+	int pctMagicSwordPerLevel;
 
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
@@ -68,8 +68,8 @@ public class MonsterMetrics {
 		Dice.initialize();
 		spotlightMonster = null;
 		numberOfFights = DEFAULT_FIGHTS_GENERAL;
-		magicPerLevelPct = DEFAULT_MAGIC_PER_LEVEL_PCT;
 		armorType = DEFAULT_ARMOR;
+		pctMagicSwordPerLevel = DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL;
 	}
 
 	//--------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public class MonsterMetrics {
 		System.out.println("\t-a armor worn by opposing fighters: =l, c, or p "
 			+ "(default " + DEFAULT_ARMOR + ")");
 		System.out.println("\t-b chance for magic weapon bonus per level " 
-			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
+			+ "(default =" + DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL + ")");
 		System.out.println("\t-d display equated fighter hit dice per level");
 		System.out.println("\t-e display equated fighters per level");
 		System.out.println("\t-f number of fights per point in search space " 
@@ -108,7 +108,7 @@ public class MonsterMetrics {
 			if (s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'a': armorType = getArmorType(s); break;
-					case 'b': magicPerLevelPct = getParamInt(s); break;
+					case 'b': pctMagicSwordPerLevel = getParamInt(s); break;
 					case 'd': displayEquatedFightersHD = true; break;
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
@@ -439,6 +439,9 @@ public class MonsterMetrics {
 
 	/**
 	*  Create a new fighter of the indicated level.
+	*  Equipment is kept to fixed baseline, with only
+	*  magic swords to hit monsters as required.
+	*  (So: Do not use standard Character equip or magic.)
 	*/
 	Character newFighter (int level) {
 		Character f = new Character("Human", "Fighter", level, null); 
@@ -455,7 +458,7 @@ public class MonsterMetrics {
 	Weapon newSword (int level) {
 		int bonus = 0;
 		for (int i = 0; i < level; i++) {
-			if (Dice.roll(100) <= magicPerLevelPct) {
+			if (Dice.roll(100) <= pctMagicSwordPerLevel) {
 				bonus++;
 			}
 		}

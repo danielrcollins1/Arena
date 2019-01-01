@@ -1,6 +1,4 @@
-import java.io.*; 
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Experience award table from Sup-I.
@@ -46,7 +44,7 @@ public class XPAwardTable {
 	private static XPAwardTable instance = null;
 	
 	/** Array of XPRecords. */
-	private ArrayList<XPAwardRecord> xpAwardRecordArray;
+	private XPAwardRecord[] xpAwardRecordArray;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -57,9 +55,9 @@ public class XPAwardTable {
 	*/
 	protected XPAwardTable () throws IOException {
 		String[][] table = CSVReader.readFile(XP_AWARD_TABLE_FILE);
-		xpAwardRecordArray = new ArrayList<XPAwardRecord>();
+		xpAwardRecordArray = new XPAwardRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			xpAwardRecordArray.add(new XPAwardRecord(table[i]));
+			xpAwardRecordArray[i - 1] = new XPAwardRecord(table[i]);
 		}
 	}
 
@@ -157,8 +155,8 @@ public class XPAwardTable {
 	*/
 	private XPAwardRecord getRecordByNum (int num) {
 		assert (num >= 9);
-		for (int i = xpAwardRecordArray.size() - 1; i > 0; i--) {
-			XPAwardRecord record = xpAwardRecordArray.get(i);
+		for (int i = xpAwardRecordArray.length - 1; i > 0; i--) {
+			XPAwardRecord record = xpAwardRecordArray[i];
 			if (num >= Integer.parseInt(record.HDStr)) return record;
 		}
 		return null;	

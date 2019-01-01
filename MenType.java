@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -71,7 +72,7 @@ public class MenType {
 	/**
 	*  Determine alignment from among permitted options.
 	*/
-	public Alignment determineAlignment () {
+	public Alignment getAlignment () {
 		String[] option = alignStr.split("/");
 		int rand = Dice.roll(option.length) - 1;
 		return Alignment.valueOf(option[rand]);
@@ -82,7 +83,7 @@ public class MenType {
 	*/
 	public Component[] createComponents (int total) {
 		int remainder = total;
-		ArrayList<Component> components = new ArrayList<Component>();
+		List<Component> components = new ArrayList<Component>();
 		String[] unitType = composition.split("; ");
 		for (int i = 0; i < unitType.length; i++) {
 			String unitName;

@@ -1,5 +1,4 @@
-import java.io.*; 
-import java.util.*;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Treasure based on underworld level beneath surface (Vol-3, p. 7). 
@@ -48,7 +47,7 @@ public class DungeonTreasureTable {
 	private static DungeonTreasureTable instance = null;
 	
 	/** Array of TreasureType records. */
-	private ArrayList<TreasureRecord> treasureTable;
+	private TreasureRecord[] treasureTable;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -58,10 +57,10 @@ public class DungeonTreasureTable {
 	*  Constructor (read from dedicated file).
 	*/
 	protected DungeonTreasureTable () throws IOException {
-		treasureTable = new ArrayList<TreasureRecord>();
 		String[][] table = CSVReader.readFile(DUNGEON_TREASURE_FILE);
+		treasureTable = new TreasureRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			treasureTable.add(new TreasureRecord(table[i]));
+			treasureTable[i - 1] = new TreasureRecord(table[i]);
 		}
 	}
 
@@ -88,8 +87,8 @@ public class DungeonTreasureTable {
 	*  Get a treasure record by matching its level code.
 	*/
 	private TreasureRecord getRecordByLevel (int level) {
-		for (int i = treasureTable.size() - 1; i > -1; i--) {
-			TreasureRecord tr = treasureTable.get(i);
+		for (int i = treasureTable.length - 1; i > -1; i--) {
+			TreasureRecord tr = treasureTable[i];
 			if (level >= tr.startLevel) {
 				return tr;
 			}
@@ -157,7 +156,7 @@ public class DungeonTreasureTable {
 			System.out.println();
 		}
 		System.out.println();
-		
+
 		// Estimated average values
 		System.out.println("Estimated Average Values");
 		final int SAMPLE_SIZE = 10000;

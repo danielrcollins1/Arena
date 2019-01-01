@@ -1,5 +1,4 @@
-import java.io.*; 
-import java.util.*;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Table of conversions from EHD to Monster Level Table.
@@ -43,7 +42,7 @@ public class EHDToTables {
 	static EHDToTables instance = null;
 	
 	/** Array of EHDTableRecords. */
-	ArrayList<EHDTableRecord> convertMatrix;
+	EHDTableRecord[] convertMatrix;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -53,10 +52,10 @@ public class EHDToTables {
 	*  Constructor (read from dedicated file).
 	*/
 	protected EHDToTables () throws IOException {
-		convertMatrix = new ArrayList<EHDTableRecord>();
 		String[][] table = CSVReader.readFile(EHD_TO_TABLE_FILE);
+		convertMatrix = new EHDTableRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			convertMatrix.add(new EHDTableRecord(table[i]));
+			convertMatrix[i - 1] = new EHDTableRecord(table[i]);
 		}
 	}
 
@@ -83,9 +82,9 @@ public class EHDToTables {
 	*  Map an EHD to a monster level table.
 	*/
 	int mapEHDToTable (int EHD) {
-		for (int i = convertMatrix.size()-1; i > -1; i--) {
-			if (EHD >= convertMatrix.get(i).EHD)
-				return convertMatrix.get(i).tableIdx;
+		for (int i = convertMatrix.length - 1; i > -1; i--) {
+			if (EHD >= convertMatrix[i].EHD)
+				return convertMatrix[i].tableIdx;
 		}	
 		return -1;
 	}
@@ -95,13 +94,12 @@ public class EHDToTables {
 	*/
 	public static void main (String[] args) {
 		EHDToTables matrix = EHDToTables.getInstance();
-	
-		// Print EHDToTables matrix
-		System.out.println("\nEHDToTables");
+		System.out.println("EHD To Tables:");
 		for (int ehd = 0; ehd <= 20; ehd++) {
 			System.out.println(ehd + "\t" 
 				+ matrix.mapEHDToTable(ehd));
 		}
+		System.out.println();
 	}
 }
 

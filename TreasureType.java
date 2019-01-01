@@ -1,6 +1,3 @@
-import java.io.*; 
-import java.util.*;
-
 /******************************************************************************
 *  Treasure type associated with a monster (in the wilderness).
 *

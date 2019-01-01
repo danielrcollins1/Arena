@@ -1,5 +1,4 @@
-import java.io.*; 
-import java.util.ArrayList;
+import java.io.IOException; 
 
 /******************************************************************************
 *  List of NPC men encounters.
@@ -26,7 +25,7 @@ public class MenTypeList {
 	static MenTypeList instance = null;
 	
 	/** List of MenTypes. */
-	ArrayList<MenType> typeList;
+	MenType[] typeList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -37,9 +36,9 @@ public class MenTypeList {
 	*/
 	protected MenTypeList () throws IOException {
 		String[][] table = CSVReader.readFile(MENTYPES_FILE);
-		typeList = new ArrayList<MenType>();
+		typeList = new MenType[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			typeList.add(new MenType(table[i]));
+			typeList[i - 1] = new MenType(table[i]);
 		}
 	}
 
@@ -75,25 +74,13 @@ public class MenTypeList {
 	}
 
 	/**
-	*	Identify	this object	as	a string.
-	*/
-	public String toString () {
-		String s = "";
-		for (int i = 0; i < typeList.size(); i++) {
-			s += typeList.get(i).getCategory();
-			if (i < typeList.size() - 1) s += ", ";		
-		}	
-		return s;
-	}
-
-	/**
 	*  Main test method.
 	*/
 	public static void main (String[] args) {
 		Dice.initialize();
 		MenTypeList mt = MenTypeList.getInstance();
 		for (MenType m: mt.typeList) {
-			System.out.println(m + ", " + m.determineAlignment());
+			System.out.println(m + ", " + m.getAlignment());
 			MenType.Component[] comp = m.createComponents(80);
 			for (MenType.Component c: comp) {
 				System.out.println("- " + c.number + " " + c.description);			

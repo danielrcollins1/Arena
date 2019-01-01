@@ -173,11 +173,11 @@ public class Dice {
 	}
 
 	/** 
-	*  Rolls the dice with added modifier.
-	*  @return The dice-roll.
+	*  Rolls the dice with specified floor.
+	*  @return The bounded dice-roll.
 	*/
-	public int rollPlus (int modifier) {
-		return roll() + modifier;
+	public int boundRoll (int floor) {
+		return Math.max(roll(), floor);
 	}
 
 	/** 
@@ -202,6 +202,13 @@ public class Dice {
 	*/
 	public int avgRoll () {
 		return (minRoll() + maxRoll())/2;
+	}
+
+	/** 
+	*  Modify the addition field.
+	*/
+	public void modifyAdd (int mod) {
+		addition += mod;	
 	}
 
 	/**

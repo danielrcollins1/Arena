@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 
 /******************************************************************************
@@ -14,27 +15,36 @@ public class Character extends Monster {
 	//  Constants
 	//--------------------------------------------------------------------------
 
+	/** Base age in years. */
+	static final int BASE_AGE = 18;
+
 	/** Base armor class. */
 	static final int BASE_ARMOR_CLASS = 9;
 
 	/** Base movement. */
 	static final int BASE_MOVEMENT = 12;
 
-	/** Percent per level for NPC magic items. */
-	static final int NPC_PCT_MAGIC_PER_LEVEL = 5;
+	/** Base hit dice. */
+	static final Dice BASE_HD = new Dice(1, 6);
+
+	/** Base percent per level for magic items. */
+	static final int BASE_MAGIC_PER_LEVEL = 5;
+
+	/** Dice for ability scores. */
+	static final Dice[] ABILITY_DICE = new Dice[] 
+		{new Dice(3, 6), new Dice(2, 6, 6), 
+		new Dice(2, 4, 10), new Dice(2, 3, 12)};
+
 
 	/** Whether we apply the prime-requisite XP bonus. */
 	static final boolean APPLY_BONUS_XP = false;
 
-	/** Dice for ability scores. */
-	static final Dice ABILITY_DICE = new Dice(3, 6);
-
-	/** Starting age. */
-	static final int STARTING_AGE = 18;
-
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
+
+	/** Age in years. */
+	int age;
 
 	/** Personal name of the character. */
 	String name;
@@ -46,7 +56,7 @@ public class Character extends Monster {
 	int[] abilityScoreDamage;
 
 	/** List of classes with XP scores. */
-	ArrayList<ClassRecord> classList;
+	List<ClassRecord> classList;
 
 	/** Armor worn. */
 	Armor armor;
@@ -56,35 +66,52 @@ public class Character extends Monster {
 
 	/** Weapon in hand. */
 	Weapon weaponInHand;	
+
+	/** Magic ring. */
+	Equipment ring;
+
+	/** Magic wand. */
+	Equipment wand;
 	
 	/** Equipment carried. */
-	ArrayList<Equipment> equipList;
+	List<Equipment> equipList;
 
-	/** Feats acquired. */
-	ArrayList<Feat> featList;
+	/** Primary personality trait. */
+	PersonalityTraits.PersonalityTrait primaryPersonality;
 	
-	/** Use feats? */
+	/** Secondary personality trait. */
+	PersonalityTraits.PersonalityTrait secondaryPersonality;
+
+	/** Percent chance per level for magic items. */
+	static int pctMagicPerLevel = BASE_MAGIC_PER_LEVEL;
+
+	/** Assign feats to characters? */
 	static boolean useFeats = false;
 
-	/** Age in years */
-	int age;
+	/** Print feats in string descriptor? */
+	static boolean printFeats = true;
+
+	/** Print abilities in string descriptor? */
+	static boolean printAbilities = true;
+
+	/** Print equipment in string descriptor? */
+	static boolean printEquipment = true;
+
+	/** Print personality in string descriptor? */
+	static boolean printPersonality = true;
+
+	/** Print spells in string descriptor? */
+	static boolean printSpells = true;
+
+	/** Boost abilities & hit points at time of creation? */
+	static boolean boostInitialAbilities = false;
+
+	/** Apply aging effects? */
+	static boolean applyAgingEffects = false;
 
 	//--------------------------------------------------------------------------
 	//  Enumerations
 	//--------------------------------------------------------------------------
-
-	/** 
-	*  Optional OED fighter feats. 
-	*  Caution: Not all are implemented in code at this time.
-	*/
-	public enum Feat {
-		Berserking, GreatCleave, GreatFortitude, GreatStrength, 
-		IronWill, MountedCombat, RapidShot, RapidStrike, 
-		Toughness, Tracking, TwoWeaponFighting, WeaponSpecialization;
-		
-		/** Total number of feats available. */
-		public static final int length = Feat.values().length;
-	};
 
 	/** 
 	*  Age categories.
@@ -98,25 +125,45 @@ public class Character extends Monster {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (single class, no equipment).
+	*  Constructor (single class).
 	*/
-	public Character (String race, String classn, int level, Alignment align) {
-		super(race, BASE_ARMOR_CLASS, BASE_MOVEMENT, 
-			new Dice(Monster.BASE_HIT_DIE), null);
+	public Character (String race, String classn, int level, String align) {
+		super(race, BASE_ARMOR_CLASS, BASE_MOVEMENT, BASE_HD, null);
 
 		assert(level >= 0); 
-		age = STARTING_AGE;
+		age = BASE_AGE;
 		name = NameGenerator.getInstance().getRandom();
-		alignment = (align != null) ? align : Alignment.random();
-		abilityScore = newAbilityScores();
+		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
+		abilityScore = new int[Ability.length];
+		rollAbilityScores(classType, level);
 		abilityScoreDamage = new int[Ability.length];
 		classList = new ArrayList<ClassRecord>(1);
 		equipList = new ArrayList<Equipment>(4);
-		featList = new ArrayList<Feat>(0);
-		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
 		classList.add(new ClassRecord(this, classType, level));
+		alignment = getAlignmentFromString(align);
+		primaryPersonality = PersonalityTraits.getInstance().getRandom(alignment);
+		secondaryPersonality = PersonalityTraits.getInstance().getRandom(null);
 		updateStats();
 		setPerfectHealth();
+	}
+
+	/**
+	*  Constructor (double class).
+	*/
+	public Character (String race, String class1, int level1, 
+			String class2, int level2, String align) {
+		this(race, class1, level1, align);	
+
+		assert(level2 >= 0); 
+		classList.clear();
+		ClassIndex classIndex = ClassIndex.getInstance();
+		ClassType classType1 = classIndex.getTypeFromName(class1);
+		ClassType classType2 = classIndex.getTypeFromName(class2);
+		rollAbilityScoresDblClass(classType1, level1, classType2, level2);
+		classList.add(new ClassRecord(this, classType1, level1));
+		classList.add(new ClassRecord(this, classType2, level2));
+		updateStats();
+		setPerfectHealth();			
 	}
 	
 	//--------------------------------------------------------------------------
@@ -132,15 +179,90 @@ public class Character extends Monster {
 	public void addEquipment (Equipment equip) { equipList.add(equip); }
 	public void dropAllEquipment () { equipList.clear(); }
 
+	// Class-detecting methods
+	public boolean isFighter () { return hasPrimeReqClass(Ability.Str); }
+	public boolean isThief () { return hasPrimeReqClass(Ability.Dex); }
+	public boolean isWizard () { return hasPrimeReqClass(Ability.Int); }
+
 	/**
-	*  Roll random ability scores.
+	*  Roll random ability scores for single-class character.
 	*/
-	private int[] newAbilityScores () {
-		int[] scores = new int[Ability.length];
- 		for (int i = 0; i < Ability.length; i++) {
- 			scores[i] = ABILITY_DICE.roll();
+	private void rollAbilityScores (ClassType type, int level) {
+		if (boostInitialAbilities) {
+			rollPriorityAbilityScores(type.getAbilityPriority(), level);
+		}
+		else {		
+			for (int i = 0; i < Ability.length; i++) {
+				abilityScore[i] = ABILITY_DICE[0].roll();
+			}
+		}
+	}
+
+	/**
+	*  Roll random ability scores for double-class character.
+	*  (This is ugly b/c it needs to happen before we add class records.)
+	*/
+	private void rollAbilityScoresDblClass(ClassType type1, int level1, 
+			ClassType type2, int level2) {
+		if (boostInitialAbilities) {
+			Ability[] priorityList;
+			if (type1.getPrimeReq() == Ability.Int || type2.getPrimeReq() == Ability.Int) {
+				priorityList = new Ability[] {Ability.Dex, Ability.Int, 
+					Ability.Str, Ability.Con, Ability.Cha, Ability.Wis};
+			}		
+			else {
+				priorityList = (level1 >= level2) ?
+					type1.getAbilityPriority() : type2.getAbilityPriority();
+			}
+			rollPriorityAbilityScores(priorityList, Math.max(level1, level2));
+		}			
+	}
+
+	/**
+	*  Roll boosted random ability scores as per given priority.
+	*/
+	private void rollPriorityAbilityScores(Ability[] priorityList, int level) {
+		for (int i = 0; i < Ability.length; i++) {
+			int idx = priorityList[i].ordinal();
+			abilityScore[idx] = getBoostedAbilityDice(level, i).roll();
  		}
-		return scores;
+	}
+
+	/**
+	*  Get ability dice boosted by level and priority.
+	*  This is as per OED rule observed from Monte Carlo analysis.
+	*/
+	private Dice getBoostedAbilityDice (int level, int priority) {
+		if (level <= 0) {
+			return ABILITY_DICE[0];
+		}	
+		else if (level == 1) {
+			switch (priority) {
+				case 0: return ABILITY_DICE[1];
+				default: return ABILITY_DICE[0];
+			}
+		}
+		else if (level <= 4) {
+			switch (priority) {
+				case 0: case 1: case 2: return ABILITY_DICE[1];
+				default: return ABILITY_DICE[0];
+			}
+		}
+		else if (level <= 7) {
+			switch (priority) {
+				case 0: return ABILITY_DICE[2]; 
+				case 1: case 2: return ABILITY_DICE[1];
+				default: return ABILITY_DICE[0];
+			}
+		}
+		else {
+			switch (priority) {
+				case 0: return ABILITY_DICE[3]; 
+				case 1: return ABILITY_DICE[2];
+				case 2: case 3: return ABILITY_DICE[1];
+				default: return ABILITY_DICE[0];
+			}
+		}					
 	}
 
 	/**
@@ -229,6 +351,16 @@ public class Character extends Monster {
 	}
 
 	/**
+	*  Do we have any class with the given prime requisite?
+	*/
+	private boolean hasPrimeReqClass (Ability prime) {
+		for (ClassRecord cr: classList)
+			if (cr.getClassType().getPrimeReq() == prime)
+				return true;
+		return false;	
+	}
+
+	/**
 	*  Get highest level class.
 	*/
 	public ClassRecord getTopClass() {
@@ -262,10 +394,13 @@ public class Character extends Monster {
 	private int computeArmorClass() { 
 		int AC = BASE_ARMOR_CLASS - getAbilityBonus(Ability.Dex);
 		if (armor != null) {
-			AC = AC - armor.getBaseArmor() - armor.getMagicBonus();
+			AC -= armor.getBaseArmor() + armor.getMagicBonus();
 		}	
 		if (shield != null) {
-			AC = AC - shield.getBaseArmor() - shield.getMagicBonus();
+			AC -= shield.getBaseArmor() + shield.getMagicBonus();
+		}
+		if (ring != null) {
+			AC -= ring.getMagicBonus();		
 		}
 		return AC;
 	}
@@ -274,8 +409,7 @@ public class Character extends Monster {
 	*  Get movement based on armor.
 	*/
 	private int computeMoveInches() {
-		return (armor == null ? 
-			BASE_MOVEMENT : armor.getMaxMove());
+		return (armor == null) ? BASE_MOVEMENT : armor.getMaxMove();
 	}
 
 	/**
@@ -440,7 +574,7 @@ public class Character extends Monster {
 			return XP;
 		}
 		else {
-			Ability primeReq = cr.getClassType().getPrimeRequisite();
+			Ability primeReq = cr.getClassType().getPrimeReq();
 			int score = getAbilityScore(primeReq);
 			int bonusPct = Ability.bonusPercentXP(score);
 			return XP + XP * bonusPct/100;
@@ -473,17 +607,16 @@ public class Character extends Monster {
 	}
 
 	/**
-	*  Create human NPC with equipment from class title.
+	*  Create evil human NPC with equipment from class title.
 	*/
-	static public Character newNPCFromTitle (String title, Alignment align) {
+	static public Character evilNPCFromTitle (String title) {
 		ClassType classType = ClassIndex.getInstance().getTypeFromTitle(title);
 		if (classType != null) {
+			String classn = classType.getName();
 			int level = classType.getLevelFromTitle(title);
-			Character c = new Character("Human", classType.getName(), level, align);
+			Character c = new Character("Human", classn, level, "Chaotic");
 			c.setBasicEquipment();
-			for (int i = 1; i <= level; i++) {
-				c.checkMagicArmsBoost(NPC_PCT_MAGIC_PER_LEVEL);			
-			}
+			c.boostMagicItemsToLevel();
 			return c;
 		}
 		return null;
@@ -493,51 +626,108 @@ public class Character extends Monster {
 	*  Set basic equipment by top class.
 	*/
 	public void setBasicEquipment () {
-		String className = getTopClass().getClassType().getName();
-		if (className.equals("Fighter")) {
+		if (isFighter()) {
 			switch (getLevel()) {
 				case 0: setArmor(Armor.makeType(Armor.Type.Leather)); break;
 				case 1: setArmor(Armor.makeType(Armor.Type.Chain)); break;
 				default: setArmor(Armor.makeType(Armor.Type.Plate)); break;
 			}
-			setShield(Armor.makeType(Armor.Type.Shield));
-			addEquipment(Weapon.randomPrimary());
+			Weapon primary = Weapon.randomPrimary();
+			addEquipment(primary);
+			if (primary.getHandsUsed() < 2) {
+				setShield(Armor.makeType(Armor.Type.Shield));
+			}
 			addEquipment(Weapon.randomSecondary());
+			if (isWizard()) {
+				setArmor(Armor.makeType(Armor.Type.Chain));
+				setShield(null);			
+			}
 		}
-		else if (className.equals("Thief")) {
+		else if (isThief()) {
 			setArmor(Armor.makeType(Armor.Type.Leather));
-			addEquipment(new Weapon("Sword", new Dice(8), 1));
+			addEquipment(Weapon.randomThieving());
+			addEquipment(Weapon.dagger());
 		}
 		else {
-			addEquipment(Weapon.silverDagger());
+			addEquipment(Weapon.dagger());
 		}
 	}
 
 	/**
-	*  Make rolls to possibly boost magic arms.
+	*  Make rolls to boost magic items for one level.
 	*/
-	public void checkMagicArmsBoost (int percent) {
+	public void boostMagicItemsOneLevel () {
 		if (weaponInHand == null) {
 			drawBestWeapon(null);
 		}
-		if (armor != null & Dice.roll(100) <= percent) {
+		if (armor != null && getMagicBoost()) {
 			armor.incMagicBonus();
 		}
-		if (shield != null & Dice.roll(100) <= percent) {
+		if (shield != null && getMagicBoost()) {
 			shield.incMagicBonus();			
 		}
-		if (weaponInHand != null & Dice.roll(100) <= percent) {
+		if (weaponInHand != null && getMagicBoost()) {
 			weaponInHand.incMagicBonus();
+		}
+		if (shield == null && getMagicBoost()) {
+			incrementRing();
+		}
+		if (getTopClass().getClassType().usesSpells() && getMagicBoost()) {
+			incrementWand();
 		}
 		updateStats();
 	}
 
 	/**
+	*  Boost all magic items to the character's top level. 
+	*/
+	public void boostMagicItemsToLevel () {
+		int level = getLevel();
+		for (int i = 1; i < level; i++) {
+			boostMagicItemsOneLevel();
+		}
+	}
+
+	/**
+	*	Check if a magic item boost is gained. 
+	*/
+	boolean getMagicBoost () {
+		return Dice.roll(100) <= pctMagicPerLevel;
+	}
+
+	/**
+	*	Increment magic ring worn.
+	*/
+	void incrementRing () {
+		if (ring == null)
+			ring = new Equipment("Ring of Protection", 1);
+		else
+			ring.incMagicBonus();		
+	}
+
+	/**
+	*	Increment magic wand carried.
+	*/
+	void incrementWand () {
+		Wands wandTable = Wands.getInstance();
+		if (wand == null)
+			wand = wandTable.getRandom(1);
+		else {
+			int newTier = wandTable.getTier(wand) + 1;
+			Equipment newWand = wandTable.getRandom(newTier);
+			if (newWand != null)
+				wand = newWand;				
+		}		
+	}
+
+	/**
 	*	Roll a saving throw with modifier.
 	*/
-	public boolean	rollSave	(SavingThrows.SaveType type, int modifier) {
-		modifier += getFixedSaveModifiers(type);
+	public boolean	rollSave (SavingThrows.SaveType type, int modifier) {
 		ClassRecord bestClass = bestClassForSave(type);
+		modifier += getFixedSaveModifiers(type);
+		if (ring != null)
+			modifier += ring.getMagicBonus();
 		return SavingThrows.getInstance().rollSave(
 			type, bestClass.getClassType().getSaveAsClass(), 
 			bestClass.getLevel(), modifier); 
@@ -579,32 +769,11 @@ public class Character extends Monster {
 	*  Does this character have a given feat?
 	*/
 	public boolean hasFeat (Feat feat) {
-		return featList.contains(feat);
-	}
-
-	/**
-	*  Add a random feat to this character.
-	*/
-	public void addFeat () {
-		if (useFeats) {
-			while	(true) {
-				int rand = Dice.roll(Feat.length) - 1;
-				Feat newFeat = Feat.values()[rand];
-				if (!hasFeat(newFeat)) {
-					featList.add(newFeat);
-					return;
-				}
-			}	
+		for (ClassRecord rec: classList) {
+			if (rec.hasFeat(feat))
+				return true;
 		}
-	}
-
-	/**
-	*  Lose the last feat for this character.
-	*/
-	public void loseFeat () {
-		if (featList.size() > 1) {
-			featList.remove(featList.size() - 1);
-		}	
+		return false;
 	}
 
 	/**
@@ -617,14 +786,14 @@ public class Character extends Monster {
 	/**
 	*  Increment the age of the character.
 	*/
-	public void incrementAge (boolean ageEffects) {
+	public void incrementAge () {
 
 		// Increment the age
 		AgeCategory startAgeCat = getAgeCategory();
 		age++;
 
 		// Apply effects
-		if (ageEffects) {
+		if (applyAgingEffects) {
 			if (getAgeCategory() != startAgeCat) {
 				ageAdjustAbilities();		
 			}
@@ -667,12 +836,9 @@ public class Character extends Monster {
 	*/
 	private void ageAdjustLevels () {
 		for (ClassRecord record: classList) {
-			String className = record.getClassType().getName();
-			if (className.equals("Fighter") && age % 2 == 0) {
-				record.loseLevel();				
-			}
-			else if (className.equals("Thief") && age % 4 == 0) {
-				record.loseLevel();				
+			switch (record.getClassType().getPrimeReq()) {
+				case Str: if (age % 5 == 0) record.loseLevel(); break;
+				case Dex: if (age % 10 == 0) record.loseLevel(); break;
 			}
 		}
 	}
@@ -690,32 +856,85 @@ public class Character extends Monster {
 	}
 
 	/**
+	*  Convert string to alignment (random if null).
+	*/
+	Alignment getAlignmentFromString (String s) {
+		Alignment align = Alignment.getFromString(s);
+		if (align == null)
+			align = Alignment.randomNormal();
+		return align;	
+	}
+
+	/**
+	*  Mutator to initial ability/hp boost switch.
+	*/
+	static public void setBoostInitialAbilities (boolean boost) {
+		boostInitialAbilities = boost; 
+	}
+
+	/**
+	*  Accessor to initial ability/hp boost switch.
+	*/
+	static public boolean getBoostInitialAbilities () {
+		return boostInitialAbilities;	
+	}
+
+	/**
+	*  Mutator to aging effect switch.
+	*/
+	static public void setApplyAgingEffects (boolean aging) {
+		applyAgingEffects = aging;
+	}
+
+	/**
+	*  Mutator to percent magic per level. 
+	*/
+	static public void setPctMagicPerLevel (int pct) {
+		pctMagicPerLevel = pct;	
+	}
+
+	//--------------------------------------------------------------------------
+	//  Printing Methods
+	//--------------------------------------------------------------------------
+
+	// Print option switches
+	static public void setPrintFeats (boolean p) { printFeats = p; }
+	static public void setPrintAbilities (boolean p) { printAbilities = p; }
+	static public void setPrintEquipment (boolean p) { printEquipment = p; }
+	static public void setPrintPersonality (boolean p) { printPersonality = p; }
+	static public void setPrintSpells (boolean p) { printSpells = p; }
+
+	/**
 	*  Identify this object as a string.
 	*/
 	public String toString () {
 
-		// Header
+		// Basic stat block
 		String s = name + ", " + race + " " + classString();
-
-		// Stat block
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
-			+ ", hp " + getHP() + ", Atk " + getAttack() + "; ";
-		s += abilityString();
+			+ ", hp " + getHP() + ", Atk " + getAttack();
 
-		// Feats
-		String featStr = featString();
-		if (featStr.length() > 0) {
-			s += "; " + featStr;		
-		}
-
-		// Equipment
-		String equipStr = equipString();
-		if (equipStr.length() > 0) {
-			s += "; " + equipStr;		
-		}
-		s += ".";
-		return s;		
+		// Optional information
+		if (printAbilities)
+			s = addClause(s, abilityString());
+		if (printEquipment)
+			s = addClause(s, equipString());
+		if (printPersonality)
+			s = addClause(s, personalityString());
+		if (printFeats)
+			s = addClause(s, featString());
+		if (printSpells)
+			s = addClause(s, spellsString());
+		
+		return s += ".";
 	}	
+
+	/**
+	*  Add an independent clause to a string, if nonempty.
+	*/
+	private String addClause (String s, String clause) {
+		return clause.length() == 0 ? s : s + "; " + clause;
+	}
 
 	/**
 	*  String representation of all class and levels.
@@ -723,10 +942,11 @@ public class Character extends Monster {
 	String classString () {
 		String s = "";
 		for (ClassRecord record: classList) {
+			if (s.length() > 0) s += "/";
 			s += record.getClassType().getAbbreviation() 
-				+ record.getLevel() + "/";
+				+ record.getLevel();
 		}
-		return s.substring(0, s.length() - 1);
+		return s;
 	}
 
 	/**
@@ -735,9 +955,9 @@ public class Character extends Monster {
 	private String abilityString () {
 		String s = "";
 		for (Ability a: Ability.values()) {
-			s += a.name() + " " + getAbilityScore(a) + ", ";
+			s = addItem(s, a.name() + " " + getAbilityScore(a));
 		}
-		return s.substring(0, s.length() - 2);
+		return s;
 	}
 
 	/**
@@ -745,27 +965,10 @@ public class Character extends Monster {
 	*/
 	private String featString () {
 		String s = "";
-		for (Feat feat: featList) {
-			s += formatFeat(feat) + ", ";
-		}	
-		return (s.length() < 2 ? "" : 	
-			s.substring(0, s.length() - 2));
-	}
-
-	/**
-	*  Format feat name with spaces.
-	*/
-	private String formatFeat (Feat feat) {
-		String r = "";
-		String s = feat.toString();
-		for (int i = 0; i < s.length(); i++) {
-			if (i > 0 && 
-					java.lang.Character.isUpperCase(s.charAt(i))) {
-				r += " ";
-			}
-			r += s.charAt(i);
-		}			
-		return r;	
+		for (ClassRecord rec: classList) {
+			s = addItem(s, rec.featsString());
+		}
+		return s;
 	}
 
 	/**
@@ -773,14 +976,56 @@ public class Character extends Monster {
 	*/
 	private String equipString () {
 		String s = "";
-		if (armor != null) s += armor + ", ";
-		if (shield != null) s += shield + ", ";	
-		if (weaponInHand != null) s += weaponInHand + ", ";
+		s = addItem(s, armor);
+		s = addItem(s, shield);
+		s = addItem(s, ring);
+		s = addItem(s, weaponInHand);
+		s = addItem(s, wand);
 		for (Equipment equip: equipList) {
-			s += equip + ", ";		
+			s = addItem(s, equip);
 		}
-		return (s.length() < 2 ? "" : 	
-			s.substring(0, s.length() - 2));
+		return s;
+	}
+
+	/**
+	*  Add item to a string if not null.
+	*/
+	private String addItem (String s, Object item) {
+		if (item == null)
+			return s;
+		else {
+			if (s.length() == 0)
+				return "" + item;
+			else
+				return s + ", " + item;		
+		}	
+	}
+
+	/**
+	*  String representation of alignment and personality.
+	*/
+	private String personalityString () {
+		return alignment + ", " 
+			+ primaryPersonality + ", " 
+			+ secondaryPersonality;	
+	}
+
+	/**
+	*  String representation of spells.
+	*/
+	private String spellsString () {
+		String s = "";
+		for (ClassRecord cr: classList) {
+			if (cr.getClassType().usesSpells()) {
+				String sSpells = cr.spellsString();
+				if (sSpells.length() > 0) {
+					if (s.length() > 0)
+						s += "; ";
+					s += "Spells: " + sSpells;
+				}
+			}
+		}
+		return s;
 	}
 
 	/**
@@ -788,6 +1033,7 @@ public class Character extends Monster {
 	*/
 	public static void main (String[] args) {
 		Dice.initialize();
+		Character.setBoostInitialAbilities(true);
 		Character p = new Character("Human", "Fighter", 1, null);
 		p.setBasicEquipment();
 		p.drawBestWeapon(null);

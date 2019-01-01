@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 /******************************************************************************
 *  List of special abilities found in database but not recognized.

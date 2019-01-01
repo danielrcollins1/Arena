@@ -1,6 +1,5 @@
 import java.io.*; 
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.*;
 import java.nio.charset.Charset;
 
 /******************************************************************************
@@ -39,7 +38,7 @@ public class CSVReader {
 	public static String[][] readFile (String filename, String charset) throws IOException {
 		File file = new File(filename);
 		Scanner scan = new Scanner(file, charset);
-		ArrayList<String[]> lines = new ArrayList<String[]>();
+		List<String[]> lines = new ArrayList<String[]>();
 		while (scan.hasNextLine()) {
 			lines.add(splitLine(scan.nextLine()));
 		}
@@ -55,7 +54,7 @@ public class CSVReader {
 	public static String[] splitLine (String line) {
 		int ptr = 0;
 		line = trimTrailingDelimit(line);
-		ArrayList<String> fieldList = new ArrayList<String>();
+		List<String> fieldList = new ArrayList<String>();
 		while (ptr < line.length()) {
 
 			// Field is non-quoted
@@ -103,7 +102,7 @@ public class CSVReader {
 			}
  		}
 		
-		// Return arrayList as normal array
+		// Return list as normal array
 		String[] format = new String[0];
 		return fieldList.toArray(format);
 	}

@@ -36,6 +36,13 @@ public class Equipment {
 		this.name = name;
 		setMagicBonus(magicBonus);
 	}
+
+	/**
+	*  Nonmagic constructor
+	*/
+	Equipment (String name) {
+		this(name, 0);	
+	}
 	
 	//--------------------------------------------------------------------------
 	//  Methods

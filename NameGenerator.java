@@ -1,6 +1,4 @@
-import java.io.*; 
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Name generator for characters.
@@ -19,8 +17,8 @@ public class NameGenerator {
 	/** Name of file with names. */
 	final String NAMES_FILE = "Names.csv";
 
-	/** Chance for female name. */
-	final double CHANCE_FEMALE = 0.125;
+	/** Base chance for female name. */
+	final double BASE_CHANCE_FEMALE = 0.125;
 
 	//--------------------------------------------------------------------------
 	//  Inner class
@@ -44,7 +42,10 @@ public class NameGenerator {
 	static NameGenerator instance = null;
 
 	/** Table of saving throw targets. */
-	ArrayList<NameData> nameList;
+	NameData[] nameList;
+
+	/** Chance for female name. */
+	double chanceFemale;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -54,10 +55,11 @@ public class NameGenerator {
 	*  Constructor (read from dedicated file).
 	*/
 	protected NameGenerator () throws IOException {
+		chanceFemale = BASE_CHANCE_FEMALE;
 		String[][] table = CSVReader.readFile(NAMES_FILE);
-		nameList = new ArrayList<NameData>();
+		nameList = new NameData[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			nameList.add(new NameData(table[i]));
+			nameList[i - 1] = new NameData(table[i]);
 		}		
 	}
 
@@ -81,17 +83,37 @@ public class NameGenerator {
 	}
 
 	/**
+	*  Set a new chance for female names.
+	*/
+	public void setChanceFemale (double chance) {
+		chanceFemale = chance;	
+	}
+
+	/**
 	*  Get a random name.
 	*/
 	public String getRandom () {
-		boolean randMale = (Math.random() > CHANCE_FEMALE);
+		boolean randMale = (Math.random() > chanceFemale);
 		while (true) {
-			int randName = Dice.roll(nameList.size()) - 1;
-			NameData nameData = nameList.get(randName);
+			int index = Dice.roll(nameList.length) - 1;
+			NameData nameData = nameList[index];
 			if (nameData.isMale == randMale) {
 				return nameData.name;			
 			}
 		}
+	}
+	
+	/**
+	*  Main test function.
+	*/
+	public static void main (String[] args) {	
+		Dice.initialize();
+		NameGenerator nameGen = NameGenerator.getInstance();
+		System.out.println("Random Names:");
+		for (int i = 0; i <= 20; i++) {
+			System.out.println(nameGen.getRandom());
+		}
+		System.out.println();
 	}
 }
 

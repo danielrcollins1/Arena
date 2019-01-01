@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.ArrayList;
+
 /******************************************************************************
 *  Record of one class gained by a character (XP, level, hit points, etc.).
 *
@@ -7,6 +10,13 @@
 ******************************************************************************/
 
 public class ClassRecord {
+
+	//--------------------------------------------------------------------------
+	//  Constants
+	//--------------------------------------------------------------------------
+
+	/** Hit die for level 0. */
+	static final int LEVEL_ZERO_HIT_DIE = 6;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -27,6 +37,12 @@ public class ClassRecord {
 	/** Experience points earned towards this class. */
 	int XP;
 
+	/** Spells known for this class. */
+	List<List<Spell>> spellsKnown;
+
+	/** Feats known for this class. */
+	List<Feat> featsKnown;
+
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
@@ -41,6 +57,7 @@ public class ClassRecord {
 		this.XP = type.getXpReq(level);
 		rollFullHitPoints();
 		addAllFeats();
+		addAllSpells();
 	}
 
 	//--------------------------------------------------------------------------
@@ -74,9 +91,9 @@ public class ClassRecord {
 	public void addLevel () {
 		level++;	
 		XP = Math.max(XP, classType.getXpReq(level));
-		rollNewHitPoints(level);
+		addNewHitPoints(level, false);
 		if (isFeatLevel(level)) {
-			character.addFeat();
+			addFeat();
 		}
 	}
 
@@ -95,7 +112,7 @@ public class ClassRecord {
 		// Else reduce hit points proportionally
 		else {
 			if (isFeatLevel(level))
-				character.loseFeat();
+				loseFeat();
 			Dice diceInc = classType.getHitDiceInc(level);
 			if (diceInc.getAdd() > 0)
 				hitPoints -= diceInc.getAdd();
@@ -107,23 +124,73 @@ public class ClassRecord {
 	}
 
 	/**
+	*  Is this a level where we gain a feat?
+	*/
+	boolean isFeatLevel (int newLevel) {
+		return Character.useFeats()
+			&& classType.usesFeats()
+			&& newLevel % 4 == 0;
+	}
+
+	/**
 	*  Choose all feats for new character.
 	*/
 	void addAllFeats () {
-		for (int i = 1; i <= level; i++) {
-			if (isFeatLevel(i)) {
-				character.addFeat();			
+		if (Character.useFeats() && classType.usesFeats()) {
+			featsKnown = new ArrayList<Feat>();
+			for (int i = 1; i <= level; i++) {
+				if (isFeatLevel(i)) {
+					addFeat();
+				}
 			}
 		}
 	}
 
 	/**
-	*  Is this a level where we gain a feat?
+	*  Add a random feat to this character.
 	*/
-	boolean isFeatLevel (int newLevel) {
-		return Character.useFeats()
-			&& classType.getName().equals("Fighter")
-			&& newLevel % 4 == 0;	
+	void addFeat () {
+		if (featsKnown.size() < Feat.number) {
+			Feat newFeat;
+			do {
+				int rand = Dice.roll(Feat.number) - 1;
+				newFeat = Feat.values()[rand];
+			} while (featsKnown.contains(newFeat));
+			featsKnown.add(newFeat);
+		}	
+	}
+
+	/**
+	*  Lose the last feat for this character.
+	*/
+	void loseFeat () {
+		if (featsKnown.size() > 1) {
+			featsKnown.remove(featsKnown.size() - 1);
+		}	
+	}
+
+	/**
+	*  Is this feat known by this class record?
+	*/
+	public boolean hasFeat (Feat f) {
+		return featsKnown != null && featsKnown.contains(f);
+	}
+
+	/**
+	*  String representation of feats known.
+	*/
+	String featsString () {
+		if (featsKnown == null)
+			return null;
+		else {
+			String s = "";
+			for (Feat feat: featsKnown) {
+				if (s.length() > 0)
+					s += ", ";
+				s += Feat.formatName(feat);
+			}
+			return s;
+		}
 	}
 
 	/**
@@ -133,37 +200,6 @@ public class ClassRecord {
 		int low = classType.getXpReq(level);
 		int high = classType.getXpReqNext(level);
 		return (low + high)/2;
-	}
-
-	/**
-	*  Add hit points for a given level.
-	*/
-	void rollNewHitPoints (int newLevel) {
-		int hpBonus = character.getAbilityBonus(Ability.Con);
-
-		// From level 0 to 1st
-		if (newLevel == 1) {
-			hitPoints += (classType.getHitDiceType() - 6)/2;
-			hitPoints = Math.max(1, hitPoints);
-		}
-		
-		// Levels above 1st
-		else if (newLevel > 1) {
-			Dice newDice = classType.getHitDiceInc(newLevel);
-			hitPoints += (newDice.getNum() > 0 ?
-				Math.max(1, newDice.rollPlus(hpBonus)) : newDice.getAdd());
-		}		
-	}
-
-	/**
-	*  Roll full hit points from start to current level.
-	*/
-	void rollFullHitPoints () {
-		int hpBonus = character.getAbilityBonus(Ability.Con);
-		hitPoints = Math.max(1, new Dice(1, 6).rollPlus(hpBonus)); // Level 0
-		for (int newLevel = 1; newLevel <= level; newLevel++) {
-			rollNewHitPoints(newLevel);
-		}
 	}
 
 	/**
@@ -178,6 +214,60 @@ public class ClassRecord {
 	}
 
 	/**
+	*  Roll full hit points from start to current level.
+	*/
+	void rollFullHitPoints () {
+		hitPoints = 0;
+		boolean boost = Character.getBoostInitialAbilities();
+		for (int newLevel = 0; newLevel <= level; newLevel++) {
+			addNewHitPoints(newLevel, boost);
+		}
+	}
+
+	/**
+	*  Add hit points for a given level.
+	*  Per OED rules, at initial generation,
+	*    we do not accept 1 or 2 hp die-rolls.
+	*/
+	void addNewHitPoints (int newLevel, boolean initBoost) {
+		int hpBonus = character.getAbilityBonus(Ability.Con);
+
+		if (newLevel == 0) {  // Roll d6 for any class
+			Dice newDice = new Dice(1, LEVEL_ZERO_HIT_DIE, hpBonus);
+			if (initBoost)
+				newDice = boostInitHitDice(newDice);
+			hitPoints += newDice.boundRoll(1);
+		}
+		if (newLevel == 1) {  // Pro-rate to new class die
+			int revisedRoll = (int) Math.round((hitPoints - hpBonus) 
+				* (double) classType.getHitDiceType() / LEVEL_ZERO_HIT_DIE);
+			hitPoints = Math.max(1, revisedRoll + hpBonus);
+		}
+		else if (newLevel > 1) {
+			Dice newDice = classType.getHitDiceInc(newLevel);
+			if (newDice.getNum() > 0) {  // Roll new die
+				newDice.modifyAdd(hpBonus);
+				if (initBoost)
+					newDice = boostInitHitDice(newDice);
+				hitPoints += newDice.boundRoll(1);
+			}
+			else {  // Add constant for high level
+				hitPoints += newDice.getAdd();			
+			}
+		}		
+	}
+
+	/**
+	*  Convert hit dice for init boost (no 1's or 2's).
+	*/
+	private Dice boostInitHitDice (Dice hitDice) {
+		Dice boostDice = new Dice(hitDice);	
+		boostDice.setSides(boostDice.getSides() - 2);
+		boostDice.modifyAdd(boostDice.getNum() * 2);
+		return boostDice;	
+	}
+
+	/**
 	*  Handle a Constitution change to hit points.
 	*/
 	public void handleConChange (int oldCon) {
@@ -186,6 +276,70 @@ public class ClassRecord {
 		int diffBonus = newBonus - oldBonus;
 		int numDice = classType.getHitDiceTotal(level).getNum();
 		hitPoints = Math.max(numDice, hitPoints + diffBonus * numDice);
+	}
+
+	/**
+	*  Add all expected wizard spells.
+	*/
+	void addAllSpells() {
+		if (classType.usesSpells()) {
+			spellsKnown = new ArrayList<List<Spell>>();
+			SpellsTable table = SpellsTable.getInstance();
+			SpellsUsable usable = SpellsUsable.getInstance();
+			for (int power = 1; power <= usable.getMaxSpellLevel(); power++) {
+				spellsKnown.add(new ArrayList<Spell>());				
+				int spellsUsable = usable.getSpellsUsable(level, power);
+				for (int num = 0; num < spellsUsable; num++) {
+					addOneSpell(power);
+				}
+			}
+		}
+	}
+
+	/**
+	*  Add one spell to given level.
+	*/
+	void addOneSpell (int power) {
+		Spell spell;
+		SpellsTable table = SpellsTable.getInstance();
+		List<Spell> list = spellsKnown.get(power - 1);
+		if (list.size() < table.getNumAtLevel(power)) {
+			do {
+				Spell.Usage usage = rollUsage();
+				spell = table.getRandom(power, usage);
+			} while (list.contains(spell));
+			list.add(spell);
+		}
+	}
+
+	/**
+	*  Roll random spell usage.
+	*/
+	Spell.Usage rollUsage () {
+		switch (Dice.roll(6)) {
+			case 1: return Spell.Usage.Miscellany;
+			case 2: case 3: return Spell.Usage.Defensive;
+			default: return Spell.Usage.Offensive;
+		}	
+	}
+
+	/**
+	*  String representation of spells known.
+	*/
+	String spellsString () {
+		if (spellsKnown == null)
+			return null;
+		else {
+			String s = "";
+			for (List<Spell> list: spellsKnown) {
+				for (Spell spell: list) {
+					if (s.length() > 0)
+						s += ", ";
+					s += spell.getName();				
+				}
+			}
+			return s;
+		}
 	}
 
 	/**

@@ -13,20 +13,29 @@ public enum Ability {
 	public static final int length = Ability.values().length;
 
 	//--------------------------------------------------------------------------
+	//  Inner Enumeration
+	//--------------------------------------------------------------------------
+
+	/** Available bonus formula methods. */
+	enum BonusType {Bonus_BX, Bonus_OED};
+
+	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
+	/** Constant switch for bonus formula. */
 	final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
 
-	//--------------------------------------------------------------------------
-	//  Enumerations
-	//--------------------------------------------------------------------------
-
-	enum BonusType {Bonus_BX, Bonus_OED};
+	/** Prioritized preference for any class based on prime requisite. */
+	private final static Ability[][] abilityPriority = 
+		{{Str, Dex, Con, Int, Wis, Cha}, {Int, Dex, Con, Cha, Wis, Str},
+		 {Wis, Con, Str, Int, Cha, Dex}, {Dex, Str, Con, Int, Cha, Wis},
+		 {Con, Str, Dex, Wis, Cha, Int}, {Cha, Dex, Int, Wis, Con, Str}};
 	
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
+	
 	/**
 	*  Gives the bonus for a given ability score.
 	*/
@@ -68,7 +77,7 @@ public enum Ability {
 	}
 	
 	/**
-	*  Returns bonus percent of XP for prime requisite.
+	*  Return bonus percent of XP for prime requisite.
 	*/
 	public static int bonusPercentXP (int score) {
 		if (score >= 15) return 10;
@@ -76,6 +85,13 @@ public enum Ability {
 		else if (score >=9) return 0;
 		else if (score >= 7) return -10;
 		else return -20;
+	}
+	
+	/**
+	*  Get ability priority list based on prime requisite.
+	*/
+	public static Ability[] getPriorityList(Ability primeReq) {
+		return abilityPriority[primeReq.ordinal()];
 	}
 }
 

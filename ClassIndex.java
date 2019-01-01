@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /******************************************************************************
 *  Index of supported character class types (singleton pattern).
@@ -27,7 +25,7 @@ public class ClassIndex {
 	static ClassIndex instance = null;
 	
 	/** Array of ClassInfo records. */
-	ArrayList<ClassType> classTypeList;
+	ClassType[] classTypeList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -38,12 +36,12 @@ public class ClassIndex {
 	*/
 	protected ClassIndex () throws IOException {
 		String[][] index = CSVReader.readFile(CLASS_INDEX_FILE);
-		classTypeList = new ArrayList<ClassType>();
+		classTypeList = new ClassType[index.length - 1];
 		for (int i = 1; i < index.length; i++) {
 			String className = index[i][0];
 			String filename = "Class-" + className + ".csv";
 			String[][] levelData = CSVReader.readFile(filename);
-			classTypeList.add(new ClassType(index[i], levelData));
+			classTypeList[i - 1] = new ClassType(index[i], levelData);
 		}
 	}
 

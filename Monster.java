@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -51,8 +50,8 @@ public class Monster {
 	int timesMeleed;
 	Monster host;
 	Monster charmer;
-	ArrayList<SpecialAbility> specialList;
-	ArrayList<SpecialAbility> conditionList;
+	List<SpecialAbility> specialList;
+	List<SpecialAbility> conditionList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -175,12 +174,12 @@ public class Monster {
 	public void setArmor (Armor a) {}
 	public void drawBestWeapon (Monster m) {}
 	public void sheatheWeapon () {}
-	public void checkMagicArmsBoost (int pct) {}
+	public void boostMagicItemsOneLevel () {}
 	public int getAbilityScore (Ability ability) { return 0; }
 	public void takeAbilityDamage (Ability a, int n) {} 
 	public void zeroAbilityDamage () {} 
 	public boolean hasNullAbilityScore () { return false; }
-	public boolean hasFeat (Character.Feat feat) { return false; }
+	public boolean hasFeat (Feat feat) { return false; }
 	public void addXP (int xp) {}
 
 	/**
@@ -218,8 +217,8 @@ public class Monster {
 	/**
 	* Parse special ability list from descriptor string.
 	*/
-	private ArrayList<SpecialAbility> parseSpecialAbilityList (String s) {
-		ArrayList<SpecialAbility> list = new ArrayList<SpecialAbility>(); 
+	private List<SpecialAbility> parseSpecialAbilityList (String s) {
+		List<SpecialAbility> list = new ArrayList<SpecialAbility>(); 
 		if (s.length() > 1) {
 			String parts[] = s.split(", ");
 			for (String part: parts) {
@@ -245,7 +244,7 @@ public class Monster {
 	*/
 	public Monster spawn () {
 		if (hasSpecial(SpecialType.NPC)) {
-			Character c = Character.newNPCFromTitle(race, Alignment.Chaotic);
+			Character c = Character.evilNPCFromTitle(race);
 			c.race = race; // Reset monster race/title for kill tally
 			for (SpecialAbility s: specialList) {
 				c.specialList.add(s);
@@ -346,9 +345,9 @@ public class Monster {
 		int totalRoll = naturalRoll + attack.getBonus() 
 			+ target.getAC() + hitModifier(target);
 		if (canAttack(target) && (naturalRoll == 20 || totalRoll >= 20)) {
-			int damage = attack.getDamage().roll();
-			if (damage < 1 && attack.getDamage().getNum() > 0)
-				damage = 1;
+			Dice damageDice = attack.getDamage();
+			int floor = damageDice.getNum() == 0 ? 0 : 1;
+			int damage = damageDice.boundRoll(floor);
 			damage = checkDamageReduction(target, damage);
 			target.takeDamage(damage);
 			checkSpecialOnHit(target, totalRoll, last);
@@ -418,7 +417,7 @@ public class Monster {
 		// Berserker bonus
 		if (hasSpecial(SpecialType.Berserking) 
 				|| hasCondition(SpecialType.Berserking)
-				|| hasFeat(Character.Feat.Berserking)) {
+				|| hasFeat(Feat.Berserking)) {
 			modifier += 2;
 		}
 
@@ -607,7 +606,7 @@ public class Monster {
 				case Fear:
 					Dice moraleDice = new Dice(2, 6); 
 					for (Monster targetFear: enemy) {
-						if (moraleDice.rollPlus(targetFear.getHD()) < 9) {
+						if (moraleDice.roll() + targetFear.getHD() < 9) {
 							targetFear.addCondition(SpecialType.Fear);
 						}
 					}
@@ -636,7 +635,7 @@ public class Monster {
 				case Whirlwind:
 					int diameter = s.getParam();
 					int numVictims = diameter * diameter;
-					ArrayList<Monster> victims = enemy.randomGroup(numVictims);
+					List<Monster> victims = enemy.randomGroup(numVictims);
 					for (Monster m: victims) {
 						if (m.getHD() < 2) {
 							m.instaKill();
@@ -647,7 +646,7 @@ public class Monster {
 				case Confusion:
 					target = enemy.random();
 					modifier = -s.getParam();
-					if (target.hasFeat(Character.Feat.IronWill)) modifier += 4;
+					if (target.hasFeat(Feat.IronWill)) modifier += 4;
 					castCondition(target, SpecialType.Confusion, modifier);
 					break;
 
@@ -962,7 +961,7 @@ public class Monster {
 	*/
 	void castEnergyArea (Party enemy, int number, int damage, 
 			EnergyType energy, SavingThrows.SaveType saveType) {
-		ArrayList<Monster> targets = enemy.randomGroup(number);
+		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			castEnergy(m, damage, energy, saveType);
 		}
@@ -996,7 +995,7 @@ public class Monster {
 	* Apply condition to multiple enemy party numbers.
 	*/
 	void castConditionArea (Party enemy, int number, SpecialType condition) {
-		ArrayList<Monster> targets = enemy.randomGroup(number);
+		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			castCondition(m, condition);
 		}
@@ -1022,7 +1021,7 @@ public class Monster {
 	* Cast a charm on one enemy monster.
 	*/
 	void castCharm (Monster target, int saveMod) {
-		if (target.hasFeat(Character.Feat.IronWill)) saveMod += 4;
+		if (target.hasFeat(Feat.IronWill)) saveMod += 4;
 		if (!target.rollSave(SavingThrows.SaveType.Spells, saveMod)) {
 			target.setCharmed(this);
 		}
@@ -1036,7 +1035,7 @@ public class Monster {
 	*    condition MindBlast (thus, hors de combat). 
 	*/
 	void mindBlastArea (Party enemy, int number) {
-		ArrayList<Monster> targets = enemy.randomGroup(number);
+		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			int intel = m.getAbilityScore(Ability.Int);
 			if (intel > 0) {
@@ -1208,7 +1207,7 @@ public class Monster {
 
 		// Great Fortitude feat vs. death saves 
 		if (type == SavingThrows.SaveType.Death && 
-				hasFeat(Character.Feat.GreatFortitude))
+				hasFeat(Feat.GreatFortitude))
 			modifier += 4;  
 
 		return modifier;

@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 /******************************************************************************
 *  One party (force, team, band, or group) of Monsters.
@@ -17,10 +15,10 @@ public class Party implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 
 	/** List of party members. */
-	ArrayList<Monster> members;
+	List<Monster> members;
 
 	/** List of fallen members. */
-	ArrayList<Monster> fallen;
+	List<Monster> fallen;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -46,7 +44,7 @@ public class Party implements Iterable<Monster> {
 	/**
 	*  List constructor
 	*/
-	Party (ArrayList<Monster> list) {
+	Party (List<Monster> list) {
 		members = list;
 		fallen = new ArrayList<Monster>();
 	}
@@ -116,15 +114,15 @@ public class Party implements Iterable<Monster> {
 	/**
 	*  Get a random subset of this party.
 	*/
-	public ArrayList<Monster> randomGroup (int number) {
+	public List<Monster> randomGroup (int number) {
 
 		// Make a copy of members & shuffle it
-		ArrayList<Monster> shuffledMembers 
+		List<Monster> shuffledMembers 
 			= new ArrayList<Monster>(members);
 		Collections.shuffle(shuffledMembers);
 
 		// Deal out top elements from shuffle
-		ArrayList<Monster> group = new ArrayList<Monster>();
+		List<Monster> group = new ArrayList<Monster>();
 		int num = Math.min(number, size());
 		for (int i = 0; i < num; i++) {
 			group.add(shuffledMembers.get(i));
@@ -205,7 +203,7 @@ public class Party implements Iterable<Monster> {
 						boolean last = (i == attack.getRate() - 1);
 						m.singleAttack(m.getAttack(), target, last);
 						if (target.horsDeCombat() && 
-							m.hasFeat(Character.Feat.GreatCleave)) i--;
+							m.hasFeat(Feat.GreatCleave)) i--;
 						target.incTimesMeleed();
 					}
 				}
@@ -235,10 +233,17 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Sort the list of members by level/hit dice.
+	*  Sort the list of members by increasing level/hit dice.
 	*/
 	public void sortMembers () {
 		members.sort((a, b) -> a.getHD() - b.getHD());
+	}
+
+	/**
+	*  Sort the list of members by decreasing level/hit dice.
+	*/
+	public void sortMembersDown () {
+		members.sort((a, b) -> b.getHD() - a.getHD());
 	}
 
 	/**
@@ -280,29 +285,15 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Counts members at a given level or above.
+	*  Print top number of members of party. 
 	*/
-	public int countAboveLevel (int level) {
-		int count = 0;
-		for (Monster m: this) {
-			if (m.getLevel() >= level)
-				count++;  
-		}
-		return count;
-	}
-
-	/**
-	*  Prints members at a given level or above.
-	*/
-	public void printAboveLevel (int level) {
-		sortMembers();
-		for (int i = members.size() - 1; i >= 0; i--) {
-			Monster m = members.get(i);
-			if (m.getLevel() >= level)
-				System.out.println(m);
+	public void printTopMembers (int number) {
+		sortMembersDown();
+		for (int i = 0; i < number && i < members.size(); i++) {
+			System.out.println(members.get(i));				
 		}
 		System.out.println();
-	}
+	}	
 
 	/**
 	* Identify this object as a string.
@@ -327,8 +318,8 @@ public class Party implements Iterable<Monster> {
 	/**
 	* Make a list of the party's hit points.
 	*/
-	public ArrayList<Integer> getHitPointList () {
-		ArrayList<Integer> list = new ArrayList<Integer>(size());
+	public List<Integer> getHitPointList () {
+		List<Integer> list = new ArrayList<Integer>(size());
 		for (Monster m: this) {
 			list.add(m.getHP());    
 		} 

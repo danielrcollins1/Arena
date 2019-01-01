@@ -1,4 +1,4 @@
-import java.io.*; 
+import java.io.IOException; 
 import java.util.*;
 
 /******************************************************************************
@@ -25,8 +25,8 @@ public class MonsterDatabase implements Iterable<Monster> {
 	/** The singleton class instance. */
 	static MonsterDatabase instance = null;
 	
-	/** Array of Monster records. */
-	ArrayList<Monster> monsterList;
+	/** List of Monster records. */
+	List<Monster> monsterList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -36,8 +36,8 @@ public class MonsterDatabase implements Iterable<Monster> {
 	*  Constructor (read from dedicated file).
 	*/
 	protected MonsterDatabase () throws IOException {
-		monsterList = new ArrayList<Monster>();
 		String[][] table = CSVReader.readFile(MONSTER_FILE);
+		monsterList = new ArrayList<Monster>(table.length - 1);
 		for (int i = 1; i < table.length; i++) {
 			monsterList.add(new Monster(table[i]));
 		}

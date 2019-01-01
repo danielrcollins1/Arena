@@ -3,7 +3,7 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-15
-*  @version  1.1
+*  @version  1.2
 ******************************************************************************/
 
 public class Marshal {
@@ -12,8 +12,29 @@ public class Marshal {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Dice for standard number of men. */
-	static final Dice NUMBER_APPEARING_DICE = new Dice(3, 10, 10, 0);
+	/** Dice for men number appearing, as per Vol-2. */
+	static final Dice NA_DICE = new Dice(3, 10, 10, 0);
+
+	/*
+	*  Fight cycles per man to simulate.
+	*  This has been chosen after experimentation to generate a leader level
+	*  approximately in scale with those specified for men in Vol-2. 
+	*/
+	static final int FIGHTS_PER_MAN = 4;
+
+	/** 
+	*  Percent chance magic per level.
+	*  This matches the number in Vol-2; however, note that due to natural 
+	*  selection, leaders will be observed with a higher frequency of magic.
+	*/	
+	static final int PCT_MAGIC_PER_LEVEL = 5;
+	
+	/** 
+	*  Number of leaders to print. 
+	*  This (a) roughly simulates lieutenants in a cival war-era company, 
+	*  and (b) serves to fit a unit on a half digest sized page.
+	*/
+	static final int NUM_LEADERS_TO_PRINT = 4;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -24,12 +45,6 @@ public class Marshal {
 
 	/** Number of men in force. */
 	int menTotal;
-
-	/** Force all leaders to carry swords. */
-	boolean swordsOnly;
-
-	/** Use revised XP awards (per Sup-I). */
-	boolean useRevisedXPAwards;
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
@@ -44,9 +59,7 @@ public class Marshal {
 	public Marshal () {
 		Dice.initialize();
 		menType = null;
-		menTotal = 0;
-		swordsOnly = false;
-		useRevisedXPAwards = false;
+		menTotal = NA_DICE.roll();
 		exitAfterArgs = false;		
 	}
 
@@ -62,8 +75,6 @@ public class Marshal {
 		System.out.println("  menType from those listed in data file MenTypes.csv");
 		System.out.println("  where options include:");
 		System.out.println("\t-f include OED feats");
-		System.out.println("\t-s swords only (strict Vol-2 rule)");
-		System.out.println("\t-x use XP table as per Sup-I/BX");
 		System.out.println();
 	}
 
@@ -75,8 +86,6 @@ public class Marshal {
 			if (s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'f': Character.setFeatUsage(true); break;
-					case 's': swordsOnly = true; break;
-					case 'x': useRevisedXPAwards = true; break;
 					default: exitAfterArgs = true; break;
 				}
 			}
@@ -103,13 +112,10 @@ public class Marshal {
 	*  Main method.
 	*/
 	public void assembleMen () {
-		if (menTotal == 0) {
-			menTotal = NUMBER_APPEARING_DICE.roll();
-		}
 		reportHeader();
-		reportGrunts();
-		reportLeaders();
 		reportNotes();
+		reportLeaders();
+		reportGrunts();
 	}
 
 	/**
@@ -117,49 +123,8 @@ public class Marshal {
 	*/
 	void reportHeader () {
 		String header = menType + ", " 
-			+ menType.determineAlignment() + ", "
 			+ menTotal + " Total ";
 		System.out.println(header);
-		System.out.println();
-	}
-
-	/**
-	*  Generate and report on grunt-types.
-	*/
-	void reportGrunts () {
-		MenType.Component[] comp = menType.createComponents(menTotal);
-		for (MenType.Component c: comp) {
-			System.out.println(c.number + " " + c.description);			
-		}
-		System.out.println();
-	}
-
-	/**
-	*  Generate and report on leader-types.
-	*/
-	void reportLeaders () {
-		Arena arena = new Arena(false, menTotal);
-		arena.setBaseArmor(menType.getLeaderArmor());
-		arena.setUseRevisedXPAwards(useRevisedXPAwards);
-		if (swordsOnly) {
-			arena.setBaseWeapon(new Weapon("Sword", new Dice(8), 1));		
-		}
-		while (!isLeaderReqMet(arena)) {
-			arena.runOneCycle();		
-		}
-		arena.printMenAboveLevel(4);
-	}
-
-	/**
-	*  Check if we have required leaders.
-	*/
-	boolean isLeaderReqMet (Arena arena) {
-		if (menTotal < 50)
-			return arena.countMenAboveLevel(4) >= 1;
-		else if (menTotal < 100)
-			return arena.countMenAboveLevel(5) >= 1;
-		else
-			return arena.countMenAboveLevel(8) >= menTotal/100;
 	}
 
 	/**
@@ -187,6 +152,30 @@ public class Marshal {
 			return "50% for Magic-User (10th-11th), 25% for Cleric (8th).";
 		else
 			return "100% for Magic-User (10th-11th), 50% for Cleric (8th).";
+	}
+
+	/**
+	*  Generate and report on leader-types.
+	*/
+	void reportLeaders () {
+		Arena arena = new Arena(menTotal, false, true);
+		arena.setBaseArmor(menType.getLeaderArmor());
+		arena.setTypicalAlignment(menType.getAlignment());
+		arena.setFightCycles(menTotal * FIGHTS_PER_MAN);
+		arena.setPctMagicPerLevel(PCT_MAGIC_PER_LEVEL);
+		arena.runSim();
+		arena.printTopFighters(NUM_LEADERS_TO_PRINT);
+	}
+
+	/**
+	*  Generate and report on grunt-types.
+	*/
+	void reportGrunts () {
+		MenType.Component[] comp = menType.createComponents(menTotal);
+		for (MenType.Component c: comp) {
+			System.out.println(c.number + " " + c.description + ".");
+		}
+		System.out.println();
 	}
 
 	/**

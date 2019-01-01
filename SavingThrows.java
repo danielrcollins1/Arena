@@ -1,6 +1,4 @@
-import java.io.*; 
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Saving throws table (singleton pattern).
@@ -69,7 +67,7 @@ public class SavingThrows {
 	static SavingThrows instance = null;
 
 	/** Table of saving throw targets. */
-	ArrayList<SaveRecord> targetsTable;
+	SaveRecord[] targetsTable;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -80,9 +78,9 @@ public class SavingThrows {
 	*/
 	protected SavingThrows () throws IOException {
 		String[][] table = CSVReader.readFile(SAVING_THROWS_FILE);
-		targetsTable = new ArrayList<SaveRecord>();
+		targetsTable = new SaveRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
-			targetsTable.add(new SaveRecord(table[i]));		
+			targetsTable[i - 1] = new SaveRecord(table[i]);
 		}		
 	}
 
@@ -139,8 +137,8 @@ public class SavingThrows {
 	*/
 	SaveRecord getSaveRecord (String asClass, int level) {
 		level = Math.max(1, level);
-		for (int i = targetsTable.size() - 1; i > -1; i--) {
-			SaveRecord record = targetsTable.get(i);
+		for (int i = targetsTable.length - 1; i > -1; i--) {
+			SaveRecord record = targetsTable[i];
 			if (record.className.equals(asClass) && level >= record.minLevel)
 				return record;
 		}

@@ -94,6 +94,27 @@ public class Weapon extends Equipment {
 			default: return new Weapon("Dagger", new Dice(4), 1);
 		}
 	}	
+
+	/**
+	*  Make a random melee weapon for a thief.
+	*/
+	static public Weapon randomThieving () {
+		switch (Dice.roll(6)) {
+			case 1: return new Weapon("Sword", new Dice(8), 1);
+			case 2: return new Weapon("Dagger", new Dice(4), 1);
+			case 3: return new Weapon("Spear", new Dice(6), 1);
+			case 4: return new Weapon("Hand axe", new Dice(6), 1);
+			case 5: return new Weapon("Mace", new Dice(6), 1);
+			default: return new Weapon("Sword", new Dice(8), 1);
+		}
+	}
+
+	/**
+	*  Make a normal dagger.
+	*/
+	static public Weapon dagger () {
+		return new Weapon("Dagger", new Dice(4), 1, 0, Material.Steel);
+	}
 	
 	/**
 	*  Make a silver dagger.

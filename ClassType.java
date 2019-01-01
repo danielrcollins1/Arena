@@ -39,6 +39,15 @@ public class ClassType {
 	/** Save as this class. */
 	String saveAsClass;
 
+	/** Does this class use feats? */
+	boolean useFeats;
+
+	/** Does this class use skills? */
+	boolean useSkills;
+
+	/** Does this class use spells? */
+	boolean useSpells;
+
 	/** Array of low-level XP requirements. */
 	int[] xpReqs;
 	
@@ -74,6 +83,11 @@ public class ClassType {
 				primeRequisite = ability;
 			}			
 		}
+
+		// Special ability category
+		useFeats = indexData[8].contains("Feats");
+		useSkills = indexData[8].contains("Skills");
+		useSpells = indexData[8].contains("Spells");
 		
 		// Class-specific fields
 		int arraySize = levelData.length - 1;
@@ -106,7 +120,7 @@ public class ClassType {
 	/**
 	*  Get the prime requisite.
 	*/
-	public Ability getPrimeRequisite () { 
+	public Ability getPrimeReq () { 
 		return primeRequisite; 
 	}
 
@@ -202,6 +216,34 @@ public class ClassType {
 	*/
 	public String getSaveAsClass () {
 		return saveAsClass;
+	}
+
+	/**
+	*  Get whether we use feats.
+	*/
+	public boolean usesFeats () {
+		return useFeats;
+	}
+
+	/**
+	*  Get whether we use skills.
+	*/
+	public boolean usesSkills () {
+		return useSkills;
+	}
+
+	/**
+	*  Get whether we use spells.
+	*/
+	public boolean usesSpells () {
+		return useSpells;
+	}
+
+	/**
+	*  Get the ability priority list.
+	*/
+	public Ability[] getAbilityPriority () {
+		return Ability.getPriorityList(primeRequisite);
 	}
 
 	/**
