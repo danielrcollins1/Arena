@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.io.FileWriter; 
+import java.io.IOException; 
 
 /******************************************************************************
 *  Generates random NPCs to user specification.
@@ -17,6 +19,9 @@ public class NPCGenerator {
 	/** Percent chance for magic per level. */
 	static final int PCT_MAGIC_PER_LEVEL = 15;
 
+	/** File writer end-line symbol. */
+	static final String ENDL = System.getProperty("line.separator");
+
 	//--------------------------------------------------------------------------
 	//  Inner Class
 	//--------------------------------------------------------------------------
@@ -34,10 +39,19 @@ public class NPCGenerator {
 	//--------------------------------------------------------------------------
 
 	/** Profile input by user. */
-	static GenProfile inputProfile;
+	GenProfile inputProfile;
 
 	/** Number of NPCs to create. */
-	static int numNPCs; 
+	int numNPCs; 
+
+	/** Flag to escape after parsing arguments. */
+	boolean exitAfterArgs;
+
+	/** Output filename. */
+	String outFileName;
+	
+	/** File writer. */
+	FileWriter fileWriter;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -59,9 +73,37 @@ public class NPCGenerator {
 	//--------------------------------------------------------------------------
 
 	/**
+	*  Print program banner.
+	*/
+	public void printBanner () {
+		System.out.println("OED NPC Generator\n");	
+	}
+
+	/**
+	*  Print usage.
+	*/
+	public void printUsage () {
+		System.out.println("Usage: NPCGenerator [filename]");
+		System.out.println("\tfilename: Text file to write NPCs");
+		System.out.println();
+	}
+
+	/**
+	*  Parse arguments.
+	*/
+	public void parseArgs (String[] args) {
+		for (String s: args) {
+			if (s.equals("-?"))
+				exitAfterArgs = true;
+			else
+				outFileName = s;
+		}
+	}
+
+	/**
 	*  Roll for a race.
 	*/
-	public static String rollRace () {
+	public String rollRace () {
 		switch (Dice.roll(6)) {
 			case 1: return "Dwarf";
 			case 2: return "Elf";
@@ -73,7 +115,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for a class.
 	*/
-	public static String rollClass () {
+	public String rollClass () {
 		switch (Dice.roll(6)) {
 			case 1: return "Wizard";
 			case 2: case 3: return "Thief";
@@ -84,7 +126,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for elf non-wizard class.
 	*/
-	public static String rollElfClass () {
+	public String rollElfClass () {
 		switch(Dice.roll(6)) {
 			case 1: case 2: return "Thief";
 			default: return "Fighter";
@@ -94,7 +136,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for an alignment.
 	*/
-	public static String rollAlign() {
+	public String rollAlign() {
 		switch (Dice.roll(6)) {
 			case 1: return "Lawful";
 			default: return "Neutral";
@@ -106,7 +148,7 @@ public class NPCGenerator {
 	*  Get a clean string reference from the Scanner.
 	*  (Empty input returns as null.)
 	*/
-	static String scanCleanLine (Scanner scan) {
+	String scanCleanLine (Scanner scan) {
 		String s = scan.nextLine();
 		return (s.length() == 0) ? null : s;	
 	}
@@ -115,7 +157,7 @@ public class NPCGenerator {
 	*  Get a clean integer value from the Scanner.
 	*  (Non-integer input returns as -1.)
 	*/
-	static int scanCleanInt (Scanner scan) {
+	int scanCleanInt (Scanner scan) {
 		String s = scan.nextLine();
 		try {
 			return Integer.parseInt(s);
@@ -129,7 +171,7 @@ public class NPCGenerator {
 	*  Get a clean race name from the Scanner.
 	*  (Possibly null to randomize.)
 	*/
-	static String scanCleanRace (Scanner scan) {
+	String scanCleanRace (Scanner scan) {
 		String s = scanCleanLine(scan);
 		return (s != null 
 				&& (s.equals("Human") || s.equals("Elf") 
@@ -141,7 +183,7 @@ public class NPCGenerator {
 	*  Get a clean class name from the Scanner.
 	*  (Possibly null to randomize.)
 	*/
-	static String scanCleanClass (Scanner scan) {
+	String scanCleanClass (Scanner scan) {
 		String s = scanCleanLine(scan);
 		return (s != null 
 				&& ClassIndex.getInstance().getTypeFromName(s) != null) ?
@@ -151,7 +193,7 @@ public class NPCGenerator {
 	/**
 	*  Get the input profile from user.
 	*/
-	public static void getUserInput () {
+	public void getUserInput () {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter the following data, "
 			+ "or blank for random determination.");
@@ -173,13 +215,13 @@ public class NPCGenerator {
 		System.out.print("Number? ");
 		numNPCs = scanCleanInt(scan);
 		if (numNPCs < 1) numNPCs = 1;
-		System.out.println();			
+		System.out.println();
 	}
 
 	/**
 	*  Create one fully-formed profile from incomplete source.
 	*/
-	static GenProfile fillProfile (GenProfile ip) {
+	GenProfile fillProfile (GenProfile ip) {
 		GenProfile profile = new GenProfile();
  		profile.race = (ip.race != null) ? ip.race : rollRace();
  		profile.class1 = (ip.class1 != null) ? ip.class1 : rollClass();
@@ -196,7 +238,7 @@ public class NPCGenerator {
 	/**
 	*  Fill in 2nd class & level for an Elf profile.
 	*/
-	static void fillElfProfile (GenProfile p) {
+	void fillElfProfile (GenProfile p) {
 		if (p.class2 == null) {
 			p.class2 = (p.class1.equals("Wizard")) ? rollElfClass() : "Wizard"; 
 		}
@@ -212,7 +254,7 @@ public class NPCGenerator {
 	/**
 	*  Make one NPC from a fully-formed profile.
 	*/
-	static Character makeNPCFromProfile (GenProfile p) {
+	Character makeNPCFromProfile (GenProfile p) {
 		Character c = (p.class2 == null) ?
 			new Character(p.race, p.class1, p.level1, p.align) :
 			new Character(p.race, p.class1, p.level1, p.class2, p.level2, p.align);
@@ -225,20 +267,58 @@ public class NPCGenerator {
 	/**
 	*  Make multiple NPCs as per input profile.
 	*/
-	public static void makeAllNPCs () {
+	public void makeAllNPCs () {
 		for (int i = 0; i < numNPCs; i++) {
 			GenProfile p = fillProfile(inputProfile);
 			Character c = makeNPCFromProfile(p);
-			System.out.println(c);
+			writeLine(c.toString());
 		}
-		System.out.println();
+		writeLine("");
 	}
 
 	/**
-	*  Print program banner.
+	*  Open file writer.
 	*/
-	public static void printBanner () {
-		System.out.println("OED NPC Generator\n");	
+	public void fileWriterOpen() {
+		if (outFileName != null) {
+			try {
+				fileWriter = new FileWriter(outFileName);
+			}
+			catch (IOException e) {
+            System.err.println("File writer could not be opened.") ;
+			}
+		}
+	}
+
+	/**
+	*  Close file writer.
+	*/
+	public void fileWriterClose() {
+		if (fileWriter != null) {
+			try {
+				fileWriter.close();		
+			}
+			catch (IOException e) {
+            System.err.println("File writer could not be closed.") ;
+			}
+		}
+	}
+
+	/**
+	*  Write an output line (to out or file writer).
+	*/
+	public void writeLine (String s) {
+		if (fileWriter != null) {
+			try {
+				fileWriter.write(s + ENDL);
+			}
+			catch (IOException e) {
+            System.err.println("File writer write error.") ;
+			}
+		}			
+		else {
+			System.out.println(s);
+		}
 	}
 
 	/**
@@ -247,8 +327,16 @@ public class NPCGenerator {
 	public static void main (String[] args) {
 		NPCGenerator gen = new NPCGenerator();
 		gen.printBanner();
-		gen.getUserInput();
-		gen.makeAllNPCs();
+		gen.parseArgs(args);
+		if (gen.exitAfterArgs) {
+			gen.printUsage();
+		}
+		else {		
+			gen.getUserInput();
+			gen.fileWriterOpen();
+			gen.makeAllNPCs();
+			gen.fileWriterClose();
+		}
 	}
 }
 
