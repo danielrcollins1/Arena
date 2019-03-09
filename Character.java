@@ -909,7 +909,7 @@ public class Character extends Monster {
 	*/
 	public String toString () {
 
-		// Basic stat block
+		// Standard stat block
 		String s = name + ", " + race + " " + classString();
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
 			+ ", hp " + getHP() + ", Atk " + getAttack();
@@ -917,24 +917,17 @@ public class Character extends Monster {
 		// Optional information
 		if (printAbilities)
 			s = addClause(s, abilityString());
-		if (printEquipment)
-			s = addClause(s, equipString());
 		if (printPersonality)
 			s = addClause(s, personalityString());
+		if (printEquipment)
+			s = addClause(s, "Equip", equipString());
 		if (printFeats)
-			s = addClause(s, featString());
+			s = addClause(s, "Feats", featString());
 		if (printSpells)
-			s = addClause(s, spellsString());
+			s = addClause(s, "Spells", spellsString());
 		
 		return s += ".";
 	}	
-
-	/**
-	*  Add an independent clause to a string, if nonempty.
-	*/
-	private String addClause (String s, String clause) {
-		return clause.length() == 0 ? s : s + "; " + clause;
-	}
 
 	/**
 	*  String representation of all class and levels.
@@ -961,14 +954,12 @@ public class Character extends Monster {
 	}
 
 	/**
-	*  String representation of feats.
+	*  String representation of alignment and personality.
 	*/
-	private String featString () {
-		String s = "";
-		for (ClassRecord rec: classList) {
-			s = addItem(s, rec.featsString());
-		}
-		return s;
+	private String personalityString () {
+		return alignment + ", " 
+			+ primaryPersonality + ", " 
+			+ secondaryPersonality;	
 	}
 
 	/**
@@ -984,30 +975,18 @@ public class Character extends Monster {
 		for (Equipment equip: equipList) {
 			s = addItem(s, equip);
 		}
-		return s;
+		return toTitleCase(s);
 	}
 
 	/**
-	*  Add item to a string if not null.
+	*  String representation of feats.
 	*/
-	private String addItem (String s, Object item) {
-		if (item == null)
-			return s;
-		else {
-			if (s.length() == 0)
-				return "" + item;
-			else
-				return s + ", " + item;		
-		}	
-	}
-
-	/**
-	*  String representation of alignment and personality.
-	*/
-	private String personalityString () {
-		return alignment + ", " 
-			+ primaryPersonality + ", " 
-			+ secondaryPersonality;	
+	private String featString () {
+		String s = "";
+		for (ClassRecord rec: classList) {
+			s = addItem(s, rec.featsString());
+		}
+		return toTitleCase(s);
 	}
 
 	/**
@@ -1017,15 +996,46 @@ public class Character extends Monster {
 		String s = "";
 		for (ClassRecord cr: classList) {
 			if (cr.getClassType().usesSpells()) {
-				String sSpells = cr.spellsString();
-				if (sSpells.length() > 0) {
-					if (s.length() > 0)
-						s += "; ";
-					s += "Spells: " + sSpells;
-				}
+				s = addItem(s, cr.spellsString());
 			}
 		}
-		return s;
+		return toTitleCase(s);
+	}
+
+	/**
+	*  Add item to a string if not null.
+	*/
+	private String addItem (String s, Object item) {
+		if (item == null)
+			return s;
+		else 
+			return s + (s.length() > 0 ? ", " : "") + item;
+	}
+
+	/**
+	*  Add an independent clause to a string, if nonempty.
+	*/
+	private String addClause (String s, String clause) {
+		return clause.length() > 0 ? s + "; " + clause : s;
+	}
+
+	/**
+	*  Add a label & clause to a string, if nonempty.
+	*/
+	private String addClause (String s, String label, String clause) {
+		return clause.length() > 0 ? addClause(s, label + ": " + clause) : s;
+	}
+
+	/**
+	*  Convert a string to title case.
+	*/
+	private String toTitleCase(String s) {
+		if (s.length() > 0) {
+			return java.lang.Character.toUpperCase(s.charAt(0))
+				+ s.substring(1).toLowerCase();
+		}
+		else
+			return s;
 	}
 
 	/**
