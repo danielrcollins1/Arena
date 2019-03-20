@@ -920,7 +920,7 @@ public class Character extends Monster {
 		if (printPersonality)
 			s = addClause(s, personalityString());
 		if (printEquipment)
-			s = addClause(s, "Equip", equipString());
+			s = addClause(s, "Gear", equipString());
 		if (printFeats)
 			s = addClause(s, "Feats", featString());
 		if (printSpells)
