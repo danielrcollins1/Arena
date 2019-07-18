@@ -28,7 +28,7 @@ public enum SpecialType {
 	FireBreath, ColdBreath, LightningBreath, AcidBreath, PoisonBreath, 
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
-	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity;
+	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity, SteamBreath;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -81,6 +81,7 @@ public enum SpecialType {
 		switch (this) {
 			case FireBreath: case ColdBreath: case LightningBreath:
 			case AcidBreath: case PoisonBreath: case PetrifyingBreath:
+			case SteamBreath:
 				return true;
 		}	
 		return false;

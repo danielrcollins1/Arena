@@ -32,6 +32,7 @@ public class Monster {
 	String race;
 	String sourceBook;
 	char type;
+	char environment;
 	Dice numberAppearing;
 	int armorClass;
 	int moveInches;
@@ -42,7 +43,6 @@ public class Monster {
 	Alignment alignment;
 	float hitDiceAsFloat;
 	int equivalentHitDice;
-	int environment;
 	int hitPoints;
 	int maxHitPoints;
 	int breathCharges;
@@ -93,7 +93,7 @@ public class Monster {
 		alignment = Alignment.getFromChar(s[11].charAt(0));
 		hitDiceAsFloat = parseFloat(s[12]);
 		equivalentHitDice = parseEHD(s[13]);
-		environment = CSVReader.parseInt(s[14]);
+		environment = s[14].charAt(0);
 		sourceBook = s[15];
 
 		// Secondary fields
@@ -148,7 +148,7 @@ public class Monster {
 	public Alignment getAlignment () { return alignment; }
 	public char getType () { return type; }
 	public int getEquivalentHitDice () { return equivalentHitDice; }
-	public int getEnvironment () { return environment; }
+	public char getEnvironment () { return environment; }
 	public float getHitDiceAsFloat () { return hitDiceAsFloat; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
@@ -864,7 +864,7 @@ public class Monster {
 			int damage, maxVictims, numVictims;
 			switch (breath.getType()) {
 
-				case FireBreath: 
+				case FireBreath: case SteamBreath:
 					// As a data simplifying assumption, 
 					// we assume damage dice = length of cone.
 					switch (param) {

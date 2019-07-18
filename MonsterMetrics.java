@@ -83,7 +83,7 @@ public class MonsterMetrics {
 		System.out.println();
 		System.out.println("Usage: MonsterMetrics [monster] [options]");
 		System.out.println("  By default, measures all monsters in MonsterDatabase file.");
-		System.out.println("  Skips any monsters marked as having undefinable EHD (*)");
+		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
 		System.out.println("  If monster is named, measures that monster at increased fidelity.");
 		System.out.println("  Options include:");
 		System.out.println("\t-a armor worn by opposing fighters: =l, c, or p "

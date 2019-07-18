@@ -99,7 +99,7 @@ public class MonsterTables implements Iterable<List<Monster>> {
 		
 		// Sort monster database into these tables
 		for (Monster monster: MonsterDatabase.getInstance()) {
-			if (monster.getEnvironment() == 1) {
+			if (monster.getEnvironment() == 'D') {
 				int tableLevel = EHDToTables.getInstance()
 					.mapEHDToTable(monster.getEHD());
 				if (1 <= tableLevel && tableLevel <= maxLevel) {
