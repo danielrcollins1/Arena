@@ -12,8 +12,8 @@ public enum Feat {
 	*  Caution: Not all are implemented in code at this time.
 	*/
 	Berserking, GreatCleave, GreatFortitude, GreatStrength, 
-	IronWill, MountedCombat, RapidShot, RapidStrike, 
-	Toughness, Tracking, TwoWeaponFighting, WeaponSpecialization;
+	IronWill, MountedCombat, RapidShot, RapidStrike, Survival, 
+	Toughness, TwoWeaponFighting, WeaponSpecialization;
 
 	/** Total number of feats available. */
 	public static final int number = Feat.values().length;

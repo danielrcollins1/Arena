@@ -5,6 +5,9 @@ import java.io.IOException;
 /******************************************************************************
 *  Generates random NPCs to user specification.
 *
+*  Optionally take name of output file, so we can see user prompts 
+*  in console, while final output goes to text file. 
+*
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-04
 *  @version  1.0
@@ -271,9 +274,8 @@ public class NPCGenerator {
 		for (int i = 0; i < numNPCs; i++) {
 			GenProfile p = fillProfile(inputProfile);
 			Character c = makeNPCFromProfile(p);
-			writeLine(c.toString());
+			writeOutput(c.toString() + ENDL + ENDL);
 		}
-		writeLine("");
 	}
 
 	/**
@@ -305,19 +307,19 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Write an output line (to out or file writer).
+	*  Write an output string (to file writer or system out).
 	*/
-	public void writeLine (String s) {
+	public void writeOutput (String s) {
 		if (fileWriter != null) {
 			try {
-				fileWriter.write(s + ENDL);
+				fileWriter.write(s);
 			}
 			catch (IOException e) {
             System.err.println("File writer write error.") ;
 			}
 		}			
 		else {
-			System.out.println(s);
+			System.out.print(s);
 		}
 	}
 
