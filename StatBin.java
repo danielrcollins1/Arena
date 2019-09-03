@@ -47,47 +47,48 @@ public class StatBin {
 	}
 
 	/**
-	*  Square an integer.
-	*/
-	static long square (long i) {
-		return i * i;	
-	}
-
-	/**
-	*  Compute a mean from num and sum.
-	*/
-	double mean (int num, long sum) {
-		return (double) sum/num;	
-	}
-
-	/**
 	*  Compute mean hit points.
 	*/
-	int getMeanHp () {
+	double getMeanHp () {
 		long sum = 0;
-		for (Character c: bin)
+		for (Character c: bin) {
 			sum += c.getHitPoints();
-		return (int)(sum/size());
+		}
+		return (double) sum/size();
+	}
+
+	/**
+	*  Compute mean hit points rolled.
+	*/
+	double getMeanHpRoll () {
+		long sum = 0;
+		for (Character c: bin) {
+			sum += c.getHitPoints() 
+				- c.getAbilityBonus(Ability.Con) * c.getLevel();
+		}
+		return (double) sum/size();
 	}
 
 	/**
 	*  Compute mean age.
 	*/
-	int getMeanAge () {
+	double getMeanAge () {
 		long sum = 0;
-		for (Character c: bin)
+		for (Character c: bin) {
 			sum += c.getAge();
-		return (int)(sum/size());
+		}
+		return (double) sum/size();
 	}
 
 	/**
 	*  Compute mean ability score.
 	*/
-	int getMeanAbility (Ability a) {
+	double getMeanAbility (Ability a) {
 		long sum = 0;
-		for (Character c: bin)
+		for (Character c: bin) {
 			sum += c.getAbilityScore(a);
-		return (int)(sum/size());
+		}
+		return (double) sum/size();
 	}
 }
 

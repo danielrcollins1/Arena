@@ -236,33 +236,25 @@ public class Character extends Monster {
 		if (level <= 0) {
 			return ABILITY_DICE[0];
 		}	
-		else if (level == 1) {
+		else if (level <= 3) {
 			switch (priority) {
 				case 0: return ABILITY_DICE[1];
 				default: return ABILITY_DICE[0];
 			}
 		}
-		else if (level <= 4) {
-			switch (priority) {
-				case 0: case 1: case 2: return ABILITY_DICE[1];
-				default: return ABILITY_DICE[0];
-			}
-		}
 		else if (level <= 7) {
 			switch (priority) {
-				case 0: return ABILITY_DICE[2]; 
-				case 1: case 2: return ABILITY_DICE[1];
+				case 0: case 1: return ABILITY_DICE[1];
 				default: return ABILITY_DICE[0];
 			}
 		}
 		else {
 			switch (priority) {
-				case 0: return ABILITY_DICE[3]; 
-				case 1: return ABILITY_DICE[2];
-				case 2: case 3: return ABILITY_DICE[1];
+				case 0: return ABILITY_DICE[2]; 
+				case 1: case 2: case 3: return ABILITY_DICE[1];
 				default: return ABILITY_DICE[0];
 			}
-		}					
+		}
 	}
 
 	/**

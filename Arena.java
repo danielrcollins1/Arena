@@ -524,10 +524,10 @@ public class Arena {
 		for (int level = 0; level <= maxLevel; level++) {
 			StatBin bin = statBins[level];
 			if (bin.size() > 0) {
-				System.out.print(String.format("%3d   %5d  %3d %3d ",
+				System.out.print(String.format("%3d   %5d  %3.0f %3.0f ",
 					level, bin.size(), bin.getMeanAge(), bin.getMeanHp())); 
 				for (Ability a: Ability.values())
-					System.out.print(String.format("%3d ", bin.getMeanAbility(a)));
+					System.out.print(String.format("%3.0f ", bin.getMeanAbility(a)));
 				System.out.println();
 			}
 		}
