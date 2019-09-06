@@ -1,0 +1,45 @@
+Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Special,Type,Align,HD#,EHD,Env,Source
+"Hydra, 5 Heads",1,5,12,5,25,B,5,1d6,Multiheads,B,N,5,7,D,O
+"Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,Multiheads,B,N,6,9,D,O
+"Hydra, 7 Heads",1,5,12,7,25,B,7,1d6,Multiheads,B,N,7,11,D,O
+"Hydra, 8 Heads",1,5,12,8,25,B,8,1d6,Multiheads,B,N,8,12,D,O
+"Hydra, 9 Heads",1,5,12,9,25,B,9,1d6,Multiheads,B,N,9,16,D,O
+"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,Multiheads,B,N,10,18,D,O
+"Hydra, 11 Heads",1,5,12,11,25,B,11,1d6,Multiheads,B,N,11,20,D,O
+"Hydra, 12 Heads",1,5,12,12,25,B,12,1d6,Multiheads,B,N,12,22,D,O
+"Dragon, White, Very Young",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,5,D,O
+"Dragon, White, Young",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,8,D,O
+"Dragon, White, Sub-Adult",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,12,D,O
+"Dragon, White, Adult",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,16,D,O
+"Dragon, White, Old",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,20,D,O
+"Dragon, White, Very Old",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,28,D,O
+"Dragon, Black, Very Young",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,5,D,O
+"Dragon, Black, Young",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,10,D,O
+"Dragon, Black, Sub-Adult",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,14,D,O
+"Dragon, Black, Adult",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,18,D,O
+"Dragon, Black, Old",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,25,D,O
+"Dragon, Black, Very Old",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,30,D,O
+"Dragon, Green, Very Young",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,6,D,O
+"Dragon, Green, Young",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,11,D,O
+"Dragon, Green, Sub-Adult",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,17,D,O
+"Dragon, Green, Adult",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,23,D,O
+"Dragon, Green, Old",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,31,D,O
+"Dragon, Green, Very Old",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,40,D,O
+"Dragon, Blue, Very Young",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,7,D,O
+"Dragon, Blue, Young",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,13,D,O
+"Dragon, Blue, Sub-Adult",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,17,D,O
+"Dragon, Blue, Adult",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,28,D,O
+"Dragon, Blue, Old",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,35,D,O
+"Dragon, Blue, Very Old",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,44,D,O
+"Dragon, Red, Very Young",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,8,D,O
+"Dragon, Red, Young",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,15,D,O
+"Dragon, Red, Sub-Adult",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,23,D,O
+"Dragon, Red, Adult",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,32,D,O
+"Dragon, Red, Old",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,42,D,O
+"Dragon, Red, Very Old",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,53,D,O
+"Dragon, Gold, Very Young",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold, Young",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold, Sub-Adult",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold, Adult",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold, Old",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold, Very Old",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
