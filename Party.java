@@ -36,9 +36,18 @@ public class Party implements Iterable<Monster> {
 	*  Solo party
 	*/
 	Party (Monster monster) {
-		members = new ArrayList<Monster>();
-		fallen = new ArrayList<Monster>();
+		this();
 		members.add(monster);
+	}
+
+	/**
+	*  Spawn copies of a monster
+	*/
+	Party (Monster monster, int count) {
+		this();
+		for (int i = 0; i < count; i++) {
+			members.add(monster.spawn());		
+		}	
 	}
 
 	/**

@@ -334,15 +334,15 @@ public class Arena {
 	*  Create a monster party to confront a number of fighters.
 	*/
 	Party createMonsterParty (int dungeonLevel, int numFighters) {
-		Party monsterParty = new Party();
-		Monster monster = MonsterTables.getInstance()
-			.randomMonsterByDungeonLevel(dungeonLevel);
-		int numMonsters = getMonsterNumber(
-			monster, dungeonLevel, numFighters);
-		for (int i = 0; i < numMonsters; i++) {
-			monsterParty.add(monster.spawn());   
-		}
-		return monsterParty;
+		Monster monster;
+		int count = 0;
+		do {
+			monster = MonsterTables.getInstance()
+				.randomMonsterByDungeonLevel(dungeonLevel);
+			count = getMonsterNumber(
+				monster, dungeonLevel, numFighters);
+		} while (count < 1);
+		return new Party(monster, count);
 	}
 
 	/**
