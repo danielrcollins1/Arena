@@ -28,7 +28,8 @@ public enum SpecialType {
 	FireBreath, ColdBreath, LightningBreath, AcidBreath, PoisonBreath, 
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
-	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity, SteamBreath;
+	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity, 
+	SteamBreath, Stench, ResistStench;
 	
 	//--------------------------------------------------------------------------
 	//  Methods

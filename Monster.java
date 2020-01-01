@@ -436,6 +436,11 @@ public class Monster {
 		if (hasSpecial(SpecialType.Phasing) && new Dice(6).roll() <= 3) {
 			modifier += 2;
 		}
+		
+		// Stench nausea
+		if (hasCondition(SpecialType.Stench)) {
+			modifier -= 2;		
+		}
 
 		// Target displacement
 		if (target.hasSpecial(SpecialType.Displacement)) {
@@ -660,6 +665,19 @@ public class Monster {
 					for (int i = 0; i < 6; i++) {
 						target = enemy.random();
 						singleAttack(attack, target, false);
+					}
+					break;
+
+				case Stench:
+					for (Monster targetStench: enemy) {
+						if (!targetStench.hasCondition(SpecialType.ResistStench)) {
+							if (!targetStench.rollSave(SavingThrows.SaveType.Breath)) {
+								targetStench.addCondition(SpecialType.Stench);
+							}
+							else {
+								targetStench.addCondition(SpecialType.ResistStench);
+							}
+						}
 					}
 					break;
 
