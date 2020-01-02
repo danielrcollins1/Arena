@@ -29,7 +29,7 @@ public enum SpecialType {
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity, 
-	SteamBreath, Stench, ResistStench;
+	SteamBreath, Stench, ResistStench, WebMovement;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
