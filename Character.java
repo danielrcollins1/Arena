@@ -6,7 +6,6 @@ import java.util.ArrayList;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20
-*  @version  1.01
 ******************************************************************************/
 
 public class Character extends Monster {
@@ -59,19 +58,19 @@ public class Character extends Monster {
 	List<ClassRecord> classList;
 
 	/** Armor worn. */
-	Armor armor;
+	Armor armorWorn;
 
 	/** Shield held. */
-	Armor shield;
+	Armor shieldHeld;
 
 	/** Weapon in hand. */
 	Weapon weaponInHand;	
 
 	/** Magic ring. */
-	Equipment ring;
+	Equipment ringWorn;
 
 	/** Magic wand. */
-	Equipment wand;
+	Equipment wandHeld;
 	
 	/** Equipment carried. */
 	List<Equipment> equipList;
@@ -174,8 +173,8 @@ public class Character extends Monster {
 	public String getName () { return name; }
 
 	// Implement null Monster equipment methods
-	public Armor getArmor () { return armor; }
-	public Armor getShield () { return shield; }
+	public Armor getArmor () { return armorWorn; }
+	public Armor getShield () { return shieldHeld; }
 	public Weapon getWeapon () { return weaponInHand; }
 
 	// Access equipment carried
@@ -390,14 +389,14 @@ public class Character extends Monster {
 	*/
 	private int computeArmorClass() { 
 		int AC = BASE_ARMOR_CLASS - getAbilityBonus(Ability.Dex);
-		if (armor != null) {
-			AC -= armor.getBaseArmor() + armor.getMagicBonus();
+		if (armorWorn != null) {
+			AC -= armorWorn.getBaseArmor() + armorWorn.getMagicBonus();
 		}	
-		if (shield != null) {
-			AC -= shield.getBaseArmor() + shield.getMagicBonus();
+		if (shieldHeld != null) {
+			AC -= shieldHeld.getBaseArmor() + shieldHeld.getMagicBonus();
 		}
-		if (ring != null) {
-			AC -= ring.getMagicBonus();		
+		if (ringWorn != null) {
+			AC -= ringWorn.getMagicBonus();		
 		}
 		return AC;
 	}
@@ -406,7 +405,7 @@ public class Character extends Monster {
 	*  Get movement based on armor.
 	*/
 	private int computeMoveInches() {
-		return (armor == null) ? BASE_MOVEMENT : armor.getMaxMove();
+		return (armorWorn == null) ? BASE_MOVEMENT : armorWorn.getMaxMove();
 	}
 
 	/**
@@ -456,7 +455,11 @@ public class Character extends Monster {
 	*  Set armor worn.
 	*/
 	public void setArmor (Armor armor) { 
-		this.armor = armor; 
+		equipList.remove(armorWorn);
+		if (armor != null && !equipList.contains(armor)) {
+			equipList.add(0, armor);			
+		}
+		armorWorn = armor;
 		updateStats();
 	}
 
@@ -464,7 +467,11 @@ public class Character extends Monster {
 	*  Set shield carried.
 	*/
 	public void setShield (Armor shield) { 
-		this.shield = shield; 
+		equipList.remove(shieldHeld);
+		if (shield != null && !equipList.contains(shield)) {
+			equipList.add(shield);			
+		}
+		shieldHeld = shield;
 		updateStats();
 	}
 
@@ -472,23 +479,13 @@ public class Character extends Monster {
 	*  Draw a particular weapon from equipment.
 	*/
 	public void drawWeapon (Weapon weapon) {
-		assert(weaponInHand == null);
-		if (weapon.getHandsUsed() > 1 && shield != null) {
-			equipList.add(shield);
-			shield = null;		
+		if (weapon != null && !equipList.contains(weapon)) {
+			equipList.add(weapon);
+		}	
+		if (weapon.getHandsUsed() > 1 && shieldHeld != null) {
+			shieldHeld = null;		
 		}
-		equipList.remove(weapon);
 		weaponInHand = weapon;
-		updateStats();
-	}
-
-	/**
-	*  Sheathe weapon in hand back to equipment.
-	*/
-	public void sheatheWeapon () {
-		assert(weaponInHand != null);
-		equipList.add(weaponInHand);	
-		weaponInHand = null;
 		updateStats();
 	}
 
@@ -496,18 +493,6 @@ public class Character extends Monster {
 	*  Draw best weapon against a given monster.
 	*/
 	public void drawBestWeapon (Monster monster) {
-		if (weaponInHand != null) {
-			sheatheWeapon();
-		}
-		drawWeapon(bestWeaponAgainst(monster));	
-	}
-
-	/**
-	*  Decide on the best weapon against a given monster.
-	*  Considers only weapons in equipment list.
-	*/
-	private Weapon bestWeaponAgainst (Monster monster) {
-		assert(weaponInHand == null);
 		int maxDamage = -1;
 		Weapon bestWeapon = null;
 		for (Equipment equip: equipList) {
@@ -521,8 +506,7 @@ public class Character extends Monster {
 				}							
 			}		
 		}	
-		weaponInHand = null;
-		return bestWeapon;
+		drawWeapon(bestWeapon);
 	}
 
 	/**
@@ -630,10 +614,10 @@ public class Character extends Monster {
 				default: setArmor(Armor.makeType(Armor.Type.Plate)); break;
 			}
 			Weapon primary = Weapon.randomPrimary();
-			addEquipment(primary);
 			if (primary.getHandsUsed() < 2) {
 				setShield(Armor.makeType(Armor.Type.Shield));
 			}
+			addEquipment(primary);
 			addEquipment(Weapon.randomSecondary());
 			if (isWizard()) {
 				setArmor(Armor.makeType(Armor.Type.Chain));
@@ -657,16 +641,16 @@ public class Character extends Monster {
 		if (weaponInHand == null) {
 			drawBestWeapon(null);
 		}
-		if (armor != null && getMagicBoost()) {
-			armor.incMagicBonus();
+		if (armorWorn != null && getMagicBoost()) {
+			armorWorn.incMagicBonus();
 		}
-		if (shield != null && getMagicBoost()) {
-			shield.incMagicBonus();			
+		if (shieldHeld != null && getMagicBoost()) {
+			shieldHeld.incMagicBonus();			
 		}
 		if (weaponInHand != null && getMagicBoost()) {
 			weaponInHand.incMagicBonus();
 		}
-		if (shield == null && getMagicBoost()) {
+		if (shieldHeld == null && getMagicBoost()) {
 			incrementRing();
 		}
 		if (getTopClass().getClassType().usesSpells() && getMagicBoost()) {
@@ -696,25 +680,39 @@ public class Character extends Monster {
 	*	Increment magic ring worn.
 	*/
 	void incrementRing () {
-		if (ring == null)
-			ring = new Equipment("Ring of Protection", 1);
-		else
-			ring.incMagicBonus();		
+		if (ringWorn == null) {
+			ringWorn = new Equipment("Ring of Protection", 1);
+			equipList.add(ringWorn);
+		}
+		else {
+			ringWorn.incMagicBonus();
+		}
 	}
 
 	/**
 	*	Increment magic wand carried.
 	*/
 	void incrementWand () {
+		Equipment newWand;
 		Wands wandTable = Wands.getInstance();
-		if (wand == null)
-			wand = wandTable.getRandom(1);
+
+		// Determine the new wand
+		if (wandHeld == null) {
+			newWand = wandTable.getRandom(1);
+		}
 		else {
-			int newTier = wandTable.getTier(wand) + 1;
-			Equipment newWand = wandTable.getRandom(newTier);
-			if (newWand != null)
-				wand = newWand;				
-		}		
+			int newTier = wandTable.getTier(wandHeld) + 1;
+			newWand = wandTable.getRandom(newTier);
+		}
+		
+		// Pick up new wand, discard old
+		if (newWand != null) {
+			if (wandHeld != null) {
+				equipList.remove(wandHeld);
+			}
+			equipList.add(newWand);
+			wandHeld = newWand;
+		}
 	}
 
 	/**
@@ -723,8 +721,8 @@ public class Character extends Monster {
 	public boolean	rollSave (SavingThrows.SaveType type, int modifier) {
 		ClassRecord bestClass = bestClassForSave(type);
 		modifier += getFixedSaveModifiers(type);
-		if (ring != null)
-			modifier += ring.getMagicBonus();
+		if (ringWorn != null)
+			modifier += ringWorn.getMagicBonus();
 		return SavingThrows.getInstance().rollSave(
 			type, bestClass.getClassType().getSaveAsClass(), 
 			bestClass.getLevel(), modifier); 
@@ -964,11 +962,6 @@ public class Character extends Monster {
 	*/
 	private String equipString () {
 		String s = "";
-		s = addItem(s, armor);
-		s = addItem(s, shield);
-		s = addItem(s, ring);
-		s = addItem(s, weaponInHand);
-		s = addItem(s, wand);
 		for (Equipment equip: equipList) {
 			s = addItem(s, equip);
 		}
