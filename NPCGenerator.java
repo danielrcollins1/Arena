@@ -1,5 +1,4 @@
-import java.util.Scanner;
-import java.io.FileWriter; 
+import java.io.File; 
 import java.io.IOException; 
 
 /******************************************************************************
@@ -22,8 +21,8 @@ public class NPCGenerator {
 	/** Percent chance for magic per level. */
 	static final int PCT_MAGIC_PER_LEVEL = 15;
 
-	/** File writer end-line symbol. */
-	static final String ENDL = System.getProperty("line.separator");
+	/** Name of PDF character sheet source file. */
+	static final String CHAR_SHEET_FILE = "OED-CharacterSheet.pdf";
 
 	//--------------------------------------------------------------------------
 	//  Inner Class
@@ -47,14 +46,14 @@ public class NPCGenerator {
 	/** Number of NPCs to create. */
 	int numNPCs; 
 
+	/** Print PDF character sheets */
+	boolean printPDFs;
+
+	/** Line breaks between NPCs */
+	int lineBreaks;
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
-
-	/** Output filename. */
-	String outFileName;
-	
-	/** File writer. */
-	FileWriter fileWriter;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -63,12 +62,13 @@ public class NPCGenerator {
 	/**
 	*  Constructor.
 	*/
-	public NPCGenerator () {
+	NPCGenerator () {
 		Dice.initialize();
 		inputProfile = new GenProfile();
 		Character.setFeatUsage(true);
 		Character.setBoostInitialAbilities(true);
 		Character.setPctMagicPerLevel(PCT_MAGIC_PER_LEVEL);
+		numNPCs = 1;
 	}
 
 	//--------------------------------------------------------------------------
@@ -78,35 +78,109 @@ public class NPCGenerator {
 	/**
 	*  Print program banner.
 	*/
-	public void printBanner () {
-		System.out.println("OED NPC Generator\n");	
+	void printBanner () {
+		System.out.println("OED NPC Generator");	
+		System.out.println("-----------------");	
 	}
 
 	/**
 	*  Print usage.
 	*/
-	public void printUsage () {
-		System.out.println("Usage: NPCGenerator [filename]");
-		System.out.println("\tfilename: Text file to write NPCs");
+	void printUsage () {
+		System.out.println("Usage: NPCGenerator [options]");
+		System.out.println("  where options include:");
+		System.out.println("\t-a alignment (=[L, N, C])");
+		System.out.println("\t-r race (=[M, D, E, H])");
+		System.out.println("\t-r class (=[F, T, W])");
+		System.out.println("\t-l level (=#)");
+		System.out.println("\t-n number (=#)");
+		System.out.println("\t-b breaks between NPCs (=#)");
+		System.out.println("\t-p PDF output");
 		System.out.println();
 	}
 
 	/**
 	*  Parse arguments.
 	*/
-	public void parseArgs (String[] args) {
+	void parseArgs (String[] args) {
 		for (String s: args) {
-			if (s.equals("-?"))
-				exitAfterArgs = true;
-			else
-				outFileName = s;
+			if (s.charAt(0) == '-') {
+				switch (s.charAt(1)) {
+					case 'r': parseRace(s); break;
+					case 'c': parseClass(s); break;
+					case 'a': parseAlignment(s); break;
+					case 'l': inputProfile.level1 = getParamInt(s); break;
+					case 'n': numNPCs = getParamInt(s); break;
+					case 'b': lineBreaks = getParamInt(s); break;
+					case 'p': printPDFs = true; break;
+					default: exitAfterArgs = true; break;
+				}
+			}
 		}
+	}
+
+	/**
+	*  Get integer following equals sign in command parameter.
+	*/
+	int getParamInt (String s) {
+		if (s.length() > 3 && s.charAt(2) == '=') {
+			try {
+				return Integer.parseInt(s.substring(3));
+			}
+			catch (NumberFormatException e) {
+			}
+		}
+		exitAfterArgs = true;
+		return -1;
+	}
+
+	/**
+	*  Parse the race command-line parameter.
+	*/
+	void parseRace (String s) {
+		if (s.length() > 3 && s.charAt(2) == '=') {
+			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+				case 'M': inputProfile.race = "Human"; return;
+				case 'D': inputProfile.race = "Dwarf"; return;
+				case 'E': inputProfile.race = "Elf"; return;
+				case 'H': inputProfile.race = "Halfling"; return;
+			}
+		}
+		exitAfterArgs = true;
+	}
+
+	/**
+	*  Parse the class command-line parameter.
+	*/
+	void parseClass (String s) {
+		if (s.length() > 3 && s.charAt(2) == '=') {
+			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+				case 'F': inputProfile.class1 = "Fighter"; return;
+				case 'T': inputProfile.class1 = "Thief"; return;
+				case 'W': inputProfile.class1 = "Wizard"; return;
+			}
+		}
+		exitAfterArgs = true;
+	}
+
+	/**
+	*  Parse the alignment command-line parameter.
+	*/
+	void parseAlignment (String s) {
+		if (s.length() > 3 && s.charAt(2) == '=') {
+			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+				case 'L': inputProfile.align = "Lawful"; return;
+				case 'N': inputProfile.align = "Neutral"; return;
+				case 'C': inputProfile.align = "Chaotic"; return;
+			}
+		}
+		exitAfterArgs = true;
 	}
 
 	/**
 	*  Roll for a race.
 	*/
-	public String rollRace () {
+	String rollRace () {
 		switch (Dice.roll(6)) {
 			case 1: return "Dwarf";
 			case 2: return "Elf";
@@ -118,7 +192,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for a class.
 	*/
-	public String rollClass () {
+	String rollClass () {
 		switch (Dice.roll(6)) {
 			case 1: return "Wizard";
 			case 2: case 3: return "Thief";
@@ -129,7 +203,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for elf non-wizard class.
 	*/
-	public String rollElfClass () {
+	String rollElfClass () {
 		switch(Dice.roll(6)) {
 			case 1: case 2: return "Thief";
 			default: return "Fighter";
@@ -139,7 +213,7 @@ public class NPCGenerator {
 	/**
 	*  Roll for an alignment.
 	*/
-	public String rollAlign() {
+	String rollAlign() {
 		switch (Dice.roll(6)) {
 			case 1: return "Lawful";
 			default: return "Neutral";
@@ -148,90 +222,16 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Get a clean string reference from the Scanner.
-	*  (Empty input returns as null.)
-	*/
-	String scanCleanLine (Scanner scan) {
-		String s = scan.nextLine();
-		return (s.length() == 0) ? null : s;	
-	}
-
-	/**
-	*  Get a clean integer value from the Scanner.
-	*  (Non-integer input returns as -1.)
-	*/
-	int scanCleanInt (Scanner scan) {
-		String s = scan.nextLine();
-		try {
-			return Integer.parseInt(s);
-		}
-		catch (NumberFormatException e) {
-			return -1;
-		}
-	}
-
-	/**
-	*  Get a clean race name from the Scanner.
-	*  (Possibly null to randomize.)
-	*/
-	String scanCleanRace (Scanner scan) {
-		String s = scanCleanLine(scan);
-		return (s != null 
-				&& (s.equals("Human") || s.equals("Elf") 
-					|| s.equals("Dwarf") || s.equals("Halfling"))) ?
-			s : null;				
-	}
-
-	/**
-	*  Get a clean class name from the Scanner.
-	*  (Possibly null to randomize.)
-	*/
-	String scanCleanClass (Scanner scan) {
-		String s = scanCleanLine(scan);
-		return (s != null 
-				&& ClassIndex.getInstance().getTypeFromName(s) != null) ?
-			s : null;
-	}
-
-	/**
-	*  Get the input profile from user.
-	*/
-	public void getUserInput () {
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter the following data, "
-			+ "or blank for random determination.");
-		System.out.print("Race? ");
-		inputProfile.race = scanCleanRace(scan);
-		System.out.print("Class? ");
-		inputProfile.class1 = scanCleanClass(scan);
-		System.out.print("Level? ");
-		inputProfile.level1 = scanCleanInt(scan);
-		if (inputProfile.race != null 
-				&& inputProfile.race.equals("Elf"))  {
-			System.out.print("2nd Class? ");
-			inputProfile.class2 = scanCleanClass(scan);
-			System.out.print("2nd Level? ");
-			inputProfile.level2 = scanCleanInt(scan);
-		}
-		System.out.print("Alignment? ");
-		inputProfile.align = scanCleanLine(scan);
-		System.out.print("Number? ");
-		numNPCs = scanCleanInt(scan);
-		if (numNPCs < 1) numNPCs = 1;
-		System.out.println();
-	}
-
-	/**
 	*  Create one fully-formed profile from incomplete source.
 	*/
 	GenProfile fillProfile (GenProfile ip) {
 		GenProfile profile = new GenProfile();
- 		profile.race = (ip.race != null) ? ip.race : rollRace();
- 		profile.class1 = (ip.class1 != null) ? ip.class1 : rollClass();
- 		profile.level1 = (ip.level1 > -1) ? ip.level1 : 1;
+ 		profile.race = ip.race == null ? rollRace() : ip.race;
+ 		profile.class1 = ip.class1 == null ? rollClass() : ip.class1;
+ 		profile.level1 = ip.level1 == 0 ? 1 : ip.level1;
 		profile.class2 = ip.class2;
 		profile.level2 = ip.level2;
-		profile.align = (ip.align != null) ? ip.align : rollAlign();
+		profile.align = ip.align == null ? rollAlign() : ip.align;
 		if (profile.race.equals("Elf")) {
 			fillElfProfile(profile);
 		}
@@ -270,56 +270,27 @@ public class NPCGenerator {
 	/**
 	*  Make multiple NPCs as per input profile.
 	*/
-	public void makeAllNPCs () {
+	void makeAllNPCs () {
 		for (int i = 0; i < numNPCs; i++) {
 			GenProfile p = fillProfile(inputProfile);
 			Character c = makeNPCFromProfile(p);
-			writeOutput(c.toString() + ENDL + ENDL);
-		}
-	}
-
-	/**
-	*  Open file writer.
-	*/
-	public void fileWriterOpen() {
-		if (outFileName != null) {
-			try {
-				fileWriter = new FileWriter(outFileName);
+			if (!printPDFs) {
+				printToConsole(c);			
 			}
-			catch (IOException e) {
-            System.err.println("File writer could not be opened.") ;
+			else {
+				CharacterPDF cp = new CharacterPDF();
+				cp.writePDF(c);
 			}
 		}
 	}
 
 	/**
-	*  Close file writer.
+	*  Print a character to the console.
 	*/
-	public void fileWriterClose() {
-		if (fileWriter != null) {
-			try {
-				fileWriter.close();		
-			}
-			catch (IOException e) {
-            System.err.println("File writer could not be closed.") ;
-			}
-		}
-	}
-
-	/**
-	*  Write an output string (to file writer or system out).
-	*/
-	public void writeOutput (String s) {
-		if (fileWriter != null) {
-			try {
-				fileWriter.write(s);
-			}
-			catch (IOException e) {
-            System.err.println("File writer write error.") ;
-			}
-		}			
-		else {
-			System.out.print(s);
+	void printToConsole (Character c) {
+		System.out.println(c);
+		for (int j = 0; j < lineBreaks; j++) {
+			System.out.println();
 		}
 	}
 
@@ -334,10 +305,7 @@ public class NPCGenerator {
 			gen.printUsage();
 		}
 		else {		
-			gen.getUserInput();
-			gen.fileWriterOpen();
 			gen.makeAllNPCs();
-			gen.fileWriterClose();
 		}
 	}
 }

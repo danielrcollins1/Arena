@@ -24,17 +24,28 @@ public enum Ability {
 	//--------------------------------------------------------------------------
 
 	/** Constant switch for bonus formula. */
-	final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
+	private final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
 
 	/** Prioritized preference for any class based on prime requisite. */
 	private final static Ability[][] abilityPriority = 
 		{{Str, Dex, Con, Int, Wis, Cha}, {Int, Dex, Con, Cha, Wis, Str},
 		 {Wis, Con, Str, Int, Cha, Dex}, {Dex, Str, Con, Int, Cha, Wis},
 		 {Con, Str, Dex, Wis, Cha, Int}, {Cha, Dex, Int, Wis, Con, Str}};
+
+	/** Long-form names for abilities. */
+	private final static String[] fullName =
+		{"Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma"};
 	
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
+
+	/**
+	*  Get long-form name for an ability.
+	*/
+	public static String getFullName (Ability ability) {
+		return fullName[ability.ordinal()];
+	}
 	
 	/**
 	*  Gives the bonus for a given ability score.

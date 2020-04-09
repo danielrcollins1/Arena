@@ -170,12 +170,17 @@ public class Character extends Monster {
 	//  Methods
 	//--------------------------------------------------------------------------
 
+	// Name accessor
+	public String getName () { return name; }
+
 	// Implement null Monster equipment methods
 	public Armor getArmor () { return armor; }
 	public Armor getShield () { return shield; }
 	public Weapon getWeapon () { return weaponInHand; }
 
-	// Set equipment carried
+	// Access equipment carried
+	public int getEquipmentCount () { return equipList.size(); }
+	public Equipment getEquipment (int i) { return equipList.get(i); }
 	public void addEquipment (Equipment equip) { equipList.add(equip); }
 	public void dropAllEquipment () { equipList.clear(); }
 
@@ -902,7 +907,7 @@ public class Character extends Monster {
 	public String toString () {
 
 		// Standard stat block
-		String s = name + ", " + race + " " + classString();
+		String s = name + ", " + race + " " + classString(true);
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
 			+ ", hp " + getHP() + ", Atk " + getAttack();
 
@@ -924,10 +929,10 @@ public class Character extends Monster {
 	/**
 	*  String representation of all class and levels.
 	*/
-	String classString () {
+	String classString (boolean slashes) {
 		String s = "";
 		for (ClassRecord record: classList) {
-			if (s.length() > 0) s += "/";
+			if (slashes && s.length() > 0) s += "/";
 			s += record.getClassType().getAbbreviation() 
 				+ record.getLevel();
 		}
@@ -1028,6 +1033,20 @@ public class Character extends Monster {
 		}
 		else
 			return s;
+	}
+
+	/**
+	*  Create a short race/class descriptor.
+	*/
+	public String getRaceClassDesc () {
+		return race + " " + classString(true);	
+	}
+
+	/**
+	*  Create a filename identifier.
+	*/
+	public String getFilename () {
+		return name + "-" + race + classString(false);
 	}
 
 	/**
