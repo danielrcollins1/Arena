@@ -218,18 +218,30 @@ public class Dice {
 		if (number > 0) {
 			String s = number + "d" + sides;
 			if (multiplier != 1) {
-				s += (multiplier >= 0) ?
-					"x" + multiplier : "/" + (-multiplier);
+				s += formatMultiplier(multiplier);
 			}
 			if (addition != 0) {
-				s += (addition > 0) ?
-					"+" + addition : "" + addition;   
+				s += formatBonus(addition);
 			}
 			return s;   
 		}
 		else {
 			return "" + addition;  
 		}
+	}
+
+	/**
+	*  Format additive bonus with sign. 
+	*/
+	public static String formatBonus (int bonus) {
+		return bonus >= 0 ? "+" + bonus : "" + bonus;
+	}
+
+	/**
+	*  Format multiplicative bonus with sign. 
+	*/
+	public static String formatMultiplier (int mult) {
+		return mult >= 0 ? "x" + mult : "/" + (-mult);
 	}
 
 	/**

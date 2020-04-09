@@ -43,13 +43,24 @@ public class CharacterPDF {
 				int score = c.getAbilityScore(ability);
 				int bonus = Ability.getBonus(score);
 	 			form.getField(Ability.getFullName(ability)).setValue(score + "");
-				form.getField(ability + "Mod").setValue(formatBonus(bonus));
+				form.getField(ability + "Mod").setValue(Dice.formatBonus(bonus));
 			}
 			
 			// Statistics
 			form.getField("ArmorClass").setValue(c.getArmorClass() + "");
 			form.getField("HitPoints").setValue(c.getHitPoints() + "");
 			form.getField("MoveRate").setValue(c.getMoveInches() + "");
+
+			// Attacks
+			if (c.getAttack() != null) {
+				Attack atk = c.getAttack();
+				form.getField("Weapon1").setValue(atk.getName());
+				form.getField("AtkBonus1").setValue(Dice.formatBonus(atk.getBonus()));
+				form.getField("Damage1").setValue(atk.getDamage().toString());
+				if (c.getWeapon().getMagicBonus() > 0) {
+					form.getField("AtkNotes1").setValue("Magic");
+				}
+			}
 
 			// Equipment
 			for (int i = 0; i < c.getEquipmentCount(); i++) {
@@ -64,13 +75,6 @@ public class CharacterPDF {
 		catch (IOException e) {
 			e.printStackTrace();
 		}		
-	}
-
-	/**
-	*  Format bonus with sign character.
-	*/
-	String formatBonus (int bonus) {
-		return bonus > 0 ? "+" + bonus : "" + bonus;
 	}
 
 	/**

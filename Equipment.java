@@ -65,21 +65,12 @@ public class Equipment {
 	}
 
 	/**
-	*  Format magic bonus.
-	*/
-	String formatBonus (int bonus) {
-		if (bonus > 0) return "+" + bonus;
-		if (bonus < 0) return "" + bonus;
-		return "";	
-	}
-	
-	/**
 	*  Identify this object as a string.
 	*/
 	public String toString() {
 		String s = getName();
 		if (magicBonus != 0) {
-			s += " " + formatBonus(magicBonus);
+			s += " " + Dice.formatBonus(magicBonus);
 		}
 		return s;
 	}

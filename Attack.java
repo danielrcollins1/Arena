@@ -67,7 +67,7 @@ public class Attack {
 	public String toString() {
 		return (rate == 1 ? "" : rate + " ")
 			+ (name == null ? "Attack" : name) + " "
-			+ (bonus >= 0 ? "+" : "") + bonus
+			+ Dice.formatBonus(bonus)
 			+ " (" + damage + ")";
 	}
 	

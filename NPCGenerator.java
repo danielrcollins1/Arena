@@ -79,8 +79,8 @@ public class NPCGenerator {
 	*  Print program banner.
 	*/
 	void printBanner () {
-		System.out.println("OED NPC Generator");	
-		System.out.println("-----------------");	
+		System.out.println("OED NPC Generator");
+		System.out.println("-----------------");
 	}
 
 	/**
@@ -274,12 +274,11 @@ public class NPCGenerator {
 		for (int i = 0; i < numNPCs; i++) {
 			GenProfile p = fillProfile(inputProfile);
 			Character c = makeNPCFromProfile(p);
-			if (!printPDFs) {
-				printToConsole(c);			
+			if (printPDFs) {
+				printToPDF(c);
 			}
 			else {
-				CharacterPDF cp = new CharacterPDF();
-				cp.writePDF(c);
+				printToConsole(c);			
 			}
 		}
 	}
@@ -292,6 +291,15 @@ public class NPCGenerator {
 		for (int j = 0; j < lineBreaks; j++) {
 			System.out.println();
 		}
+	}
+
+	/**
+	*  Print a character to a PDF file.
+	*/
+	void printToPDF (Character c) {
+		System.out.println("Writing " + c.getFilename() + ".pdf");
+		CharacterPDF cp = new CharacterPDF();
+		cp.writePDF(c);
 	}
 
 	/**

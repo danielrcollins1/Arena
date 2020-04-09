@@ -132,7 +132,7 @@ public class Weapon extends Equipment {
 			s = material + " " + s;		
 		}
 		if (magicBonus != 0) {
-			s += " " + formatBonus(magicBonus);
+			s += " " + Dice.formatBonus(magicBonus);
 		}
 		return s;
 	}
