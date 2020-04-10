@@ -915,11 +915,11 @@ public class Character extends Monster {
 		if (printPersonality)
 			s = addClause(s, personalityString());
 		if (printEquipment)
-			s = addClause(s, "Gear", equipString());
+			s = addClause(s, "Gear", toSentenceCase(equipString()));
 		if (printFeats)
-			s = addClause(s, "Feats", featString());
+			s = addClause(s, "Feats", toSentenceCase(featString()));
 		if (printSpells)
-			s = addClause(s, "Spells", spellsString());
+			s = addClause(s, "Spells", toSentenceCase(spellString()));
 		
 		return s += ".";
 	}	
@@ -965,31 +965,42 @@ public class Character extends Monster {
 		for (Equipment equip: equipList) {
 			s = addItem(s, equip);
 		}
-		return toTitleCase(s);
+		return s;
 	}
 
 	/**
 	*  String representation of feats.
 	*/
-	private String featString () {
+	public String featString () {
 		String s = "";
 		for (ClassRecord rec: classList) {
 			s = addItem(s, rec.featsString());
 		}
-		return toTitleCase(s);
+		return s;
+	}
+
+	/**
+	*  String representation of skills.
+	*/
+	public String skillString () {
+		String s = "";
+		for (ClassRecord rec: classList) {
+			s = addItem(s, rec.skillsString());
+		}
+		return s;
 	}
 
 	/**
 	*  String representation of spells.
 	*/
-	private String spellsString () {
+	public String spellString () {
 		String s = "";
 		for (ClassRecord cr: classList) {
 			if (cr.getClassType().usesSpells()) {
 				s = addItem(s, cr.spellsString());
 			}
 		}
-		return toTitleCase(s);
+		return s;
 	}
 
 	/**
@@ -1017,9 +1028,9 @@ public class Character extends Monster {
 	}
 
 	/**
-	*  Convert a string to title case.
+	*  Convert a string to sentence case.
 	*/
-	private String toTitleCase(String s) {
+	private String toSentenceCase(String s) {
 		if (s.length() > 0) {
 			return java.lang.Character.toUpperCase(s.charAt(0))
 				+ s.substring(1).toLowerCase();

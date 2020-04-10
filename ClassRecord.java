@@ -194,6 +194,22 @@ public class ClassRecord {
 	}
 
 	/**
+	*  String representation of skills known.
+	*/
+	String skillsString () {
+		if (!classType.usesSkills()) {
+			return null;
+		}
+		else {
+			int bonus = level 
+				+ Ability.getBonus(character.getAbilityScore(Ability.Dex));
+			return "Thief Skills " + Dice.formatBonus(bonus)
+				+ " (open locks, remove traps, pick pockets," 
+				+ " move silently, hide in shadows)";
+		}
+	}
+
+	/**
 	*  Get midpoint XP for current level.
 	*/
 	int getMidpointXP () {

@@ -19,6 +19,19 @@ public class CharacterPDF {
 	/** Name of PDF character sheet source file. */
 	static final String CHAR_SHEET_FILE = "OED-CharacterSheet.pdf";
 
+	/** Estimated characters per special ability line. */
+	static final int SPECIAL_LINE_LENGTH = 30;
+
+	/** Maximum special ability lines on the sheet. */
+	static final int NUM_SPECIAL_LINES = 9;
+
+	//--------------------------------------------------------------------------
+	//  Fields
+	//--------------------------------------------------------------------------
+
+	/** Number of special ability lines used. */
+	int specialLinesUsed;
+
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
@@ -50,6 +63,12 @@ public class CharacterPDF {
 			form.getField("ArmorClass").setValue(c.getArmorClass() + "");
 			form.getField("HitPoints").setValue(c.getHitPoints() + "");
 			form.getField("MoveRate").setValue(c.getMoveInches() + "");
+
+			// Special abilities
+			addStringToSpecial(form, getRacialAbilities(c.getRace()));
+			addStringToSpecial(form, c.featString());
+			addStringToSpecial(form, c.skillString());
+			addStringToSpecial(form, c.spellString());
 
 			// Attacks
 			if (c.getAttack() != null) {
@@ -84,6 +103,58 @@ public class CharacterPDF {
 		String s = String.valueOf(value);
 		while (s.length() < places) s = "0" + s;
 		return s;	
+	}
+
+	/**
+	*  Get racial ability descriptions.
+	*/
+	String getRacialAbilities (String race) {
+		if (race.equals("Dwarf")) {
+			return "Infravision 60', resist magic +4, dodge giants +4, find stone traps +1";
+		}	
+		else if (race.equals("Elf")) {
+			return "Multi-classed, infravision 60', hide in woods (4/6), find wood traps +1";
+		}
+		else if (race.equals("Halfling")) {
+			return "Hide in woods (4-in-6), resist magic +4, ranged attacks +4";
+		}
+		else {
+			return "";
+		}
+	}
+
+	/**
+	*  Add a string to the special ability lines.
+	*/
+	void addStringToSpecial (PDAcroForm form, String s) throws IOException {
+		if (!s.isEmpty()) {
+			String currLine = "";
+			String[] words = s.split(" ");	
+			for (String word: words) {
+				if (currLine.length() + word.length() + 1 < SPECIAL_LINE_LENGTH) {
+					currLine += word + " ";
+				}
+				else {
+					addLineToSpecial(form, currLine);
+					currLine = "  " + word + " ";
+				}
+			}	
+			if (!currLine.isEmpty()) {
+				addLineToSpecial(form, currLine);
+			}
+		}
+	}
+
+	/**
+	*  Add one pre-formatted lins to the special ability section.
+	*/
+	void addLineToSpecial (PDAcroForm form, String s) throws IOException {
+		if (!s.isEmpty()) {
+			specialLinesUsed++;
+			if (specialLinesUsed <= NUM_SPECIAL_LINES) {
+				form.getField("Special" + specialLinesUsed).setValue(s);
+			}
+		}
 	}
 
 	/**
