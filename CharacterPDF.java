@@ -25,6 +25,9 @@ public class CharacterPDF {
 	/** Maximum special ability lines on the sheet. */
 	static final int NUM_SPECIAL_LINES = 9;
 
+	/** Maximum attack mode lines on the sheet. */
+	static final int NUM_ATTACK_LINES = 3;
+
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -71,21 +74,32 @@ public class CharacterPDF {
 			addStringToSpecial(form, c.spellString());
 
 			// Attacks
-			if (c.getAttack() != null) {
+			int atkNum = 0;
+			c.drawWeapon(null);
+			while (atkNum < NUM_ATTACK_LINES) {
+				c.drawNextWeapon();
+				if (c.getWeapon() == null) break;			
+				atkNum++;
 				Attack atk = c.getAttack();
-				form.getField("Weapon1").setValue(atk.getName());
-				form.getField("AtkBonus1").setValue(Dice.formatBonus(atk.getBonus()));
-				form.getField("Damage1").setValue(atk.getDamage().toString());
+				form.getField("Weapon" + atkNum).setValue(atk.getName());
+				form.getField("AtkBonus" + atkNum).setValue(Dice.formatBonus(atk.getBonus()));
+				form.getField("Damage" + atkNum).setValue(atk.getDamage().toString());
 				if (c.getWeapon().getMagicBonus() > 0) {
-					form.getField("AtkNotes1").setValue("Magic");
+					form.getField("AtkNotes" + atkNum).setValue("Magic");
 				}
 			}
-
+			
 			// Equipment
 			for (int i = 0; i < c.getEquipmentCount(); i++) {
-				String id = "Item" + formatLeadZeroes(i + 1, 2);
-				form.getField(id).setValue(c.getEquipment(i).toString());
+				String numStr = formatLeadZeroes(i + 1, 2);
+				form.getField("Item" + numStr).setValue(c.getEquipment(i).toString());
+				String weightStr = String.format("%.1f", c.getEquipment(i).getWeight());
+				form.getField("Weight" + numStr).setValue(weightStr);
 			}
+
+			// Encumbrance
+			String weightStr = String.format("%.1f", c.getEncumbrance());
+			form.getField("WeightTotal").setValue(weightStr);
 
 			// Write output file
 			document.save(c.getFilename() + ".pdf");

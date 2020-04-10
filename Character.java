@@ -405,7 +405,27 @@ public class Character extends Monster {
 	*  Get movement based on armor.
 	*/
 	private int computeMoveInches() {
-		return (armorWorn == null) ? BASE_MOVEMENT : armorWorn.getMaxMove();
+		float weight = getEncumbrance();
+		int strength = getAbilityScore(Ability.Str);
+		if (weight <= strength * 1./3)
+			return 12;
+		else if (weight <= strength * 2./3)
+			return 9;
+		else if (weight <= strength)
+			return 6;
+		else
+			return 0;
+	}
+
+	/**
+	*  Get total encumbrance of equipment.
+	*/
+	public float getEncumbrance () {
+		float sum = 0;
+		for (Equipment equip: equipList) {
+			sum += equip.getWeight();
+		}
+		return sum;
 	}
 
 	/**
@@ -455,9 +475,13 @@ public class Character extends Monster {
 	*  Set armor worn.
 	*/
 	public void setArmor (Armor armor) { 
-		equipList.remove(armorWorn);
-		if (armor != null && !equipList.contains(armor)) {
-			equipList.add(0, armor);			
+		if (armor != null) {
+			if (!equipList.contains(armor)) {
+				equipList.add(0, armor);
+			}	
+			if (armorWorn != armor) {
+				equipList.remove(armorWorn);
+			}
 		}
 		armorWorn = armor;
 		updateStats();
@@ -467,45 +491,86 @@ public class Character extends Monster {
 	*  Set shield carried.
 	*/
 	public void setShield (Armor shield) { 
-		equipList.remove(shieldHeld);
-		if (shield != null && !equipList.contains(shield)) {
-			equipList.add(shield);			
+		if (shield != null) {
+			if (!equipList.contains(shield)) {
+				equipList.add(shield);
+			}	
+			if (shieldHeld != shield) {
+				equipList.remove(shieldHeld);
+			}		
 		}
 		shieldHeld = shield;
 		updateStats();
 	}
 
 	/**
-	*  Draw a particular weapon from equipment.
+	*  Draw a particular weapon.
 	*/
 	public void drawWeapon (Weapon weapon) {
-		if (weapon != null && !equipList.contains(weapon)) {
-			equipList.add(weapon);
-		}	
-		if (weapon.getHandsUsed() > 1 && shieldHeld != null) {
-			shieldHeld = null;		
+		if (weapon != null) {
+			if (!equipList.contains(weapon)) {
+				equipList.add(weapon);
+			}	
+			if (weapon.getHandsUsed() <= 1 && shieldHeld == null) {
+				setShield(findShieldInEquip());
+			}
+			if (weapon.getHandsUsed() >= 2 && shieldHeld != null) {
+				setShield(null);
+			}
 		}
 		weaponInHand = weapon;
 		updateStats();
 	}
 
 	/**
+	*  Find shield in equipment list, if any
+	*/
+	private Armor findShieldInEquip () {
+		for (Equipment e: equipList) {
+			if (e instanceof Armor) {
+				Armor a = (Armor) e;
+				if (a.getArmorType() == Armor.Type.Shield) {
+					return a;
+				}
+			}
+		}	
+		return null;
+	}	
+
+	/**
+	*  Draw next weapon in equipment iteratively.
+	*/
+	public void drawNextWeapon () {
+		int index = (weaponInHand == null) ? 0
+			: equipList.indexOf(weaponInHand) + 1;
+		while (index < equipList.size()) {
+			Equipment equip = equipList.get(index);
+			if (equip instanceof Weapon) {
+				drawWeapon((Weapon) equip);
+				return;
+			}		
+			index++;
+		}
+		drawWeapon(null);
+	}
+
+	/**
 	*  Draw best weapon against a given monster.
 	*/
 	public void drawBestWeapon (Monster monster) {
+		drawWeapon(null);
 		int maxDamage = -1;
 		Weapon bestWeapon = null;
-		for (Equipment equip: equipList) {
-			if (equip instanceof Weapon) {
-				weaponInHand = (Weapon) equip;
-				updateStats();
-				int damage = maxDamageVsMonster(monster);
-				if (damage > maxDamage) {
-					maxDamage = damage;
-					bestWeapon = weaponInHand;
-				}							
-			}		
-		}	
+		while (true) {
+			drawNextWeapon();
+			if (weaponInHand == null) break;
+			int damage = maxDamageVsMonster(monster);
+			if (damage > maxDamage) {
+				maxDamage = damage;
+				bestWeapon = weaponInHand;
+			}							
+		}
+		assert(bestWeapon != null);
 		drawWeapon(bestWeapon);
 	}
 
@@ -681,7 +746,7 @@ public class Character extends Monster {
 	*/
 	void incrementRing () {
 		if (ringWorn == null) {
-			ringWorn = new Equipment("Ring of Protection", 1);
+			ringWorn = new Equipment("Ring of Protection", 0, 1);
 			equipList.add(ringWorn);
 		}
 		else {

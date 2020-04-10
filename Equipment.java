@@ -15,6 +15,9 @@ public class Equipment {
 	/** Maximum magic bonus allowed. */
 	static final int MAX_MAGIC_BONUS = 5;
 
+	/** One-third of a stone. */
+	public static final float ONE_THIRD = (float) 1./3;
+
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -25,6 +28,9 @@ public class Equipment {
 	/** Magic bonus value. */
 	int magicBonus;
 
+	/** Encumbrance in stone units. */
+	float weight;
+
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -32,22 +38,24 @@ public class Equipment {
 	/**
 	*  Basic constructor
 	*/
-	Equipment (String name, int magicBonus) {
+	Equipment (String name, float weight, int magicBonus) {
 		this.name = name;
+		this.weight = weight;
 		setMagicBonus(magicBonus);
 	}
 
 	/**
 	*  Nonmagic constructor
 	*/
-	Equipment (String name) {
-		this(name, 0);	
+	Equipment (String name, float weight) {
+		this(name, weight, 0);	
 	}
 	
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
 	public String getName () { return name; }
+	public float getWeight () { return weight; }
 	public int getMagicBonus () { return magicBonus; }
 
 	/**

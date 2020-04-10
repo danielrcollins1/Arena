@@ -462,7 +462,7 @@ public class MonsterMetrics {
 				bonus++;
 			}
 		}
-		return new Weapon("Sword", new Dice(8), 1, bonus);
+		return Weapon.sword(bonus);
 	}
 
 	/**

@@ -24,9 +24,6 @@ public class Armor extends Equipment {
 	/** Base armor points added. */
 	int baseArmor;
 
-	/** Max movement allowed. */
-	int maxMovement;
-	
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -34,18 +31,24 @@ public class Armor extends Equipment {
 	/**
 	*  Constructor (all fields)
 	*/
-	Armor (Type armorType, int baseArmor, int maxMove, int magicBonus) {
-		super(armorType.toString(), magicBonus); 
+	Armor (Type armorType, int baseArmor, float weight, int magicBonus) {
+		super(armorType.toString(), weight, magicBonus); 
 		this.armorType = armorType;
 		this.baseArmor = baseArmor;
-		this.maxMovement = maxMove;
+	}
+
+	/**
+	*  Constructor (no magic)
+	*/
+	Armor (Type armorType, int baseArmor, float weight) {
+		this(armorType, baseArmor, weight, 0);
 	}
 
 	/**
 	*  Constructor (copy)
 	*/
 	Armor (Armor a) {
-		this(a.armorType, a.baseArmor, a.maxMovement, a.magicBonus);
+		this(a.armorType, a.baseArmor, a.weight, a.magicBonus);
 	}
 
 	//--------------------------------------------------------------------------
@@ -55,7 +58,6 @@ public class Armor extends Equipment {
 	// Basic accessors.
 	public Type getArmorType () { return armorType; }
 	public int getBaseArmor () { return baseArmor; }
-	public int getMaxMove () { return maxMovement; }
 
 	/**
 	*  Is this armor made of metal?
@@ -69,11 +71,13 @@ public class Armor extends Equipment {
 	*/
 	static public Armor makeType (Type type) {
 		switch (type) {
-			case Plate: return new Armor(type, 6, 6, 0);
-			case Chain: return new Armor(type, 4, 9, 0);
-			case Leather: return new Armor(type, 2, 12, 0);
-			case Shield: return new Armor(type, 1, 0, 0);
-			default: return null;			
+			case Plate: return new Armor(type, 6, 4);
+			case Chain: return new Armor(type, 4, 2);
+			case Leather: return new Armor(type, 2, 1);
+			case Shield: return new Armor(type, 1, 1);
+			default: 
+				System.err.println("Armor type has undefined values.");
+				return null;			
 		}	
 	}
 }

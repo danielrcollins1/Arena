@@ -116,8 +116,11 @@ public class Wands {
 				for (WandInfo w: wandList) {
 					if (w.tier == tier) {
 						roll--;
-						if (roll == 0)
-							return new Equipment(w.name);
+						if (roll == 0) {
+							float weight = w.name.contains("Staff") ? 
+								Equipment.ONE_THIRD : 0;
+							return new Equipment(w.name, weight);
+						}
 					}
 				}
 			}
