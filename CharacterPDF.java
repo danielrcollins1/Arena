@@ -69,9 +69,9 @@ public class CharacterPDF {
 
 			// Special abilities
 			addStringToSpecial(form, getRacialAbilities(c.getRace()));
-			addStringToSpecial(form, c.featString());
-			addStringToSpecial(form, c.skillString());
-			addStringToSpecial(form, c.spellString());
+			addSegmentToSpecial(form, "Feats: ", c.featString());
+			addSegmentToSpecial(form, "Skills: ", c.skillString());
+			addSegmentToSpecial(form, "Spells: ", c.spellString());
 
 			// Attacks
 			int atkNum = 0;
@@ -135,6 +135,15 @@ public class CharacterPDF {
 		else {
 			return "";
 		}
+	}
+
+	/**
+	*  Add a segment to the special ability lines, if nonempty.
+	*/
+	void addSegmentToSpecial (PDAcroForm form, String label, String segment) throws IOException {
+		if (!segment.isEmpty()) {
+			addStringToSpecial(form, label + Character.toSentenceCase(segment));		
+		}	
 	}
 
 	/**

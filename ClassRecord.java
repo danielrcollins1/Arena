@@ -201,11 +201,12 @@ public class ClassRecord {
 			return null;
 		}
 		else {
-			int bonus = level 
-				+ Ability.getBonus(character.getAbilityScore(Ability.Dex));
-			return "Thief Skills " + Dice.formatBonus(bonus)
-				+ " (open locks, remove traps, pick pockets," 
-				+ " move silently, hide in shadows)";
+			int skillBonus = level + character.getAbilityBonus(Ability.Dex);
+			int hearClimbBonus = level/4 + 1;
+			int backstabMult = level/4 + 2;
+			return "Picklock, disarm, filch, sneak, hide " + Dice.formatBonus(skillBonus) + "; "
+				+ "hear, climb " + Dice.formatBonus(hearClimbBonus) + "; "
+				+ "bkstab " + Dice.formatMultiplier(backstabMult);
 		}
 	}
 

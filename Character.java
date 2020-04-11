@@ -980,11 +980,11 @@ public class Character extends Monster {
 		if (printPersonality)
 			s = addClause(s, personalityString());
 		if (printEquipment)
-			s = addClause(s, "Gear", toSentenceCase(equipString()));
+			s = addClause(s, "Gear: ", toSentenceCase(equipString()));
 		if (printFeats)
-			s = addClause(s, "Feats", toSentenceCase(featString()));
+			s = addClause(s, "Feats: ", toSentenceCase(featString()));
 		if (printSpells)
-			s = addClause(s, "Spells", toSentenceCase(spellString()));
+			s = addClause(s, "Spells: ", toSentenceCase(spellString()));
 		
 		return s += ".";
 	}	
@@ -1089,13 +1089,13 @@ public class Character extends Monster {
 	*  Add a label & clause to a string, if nonempty.
 	*/
 	private String addClause (String s, String label, String clause) {
-		return clause.length() > 0 ? addClause(s, label + ": " + clause) : s;
+		return clause.length() > 0 ? addClause(s, label + clause) : s;
 	}
 
 	/**
 	*  Convert a string to sentence case.
 	*/
-	private String toSentenceCase(String s) {
+	public static String toSentenceCase(String s) {
 		if (s.length() > 0) {
 			return java.lang.Character.toUpperCase(s.charAt(0))
 				+ s.substring(1).toLowerCase();
