@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-21
-*  @version  1.0
 ******************************************************************************/
 
 public enum Ability {
@@ -24,16 +23,16 @@ public enum Ability {
 	//--------------------------------------------------------------------------
 
 	/** Constant switch for bonus formula. */
-	private final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
+	final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
 
 	/** Prioritized preference for any class based on prime requisite. */
-	private final static Ability[][] abilityPriority = 
+	final static Ability[][] abilityPriority = 
 		{{Str, Dex, Con, Int, Wis, Cha}, {Int, Dex, Con, Cha, Wis, Str},
 		 {Wis, Con, Str, Int, Cha, Dex}, {Dex, Str, Con, Int, Cha, Wis},
 		 {Con, Str, Dex, Wis, Cha, Int}, {Cha, Dex, Int, Wis, Con, Str}};
 
 	/** Long-form names for abilities. */
-	private final static String[] fullName =
+	final static String[] fullName =
 		{"Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma"};
 	
 	//--------------------------------------------------------------------------
@@ -61,7 +60,7 @@ public enum Ability {
 	/**
 	*  BX-style bonus for a given ability score.
 	*/
-	private static int getBonus_BX (int score) {
+	static int getBonus_BX (int score) {
 		switch (score) {
 			case 3: return -3;
 			case 4: case 5: return -2;
@@ -81,10 +80,8 @@ public enum Ability {
 	/**
 	*  OED-style bonus for a given ability score.
 	*/
-	private static int getBonus_OED (int score) {
-		if (score <= 8) return (score - 11)/3;
-		else if (score >= 13) return (score - 10)/3;
-		else return 0;
+	static int getBonus_OED (int score) {
+		return score > 10 ? (score - 10)/3 : (score - 11)/3;
 	}
 	
 	/**
@@ -103,6 +100,18 @@ public enum Ability {
 	*/
 	public static Ability[] getPriorityList(Ability primeReq) {
 		return abilityPriority[primeReq.ordinal()];
+	}
+	
+	/**
+	*  Main test function.
+	*/
+	public static void main (String[] args) {
+		System.out.println("Score\tBonus");
+		System.out.println("-----\t-----");
+		for (int i = 3; i <= 18; i++) {
+			System.out.println(i + "\t" + getBonus(i));		
+		}
+		System.out.println();
 	}
 }
 
