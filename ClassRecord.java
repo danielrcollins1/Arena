@@ -202,11 +202,13 @@ public class ClassRecord {
 		}
 		else {
 			int skillBonus = level + character.getAbilityBonus(Ability.Dex);
-			int hearClimbBonus = level/4 + 1;
+			int hearBonus = 1 + level/4 + character.getAbilityBonus(Ability.Int);
+			int climbBonus = 1 + level/4 + character.getAbilityBonus(Ability.Dex);
 			int backstabMult = level/4 + 2;
-			return "Picklock, disarm, filch, sneak, hide " + Dice.formatBonus(skillBonus) + "; "
-				+ "hear, climb " + Dice.formatBonus(hearClimbBonus) + "; "
-				+ "bkstab " + Dice.formatMultiplier(backstabMult);
+			return "Pick, disarm, filch, sneak, hide " + Dice.formatBonus(skillBonus) + "; "
+				+ "hear " + Dice.formatBonus(hearBonus) + ", "
+				+ "climb " + Dice.formatBonus(climbBonus) + ", "
+				+ "backstab " + Dice.formatMultiplier(backstabMult);
 		}
 	}
 
