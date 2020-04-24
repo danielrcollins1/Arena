@@ -43,7 +43,7 @@ simple magic items, spells for wizards, OED feats, and suggested
 personalities keyed off alignment. (Depends on Apache PDF Box library, 
 make sure that's on your classpath; current version at https://pdfbox.apache.org/.)
 
-ATHENA -- A master program that can initiate ay of the applications above. 
+ATHENA -- A master program that can initiate any of the applications above. 
 Used as the main application in the combined JAR distribution.
 
 -----------------------------------------------------------------
