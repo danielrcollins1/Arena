@@ -9,7 +9,12 @@ monsters. This package provides only command-line, text output; there
 are no graphics or visualizations, and generally few options for output 
 regarding individual combats. 
 
-The package currently includes four top-level main applications:
+For a precompiled JAR executable made from this package, and full 
+JavaDoc pages, visit:
+
+- http://www.oedgames.com/addons/houserules/software.html
+
+The package currently includes five top-level main applications:
 
 -----------------------------------------------------------------
 
