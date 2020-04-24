@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.lang.reflect.Method;
+
 /******************************************************************************
 *  Master wrapper around all other applications in the Arena package.
 *  Used as the main class in the runnable standalone jar.
@@ -15,8 +18,11 @@ public class Athena {
 	/** Available applications. */
 	String appNames[] = {"Arena", "Marshal", "MonsterMetrics", "NPCGenerator"};
 
-	/** Selected app index. */
-	int appIndex;
+	/** Selected application. */
+	String appSelect;
+
+	/** Modified argument array. */
+	String appArgs[];
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
@@ -54,40 +60,34 @@ public class Athena {
 			exitAfterArgs = true;
 		}
 		else {
-			appIndex = getAppIdx(args[0]);
-			if (appIndex < 0) {
+			appSelect = args[0];
+			if (!Arrays.asList(appNames).contains(appSelect)) {
 				exitAfterArgs = true;
 			}
-		}
-	}
-
-	/**
-	*  Determine index of chosen app.
-	*/
-	int getAppIdx (String command) {
-		for (int i = 0; i < appNames.length; i++) {
-			if (appNames[i].equals(command)) {
-				return i;
+			else {
+				try {
+					appArgs = Arrays.copyOfRange(args, 1, args.length);
+				}
+				catch (Exception e) {
+					System.out.println(e);
+					exitAfterArgs = true;
+				}
 			}
-		}	
-		return -1;
+		}
 	}
 
 	/**
-	*  Run chosen app as per arguments.
+	*  Run chosen app with modified arguments.
 	*/
-	void runApp (String[] args) {
-		String[] newargs = new String[args.length - 1];
-		for (int i = 0; i < newargs.length; i++) {
-			newargs[i] = args[i + 1];
-		}
-		switch(appIndex) {
-			case 0: Arena.main(newargs); break;
-			case 1: Marshal.main(newargs); break;
-			case 2: MonsterMetrics.main(newargs); break;
-			case 3: NPCGenerator.main(newargs); break;
-			default: System.err.println("Error: Invalid app index.");
+	void runApp () {
+		try {		
+			Class<?> clazz = Class.forName(appSelect);
+			Method method = clazz.getMethod("main", String[].class); 
+			method.invoke(null, (Object) appArgs);
 		}			
+		catch (Exception e) {
+			System.err.println(e);		
+		}
 	}	
 
 	/**
@@ -101,7 +101,7 @@ public class Athena {
 			athena.printUsage();
 		}
 		else {
-			athena.runApp(args);		
+			athena.runApp();		
 		}
 	}
 }
