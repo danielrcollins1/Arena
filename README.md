@@ -43,6 +43,9 @@ simple magic items, spells for wizards, OED feats, and suggested
 personalities keyed off alignment. (Depends on Apache PDF Box library, 
 make sure that's on your classpath; current version at https://pdfbox.apache.org/.)
 
+ATHENA -- A master program that can initiate ay of the programs above. 
+Used as the main application in the combined JAR distribution.
+
 -----------------------------------------------------------------
 
 GPJ project files for use with jGRASP are included for each of these
