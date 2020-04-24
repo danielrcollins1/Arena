@@ -68,6 +68,14 @@ public class Marshal {
 	//--------------------------------------------------------------------------
 
 	/**
+	*  Print program banner.
+	*/
+	void printBanner () {
+		System.out.println("OED Marshal Program");
+		System.out.println("-------------------");
+	}
+
+	/**
 	*  Print usage.
 	*/
 	public void printUsage () {
@@ -183,6 +191,7 @@ public class Marshal {
 	*/
 	public static void main (String[] args) {
 		Marshal marshal = new Marshal();
+		marshal.printBanner();
 		marshal.parseArgs(args);
 		if (marshal.exitAfterArgs()) {
 			marshal.printUsage();

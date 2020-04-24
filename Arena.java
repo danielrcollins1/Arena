@@ -108,6 +108,7 @@ public class Arena {
 		Character.setPctMagicPerLevel(DEFAULT_PCT_MAGIC_PER_LEVEL);
 		typicalAlignment = Alignment.Neutral;
 		fighterList = new Party(); 
+		reportFighterStats = true;
 	}
 
 	/**
@@ -123,6 +124,14 @@ public class Arena {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
+
+	/**
+	*  Print program banner.
+	*/
+	void printBanner () {
+		System.out.println("OED Arena Simulator");
+		System.out.println("-------------------");
+	}
 
 	/**
 	*  Print usage.
@@ -210,6 +219,7 @@ public class Arena {
 	*  Set reporting for param char code.
 	*/
 	void setReportingFromParamCode (String s) {
+		reportFighterStats = false; // shut off default
 		for (int i = 2; i < s.length(); i++) {
 			switch (s.charAt(i)) {
 				case 's': reportFighterStats = true; break;
@@ -335,23 +345,31 @@ public class Arena {
 	*/
 	Party createMonsterParty (int dungeonLevel, int numFighters) {
 		Monster monster;
-		int count = 0;
+		int numMonsters = 0;
 		do {
 			monster = MonsterTables.getInstance()
 				.randomMonsterByDungeonLevel(dungeonLevel);
-			count = getMonsterNumber(
+			numMonsters = getMonsterNumber(
 				monster, dungeonLevel, numFighters);
-		} while (count < 1);
-		return new Party(monster, count);
+		} while (numMonsters < 1);
+		return new Party(monster, numMonsters);
 	}
 
 	/**
 	*  Get number of monsters for encounter (a la Vol-3, p. 11).
+	*
+	*  In tabletop practice, we would like to assume a party size of 4,
+	*    and roll 1d6 * dungeonLevel / monsterEHD (round to closest, possibly 0).
+	*    Note E(1d6) ~ expected nominal party size of 4. 
+	*    Extra calculations here are to scale to different party sizes.
 	*/
 	int getMonsterNumber (Monster monster, int dungeonLevel, int numFighters) {
-		int scaleFactor = numFighters;
-		int numMonsters = scaleFactor * dungeonLevel / monster.getEHD();
-		return Math.max(1, numMonsters);
+		int roll = Dice.roll(6);
+		final int nominalParty = 4;
+		int numMonsters = (int) Math.round((double) 
+			roll * dungeonLevel * numFighters
+				/ (monster.getEHD() * nominalParty));
+		return numMonsters;
 	}
 
 	/**
@@ -474,7 +492,7 @@ public class Arena {
 	*  Print simulation starting info.
 	*/
 	public void reportStart () {
-		System.out.println("ARENA: "
+		System.out.println("Settings: "
 			+ (fightManVsMonster ? "man-vs-monster" : "man-vs-man")
 			+ ", numFighters " + numFighters
 			+ ", numYears " + numYears
@@ -692,6 +710,7 @@ public class Arena {
 	*/
 	public static void main (String[] args) {
 		Arena arena = new Arena();
+		arena.printBanner();
 		arena.parseArgs(args);
 		if (arena.exitAfterArgs) {
 			arena.printUsage();

@@ -77,6 +77,14 @@ public class MonsterMetrics {
 	//--------------------------------------------------------------------------
 
 	/**
+	*  Print program banner.
+	*/
+	void printBanner () {
+		System.out.println("OED Monster Metrics");
+		System.out.println("-------------------");
+	}
+
+	/**
 	*  Print usage.
 	*/
 	public void printUsage () {
@@ -481,6 +489,7 @@ public class MonsterMetrics {
 	*/
 	public static void main (String[] args) {
 		MonsterMetrics metrics = new MonsterMetrics();
+		metrics.printBanner();
 		metrics.parseArgs(args);
 		if (metrics.exitAfterArgs) {
 			metrics.printUsage();
