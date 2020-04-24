@@ -18,6 +18,9 @@ The package currently includes five top-level main applications:
 
 -----------------------------------------------------------------
 
+ATHENA -- A master program that can initiate any of the applications below. 
+Used as the main application in the combined JAR distribution.
+
 ARENA -- Simulates a population of fighters, battling for
 experience and treasure over some amount of time (broadly inspired by 
 Roman arena-style events). Combat can be man vs. man or man vs.
@@ -47,9 +50,6 @@ the Arena above (i.e., different from the Marshal process). Includes
 simple magic items, spells for wizards, OED feats, and suggested
 personalities keyed off alignment. (Depends on Apache PDF Box library, 
 make sure that's on your classpath; current version at https://pdfbox.apache.org/.)
-
-ATHENA -- A master program that can initiate any of the applications above. 
-Used as the main application in the combined JAR distribution.
 
 -----------------------------------------------------------------
 
