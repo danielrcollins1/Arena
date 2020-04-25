@@ -13,7 +13,7 @@ s#k0
 s#j0
 s#l0
 !76;u
-a1	b68	c126	f%\011AthenaZip.jar	g%\011AthenaZip.zip	hManifest-Version\0111.0!524;g
+a1	b68	c126	f%\011AthenaZip.jar	g%\011AthenaZip.zip	hManifest-Version\0111.0!458;g
 %\011MonsterTreasure.csv
 %\011SavingThrows.csv
 %\011DungeonTreasure.csv
@@ -32,12 +32,10 @@ a1	b68	c126	f%\011AthenaZip.jar	g%\011AthenaZip.zip	hManifest-Version\0111.0!524
 %\011Wands.csv
 %\011Class-Fighter.csv
 %\011EHDToTable.csv
-%\011MonsterDatabase-Dragons.csv
 %\011pdfbox-app.jar
-%\011MonsterLevelMatrix-Vol3.csv
 %\011Names.csv
 %\011TestAthenaJar.bat
-!524;f
+!458;f
 %\011MonsterTreasure.csv
 %\011SavingThrows.csv
 %\011DungeonTreasure.csv
@@ -56,8 +54,6 @@ a1	b68	c126	f%\011AthenaZip.jar	g%\011AthenaZip.zip	hManifest-Version\0111.0!524
 %\011Wands.csv
 %\011Class-Fighter.csv
 %\011EHDToTable.csv
-%\011MonsterDatabase-Dragons.csv
 %\011pdfbox-app.jar
-%\011MonsterLevelMatrix-Vol3.csv
 %\011Names.csv
 %\011TestAthenaJar.bat
