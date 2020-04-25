@@ -79,4 +79,4 @@ to the database should be made there first, and then exported to the CSV
 file in this software package. See www.oedgames.com/addons/houserules.
 
 - Daniel R. Collins ("Delta")
-www.oedgames.com 
+www.oedgames.com
