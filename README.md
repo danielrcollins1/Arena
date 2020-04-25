@@ -53,8 +53,9 @@ make sure that's on your classpath; current version at https://pdfbox.apache.org
 
 -----------------------------------------------------------------
 
-GPJ project files for use with jGRASP are included for each of these
-three applications.
+GPJ project files for use with jGRASP are included for each of the
+applications above. It's easiest to simply use Athena.gpj to build the master 
+program and all the child applications. 
 
 Note that at the current time, combat is primarily melee only; no sense
 of space, location, or movement is simulated. Targets of attacks are 
