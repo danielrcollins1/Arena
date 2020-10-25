@@ -62,9 +62,23 @@ public class Attack {
 	public void setRate (int rate)  { this.rate = rate; }
 
 	/**
+	*  Roll damage for successful hit.
+	*/
+	public int rollDamage () {
+
+		// Some attacks do 0 damage (e.g., carrion crawler)
+		if (damage.getNum() <= 0)
+			return damage.boundRoll(0);
+
+		// Everything else does minimum 1 point (even w/penalties)
+		else
+			return damage.boundRoll(1);
+	}
+
+	/**
 	*  Identify this object as a string.
 	*/
-	public String toString() {
+	public String toString () {
 		return (rate == 1 ? "" : rate + " ")
 			+ (name == null ? "Attack" : name) + " "
 			+ Dice.formatBonus(bonus)

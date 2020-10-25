@@ -262,7 +262,7 @@ public class Monster {
 	* Roll hit points from hit dice.
 	*/
 	private void rollHitPoints () {
-		if (race.contains("Dragon")) {
+		if (hasSpecial(SpecialType.DragonAge)) {
 			maxHitPoints = hitDice.getNum() * getDragonAge();
 		}
 		else if (hasSpecial(SpecialType.Multiheads)) {
@@ -328,29 +328,19 @@ public class Monster {
 	}
 
 	/**
-	* Carry out full attack routine on another creature.
-	*/
-	public void fullAttack (Attack attack, Monster target) {
-		for (int i = 0; i < attack.getRate(); i++) {
-			boolean last = (i == attack.getRate() - 1); 
-			singleAttack(attack, target, last);
-		}
-	}
-
-	/**
 	* Make one attack on another creature.
 	*/
 	public void singleAttack (Attack attack, Monster target, boolean last) {
-		int naturalRoll = Dice.roll(20);
-		int totalRoll = naturalRoll + attack.getBonus() 
-			+ target.getAC() + hitModifier(target);
-		if (canAttack(target) && (naturalRoll == 20 || totalRoll >= 20)) {
-			Dice damageDice = attack.getDamage();
-			int floor = damageDice.getNum() == 0 ? 0 : 1;
-			int damage = damageDice.boundRoll(floor);
-			damage = checkDamageReduction(target, damage);
-			target.takeDamage(damage);
-			checkSpecialOnHit(target, totalRoll, last);
+		if (canAttack(target)) {
+			int naturalRoll = Dice.roll(20);
+			int totalRoll = naturalRoll + attack.getBonus() 
+				+ target.getAC() + hitModifier(target);
+			if (naturalRoll == 20 || totalRoll >= 20) {
+				int damage = attack.rollDamage();
+				damage = checkDamageReduction(target, damage);
+				target.takeDamage(damage);
+				checkSpecialOnHit(target, totalRoll, last);
+			}
 		}
 	}
 
@@ -358,34 +348,36 @@ public class Monster {
 	* Can we feasibly attack this target?
 	*/
 	public boolean canAttack (Monster target) {
-		SpecialAbility special;
+		boolean canHit = true;
 
 		// Check silver to hit
-		special = target.findSpecial(SpecialType.SilverToHit);
-		if (special != null) {
-			boolean silverWeapon = (getWeapon() != null 
+		if (target.hasSpecial(SpecialType.SilverToHit)) {
+			boolean hasSilverWeapon = (getWeapon() != null 
 				&& getWeapon().getMaterial() == Weapon.Material.Silver);
-			return silverWeapon || getMagicHitLevel() > 0;
+			boolean atkSilverToHit = hasSpecial(SpecialType.SilverToHit);
+			if (!hasSilverWeapon && !atkSilverToHit && getMagicHitLevel() <= 0)
+				canHit = false;			
 		}
 
 		// Check magic to hit
-		special = target.findSpecial(SpecialType.MagicToHit);
-		if (special != null) {
-			return getMagicHitLevel() >= special.getParam();
+		if (target.hasSpecial(SpecialType.MagicToHit)) {
+			SpecialAbility magicSpecial = target.findSpecial(SpecialType.MagicToHit);
+			if (getMagicHitLevel() < magicSpecial.getParam())
+				canHit = false;
 		}
 
 		// Check total weapon immunity
 		if (target.hasSpecial(SpecialType.WeaponImmunity)) {
-			return false;
+			canHit = false;
 		}
 
 		// Check phasing (3-in-6 to be out of phase)
 		if (target.hasSpecial(SpecialType.Phasing) 
 				&& new Dice(6).roll() <= 3) {
-			return false;
+			canHit = false;
 		}
 
-		return true;
+		return canHit;
 	}
 
 	/**

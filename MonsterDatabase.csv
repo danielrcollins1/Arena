@@ -2,6 +2,7 @@ Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Special,Type,Align,HD#,EHD,Env,Sourc
 Rat,1d100,7,15,1/6,-,-,1,1,-,A,N,0.2,0,D,M2
 Giant Centipede,2d12,9,15,1/3,-,-,1,0,Poison (-4),A,N,0.3,1,D,M1
 Giant Rat,5d10,7,12,1/2,10,C,1,1d3,Disease,A,N,0.5,1,D,"S1, M1"
+Jackal,1d6,8,12,1/2,-,-,1,1d3,-,A,N,0.5,1,W,"S1, M1"
 "Giant Beetle, Fire",3d4,4,9,1-1,-,-,1,1d6,Light,A,N,0.8,1,D,S2
 Stirge,3d10,7,18,1,55,D,1,1d3,"Flight (18), HitBonus (3), BloodDrain (4)",A,N,1,1,D,S1
 Wolf,2d10,7,18,2,10,-,1,1d6,-,A,N,2,1,W,"S1, SS, M1"
@@ -19,21 +20,26 @@ Giant Hog,1d12,7,15,3+3,-,-,1,1d6,-,A,N,3,2,D,M1
 Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,-,A,N,3,2,W,"S1, M1"
 Crocodile,3d8,5,9,3,-,-,1,1d6,Swimming (15),A,N,3,2,U,"O, M1"
 Giant Tick,3d4,4,3,3,-,-,1,1d3,"BloodDrain (4), Disease",A,N,3,2,D,S1
+Ram,1d6,7,15,3,-,-,1,1d6,Charge,A,N,3,2,W,"S1, M2"
+Huge Spider,1d12,6,18,2+2,50,-,1,1d6,"Poison (-1), Stealth (3), Hopping",A,N,2,3,D,M1
 Giant Toad,3d10,6,3,2,-,-,1,1d6,"Hopping, Grabbing, Poison",A,N,2,3,D,"S1, S2"
 "Horse, Heavy",1,7,12,3,-,-,2,1d6,-,A,N,3,3,W,"CM, O, SS"
 Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,BloodDrain (6),A,N,3,3,D,"S1, M1"
+Bull,1d20,6,15,4,-,-,1,1d6+2,Charge,A,N,4,3,W,"S1, M1"
 Giant Wasp,3d10,5,6,3,-,-,1,1d6,"Flight (24), Poison",A,N,3,4,D,S2
 Giant Crab,3d4,2,6,3,-,-,2,1d6+1,-,A,N,3,4,U,"O, S1, S2"
 Giant Octopus,1d4,7,3,4,30,A,8,1d3,"Swimming (9), Jet, InkCloud",A,N,4,4,U,"O, S2, M1"
+Lion,2d6,6,12,5,25,-,2,1d6,"Stealth (2), Grabbing",A,N,5,4,W,"S1, M1"
 "Giant Ant, Warrior",1d20,3,18,3,10,-,1,1d6,Poison,A,N,3,5,D,M1
 "Giant Snake, Poisonous",1d6,5,15,4+2,-,-,1,1d6,Poison,A,N,4,5,D,M1
 "Giant Beetle, Boring",2d6,3,6,5,50,A,1,2d6,-,A,N,5,5,D,S2
-Lion,2d6,5,12,5+2,25,-,2,1d6,"Stealth (2), Grabbing",A,N,5,5,W,"S1, M1"
 White Ape,2d4,6,12,6,10,C,2,1d6,-,A,N,6,5,D,"M1, WM"
 Giant Crocodile,2d6,5,9,6,-,-,1,2d6,"Swimming (15), Capsizing",A,N,6,5,U,"O, S2"
+Bear,1d6,5,12,6,-,-,2,1d6,Grabbing,A,N,6,5,W,"S1, M1"
 "Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,Constriction,A,N,6,6,D,M1
 "Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,-,A,N,6,6,D,S2
 Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,"Stealth (2), Grabbing",A,N,7,6,W,"S1, M1"
+Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,"Poison, WebMovement (12)",A,C,4,7,D,M1
 Giant Slug,1,8,6,12+2,-,-,1,1d6+1,AcidSpitting,A,N,12,8,D,S1
 Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,Poison,A,N,5,9,D,"S1, M1"
 "Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,"Swimming (20), Poison, Constriction",A,N,6,10,U,"O, M1"
@@ -70,27 +76,27 @@ Wyvern,1d6,3,9,7,60,E,1,1d6+2,"Flight (24), Poison",B,N,7,9,D,O
 Phase Spider,1d6,6,6,5,80,E,1,1d6,"Phasing, Poison",B,N,5,10,D,S1
 Salamander,1d4+1,5,9,7+3,65,F,2,2d6,"Heat, Constriction, FireImmunity",B,C,7,10,D,S1
 Chimera,1d4,4,12,9,50,F,3,1d6,"Flight (18), FireBreath (3)",B,N,9,10,D,O
-"Dragon, White",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,13,D,O
+"Dragon, White",1d4,2,9,6,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), ColdBreath",B,C,6,13,D,O
 Gorgon,1d4,2,12,8,50,E,1,2d6,PetrifyingBreath,B,C,8,13,D,O
 Medusa,1d4,8,9,4,75,F,2,1d6,"PetrifyingGaze, Poison",B,C,4,14,D,O
 Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,Confusion,B,N,8,14,D,S1
-"Dragon, Black",1d4,2,9,7,60,H,2,2d6,"Flight (24), Fear, Detection (15), AcidBreath",B,C,7,15,D,O
+"Dragon, Black",1d4,2,9,7,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), AcidBreath",B,C,7,15,D,O
 Mind Flayer,1d4,5,12,8+3,50,F,4,0,"MagicResistance (90), MindBlast, Grabbing, BrainConsumption",B,N,8,15,D,SR1
 Roper,1d3,0,3,10,90,D,1,3d6,"MagicResistance (80), SappingStrands, LightningImmunity, ColdResistance, FireVulnerability",B,C,10,15,D,SR2
 Balrog,1d6,2,6,10,25,F,2,2d6,"Flight (15), MagicResistance (75), Immolation",B,C,10,15,D,O
-"Dragon, Green",1d4,2,9,8,60,H,2,2d6,"Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,17,D,O
+"Dragon, Green",1d4,2,9,8,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,17,D,O
 "Golem, Flesh",1,9,9,12,-,-,2,2d6,"MagicToHit (1), SpellImmunity",B,N,12,17,D,S1
 "Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,Multiheads,B,N,10,18,D,O
-"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,"Flight (24), Fear, Detection (15), LightningBreath",B,N,9,22,D,O
+"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,22,D,O
 Basilisk,1d6,4,6,6+1,40,F,1,1d6,"PetrifyingGaze, Petrification",B,N,6,25,D,O
-"Dragon, Red",1d4,2,9,10,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath",B,C,10,27,D,O
+"Dragon, Red",1d4,2,9,10,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath",B,C,10,27,D,O
 Purple Worm,1d4,6,6,15,25,D,2,2d6,"Swallowing, Poison, Fearlessness",B,N,15,28,D,O
-Dragon Turtle,1d4,2,3,12,60,H,2,2d6,"Swimming (9), Fear, Detection (15), SteamBreath",B,C,12,34,U,O
+Dragon Turtle,1d4,2,3,12,60,H,2,2d6,"DragonAge, Swimming (9), Fear, Detection (15), SteamBreath",B,C,12,34,U,O
 "Golem, Stone",1,5,6,18,-,-,1,3d6,"MagicToHit (2), SpellImmunity, Slowing",B,N,18,37,D,S1
 "Golem, Iron",1,2,3,24,-,-,1,4d6,"MagicToHit (3), SpellImmunity, PoisonBreath (1)",B,N,24,98,D,S1
 Rust Monster,1d2,2,12,5,-,-,1,0,Corrosion,B,N,5,?,D,S1
 Lammasu,2d4,6,12,6+2,40,A,2,1d6,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil (10)",B,L,6,?,D,S1
-"Dragon, Gold",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
+"Dragon, Gold",1d4,2,9,11,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
 Beholder,1,2,3,12,90,I,1,1d6,"Flight (3), AntiMagic, Spells",B,N,12,?,D,S1
 Gnome,4d10x10,5,6,1,60,C,1,1d6,"SaveBonus (4), DodgeGiants",F,L,1,1,W,O
 Elf,3d10x10,5,12,1+1,25,E,1,1d6,"Camouflage, HitBonus (1)",F,L,1,1,W,O
