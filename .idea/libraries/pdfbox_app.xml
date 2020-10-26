@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pdfbox-app">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/pdfbox-app.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

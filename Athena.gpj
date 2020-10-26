@@ -107,4 +107,4 @@ a%\011Athena_doc%s	b	c1	d0!950;g
 %\011NameGenerator.java
 %\011Party.java
 !29;m
-RunSelect	APPLICATION:Athena
+RunSelect	APPLICATION:net.superdan.athena.Athena
