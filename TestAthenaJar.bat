@@ -1,9 +1,9 @@
-REM Test the Athena JAR program
-java -jar Athena.jar
-java -jar Athena.jar Arena
-java -jar Athena.jar Marshal bandits
-java -jar Athena.jar MonsterMetrics troll -f=100
-java -jar Athena.jar NPCGenerator
-java -jar Athena.jar NPCGenerator -pdf
-java -jar Athena.jar FooBar
+REM Test the net.superdan.athena.Athena JAR program
+java -jar net.superdan.athena.Athena.jar
+java -jar net.superdan.athena.Athena.jar net.superdan.athena.Arena
+java -jar net.superdan.athena.Athena.jar net.superdan.athena.Marshal bandits
+java -jar net.superdan.athena.Athena.jar net.superdan.athena.MonsterMetrics troll -f=100
+java -jar net.superdan.athena.Athena.jar net.superdan.athena.NPCGenerator
+java -jar net.superdan.athena.Athena.jar net.superdan.athena.NPCGenerator -pdf
+java -jar net.superdan.athena.Athena.jar FooBar
 pause
