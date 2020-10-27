@@ -42,6 +42,7 @@ public class MapUtil {
 		map.put("A", 2);
 		map.put("B", 3);
 		map.put("C", 1);   
+		map.put("D", 2);
 		System.out.println(map);
 		System.out.println(entriesSortedByValues(map, false));
 		System.out.println(entriesSortedByValues(map, true));
