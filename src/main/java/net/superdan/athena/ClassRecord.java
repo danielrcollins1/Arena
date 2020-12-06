@@ -324,7 +324,7 @@ public class ClassRecord {
 	void addAllSpells() {
 		if (classType.usesSpells()) {
 			spellsKnown = new ArrayList<>();
-			SpellsTable table = SpellsTable.getInstance();
+			SpellsTable.getInstance(); // instantiate singleton
 			SpellsUsable usable = SpellsUsable.getInstance();
 			for (int power = 1; power <= usable.getMaxSpellLevel(); power++) {
 				spellsKnown.add(new ArrayList<>());
@@ -356,12 +356,11 @@ public class ClassRecord {
 	 * Roll random spell usage.
 	 */
 	Spell.Usage rollUsage() {
-		switch (roll(6)) {
-			case 1:
-				return Miscellany;
-			case 2: case 3: return Defensive;
-			default: return Offensive;
-		}	
+		return switch (roll(6)) {
+			case 1 -> Miscellany;
+			case 2, 3 -> Defensive;
+			default -> Offensive;
+		};
 	}
 
 	/**

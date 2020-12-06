@@ -30,16 +30,18 @@ public class MapUtil {
 				(e1, e2) -> {
 					int res = e1.getValue().compareTo(e2.getValue());
 					if (reverse) res = -res;
-					return res != 0 ? res : 1;
+                    //noinspection ComparatorMethodParameterNotUsed
+                    return res != 0 ? res : 1;
 				}
 		);
 		sortedEntries.addAll(map.entrySet());
 		return sortedEntries;
 	}
 	
+/*
 	/**
 	*	Main test method.
-	*/
+	* /
 	public static void main	(String[] args) {
 		Map<String, Integer> map = new TreeMap<>();
 		map.put("A", 2);
@@ -50,8 +52,9 @@ public class MapUtil {
 		System.out.println(entriesSortedByValues(map, false));
 		System.out.println(entriesSortedByValues(map, true));
 	}
-	
-	/*--------------------------------------------------------------------------
+
+*/
+    /*--------------------------------------------------------------------------
 	*	If the sorting method above is somehow deficient, consider instead:
 	*  https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
 	*-------------------------------------------------------------------------*/

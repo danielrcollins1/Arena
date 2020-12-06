@@ -112,9 +112,10 @@ public enum Ability {
 		return abilityPriority[primeReq.ordinal()];
 	}
 
+/*
 	/**
 	 *  Main test function.
-	 */
+	 * /
 	public static void main (String[] args) {
 		System.out.println("Score\tBonus");
 		System.out.println("-----\t-----");
@@ -123,5 +124,6 @@ public enum Ability {
 		}
 		System.out.println();
 	}
+*/
 }
 

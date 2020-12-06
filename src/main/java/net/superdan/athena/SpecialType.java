@@ -55,15 +55,13 @@ public enum SpecialType {
     public SavingThrows.SaveType getSaveType() {
         switch (this) {
             case Poison:
+            case SporeCloud:
                 return SavingThrows.SaveType.Death;
             case Paralysis:
-                return SavingThrows.SaveType.Stone;
             case Petrification:
                 return SavingThrows.SaveType.Stone;
             case Confusion:
                 return SavingThrows.SaveType.Spells;
-            case SporeCloud:
-                return SavingThrows.SaveType.Death;
             default:
                 System.err.println("Error: No saveType for condition: " + this);
                 return null;

@@ -24,7 +24,7 @@ public class PersonalityTraits {
 	//  Inner class
 	//--------------------------------------------------------------------------
 
-	class PersonalityTrait {
+	static class PersonalityTrait {
 		String name;
 		int value;
 
@@ -97,7 +97,6 @@ public class PersonalityTraits {
 			case Lawful -> value == +1;
 			case Neutral -> value == 0;
 			case Chaotic -> value == -1;
-			default -> false;
 		};
 	}
 
@@ -130,7 +129,6 @@ public class PersonalityTraits {
 	*/
 	public static void main (String[] args) throws IOException {
 		Dice.initialize();
-		final int NUM_TRAITS = 5;
 		PersonalityTraits pt = new PersonalityTraits();
 		pt.printMultiTraits(Alignment.Lawful);
 		pt.printMultiTraits(Alignment.Neutral);
