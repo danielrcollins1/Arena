@@ -45,6 +45,8 @@ public class Dice {
 	 */
 	private static Random random = null;
 
+	public static int force = 0;
+
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
@@ -162,6 +164,8 @@ public class Dice {
 	public static void initialize() {
 		random = new Random();
 	}
+
+	public static void initialize(int force) {  random = new NonRandom(force); }
 
 	/**
 	 * Roll one die from a static context.
@@ -318,5 +322,25 @@ public class Dice {
 					+ (double) count[i]/numRolls);
 		}
 		System.out.println();
+		
 	}
+
+	static class NonRandom extends Random {
+		private final int force;
+
+		public NonRandom(int force) {
+			this.force = force;
+		}
+
+		@Override
+		public int nextInt() {
+			return force;
+		}
+
+		@Override
+		public int nextInt(int sides) {
+			return force - 1; // the result of nextInt(sides) will have 1 added to it, so subtract 1
+		}
+	}
+
 }
