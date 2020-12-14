@@ -26,7 +26,7 @@ public class NameGenerator {
 	//  Inner class
 	//--------------------------------------------------------------------------
 
-	class NameData {
+	static class NameData {
 		String name;
 		boolean isMale;	
 
