@@ -1,5 +1,9 @@
 package net.superdan.athena;
 
+import picocli.CommandLine;
+
+import java.util.concurrent.Callable;
+
 /******************************************************************************
 *  Generates random NPCs to user specification.
 *
@@ -11,7 +15,10 @@ package net.superdan.athena;
 *  @version  1.0
 ******************************************************************************/
 
-public class NPCGenerator {
+@SuppressWarnings("RedundantThrows")
+@CommandLine.Command(name = "NPCGenerator", mixinStandardHelpOptions = true, version = "NPCGenerator 1.0",
+		description = "Makes a group of NPCs according to input specs and writes to a file or STDOUT.")
+public class NPCGenerator implements Callable<Integer> {
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -19,9 +26,6 @@ public class NPCGenerator {
 
 	/** Percent chance for magic per level. */
 	static final int PCT_MAGIC_PER_LEVEL = 15;
-
-	/** Name of PDF character sheet source file. */
-	static final String CHAR_SHEET_FILE = "OED-CharacterSheet.pdf";
 
 	//--------------------------------------------------------------------------
 	//  Inner Class
@@ -43,16 +47,28 @@ public class NPCGenerator {
 	GenProfile inputProfile;
 
 	/** Number of NPCs to create. */
+	@CommandLine.Option(names = {"-n", "--number"}, description = "The number of NPCs to create")
 	int numNPCs; 
 
 	/** Print PDF character sheets */
+	@CommandLine.Option(names = {"-p", "--pdf"}, description = "Print to PDF")
 	boolean printPDFs;
 
 	/** Line breaks between NPCs */
+	@CommandLine.Option(names = {"-b", "--breaks"}, description = "Line breaks between NPCs")
 	int lineBreaks;
 
-	/** Flag to escape after parsing arguments. */
-	boolean exitAfterArgs;
+	@CommandLine.Option(names = {"-r", "--race"}, description = "Race Valid Values: ${COMPLETION-CANDIDATES}")
+	Race race;
+
+	@CommandLine.Option(names = {"-c", "--class"}, description = "Class Valid Values: ${COMPLETION-CANDIDATES}")
+	CharacterClass aClass;
+
+	@CommandLine.Option(names = {"-a", "--alignment"}, description = "Alignment Valid Values: ${COMPLETION-CANDIDATES}")
+	Alignment alignment;
+
+	@CommandLine.Option(names = {"-l", "--level"}, description = "Level of NPC to generate")
+	int level;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -80,131 +96,6 @@ public class NPCGenerator {
 	void printBanner () {
 		System.out.println("OED NPC Generator");
 		System.out.println("-----------------");
-	}
-
-	/**
-	*  Print usage.
-	*/
-	void printUsage () {
-		System.out.println("Usage: net.superdan.athena.NPCGenerator [options]");
-		System.out.println("  where options include:");
-		System.out.println("\t-a alignment (=[L, N, C])");
-		System.out.println("\t-r race (=[M, D, E, H])");
-		System.out.println("\t-r class (=[F, T, W])");
-		System.out.println("\t-l level (=#)");
-		System.out.println("\t-n number (=#)");
-		System.out.println("\t-b breaks between NPCs (=#)");
-		System.out.println("\t-p PDF output");
-		System.out.println();
-	}
-
-	/**
-	*  Parse arguments.
-	*/
-	void parseArgs (String[] args) {
-		for (String s: args) {
-			if (s.charAt(0) == '-') {
-				switch (s.charAt(1)) {
-					case 'r' -> parseRace(s);
-					case 'c' -> parseClass(s);
-					case 'a' -> parseAlignment(s);
-					case 'l' -> inputProfile.level1 = getParamInt(s);
-					case 'n' -> numNPCs = getParamInt(s);
-					case 'b' -> lineBreaks = getParamInt(s);
-					case 'p' -> printPDFs = true;
-					default -> exitAfterArgs = true;
-				}
-			}
-		}
-	}
-
-	/**
-	*  Get integer following equals sign in command parameter.
-	*/
-	int getParamInt (String s) {
-		if (s.length() > 3 && s.charAt(2) == '=') {
-			try {
-				return Integer.parseInt(s.substring(3));
-			}
-			catch (NumberFormatException e) {
-				e.printStackTrace(System.err);
-			}
-		}
-		exitAfterArgs = true;
-		return -1;
-	}
-
-	/**
-	*  Parse the race command-line parameter.
-	*/
-	void parseRace (String s) {
-		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
-				case 'M' -> {
-					inputProfile.race = "Human";
-					return;
-				}
-				case 'D' -> {
-					inputProfile.race = "Dwarf";
-					return;
-				}
-				case 'E' -> {
-					inputProfile.race = "Elf";
-					return;
-				}
-				case 'H' -> {
-					inputProfile.race = "Halfling";
-					return;
-				}
-			}
-		}
-		exitAfterArgs = true;
-	}
-
-	/**
-	*  Parse the class command-line parameter.
-	*/
-	void parseClass (String s) {
-		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
-				case 'F' -> {
-					inputProfile.class1 = "Fighter";
-					return;
-				}
-				case 'T' -> {
-					inputProfile.class1 = "Thief";
-					return;
-				}
-				case 'W' -> {
-					inputProfile.class1 = "Wizard";
-					return;
-				}
-			}
-		}
-		exitAfterArgs = true;
-	}
-
-	/**
-	*  Parse the alignment command-line parameter.
-	*/
-	void parseAlignment (String s) {
-		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
-				case 'L' -> {
-					inputProfile.align = "Lawful";
-					return;
-				}
-				case 'N' -> {
-					inputProfile.align = "Neutral";
-					return;
-				}
-				case 'C' -> {
-					inputProfile.align = "Chaotic";
-					return;
-				}
-			}
-		}
-		exitAfterArgs = true;
 	}
 
 	/**
@@ -332,19 +223,42 @@ public class NPCGenerator {
 		cp.writePDF(c);
 	}
 
+	enum Race {
+		Human,
+		Dwarf,
+		Elf,
+		Halfling
+	}
+
+	enum CharacterClass {
+		Fighter,
+		Wizard,
+		Thief
+	}
+
+	/**
+	 * Computes a result, or throws an exception if unable to do so.
+	 *
+	 * @return computed result
+	 * @throws Exception if unable to compute a result
+	 */
+	@Override
+	public Integer call() throws Exception {
+		inputProfile.align = alignment != null ? String.valueOf(alignment) : null;
+		inputProfile.class1 = aClass != null ? String.valueOf(aClass) : null;
+		inputProfile.race = race != null ? String.valueOf(race) : null;
+		inputProfile.level1 = level;
+		printBanner();
+		makeAllNPCs();
+		return 0;
+	}
+
 	/**
 	*  Main test method.
 	*/
 	public static void main (String[] args) {
-		NPCGenerator gen = new NPCGenerator();
-		gen.printBanner();
-		gen.parseArgs(args);
-		if (gen.exitAfterArgs) {
-			gen.printUsage();
-		}
-		else {		
-			gen.makeAllNPCs();
-		}
+		int exitCode = new CommandLine(new NPCGenerator()).execute(args);
+		System.exit(exitCode);
 	}
 }
 
