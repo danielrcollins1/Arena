@@ -406,11 +406,15 @@ public class Monster {
 			modifier += findSpecial(SpecialType.HitBonus).getParam();
 		}
 
-		// Berserker bonus
+		// Berserker bonus (NPC)
 		if (hasSpecial(SpecialType.Berserking) 
-				|| hasCondition(SpecialType.Berserking)
-				|| hasFeat(Feat.Berserking)) {
+				|| hasCondition(SpecialType.Berserking)) {
 			modifier += 2;
+		}
+
+		// Berserker bonus (Feat)
+		if (hasFeat(Feat.Berserking) && new Dice(6).roll() <= 3) {
+			modifier += 4;
 		}
 
 		// Giant & target dodges giants
@@ -1217,8 +1221,14 @@ public class Monster {
 
 		// Great Fortitude feat vs. death saves 
 		if (type == SavingThrows.SaveType.Death && 
-				hasFeat(Feat.GreatFortitude))
+				hasFeat(Feat.GreatFortitude)) {
 			modifier += 4;  
+		}
+
+		// Berserker bonus (Feat)
+		if (hasFeat(Feat.Berserking) && new Dice(6).roll() <= 3) {
+			modifier += 4;
+		}
 
 		return modifier;
 	}
