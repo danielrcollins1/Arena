@@ -5,7 +5,6 @@ import java.util.function.Function;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-10
-*  @version  1.03
 ******************************************************************************/
 
 public class MonsterMetrics {
@@ -15,7 +14,7 @@ public class MonsterMetrics {
 	//--------------------------------------------------------------------------
 
 	final int MAX_LEVEL = 12;
-	final int MAX_ENEMIES = 64;
+	final int MAX_ENEMIES = 256; // was 64 before sweep attacks
 	final int GRAPH_Y_INTERVAL = 5;
 	final double ERR_BAR_COEFF = 0.6;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
@@ -105,6 +104,7 @@ public class MonsterMetrics {
 		System.out.println("\t-g graph power per level for each monster");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
+		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println();
 	}
 
@@ -123,6 +123,7 @@ public class MonsterMetrics {
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
+					case 'w': Character.setSweepAttacks(true); break;
 					default: exitAfterArgs = true; break;
 				}
 			}

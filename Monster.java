@@ -50,6 +50,7 @@ public class Monster {
 	int timesMeleed;
 	Monster host;
 	Monster charmer;
+	Monster meleeTarget;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
 
@@ -153,6 +154,7 @@ public class Monster {
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }
+	public Monster getMeleeTarget() { return meleeTarget; }
 	public boolean isCharmed () { return charmer != null; }
 
 	// Shortcut accessors
@@ -164,6 +166,7 @@ public class Monster {
 
 	// Basic mutators
 	public void setAlignment (Alignment align) { alignment = align; }
+	public void setMeleeTarget(Monster m) { meleeTarget = m; }
 	public void clearTimesMeleed () { timesMeleed = 0; }
 	public void incTimesMeleed () { timesMeleed++; }
 
@@ -181,6 +184,7 @@ public class Monster {
 	public boolean hasNullAbilityScore () { return false; }
 	public boolean hasFeat (Feat feat) { return false; }
 	public void addXP (int xp) {}
+	public int getSweepRate() { return 0; }
 
 	/**
 	* Parse hit dice record from short descriptor.

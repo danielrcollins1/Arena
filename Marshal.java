@@ -83,6 +83,7 @@ public class Marshal {
 		System.out.println("  menType from those listed in data file MenTypes.csv");
 		System.out.println("  where options include:");
 		System.out.println("\t-f include OED feats");
+		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println();
 	}
 
@@ -94,6 +95,7 @@ public class Marshal {
 			if (s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'f': Character.setFeatUsage(true); break;
+					case 'w': Character.setSweepAttacks(true); break;
 					default: exitAfterArgs = true; break;
 				}
 			}

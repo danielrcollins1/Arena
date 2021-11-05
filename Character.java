@@ -80,12 +80,18 @@ public class Character extends Monster {
 	
 	/** Secondary personality trait. */
 	PersonalityTraits.PersonalityTrait secondaryPersonality;
+	
+	/** Rate of sweep attacks (vs. 1 HD targets) */
+	int sweepRate;
 
 	/** Percent chance per level for magic items. */
 	static int pctMagicPerLevel = BASE_MAGIC_PER_LEVEL;
 
 	/** Assign feats to characters? */
 	static boolean useFeats = false;
+
+	/** Give attacks by fighter level vs. 1 HD creatures? */
+	static boolean useSweepAttacks = false;
 
 	/** Print feats in string descriptor? */
 	static boolean printFeats = true;
@@ -142,6 +148,7 @@ public class Character extends Monster {
 		alignment = getAlignmentFromString(align);
 		primaryPersonality = PersonalityTraits.getInstance().getRandom(alignment);
 		secondaryPersonality = PersonalityTraits.getInstance().getRandom(null);
+		sweepRate = 0;
 		updateStats();
 		setPerfectHealth();
 	}
@@ -343,6 +350,7 @@ public class Character extends Monster {
 		hitDice = getTopClass().getHitDice();
 		equivalentHitDice = hitDice.getNum();
 		maxHitPoints = findSupMaxHitPoints();
+		sweepRate = computeSweepRate();
 		boundHitPoints();
 	}
 
@@ -837,6 +845,43 @@ public class Character extends Monster {
 	}
 
 	/**
+	*  Set if we should be using sweep attacks.
+	*/
+	static public void setSweepAttacks (boolean permit) {
+		useSweepAttacks = permit;	
+	}
+
+	/**
+	*  Are we using sweep attacks?
+	*/
+	static public boolean useSweepAttacks () {
+		return useSweepAttacks;
+	}
+
+	/**
+	*  How many attacks does this character get against 1 HD opponents?
+	*  Give this fighter bonus to any class with BAB 1 or above.
+	*/
+	private int computeSweepRate() {
+		int rate = 0;
+		for (ClassRecord rec: classList) {
+			if (rec.attackBonus() >= rec.getLevel()) {
+				if (rec.getLevel() > rate)
+					rate = rec.getLevel();			
+			}
+		}
+		return rate;
+	}
+
+	/**
+	*  Get this character's recorded sweep rate.
+	*  Redefines dummy method in Monster class.
+	*/
+	public int getSweepRate () {
+		return sweepRate;
+	}
+	
+	/**
 	*  Get the age of the character.
 	*/
 	public int getAge () {
@@ -857,9 +902,7 @@ public class Character extends Monster {
 			if (getAgeCategory() != startAgeCat) {
 				ageAdjustAbilities();		
 			}
-			if (age > 40) {
-				ageAdjustLevels();
-			}
+			ageAdjustLevels();
 			updateStats();
 		}
 	}
@@ -893,12 +936,17 @@ public class Character extends Monster {
 
 	/**
 	*  Adjust levels on advancing age.
+	*  Prevents fighters from living indefinitely long;
+	*  follows pattern Gygax showed for Conan in Dragon #36.
 	*/
 	private void ageAdjustLevels () {
-		for (ClassRecord record: classList) {
-			switch (record.getClassType().getPrimeReq()) {
-				case Str: if (age % 5 == 0) record.loseLevel(); break;
-				case Dex: if (age % 10 == 0) record.loseLevel(); break;
+		if (age > 40) {
+			for (ClassRecord record: classList) {
+				switch (record.getClassType().getPrimeReq()) {
+					case Str: if (age % 2 == 0) record.loseLevel(); break;
+					case Dex: if (age % 5 == 0) record.loseLevel(); break;
+					case Int: break;
+				}
 			}
 		}
 	}

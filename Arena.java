@@ -73,6 +73,9 @@ public class Arena {
 	/** Report every encounter? */
 	boolean reportEveryEncounter;
 
+	/** Create win percent matrix? */
+	boolean makeWinPercentMatrix;
+
 	/** Base armor type for fighters. */
 	Armor.Type baseArmorType;
 
@@ -152,7 +155,9 @@ public class Arena {
 		System.out.println("\t\tt total monster kills\tx xp award ratios");
 		System.out.println("\t-s start level for fighters (default =0)");  
 		System.out.println("\t-t treasure awards by monster (default by dungeon)");
+		System.out.println("\t-u create matrix of win percentages");
 		System.out.println("\t-v man-vs-monster (default man-vs-man)");
+		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-x use revised XP award table (from Sup-I)");
 		System.out.println("\t-y number of years to simulate (default =" + DEFAULT_NUM_YEARS + ")");
 		System.out.println("\t-z fighter party size (default =" + DEFAULT_PARTY_SIZE + ")");
@@ -176,7 +181,9 @@ public class Arena {
 					case 'r': setReportingFromParamCode(s); break;
 					case 's': startLevel = getParamInt(s); break;
 					case 't': useMonsterTreasureType = true; break;
+					case 'u': makeWinPercentMatrix = true; break;
 					case 'v': fightManVsMonster = true; break;
+					case 'w': Character.setSweepAttacks(true); break;
 					case 'x': useRevisedXPAwards = true; break;
 					case 'y': numYears = getParamInt(s); break; 
 					case 'z': if (fightManVsMonster)
@@ -644,17 +651,24 @@ public class Arena {
 				+ ", oldest age " + oldest.getAge()
 				+ ", oldest level " + oldest.getLevel()
 				+ ", supMaxAge " + supMaxAge);
+			if (year == numYears)
+				System.out.println();
 		} 
 	}
 
 	/**
 	*  Find oldest fighter the list.
+	*  Break ties by highest level.
 	*/
 	Character getOldestFighter () {
 		Character oldest = null;
-		for (Monster fighter: fighterList) {
-			if (oldest == null || ((Character)fighter).getAge() > oldest.getAge())
-				oldest = (Character) fighter;
+		for (Monster monster: fighterList) {
+			Character fighter = (Character) monster;
+			if (oldest == null
+					|| fighter.getAge() > oldest.getAge()
+					|| (fighter.getAge() == oldest.getAge()
+						&& fighter.getLevel() > oldest.getLevel()))
+				oldest = fighter;
 		}
 		return oldest;
 	}
