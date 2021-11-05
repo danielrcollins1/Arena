@@ -212,6 +212,15 @@ public class ClassType {
 	}
 
 	/**
+	*  Get experience midpoint for a given level.
+	*/
+	public int getXpMidpoint (int level) {
+		int low = getXpReq(level);
+		int high = getXpReqNext(level);
+		return (low + high)/2;
+	}
+
+	/**
 	*  Get the name of the class that we save as.
 	*/
 	public String getSaveAsClass () {

@@ -87,10 +87,11 @@ public class ClassRecord {
 
 	/**
 	*  Increment the level.
+	*  Cap XP at one less than the next level.
 	*/
 	public void addLevel () {
 		level++;	
-		XP = Math.max(XP, classType.getXpReq(level));
+		XP = Math.min(XP, classType.getXpReqNext(level) - 1);
 		addNewHitPoints(level, false);
 		if (isFeatLevel(level)) {
 			addFeat();
@@ -119,7 +120,7 @@ public class ClassRecord {
 			else
 				hitPoints = hitPoints * (level - 1)/level;
 			level--;
-			XP = Math.min(XP, getMidpointXP());
+			XP = classType.getXpMidpoint(level);
 		}
 	}
 
@@ -213,15 +214,6 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Get midpoint XP for current level.
-	*/
-	int getMidpointXP () {
-		int low = classType.getXpReq(level);
-		int high = classType.getXpReqNext(level);
-		return (low + high)/2;
-	}
-
-	/**
 	*  Get adjusted hit dice for this class.
 	*/
 	public Dice getHitDice () {
@@ -257,7 +249,7 @@ public class ClassRecord {
 				newDice = boostInitHitDice(newDice);
 			hitPoints += newDice.boundRoll(1);
 		}
-		if (newLevel == 1) {  // Pro-rate to new class die
+		else if (newLevel == 1) {  // Pro-rate to new class die
 			int revisedRoll = (int) Math.round((hitPoints - hpBonus) 
 				* (double) classType.getHitDiceType() / LEVEL_ZERO_HIT_DIE);
 			hitPoints = Math.max(1, revisedRoll + hpBonus);
