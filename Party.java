@@ -100,11 +100,14 @@ public class Party implements Iterable<Monster> {
 	/**
 	*  Pick a target for melee.
 	*/
-	public Monster randomMelee () {
+	public Monster getRandomMeleeTarget () {
 		if (isOpenToMelee()) {
 			while (true) {
 				Monster m = random();
-				if (m.isOpenToMelee()) return m;
+				if (m.isOpenToMelee()) {
+					m.incTimesMeleed();
+					return m;
+				}
 			}
 		}
 		return null; 
@@ -115,7 +118,8 @@ public class Party implements Iterable<Monster> {
 	*/
 	public boolean isOpenToMelee () {
 		for (Monster m: this) {
-			if (m.isOpenToMelee()) return true;
+			if (m.isOpenToMelee()) 
+				return true;
 		} 
 		return false;
 	}
@@ -147,7 +151,6 @@ public class Party implements Iterable<Monster> {
 			summonAllMinions();
 			for (Monster m: members) {
 				m.drawBestWeapon(enemy.random());
-				m.setMeleeTarget(null);
 				m.initBreathCharges();
 			} 
 		}
@@ -195,60 +198,7 @@ public class Party implements Iterable<Monster> {
 		if (enemy.isLive()) {
 			enemy.clearTimesMeleed();
 			for (Monster m: this) {
-
-				// Special abilities
-				m.checkRegeneration();
-				m.checkConstriction();
-				m.checkSlowing(enemy);
-				if (m.checkGrabbing()) continue;
-				if (m.checkDrainBlood()) continue;
-				if (m.checkBreathWeapon(enemy)) continue;
-				if (m.checkConfused(this)) continue;
-
-				// Get initial melee target
-				Monster target = m.getMeleeTarget();
-				if (target == null || target.horsDeCombat()) {
-					target = enemy.randomMelee();
-					m.setMeleeTarget(target);
-				}
-				if (target == null) continue;
-				target.incTimesMeleed();
-
-				// Determine attack rate
-				boolean isSweeping = false;
-				int attackRate = m.getAttack().getRate(); 
-				if (Character.useSweepAttacks() 
-						&& m.getSweepRate() > attackRate 
-						&& target.getHD() <= 1) {
-					attackRate = m.getSweepRate();
-					isSweeping = true;
-				}
-
-				// Melee attacks
-				for (int i = 0; i < attackRate; i++) {
-
-					// Make one attack
-					boolean last = (i == m.getAttack().getRate() - 1);
-					m.singleAttack(m.getAttack(), target, last);
-
-					// Handle death of target
-					if (target.horsDeCombat()) {
-
-						// Get new target
-						target = enemy.randomMelee();
-						m.setMeleeTarget(target);
-						if (target == null) break;
-						target.incTimesMeleed();
-						
-						// End sweeping if new target high HD
-						if (isSweeping && target.getHD() > 1)
-							break;
-
-						// Allow cleave if not sweeping
-						if (!isSweeping && m.hasFeat(Feat.GreatCleave))
-							i--;
-					}
-				}
+				m.takeTurn(this, enemy);
 			}
 			enemy.bringOutYourDead();
 		}

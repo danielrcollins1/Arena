@@ -50,7 +50,6 @@ public class Monster {
 	int timesMeleed;
 	Monster host;
 	Monster charmer;
-	Monster meleeTarget;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
 
@@ -154,7 +153,6 @@ public class Monster {
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }
-	public Monster getMeleeTarget() { return meleeTarget; }
 	public boolean isCharmed () { return charmer != null; }
 
 	// Shortcut accessors
@@ -166,7 +164,6 @@ public class Monster {
 
 	// Basic mutators
 	public void setAlignment (Alignment align) { alignment = align; }
-	public void setMeleeTarget(Monster m) { meleeTarget = m; }
 	public void clearTimesMeleed () { timesMeleed = 0; }
 	public void incTimesMeleed () { timesMeleed++; }
 
@@ -329,6 +326,68 @@ public class Monster {
 	*/
 	public boolean isOpenToMelee () { 
 		return !horsDeCombat() && (timesMeleed < MAX_MELEERS); 
+	}
+
+	/**
+	* Take our turn against an enemy party.
+	*/
+	public void takeTurn (Party friends, Party enemies) {
+
+		// Check special ability usage
+		if (checkSpecialAbilitySuite(friends, enemies)) 
+			return;
+
+		// Get melee target
+		Monster target = enemies.getRandomMeleeTarget();
+		if (target == null) return;
+
+		// Determine attack rate
+		boolean isSweeping = useSweepAttacks(target);
+		int attackRate = isSweeping ? getSweepRate() : getAttack().getRate();
+
+		// Perform melee attacks
+		for (int i = 0; i < attackRate; i++) {
+
+			// Make one attack (some specials on last attack)
+			boolean last = (i == getAttack().getRate() - 1);
+			singleAttack(getAttack(), target, last);
+
+			// Handle death of target
+			if (target.horsDeCombat()) {
+
+				// Get new target
+				target = enemies.getRandomMeleeTarget();
+				if (target == null) return;
+
+				// End sweep attacks if new target has high HD
+				if (isSweeping && target.getHD() > 1)
+					break;
+			}
+		}
+	}
+
+	/**
+	* Central special ability check function.
+	* @return if we're blocked from making normal attacks.
+	*/
+	boolean checkSpecialAbilitySuite (Party friends, Party enemies) {
+		checkRegeneration();
+		checkConstriction();
+		checkSlowing(enemies);
+		if (checkGrabbing()) return true;
+		if (checkDrainBlood()) return true;
+		if (checkBreathWeapon(enemies)) return true;
+		if (checkConfused(friends)) return true;
+		return false;
+	}
+
+	/**
+	* Check if we should be making sweep attacks.
+	*/
+	boolean useSweepAttacks(Monster target) {
+		return Character.useSweepAttacks() 
+				&& getSweepRate() > getAttack().getRate()
+				&& target.getHD() <= 1;
 	}
 
 	/**
@@ -1123,7 +1182,7 @@ public class Monster {
 			else if (reaction <= 8) // stand motionless
 				return true;
 			else {       // make one attack on own party
-				Monster target = party.randomMelee();
+				Monster target = party.getRandomMeleeTarget();
 				if (target != null && target != this) {
 					singleAttack(getAttack(), target, true);
 				}

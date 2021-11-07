@@ -14,7 +14,7 @@ public class MonsterMetrics {
 	//--------------------------------------------------------------------------
 
 	final int MAX_LEVEL = 12;
-	final int MAX_ENEMIES = 256; // was 64 before sweep attacks
+	final int MAX_ENEMIES = 256; // was 64, then 256 for sweep attacks
 	final int GRAPH_Y_INTERVAL = 5;
 	final double ERR_BAR_COEFF = 0.6;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
@@ -202,13 +202,14 @@ public class MonsterMetrics {
 		double[] eqFighters = getEquatedFighters(monster);
 		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
 		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
-		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD);
+		int roundEHD = (int) Math.round(estEHD);
+		boolean reviseEHD = !isEHDClose(monster.getEHD(), roundEHD);
 
 		// Print stats as requested
 		if (!displayOnlyRevisions || reviseEHD || spotlightMonster == monster) {
 			System.out.println(monster.getRace() + ": "
 				+ "Old EHD " + monster.getEHD() + ", "
-				+ "New EHD " + Math.round(estEHD) 
+				+ "New EHD " + roundEHD
 				+ " (" + roundDbl(estEHD, 2) + ")");
 			if (estEHD * 2 > getDblArrayMin(eqFightersHD) * MAX_LEVEL)
 				System.out.println("\tEHD over half of harmonic mean threshold.");
@@ -226,9 +227,8 @@ public class MonsterMetrics {
 	/**
 	*  Determine if EHDs are relatively close.
 	*/
-	boolean isEHDClose (double oldEHD, double newEHD) {
+	boolean isEHDClose (int oldEHD, int newEHD) {
 		double errBar = ERR_BAR_COEFF * Math.pow(oldEHD, 0.5);
-		errBar = Math.max(errBar, 0.5);
 		return Math.abs(oldEHD - newEHD) <= errBar;
 	} 
 

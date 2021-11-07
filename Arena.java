@@ -368,7 +368,7 @@ public class Arena {
 	*  In tabletop practice, we would like to assume a party size of 4,
 	*    and roll 1d6 * dungeonLevel / monsterEHD (round to closest, possibly 0).
 	*    Note E(1d6) ~ expected nominal party size of 4. 
-	*    Extra calculations here are to scale to different party sizes.
+	*    Extra calculations here are to scale for different party sizes.
 	*/
 	int getMonsterNumber (Monster monster, int dungeonLevel, int numFighters) {
 		int roll = Dice.roll(6);
