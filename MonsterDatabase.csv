@@ -110,7 +110,7 @@ Dryad,1d6,5,12,2,20,D,1,1d3,Charm (2),F,N,2,5,W,O
 Unicorn,1d4,2,24,4,-,-,2,1d6+2,"SaveBonus (6), Detection (24), DimensionDoor (36)",F,L,4,5,W,O
 "Roc, Small",1d20,4,6,6,20,I,2,1d6,"Flight (48), Detection",F,L,6,5,W,O
 Griffon,2d8,3,12,7,10,E,2,1d6+2,Flight (30),F,N,7,9,W,O
-Tree,1d2,2,3,8,-,-,2,2d6,-,F,L,8,11,W,O
+"Tree, Animated",1d2,2,3,8,-,-,2,2d6,-,F,L,8,11,W,O
 "Roc, Medium",1d20,4,6,12,20,I,2,2d6,"Flight (48), Detection",F,L,12,15,W,O
 "Roc, Large",1d20,4,6,18,20,I,2,3d6,"Flight (48), Detection",F,L,18,24,W,O
 Treant,2d10,2,6,8,-,-,2,2d6,SummonTrees,F,L,8,32,W,O
