@@ -343,7 +343,7 @@ public class Monster {
 
 		// Determine attack rate
 		boolean isSweeping = useSweepAttacks(target);
-		int attackRate = isSweeping ? getSweepRate() : getAttack().getRate();
+		int attackRate = getAttackRate(isSweeping);
 
 		// Perform melee attacks
 		for (int i = 0; i < attackRate; i++) {
@@ -388,6 +388,18 @@ public class Monster {
 		return Character.useSweepAttacks() 
 				&& getSweepRate() > getAttack().getRate()
 				&& target.getHD() <= 1;
+	}
+
+	/**
+	* Get the current attack rate.
+	*/
+	int getAttackRate(boolean isSweeping) {
+		int rate = getAttack().getRate();
+		if (hasFeat(Feat.RapidStrike) && Dice.roll(6) <= 3)
+			rate++;
+		if (isSweeping)
+			rate = Math.max(rate, getSweepRate());
+		return rate;
 	}
 
 	/**
@@ -476,7 +488,7 @@ public class Monster {
 		}
 
 		// Berserker bonus (Feat)
-		if (hasFeat(Feat.Berserking) && new Dice(6).roll() <= 3) {
+		if (hasFeat(Feat.Berserking)) {
 			modifier += 4;
 		}
 
@@ -1289,7 +1301,7 @@ public class Monster {
 		}
 
 		// Berserker bonus (Feat)
-		if (hasFeat(Feat.Berserking) && new Dice(6).roll() <= 3) {
+		if (hasFeat(Feat.Berserking)) {
 			modifier += 4;
 		}
 

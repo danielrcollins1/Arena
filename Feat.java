@@ -11,9 +11,9 @@ public enum Feat {
 	*  Optional OED fighter feats. 
 	*  Caution: Not all are implemented in code at this time.
 	*/
-	Berserking, GreatCleave, GreatFortitude, GreatStrength, 
-	IronWill, MountedCombat, RapidShot, RapidStrike, Survival, 
-	Toughness, TwoWeaponFighting, WeaponSpecialization;
+	Berserking, ExceptionalStrength, GreatFortitude, IronWill,
+	MountedCombat, RapidShot, RapidStrike, Survival, Toughness, 
+	Tracking, TwoWeaponFighting, WeaponSpecialization;
 
 	/** Total number of feats available. */
 	public static final int number = Feat.values().length;
@@ -36,5 +36,17 @@ public enum Feat {
 			f += s.charAt(i);
 		}			
 		return f;
+	}
+	
+	/**
+	*  Main test function.
+	*/
+	public static void main (String[] args) {
+		System.out.println("Feats");
+		System.out.println("-----");
+		for (int i = 0; i < Feat.number; i++) {
+			System.out.println(Feat.values()[i]);		
+		}
+		System.out.println();
 	}
 }

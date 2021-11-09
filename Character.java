@@ -275,8 +275,9 @@ public class Character extends Monster {
 		int idx = ability.ordinal();
 		int score = abilityScore[idx];
 		score -= abilityScoreDamage[idx];
-		if (ability == Ability.Str && hasFeat(Feat.GreatStrength)) {
-			score += 2;
+		if (ability == Ability.Str 
+				&& hasFeat(Feat.ExceptionalStrength)) {
+			score += 3;
 		}
 		return score;
 	}
@@ -445,14 +446,14 @@ public class Character extends Monster {
 		}	
 		else {
 			String name = weaponInHand.getName();
-			int rate = (hasFeat(Feat.RapidStrike) ? 2 : 1);
+			int rate = 1;
 			int atkBonus = baseAttackBonus() + getAbilityBonus(Ability.Str) 
 				+ weaponInHand.getMagicBonus();
 			Dice damageDice = new Dice(weaponInHand.getBaseDamage());
 			int damageAdd = damageDice.getAdd() + getAbilityBonus(Ability.Str) 
 				+ weaponInHand.getMagicBonus();
 			if (hasFeat(Feat.WeaponSpecialization)) {
-				atkBonus += 1;
+				atkBonus += 2;
 				damageAdd += 2;
 			}
 			damageDice.setAdd(damageAdd);
