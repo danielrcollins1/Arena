@@ -70,6 +70,9 @@ public class Arena {
 	/** Report XP award ratios? */
 	boolean reportXPAwards;
 
+	/** Report each individual XP award? */
+	boolean reportAllXPAwards;
+
 	/** Report every encounter? */
 	boolean reportEveryEncounter;
 
@@ -146,6 +149,7 @@ public class Arena {
 		System.out.println("\t-b base type of armor (=0-3, default 3)");
 		System.out.println("\t-e report every encounter");
 		System.out.println("\t-f fights per year (default =" + DEFAULT_FIGHTS_PER_YEAR + ")");
+		System.out.println("\t-l print all XP awards");
 		System.out.println("\t-m magic per level chance (default =" + DEFAULT_PCT_MAGIC_PER_LEVEL + ")");
 		System.out.println("\t-n number of men fighting (default =" + DEFAULT_NUM_FIGHTERS + ")");
 		System.out.println("\t-p play-by-play reporting");  
@@ -175,6 +179,7 @@ public class Arena {
 					case 'b': setBaseArmorFromInt(getParamInt(s)); break;
 					case 'e': reportEveryEncounter = true; break;
 					case 'f': fightsPerYear = getParamInt(s); break; 
+					case 'l': reportAllXPAwards = true; break;
 					case 'm': Character.setPctMagicPerLevel(getParamInt(s)); break;
 					case 'n': numFighters = getParamInt(s); break;
 					case 'p': FightManager.setPlayByPlayReporting(true); break;
@@ -404,6 +409,12 @@ public class Arena {
 		int sharePerMember = (monsterXP + treasureXP) / victor.size();
 		for (Monster member: victor) {
 			awardXP(member, sharePerMember);
+		}
+		
+		// Report on XP awards
+		if (reportAllXPAwards) {
+			System.out.println(victor + " each gain " 
+				+ sharePerMember + " XP");
 		}
 	}
 
