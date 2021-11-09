@@ -1173,7 +1173,7 @@ public class Monster {
 					break;
 
 				case SummonTrees:
-					party.addMonsters("Tree", 2);
+					party.addMonsters("Tree, Animated", 2);
 					break;
 
 				default:
