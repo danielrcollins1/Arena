@@ -48,7 +48,7 @@ public class Attack {
 	*  Constructor (bonus, damage dice).
 	*/
 	Attack (int bonus, int damDice) {
-		this(null, bonus, 1, new Dice(damDice, 6));
+		this(null, 1, bonus, new Dice(damDice, 6));
 	}
 
 	//--------------------------------------------------------------------------
