@@ -93,15 +93,15 @@ public class MonsterMetrics {
 		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
 		System.out.println("  If monster is named, measures that monster at increased fidelity.");
 		System.out.println("  Options include:");
-		System.out.println("\t-a armor worn by opposing fighters: =l, c, or p "
-			+ "(default " + DEFAULT_ARMOR + ")");
-		System.out.println("\t-b chance for magic weapon bonus per level " 
-			+ "(default =" + DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL + ")");
+		System.out.println("\t-a armor worn by fighters: (=l, c, or p; "
+			+ "default " + DEFAULT_ARMOR + ")");
 		System.out.println("\t-d display equated fighter hit dice per level");
 		System.out.println("\t-e display equated fighters per level");
 		System.out.println("\t-f number of fights per point in search space " 
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
 		System.out.println("\t-g graph power per level for each monster");
+		System.out.println("\t-m chance for magic weapon bonus per level " 
+			+ "(default =" + DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL + ")");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
@@ -116,11 +116,11 @@ public class MonsterMetrics {
 			if (s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'a': armorType = getArmorType(s); break;
-					case 'b': pctMagicSwordPerLevel = getParamInt(s); break;
 					case 'd': displayEquatedFightersHD = true; break;
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
+					case 'm': pctMagicSwordPerLevel = getParamInt(s); break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
