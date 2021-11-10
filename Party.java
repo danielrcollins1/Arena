@@ -105,7 +105,6 @@ public class Party implements Iterable<Monster> {
 			while (true) {
 				Monster m = random();
 				if (m.isOpenToMelee()) {
-					m.incTimesMeleed();
 					return m;
 				}
 			}

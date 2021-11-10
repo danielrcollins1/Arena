@@ -14,9 +14,8 @@ public class MonsterMetrics {
 	//--------------------------------------------------------------------------
 
 	final int MAX_LEVEL = 12;
-	final int MAX_ENEMIES = 256; // was 64, then 256 for sweep attacks
+	final int MAX_ENEMIES = 256;
 	final int GRAPH_Y_INTERVAL = 5;
-	final double ERR_BAR_COEFF = 0.6;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL = 15;
@@ -202,14 +201,13 @@ public class MonsterMetrics {
 		double[] eqFighters = getEquatedFighters(monster);
 		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
 		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
-		int roundEHD = (int) Math.round(estEHD);
-		boolean reviseEHD = !isEHDClose(monster.getEHD(), roundEHD);
+		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD);
 
 		// Print stats as requested
-		if (!displayOnlyRevisions || reviseEHD || spotlightMonster == monster) {
+		if (reviseEHD || !displayOnlyRevisions || spotlightMonster == monster) {
 			System.out.println(monster.getRace() + ": "
 				+ "Old EHD " + monster.getEHD() + ", "
-				+ "New EHD " + roundEHD
+				+ "New EHD " + Math.round(estEHD)
 				+ " (" + roundDbl(estEHD, 2) + ")");
 			if (estEHD * 2 > getDblArrayMin(eqFightersHD) * MAX_LEVEL)
 				System.out.println("\tEHD over half of harmonic mean threshold.");
@@ -226,9 +224,30 @@ public class MonsterMetrics {
 
 	/**
 	*  Determine if EHDs are relatively close.
+	*
+	*  Note the -r switch is used for regression testing of the whole Arena suite.
+	*  (Gives visibility if a code modification has unexpected side effects.)
+	*
+	*  There's natural variation in estimated EHD due to random sampling, 
+	*  and more at higher levels, which we don't want to spuriously flag revised values. 
+	*  So we implement an exponential error bar before triggering a report.
+	*  
+	*  Also, there are some low-level monsters with EHDs right around the halfway point
+	*  between two integers that would trigger a report half of the time, if we compared
+	*  integer values, and had an error bar below 1.
+	*  
+	*  Therefore, we compare decimal values, and only trigger a report if there's
+	*  at least a 2/3 unit difference. For the monsters in question, we made the manual
+	*  choice in the database of leaning toward the actual HD. In some cases this
+	*  masks the fact that the true EHD may be under the halfway point by a tiny fraction.
+	*
+	*  E.g.: Zombie, Caveman, Gnoll, Bugbear, Ogre, Hill Giant.
 	*/
-	boolean isEHDClose (int oldEHD, int newEHD) {
-		double errBar = ERR_BAR_COEFF * Math.pow(oldEHD, 0.5);
+	boolean isEHDClose (double oldEHD, double newEHD) {
+		final double ERRBAR_MIN = 2/3.;
+		final double ERRBAR_COEFF = 0.6;
+		double errBar = ERRBAR_COEFF * Math.sqrt(oldEHD);
+		errBar = Math.max(errBar, ERRBAR_MIN);
 		return Math.abs(oldEHD - newEHD) <= errBar;
 	} 
 

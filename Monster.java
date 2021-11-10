@@ -50,6 +50,7 @@ public class Monster {
 	int timesMeleed;
 	Monster host;
 	Monster charmer;
+	Monster meleeTarget;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
 
@@ -334,33 +335,33 @@ public class Monster {
 	public void takeTurn (Party friends, Party enemies) {
 
 		// Check special ability usage
-		if (checkSpecialAbilitySuite(friends, enemies)) 
+		if (!checkSpecialAbilitySuite(friends, enemies)) 
 			return;
 
-		// Get melee target
-		Monster target = enemies.getRandomMeleeTarget();
-		if (target == null) return;
+		// Get melee target for the turn
+		if (!chooseTarget(enemies))
+			return;
 
 		// Determine attack rate
-		boolean isSweeping = useSweepAttacks(target);
+		boolean isSweeping = useSweepAttacks(meleeTarget);
 		int attackRate = getAttackRate(isSweeping);
 
 		// Perform melee attacks
 		for (int i = 0; i < attackRate; i++) {
 
 			// Make one attack (some specials on last attack)
-			boolean last = (i == getAttack().getRate() - 1);
-			singleAttack(getAttack(), target, last);
+			boolean last = (i == attackRate - 1);
+			singleAttack(getAttack(), meleeTarget, last);
 
 			// Handle death of target
-			if (target.horsDeCombat()) {
+			if (meleeTarget.horsDeCombat()) {
 
 				// Get new target
-				target = enemies.getRandomMeleeTarget();
-				if (target == null) return;
+				if (!chooseTarget(enemies))
+					return;
 
 				// End sweep attacks if new target has high HD
-				if (isSweeping && target.getHD() > 1)
+				if (isSweeping && meleeTarget.getHD() > 1)
 					break;
 			}
 		}
@@ -368,17 +369,28 @@ public class Monster {
 
 	/**
 	* Central special ability check function.
-	* @return if we're blocked from making normal attacks.
+	* @return if we can continue to make normal attacks.
 	*/
 	boolean checkSpecialAbilitySuite (Party friends, Party enemies) {
 		checkRegeneration();
 		checkConstriction();
 		checkSlowing(enemies);
-		if (checkGrabbing()) return true;
-		if (checkDrainBlood()) return true;
-		if (checkBreathWeapon(enemies)) return true;
-		if (checkConfused(friends)) return true;
-		return false;
+		if (checkGrabbing()) return false;
+		if (checkDrainBlood()) return false;
+		if (checkBreathWeapon(enemies)) return false;
+		if (checkConfused(friends)) return false;
+		return true;
+	}
+
+	/**
+	* Choose target for upcoming melee attacks.
+	* @return if we have a target.
+	*/
+	boolean chooseTarget (Party enemies) {
+		meleeTarget = enemies.getRandomMeleeTarget();
+		if (meleeTarget == null) return false;
+		meleeTarget.incTimesMeleed();
+		return true;
 	}
 
 	/**
