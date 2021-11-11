@@ -2,11 +2,11 @@ Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Special,Type,Align,HD#,EHD,Env,Sourc
 "Hydra, 5 Heads",1,5,12,5,25,B,5,1d6,Multiheads,B,N,5,7,D,O
 "Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,Multiheads,B,N,6,9,D,O
 "Hydra, 7 Heads",1,5,12,7,25,B,7,1d6,Multiheads,B,N,7,11,D,O
-"Hydra, 8 Heads",1,5,12,8,25,B,8,1d6,Multiheads,B,N,8,12,D,O
+"Hydra, 8 Heads",1,5,12,8,25,B,8,1d6,Multiheads,B,N,8,13,D,O
 "Hydra, 9 Heads",1,5,12,9,25,B,9,1d6,Multiheads,B,N,9,16,D,O
-"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,Multiheads,B,N,10,18,D,O
-"Hydra, 11 Heads",1,5,12,11,25,B,11,1d6,Multiheads,B,N,11,20,D,O
-"Hydra, 12 Heads",1,5,12,12,25,B,12,1d6,Multiheads,B,N,12,22,D,O
+"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,Multiheads,B,N,10,19,D,O
+"Hydra, 11 Heads",1,5,12,11,25,B,11,1d6,Multiheads,B,N,11,21,D,O
+"Hydra, 12 Heads",1,5,12,12,25,B,12,1d6,Multiheads,B,N,12,25,D,O
 "Dragon, White, Very Young",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,5,D,O
 "Dragon, White, Young",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,8,D,O
 "Dragon, White, Sub-Adult",1d4,2,9,6,60,H,2,2d6,"Flight (24), Fear, Detection (15), ColdBreath",B,C,6,12,D,O
