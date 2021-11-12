@@ -104,7 +104,7 @@ public class NPCGenerator {
 	*/
 	void parseArgs (String[] args) {
 		for (String s: args) {
-			if (s.charAt(0) == '-') {
+			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'r': parseRace(s); break;
 					case 'c': parseClass(s); break;
@@ -115,6 +115,9 @@ public class NPCGenerator {
 					case 'p': printPDFs = true; break;
 					default: exitAfterArgs = true; break;
 				}
+			}
+			else {
+				exitAfterArgs = true;
 			}
 		}
 	}

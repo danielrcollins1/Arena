@@ -89,7 +89,6 @@ public class MonsterMetrics {
 	*  Print usage.
 	*/
 	public void printUsage () {
-		System.out.println();
 		System.out.println("Usage: MonsterMetrics [monster] [options]");
 		System.out.println("  By default, measures all monsters in MonsterDatabase file.");
 		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
@@ -116,7 +115,7 @@ public class MonsterMetrics {
 	*/
 	public void parseArgs (String[] args) {
 		for (String s: args) {
-			if (s.charAt(0) == '-') {
+			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'a': armorType = getArmorType(s); break;
 					case 'b': MonsterDatabase.setDatabaseFilename(
@@ -136,6 +135,7 @@ public class MonsterMetrics {
 				if (spotlightMonster == null) {
 					spotlightMonster = MonsterDatabase.getInstance().getByRace(s);
 					if (spotlightMonster == null) {
+						System.err.println("Monster not found in database.");
 						exitAfterArgs = true;     
 					}
 					numberOfFights = DEFAULT_FIGHTS_SPOTLIGHT;

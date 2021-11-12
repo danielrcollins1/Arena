@@ -92,7 +92,7 @@ public class Marshal {
 	*/
 	public void parseArgs (String[] args) {
 		for (String s: args) {
-			if (s.charAt(0) == '-') {
+			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'f': Character.setFeatUsage(true); break;
 					case 'w': Character.setSweepAttacks(true); break;

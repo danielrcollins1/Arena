@@ -173,7 +173,7 @@ public class Arena {
 	*/
 	public void parseArgs (String[] args) {
 		for (String s: args) {
-			if (s.charAt(0) == '-') {
+			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'a': Character.setApplyAgingEffects(true); break;
 					case 'b': setBaseArmorFromInt(getParamInt(s)); break;
@@ -196,6 +196,9 @@ public class Arena {
 					default: exitAfterArgs = true; break;
 				}
 			}
+			else {
+				exitAfterArgs = true;			
+			}
 		}
 	}
 
@@ -203,7 +206,7 @@ public class Arena {
 	*  Get integer following equals sign in command parameter.
 	*/
 	int getParamInt (String s) {
-		if (s.charAt(2) == '=') {
+		if (s.length() > 3 && s.charAt(2) == '=') {
 			try {
 				return Integer.parseInt(s.substring(3));
 			}
