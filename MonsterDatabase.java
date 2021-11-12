@@ -11,16 +11,19 @@ import java.util.*;
 
 public class MonsterDatabase implements Iterable<Monster> {
 
-	//--------------------------------------------------------------------------
+ 	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Name of file with monster information. */
-	final String MONSTER_FILE = "MonsterDatabase.csv";
+	/** Default file with monster information. */
+	final static String MONSTER_FILE_DEFAULT = "MonsterDatabase.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
+
+	/** Name of file with monster information. */
+	static String monsterFile = MONSTER_FILE_DEFAULT;
 
 	/** The singleton class instance. */
 	static MonsterDatabase instance = null;
@@ -36,7 +39,7 @@ public class MonsterDatabase implements Iterable<Monster> {
 	*  Constructor (read from dedicated file).
 	*/
 	protected MonsterDatabase () throws IOException {
-		String[][] table = CSVReader.readFile(MONSTER_FILE);
+		String[][] table = CSVReader.readFile(monsterFile);
 		monsterList = new ArrayList<Monster>(table.length - 1);
 		for (int i = 1; i < table.length; i++) {
 			monsterList.add(new Monster(table[i]));
@@ -79,6 +82,13 @@ public class MonsterDatabase implements Iterable<Monster> {
 			}
 		}
 		return null;
+	}
+
+	/**
+	*  Set an alternate monster database filename.
+	*/
+	public static void setDatabaseFilename (String filename) {
+		monsterFile = filename;	
 	}
 
 	/**

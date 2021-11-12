@@ -52,6 +52,9 @@ public class MonsterMetrics {
 	/** Flag to graph equated fighters HD. */
 	boolean graphEquatedFightersHD; 
 
+	/** Did we print anything on this run? */
+	boolean printedSomeMonster;
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
 
@@ -92,8 +95,9 @@ public class MonsterMetrics {
 		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
 		System.out.println("  If monster is named, measures that monster at increased fidelity.");
 		System.out.println("  Options include:");
-		System.out.println("\t-a armor worn by fighters: (=l, c, or p; "
+		System.out.println("\t-a armor worn by fighters (=l, c, or p; "
 			+ "default " + DEFAULT_ARMOR + ")");
+		System.out.println("\t-b set filename for an alternate monster database");
 		System.out.println("\t-d display equated fighter hit dice per level");
 		System.out.println("\t-e display equated fighters per level");
 		System.out.println("\t-f number of fights per point in search space " 
@@ -115,6 +119,8 @@ public class MonsterMetrics {
 			if (s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
 					case 'a': armorType = getArmorType(s); break;
+					case 'b': MonsterDatabase.setDatabaseFilename(
+									getParamString(s)); break;
 					case 'd': displayEquatedFightersHD = true; break;
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
@@ -142,7 +148,7 @@ public class MonsterMetrics {
 	*  Get integer following equals sign in command parameter.
 	*/
 	int getParamInt (String s) {
-		if (s.charAt(2) == '=') {
+		if (s.length() > 3 && s.charAt(2) == '=') {
 			try {
 				return Integer.parseInt(s.substring(3));
 			}
@@ -155,10 +161,21 @@ public class MonsterMetrics {
 	}
 
 	/**
+	*  Get string following equals sign in command parameter.
+	*/
+	String getParamString (String s) {
+		if (s.length() > 3 && s.charAt(2) == '=') {
+			return s.substring(3);		
+		}	
+		exitAfterArgs = true;
+		return "";
+	}
+
+	/**
 	*  Get armor type from command parameter.
 	*/
 	Armor.Type getArmorType (String s) {
-		if (s.charAt(2) == '=') {
+		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch (s.charAt(3)) {
 				case 'l': return Armor.Type.Leather;
 				case 'c': return Armor.Type.Chain;
@@ -184,10 +201,17 @@ public class MonsterMetrics {
 	*/
 	void reportAllMonsters () {
 		MonsterDatabase db = MonsterDatabase.getInstance();
+		if (db == null) return;
 		for (Monster m: db) {
 			if (!m.hasUndefinedEHD()) {
 				reportOneMonster(m);
 			}
+		}
+		if (!printedSomeMonster) {
+			if (displayOnlyRevisions)
+				System.out.println("No revised EHDs found versus database.");
+			else
+				System.out.println("No measurable monsters found in database.");				
 		}
 		System.out.println();
 	}
@@ -219,6 +243,7 @@ public class MonsterMetrics {
  				graphDblArray(eqFightersHD);
 			if (anySpecialPrinting())
 				System.out.println();
+			printedSomeMonster = true;
 		}
 	}
 
@@ -233,19 +258,19 @@ public class MonsterMetrics {
 	*  So we implement an exponential error bar before triggering a report.
 	*  
 	*  Also, there are some low-level monsters with EHDs right around the halfway point
-	*  between two integers that would trigger a report half of the time, if we compared
+	*  between two integers that would trigger a report half the time, if we compared
 	*  integer values, and had an error bar below 1.
 	*  
 	*  Therefore, we compare decimal values, and only trigger a report if there's
 	*  at least a 2/3 unit difference. For the monsters in question, we made the manual
-	*  choice in the database of leaning toward the actual HD. In some cases this
-	*  masks the fact that the true EHD may be under the halfway point by a tiny fraction.
+	*  choice in the database of leaning toward the actual HD. In some cases this may
+	*  mask the fact that the true EHD is under the halfway point by a tiny fraction.
 	*
 	*  E.g.: Zombie, Caveman, Gnoll, Bugbear, Ogre, Hill Giant.
 	*/
 	boolean isEHDClose (double oldEHD, double newEHD) {
 		final double ERRBAR_MIN = 2/3.;
-		final double ERRBAR_COEFF = 0.6;
+		final double ERRBAR_COEFF = 0.75;
 		double errBar = ERRBAR_COEFF * Math.sqrt(oldEHD);
 		errBar = Math.max(errBar, ERRBAR_MIN);
 		return Math.abs(oldEHD - newEHD) <= errBar;
