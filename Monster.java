@@ -1054,7 +1054,7 @@ public class Monster {
 	*  Do not use this method for specials prior to melee.
 	*/
 	int getBreathVictims (Party enemy, int maxVictimsByArea) {
-		return Math.min(maxVictimsByArea, (enemy.size()+1)/2);
+		return Math.min((enemy.size() + 1) / 2, maxVictimsByArea);
 	}
 
 	/**
