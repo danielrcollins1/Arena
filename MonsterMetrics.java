@@ -13,6 +13,12 @@ public class MonsterMetrics {
 	//  Constants
 	//--------------------------------------------------------------------------
 
+	/*
+	* A 12th level fighter with sweep attacks can beat around
+	* 80 orcs, 150 kobolds, or 240 rats (1 hp). The MAX_ENEMIES
+	* value below is set to handle numbers like these.
+	*/
+
 	final int MAX_LEVEL = 12;
 	final int MAX_ENEMIES = 256;
 	final int GRAPH_Y_INTERVAL = 5;
