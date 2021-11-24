@@ -331,7 +331,7 @@ public class Monster {
 	/*
 	* Commentary on how melee attacks are allocated:
 	*
-	* Per DMG p. 70, "it is generally not possible to select a specific
+	* Per 1E DMG p. 70, "it is generally not possible to select a specific
 	* opponent in a mass melee... simply use some random number generation
 	* to find out which attacks are upon which opponents."
 	* 
@@ -345,14 +345,16 @@ public class Monster {
 	*
 	* However, that exception is hard to implement, partly because
 	* (a) the criteria for the "if" above is unclear, (b) we don't have data 
-	* on intelligence of monsters, (c) no current use-case of this code suite
-	* sees high-level monsters in a party with 1st-level types. 
+	* on intelligence of monsters, (c) sweep attacks further suggest an abstract 
+	* approach (given a fighter is likely to have more attacks than immediately 
+	* adjacent opponents), and (d) no current use-case of this code suite
+	* sees a high-level monster in a party with 1st-level types.
 	* 
 	* Additionally, there are several high-attack monsters in the MM that 
 	* explicitly allow or require their attacks to be spread out among multiple
 	* opponents, which would require exception code on the exception.
 	*
-	* E.g.: Hydra, Octopus, Squid, Scorpion, Mastodon.
+	* E.g.: Hydra, Squid, Octopus, Elephant, Mastodon, Scorpion.
 	*/
 
 	/**
