@@ -276,6 +276,19 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
+	*  Is this party mostly 1st level?
+	*/
+	public boolean isModeFirstLevel () {
+		int countFirst = 0;
+		for (Monster m: this) {
+			if (m.getLevel() <= 1) {
+				countFirst++;			
+			}
+		}
+		return countFirst > size() / 2;
+	}
+
+	/**
 	*  Print top number of members of party. 
 	*/
 	public void printTopMembers (int number) {

@@ -270,7 +270,7 @@ public class MonsterMetrics {
 	*/
 	boolean isEHDClose (double oldEHD, double newEHD) {
 		final double ERRBAR_MIN = 2/3.;
-		final double ERRBAR_COEFF = 0.75;
+		final double ERRBAR_COEFF = 0.7;
 		double errBar = ERRBAR_COEFF * Math.sqrt(oldEHD);
 		errBar = Math.max(errBar, ERRBAR_MIN);
 		return Math.abs(oldEHD - newEHD) <= errBar;

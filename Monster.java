@@ -50,7 +50,6 @@ public class Monster {
 	int timesMeleed;
 	Monster host;
 	Monster charmer;
-	Monster meleeTarget;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
 
@@ -329,40 +328,47 @@ public class Monster {
 		return !horsDeCombat() && (timesMeleed < MAX_MELEERS); 
 	}
 
+	/*
+	* Commentary on how melee attacks are allocated:
+	*
+	* Per DMG p. 70, "it is generally not possible to select a specific
+	* opponent in a mass melee... simply use some random number generation
+	* to find out which attacks are upon which opponents."
+	* 
+	* For simplicity, we've done this here, on a per-attack basis.
+	*
+	* The DMG passage does go on, "If characters or similar intelligent
+	* creatures are able to single out an opponent or opponents, then the
+	* concerned figures will remain locked in melee until one side is dead..."
+	* Likewise, Swords & Spells p. 18 says that high-level figures should
+	* seek each other out for combat instead of low-level types.
+	*
+	* However, that exception is hard to implement, partly because
+	* (a) the criteria for the "if" above is unclear, (b) we don't have data 
+	* on intelligence of monsters, (c) no current use-case of this code suite
+	* sees high-level monsters in a party with 1st-level types. 
+	* 
+	* Additionally, there are several high-attack monsters in the MM that 
+	* explicitly allow or require their attacks to be spread out among multiple
+	* opponents, which would require exception code on the exception.
+	*
+	* E.g.: Hydra, Octopus, Squid, Scorpion, Mastodon.
+	*/
+
 	/**
 	* Take our turn against an enemy party.
 	*/
 	public void takeTurn (Party friends, Party enemies) {
-
-		// Check special ability usage
-		if (!checkSpecialAbilitySuite(friends, enemies)) 
-			return;
-
-		// Get melee target for the turn
-		if (!chooseTarget(enemies))
-			return;
-
-		// Determine attack rate
-		boolean isSweeping = useSweepAttacks(meleeTarget);
+		if (!checkSpecialAbilitySuite(friends, enemies)) return;
+		boolean isSweeping = useSweepAttacks(enemies);
 		int attackRate = getAttackRate(isSweeping);
-
-		// Perform melee attacks
 		for (int i = 0; i < attackRate; i++) {
-
-			// Make one attack (some specials on last attack)
-			boolean last = (i == attackRate - 1);
-			singleAttack(getAttack(), meleeTarget, last);
-
-			// Handle death of target
-			if (meleeTarget.horsDeCombat()) {
-
-				// Get new target
-				if (!chooseTarget(enemies))
-					return;
-
-				// End sweep attacks if new target has high HD
-				if (isSweeping && meleeTarget.getHD() > 1)
-					break;
+			Monster target = enemies.getRandomMeleeTarget();
+			if (target != null) {
+				if (isSweeping && target.getLevel() > 1) continue;
+				boolean isLastAttack = (i == attackRate - 1);
+				singleAttack(getAttack(), target, isLastAttack);
+				target.incTimesMeleed();
 			}
 		}
 	}
@@ -383,35 +389,26 @@ public class Monster {
 	}
 
 	/**
-	* Choose target for upcoming melee attacks.
-	* @return if we have a target.
-	*/
-	boolean chooseTarget (Party enemies) {
-		meleeTarget = enemies.getRandomMeleeTarget();
-		if (meleeTarget == null) return false;
-		meleeTarget.incTimesMeleed();
-		return true;
-	}
-
-	/**
 	* Check if we should be making sweep attacks.
 	*/
-	boolean useSweepAttacks(Monster target) {
+	boolean useSweepAttacks(Party enemies) {
 		return Character.useSweepAttacks() 
-				&& getSweepRate() > getAttack().getRate()
-				&& target.getHD() <= 1;
+			&& getSweepRate() > getAttack().getRate()
+			&& enemies.isModeFirstLevel();
 	}
 
 	/**
 	* Get the current attack rate.
 	*/
 	int getAttackRate(boolean isSweeping) {
-		int rate = getAttack().getRate();
-		if (hasFeat(Feat.RapidStrike) && Dice.roll(6) <= 3)
-			rate++;
-		if (isSweeping)
-			rate = Math.max(rate, getSweepRate());
-		return rate;
+		if (isSweeping) {
+			return getSweepRate();
+		}
+		else {
+			int rate = getAttack().getRate();
+			if (hasFeat(Feat.RapidStrike) && Dice.roll(6) <= 3) rate++;
+			return rate;
+		}
 	}
 
 	/**
