@@ -12,7 +12,7 @@ Large Spider,2d10,8,6,1+1,75,-,1,1d3,Poison (-2),A,N,1,2,D,"S1, M1"
 "Horse, Draft",1,7,12,2+1,-,-,1,1d6,-,A,N,2,2,W,O
 "Horse, Medium",1,7,18,2+1,-,-,2,1d6,-,A,N,2,2,W,"CM, O, SS"
 Mule,1,7,12,2+1,-,-,1,1d6,-,A,N,2,2,W,O
-"Giant Ant, Worker",1d100,3,18,2,10,-,1,1d6,-,A,N,2,2,D,M1
+"Giant Ant, Worker",2d10,3,18,2,10,-,1,1d6,-,A,N,2,2,D,M1
 Giant Frog,4d10,7,3,2,-,-,1,1d6,"Hopping, Grabbing",A,N,2,2,D,S2
 Giant Leech,2d6,8,6,2,-,-,1,1d6+1,BloodDrain (2),A,N,2,2,U,"O, S2"
 Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,-,A,N,3,2,D,"S1, M1"
@@ -22,7 +22,7 @@ Crocodile,3d8,5,9,3,-,-,1,1d6,Swimming (15),A,N,3,2,U,"O, M1"
 Giant Tick,3d4,4,3,3,-,-,1,1d3,"BloodDrain (4), Disease",A,N,3,2,D,S1
 Ram,1d6,7,15,3,-,-,1,1d6,Charge,A,N,3,2,W,"S1, M2"
 Huge Spider,1d12,6,18,2+2,50,-,1,1d6,"Poison (-1), Stealth (3), Hopping",A,N,2,3,D,M1
-Giant Toad,3d10,6,3,2,-,-,1,1d6,"Hopping, Grabbing, Poison",A,N,2,3,D,"S1, S2"
+Giant Toad,2d6,6,3,2,-,-,1,1d6,"Hopping, Grabbing, Poison",A,N,2,3,D,"S1, S2"
 "Horse, Heavy",1,7,12,3,-,-,2,1d6,-,A,N,3,3,W,"CM, O, SS"
 Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,BloodDrain (6),A,N,3,3,D,"S1, M1"
 Bull,1d20,6,15,4,-,-,1,1d6+2,Charge,A,N,4,3,W,"S1, M1"
@@ -113,13 +113,13 @@ Griffon,2d8,3,12,7,10,E,2,1d6+2,Flight (30),F,N,7,9,W,O
 "Tree, Animated",1d2,2,3,8,-,-,2,2d6,-,F,L,8,11,W,O
 "Roc, Medium",1d20,4,6,12,20,I,2,2d6,"Flight (48), Detection",F,L,12,15,W,O
 "Roc, Large",1d20,4,6,18,20,I,2,3d6,"Flight (48), Detection",F,L,18,24,W,O
-Treant,2d10,2,6,8,-,-,2,2d6,SummonTrees,F,L,8,33,W,O
+Treant,1d4,2,6,8,-,-,2,2d6,SummonTrees,F,L,8,33,W,O
 Kobold,4d10x10,7,6,1/2,50,C,1,1d3,LightSensitivity,H,C,0.5,1,D,O
 Goblin,4d10x10,6,6,1-1,50,C,1,1d3,LightSensitivity,H,C,0.8,1,D,O
 Orc,3d10x10,6,9,1,50,D,1,1d6,LightSensitivity,H,C,1,1,D,O
 Hobgoblin,2d10x10,5,9,1+1,30,D,1,1d6,Bravery (1),H,C,1,1,D,O
-Gnoll,2d10x10,5,9,2,30,D,1,1d6,Bravery (2),H,C,2,2,D,O
-Troglodyte,1d10x10,5,12,2,15,A,1,1d6,"Stealth (2), Stench",H,C,2,2,D,M1
+Gnoll,3d10,5,9,2,30,D,1,1d6,Bravery (2),H,C,2,2,D,O
+Troglodyte,3d10,5,12,2,15,A,1,1d6,"Stealth (2), Stench",H,C,2,2,D,M1
 Lizard Man,1d4x10,5,6,2+1,40,D,1,1d6,Swimming (12),H,N,2,2,D,S1
 Bugbear,5d4,5,9,3+1,30,B,1,1d6+1,Stealth (1),H,C,3,3,D,S1
 Ogre,3d6,5,9,4+1,30,C,1,1d6+2,-,H,C,4,4,D,O
@@ -142,7 +142,7 @@ Nomad,3d10x10,6,12,1,15,A,1,1d6,-,M,N,1,1,W,O
 Buccaneer,3d10x10,6,12,1,15,A,1,1d6,-,M,N,1,1,W,O
 Pirate,3d10x10,6,12,1,15,A,1,1d6,-,M,C,1,1,W,O
 Merman,3d10x10,7,3,1+1,40,A,1,1d6,"Swimming (15), Grappling, LandWeakness (-1)",M,N,1,1,U,"O, S2"
-Caveman,3d10x10,9,12,2,15,A,1,1d6+1,Cowardice (-1),M,N,2,2,W,O
+Caveman,3d10,9,12,2,15,A,1,1d6+1,Cowardice (-1),M,N,2,2,W,O
 Warrior,1d6,4,9,2,15,-,1,1d6+1,NPC,M,N,2,2,D,O
 Hero,1d6,2,9,4,15,-,1,1d6+1,NPC,M,N,4,4,D,O
 Swashbuckler,1d6,2,9,5,15,C,1,1d6+1,NPC,M,N,5,5,D,O
@@ -163,7 +163,7 @@ Wraith,2d8,3,12,4,20,E,1,1d6,"Flight (24), SilverToHit, EnergyDrain (1), Spawn",
 Ghast,1d6,4,15,4,10,G,1,1d6+2,"Paralysis, Stench",U,C,4,7,D,M1
 Mummy,1d12,3,6,5+1,30,D,1,1d6,"MagicToHit (1), DamageReduction, Rotting",U,C,5,7,D,O
 Spectre,1d8,2,15,6,25,E,1,1d6,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn",U,C,6,9,D,O
-Vampire,1d6,2,12,8,20,F,1,1d6,"Flight (12), MagicToHit (1), EnergyDrain (2), Regeneration (3), Charm (2), Spawn, SummonVermin, Polymorphism",U,C,8,40,D,"O, S1"
+Vampire,1d4,2,12,8,20,F,1,1d6,"Flight (12), MagicToHit (1), EnergyDrain (2), Regeneration (3), Charm (2), Spawn, SummonVermin, Polymorphism",U,C,8,40,D,"O, S1"
 Lich,1d4,3,6,10,100,A,1,1d6,"Fear, Spells, Paralysis",U,N,10,?,D,S1
 Djinni,1,5,9,7+1,-,-,1,2d6-1,"Flight (24), Creation, Illusion, Invisibility, GaseousForm, Whirlwind (1)",X,N,7,7,S,O
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,"Invisibility, Tracking",X,N,8,9,S,O
