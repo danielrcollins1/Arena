@@ -25,6 +25,7 @@ Huge Spider,1d12,6,18,2+2,50,-,1,1d6,"Poison (-1), Stealth (3), Hopping",A,N,2,3
 Giant Toad,2d6,6,3,2,-,-,1,1d6,"Hopping, Grabbing, Poison",A,N,2,3,D,"S1, S2"
 "Horse, Heavy",1,7,12,3,-,-,2,1d6,-,A,N,3,3,W,"CM, O, SS"
 Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,BloodDrain (6),A,N,3,3,D,"S1, M1"
+Boar,1d12,7,15,3+3,-,-,1,1d6+1,-,A,N,3,3,W,M1
 Bull,1d20,6,15,4,-,-,1,1d6+2,Charge,A,N,4,3,W,"S1, M1"
 Giant Wasp,3d10,5,6,3,-,-,1,1d6,"Flight (24), Poison",A,N,3,4,D,S2
 Giant Crab,3d4,2,6,3,-,-,2,1d6+1,-,A,N,3,4,U,"O, S1, S2"
