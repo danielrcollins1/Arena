@@ -8,7 +8,7 @@ Stirge,3d10,7,18,1,55,D,1,1d3,"Flight (18), HitBonus (3), BloodDrain (4)",A,N,1,
 Wolf,2d10,7,18,2,10,-,1,1d6,-,A,N,2,1,W,"S1, SS, M1"
 "Horse, Light",1,7,24,2,-,-,1,1d6,-,A,N,2,1,W,"CM, O, SS"
 Large Spider,2d10,8,6,1+1,75,-,1,1d3,Poison (-2),A,N,1,2,D,"S1, M1"
-"Giant Beetle, Bombardier",3d4,4,9,1,-,-,1,1d6+1,AcidBreath (2),A,N,1,2,D,S2
+"Giant Beetle, Bombardier",3d4,4,9,1,-,-,1,1d6+1,AcidBreath (2),A,N,1,2,W,S2
 "Horse, Draft",1,7,12,2+1,-,-,1,1d6,-,A,N,2,2,W,O
 "Horse, Medium",1,7,18,2+1,-,-,2,1d6,-,A,N,2,2,W,"CM, O, SS"
 Mule,1,7,12,2+1,-,-,1,1d6,-,A,N,2,2,W,O
@@ -37,7 +37,7 @@ White Ape,2d4,6,12,6,10,C,2,1d6,-,A,N,6,5,D,"M1, WM"
 Giant Crocodile,2d6,5,9,6,-,-,1,2d6,"Swimming (15), Capsizing",A,N,6,5,U,"O, S2"
 Bear,1d6,5,12,6,-,-,2,1d6,Grabbing,A,N,6,5,W,"S1, M1"
 "Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,Constriction,A,N,6,6,D,M1
-"Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,-,A,N,6,6,D,S2
+"Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,-,A,N,6,6,W,S2
 Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,"Stealth (2), Grabbing",A,N,7,6,W,"S1, M1"
 Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,"Poison, WebMovement (12)",A,C,4,7,D,M1
 Giant Slug,1,8,6,12+2,-,-,1,1d6+1,AcidSpitting,A,N,12,8,D,S1
@@ -45,7 +45,7 @@ Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,Poison,A,N,5,9,D,"S1, M1"
 "Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,"Swimming (20), Poison, Constriction",A,N,6,10,U,"O, M1"
 Giant Squid,2d6,7,3,6,20,A,10,1d6,"Swimming (12), Jet, InkCloud",A,N,6,10,U,"O, S2, M1"
 Minotaur Lizard,1d6,3,9,8,50,E,2,2d6,-,A,N,8,10,D,S2
-"Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,-,A,N,12,10,D,S2
+"Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,-,A,N,12,10,W,S2
 Giant Fish,1,6,0,15,-,-,1,2d6,"Swimming (15), Whirlpool",A,N,15,11,U,"O, M2"
 Fire Lizard,1d4,2,9,12,60,E,2,2d6,"FireBreath (2), FireImmunity",A,N,12,13,D,S2
 "Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,"Swimming (15), Swallowing",A,N,15,15,U,"O, S1, S2"
