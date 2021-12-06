@@ -23,7 +23,7 @@ public class Monster {
 	static final int MAX_MELEERS = 6;
 
 	/** Sentinel value for undefined EHD. */
-	public static final int UNDEFINED_EHD = Integer.MIN_VALUE;
+	public static final int UNDEFINED_EHD = -1;
 
 	//--------------------------------------------------------------------------
 	//  Fields
