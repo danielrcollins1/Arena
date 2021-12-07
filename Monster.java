@@ -924,7 +924,7 @@ public class Monster {
 				return true;
 			}
 
-			// Brain Consumption: effectively 40% to kill.
+			// Brain Consumption: comparable to 40% to kill/round.
 			if (hasSpecial(SpecialType.BrainConsumption)) {
 				if (Dice.roll(10) <= 4) {
 					host.instaKill();
