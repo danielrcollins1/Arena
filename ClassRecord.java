@@ -6,7 +6,6 @@ import java.util.ArrayList;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-22
-*  @version  1.0
 ******************************************************************************/
 
 public class ClassRecord {
@@ -297,11 +296,11 @@ public class ClassRecord {
 			spellsKnown = new ArrayList<List<Spell>>();
 			SpellsTable table = SpellsTable.getInstance();
 			SpellsUsable usable = SpellsUsable.getInstance();
-			for (int power = 1; power <= usable.getMaxSpellLevel(); power++) {
+			for (int sLevel = 1; sLevel <= usable.getMaxSpellLevel(); sLevel++) {
 				spellsKnown.add(new ArrayList<Spell>());				
-				int spellsUsable = usable.getSpellsUsable(level, power);
+				int spellsUsable = usable.getSpellsUsable(level, sLevel);
 				for (int num = 0; num < spellsUsable; num++) {
-					addOneSpell(power);
+					addOneSpell(sLevel);
 				}
 			}
 		}
@@ -310,14 +309,14 @@ public class ClassRecord {
 	/**
 	*  Add one spell to given level.
 	*/
-	void addOneSpell (int power) {
+	void addOneSpell (int sLevel) {
 		Spell spell;
 		SpellsTable table = SpellsTable.getInstance();
-		List<Spell> list = spellsKnown.get(power - 1);
-		if (list.size() < table.getNumAtLevel(power)) {
+		List<Spell> list = spellsKnown.get(sLevel - 1);
+		if (list.size() < table.getNumAtLevel(sLevel)) {
 			do {
 				Spell.Usage usage = rollUsage();
-				spell = table.getRandom(power, usage);
+				spell = table.getRandom(sLevel, usage);
 			} while (list.contains(spell));
 			list.add(spell);
 		}
