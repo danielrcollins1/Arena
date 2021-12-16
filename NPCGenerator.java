@@ -9,7 +9,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-04
-*  @version  1.0
 ******************************************************************************/
 
 public class NPCGenerator {
@@ -91,7 +90,7 @@ public class NPCGenerator {
 		System.out.println("  where options include:");
 		System.out.println("\t-a alignment (=[L, N, C])");
 		System.out.println("\t-r race (=[M, D, E, H])");
-		System.out.println("\t-r class (=[F, T, W])");
+		System.out.println("\t-c class (=[F, T, W])");
 		System.out.println("\t-l level (=#)");
 		System.out.println("\t-n number (=#)");
 		System.out.println("\t-b breaks between NPCs (=#)");
