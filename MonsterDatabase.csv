@@ -40,7 +40,7 @@ Bear,1d6,5,12,6,-,-,2,1d6,Grabbing,A,N,6,5,W,"S1, M1"
 "Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,Constriction,A,N,6,6,D,M1
 "Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,-,A,N,6,6,W,S2
 Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,"Stealth (2), Grabbing",A,N,7,6,W,"S1, M1"
-Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,"Poison, WebMovement (12)",A,C,4,7,D,M1
+Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,"Poison, WebMove (12)",A,C,4,7,D,M1
 Giant Slug,1,8,6,12+2,-,-,1,1d6+1,AcidSpitting,A,N,12,8,D,S1
 Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,Poison,A,N,5,9,D,"S1, M1"
 "Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,"Swimming (20), Poison, Constriction",A,N,6,10,U,"O, M1"
@@ -84,11 +84,11 @@ Medusa,1d4,8,9,4,75,F,2,1d6,"PetrifyingGaze, Poison",B,C,4,14,D,O
 Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,Confusion,B,N,8,14,D,S1
 "Dragon, Black",1d4,2,9,7,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), AcidBreath",B,C,7,15,D,O
 Mind Flayer,1d4,5,12,8+3,50,F,4,0,"MagicResistance (90), MindBlast, Grabbing, BrainConsumption",B,N,8,15,D,SR1
-Roper,1d3,0,3,10,90,D,1,3d6,"MagicResistance (80), SappingStrands, LightningImmunity, ColdResistance, FireVulnerability",B,C,10,15,D,SR2
+Roper,1d3,0,3,10,90,D,1,3d6,"MagicResistance (80), SappingStrands, VoltImmunity, ColdResistance, FireVulnerability",B,C,10,15,D,SR2
 Balrog,1d6,2,6,10,25,F,2,2d6,"Flight (15), MagicResistance (75), Immolation",B,C,10,15,D,O
 "Dragon, Green",1d4,2,9,8,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,17,D,O
 "Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,Multiheads,B,N,10,18,D,O
-"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,22,D,O
+"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,22,D,O
 Basilisk,1d6,4,6,6+1,40,F,1,1d6,"PetrifyingGaze, Petrification",B,N,6,25,D,O
 "Dragon, Red",1d4,2,9,10,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath",B,C,10,27,D,O
 Purple Worm,1d4,6,6,15,25,D,2,2d6,"Swallowing, Poison, Fearlessness",B,N,15,28,D,O
@@ -150,12 +150,12 @@ Swashbuckler,1d6,2,9,5,15,C,1,1d6+1,NPC,M,N,5,5,D,O
 Myrmidon,1d6,2,9,6,15,C,1,1d6+1,NPC,M,N,6,6,D,O
 Superhero,1d6,2,9,8,15,E,1,1d6+1,NPC,M,N,8,8,D,O
 Lord,1d6,2,9,9,15,E,1,1d6+1,NPC,M,N,9,9,D,O
-Gray Ooze,1,8,1,3,-,-,1,2d6,"FireImmunity, ColdImmunity, Corrosion, Grabbing",O,N,3,3,D,O
-Gelatinous Cube,1,8,6,4,-,-,1,1d6,"Paralysis, LightningImmunity, ColdImmunity",O,N,4,5,D,S1
-Yellow Mold,1,9,0,1,-,-,1,0,"WeaponImmunity, LightningImmunity, ColdImmunity, SporeCloud",O,N,1,?,D,O
-Green Slime,1,9,0,2,-,-,1,0,"WeaponImmunity, LightningImmunity, Corrosion, Grabbing, Absorption",O,N,2,?,D,O
-Ochre Jelly,1,8,3,5,-,-,1,1d6,"WeaponImmunity, LightningImmunity, Splitting, Grabbing",O,N,5,?,D,O
-Black Pudding,1,6,6,10,-,-,1,3d6,"WeaponImmunity, LightningImmunity, ColdImmunity, Splitting, Corrosion, Grabbing",O,N,10,?,D,O
+Gray Ooze,1,8,1,3,-,-,1,2d6,"Grabbing, Corrosion, FireImmunity, ColdImmunity",O,N,3,3,D,O
+Gelatinous Cube,1,8,6,4,-,-,1,1d6,"Paralysis, VoltImmunity, ColdImmunity",O,N,4,5,D,S1
+Yellow Mold,1,9,0,1,-,-,1,0,"SporeCloud, VoltImmunity, ColdImmunity, ChopImmunity",O,N,1,?,D,O
+Green Slime,1,9,0,2,-,-,1,0,"Grabbing, Corrosion, Absorption, VoltImmunity, ChopImmunity",O,N,2,?,D,O
+Ochre Jelly,1,8,3,5,-,-,1,1d6,"Grabbing, Splitting, VoltImmunity, ChopImmunity",O,N,5,?,D,O
+Black Pudding,1,6,6,10,-,-,1,3d6,"Grabbing, Corrosion, Splitting, VoltImmunity, ColdImmunity, ChopImmunity",O,N,10,?,D,O
 Skeleton,3d10,7,6,1,-,-,1,1d6,Fearlessness,U,N,1,1,D,O
 Zombie,3d10,8,6,2,-,-,1,1d6,Fearlessness,U,N,2,2,D,O
 Ghoul,2d12,6,9,2,20,B,1,1d6,"Paralysis, Spawn",U,C,2,3,D,O
@@ -164,11 +164,11 @@ Wraith,2d8,3,12,4,20,E,1,1d6,"Flight (24), SilverToHit, EnergyDrain (1), Spawn",
 Ghast,1d6,4,15,4,10,G,1,1d6+2,"Paralysis, Stench",U,C,4,7,D,M1
 Mummy,1d12,3,6,5+1,30,D,1,1d6,"MagicToHit (1), DamageReduction, Rotting",U,C,5,7,D,O
 Spectre,1d8,2,15,6,25,E,1,1d6,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn",U,C,6,9,D,O
-Vampire,1d4,2,12,8,20,F,1,1d6,"Flight (12), MagicToHit (1), EnergyDrain (2), Regeneration (3), Charm (2), Spawn, SummonVermin, Polymorphism",U,C,8,40,D,"O, S1"
+Vampire,1d4,2,12,8,20,F,1,1d6,"Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, Polymorphism",U,C,8,40,D,"O, S1"
 Lich,1d4,3,6,10,100,A,1,1d6,"Fear, Spells, Paralysis",U,N,10,?,D,S1
-Djinni,1,5,9,7+1,-,-,1,2d6-1,"Flight (24), Creation, Illusion, Invisibility, GaseousForm, Whirlwind (1)",X,N,7,7,S,O
+Djinni,1,5,9,7+1,-,-,1,2d6-1,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)",X,N,7,7,S,O
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,"Invisibility, Tracking",X,N,8,9,S,O
-Efreeti,1,3,9,10,-,-,1,2d6,"Flight (24), Creation, Illusion, Invisibility, GaseousForm, WallOfFire",X,C,10,13,S,O
+Efreeti,1,3,9,10,-,-,1,2d6,"Flight (24), Creation, Illusion, Invisibility, GasForm, WallOfFire",X,C,10,13,S,O
 "Air Elemental, Small",1,2,36,8,-,-,1,1d6,"Flight (36), Whirlwind (3), MagicToHit (2)",X,N,8,17,S,"O, S1"
 "Fire Elemental, Small",1,2,12,8,-,-,1,2d6,MagicToHit (2),X,N,8,20,S,"O, S1"
 "Water Elemental, Small",1,2,6,8,-,-,1,2d6,"Swimming (18), MagicToHit (2)",X,N,8,20,S,"O, S1"

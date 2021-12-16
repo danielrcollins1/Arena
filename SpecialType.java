@@ -8,7 +8,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-07-24
-*  @version  1.00
 ******************************************************************************/
 
 public enum SpecialType {
@@ -19,17 +18,17 @@ public enum SpecialType {
 
 	NPC, Poison, Paralysis, Petrification, BloodDrain, EnergyDrain,
 	Constriction, Corrosion, Immolation, Rotting, Swallowing,
-	SilverToHit, MagicToHit, WeaponImmunity, DamageReduction,
+	SilverToHit, MagicToHit, ChopImmunity, DamageReduction,
 	Multiheads, Berserking, HitBonus, Invisibility, Detection, 
 	Grabbing, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
 	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, Absorption,
 	Whirlwind, WallOfFire, ConeOfCold, AcidSpitting, Confusion, 
 	Displacement, Blinking, Phasing, CharmTouch, DragonAge, 
-	FireBreath, ColdBreath, LightningBreath, AcidBreath, PoisonBreath, 
+	FireBreath, ColdBreath, VoltBreath, AcidBreath, PoisonBreath, 
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
-	FireImmunity, ColdImmunity, AcidImmunity, LightningImmunity, 
-	SteamBreath, Stench, ResistStench, WebMovement;
+	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
+	SteamBreath, Stench, ResistStench, WebMove;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -80,7 +79,7 @@ public enum SpecialType {
 	*/
 	public boolean isBreathWeapon () {
 		switch (this) {
-			case FireBreath: case ColdBreath: case LightningBreath:
+			case FireBreath: case ColdBreath: case VoltBreath:
 			case AcidBreath: case PoisonBreath: case PetrifyingBreath:
 			case SteamBreath:
 				return true;

@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 *
 * @author   Daniel R. Collins (dcollins@superdan.net)
 * @since    2014-05-20
-* @version  1.01
 ******************************************************************************/
 
 public class Monster {
@@ -453,7 +452,7 @@ public class Monster {
 		}
 
 		// Check total weapon immunity
-		if (target.hasSpecial(SpecialType.WeaponImmunity)) {
+		if (target.hasSpecial(SpecialType.ChopImmunity)) {
 			canHit = false;
 		}
 
@@ -752,6 +751,7 @@ public class Monster {
 
 				case Stench:
 					for (Monster targetStench: enemy) {
+						// Each enemy only needs to make one save vs. stinky monster party
 						if (!targetStench.hasCondition(SpecialType.ResistStench)) {
 							if (!targetStench.rollSave(SavingThrows.SaveType.Breath)) {
 								targetStench.addCondition(SpecialType.Stench);
@@ -985,10 +985,10 @@ public class Monster {
 						EnergyType.Cold, SavingThrows.SaveType.Breath);
 					break;
 
-				case LightningBreath: // Dragon only
+				case VoltBreath: // Dragon only
 					numVictims = getBreathVictims(enemy, 5);
 					castEnergyArea(enemy, numVictims, maxHitPoints, 
-						EnergyType.Lightning, SavingThrows.SaveType.Breath);
+						EnergyType.Volt, SavingThrows.SaveType.Breath);
 					break;
 
 				case AcidBreath:
@@ -1086,7 +1086,7 @@ public class Monster {
 			case Fire: return hasSpecial(SpecialType.FireImmunity);
 			case Cold: return hasSpecial(SpecialType.ColdImmunity);
 			case Acid: return hasSpecial(SpecialType.AcidImmunity);
-			case Lightning: return hasSpecial(SpecialType.LightningImmunity);
+			case Volt: return hasSpecial(SpecialType.VoltImmunity);
 			default: return false;
 		}
 	} 
