@@ -17,12 +17,12 @@ Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Special,Type,Align,HD#,EHD,Env,Sourc
 "Dragon, Green, Adult",1d4,2,9,8,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,23,D,O
 "Dragon, Green, Old",1d4,2,9,8,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,32,D,O
 "Dragon, Green, Very Old",1d4,2,9,8,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), PoisonBreath",B,N,8,40,D,O
-"Dragon, Blue, Very Young",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,7,D,O
-"Dragon, Blue, Young",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,13,D,O
-"Dragon, Blue, Sub-Adult",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,19,D,O
-"Dragon, Blue, Adult",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,28,D,O
-"Dragon, Blue, Old",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,35,D,O
-"Dragon, Blue, Very Old",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), LightningBreath",B,N,9,44,D,O
+"Dragon, Blue, Very Young",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,7,D,O
+"Dragon, Blue, Young",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,13,D,O
+"Dragon, Blue, Sub-Adult",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,19,D,O
+"Dragon, Blue, Adult",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,28,D,O
+"Dragon, Blue, Old",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,35,D,O
+"Dragon, Blue, Very Old",1d4,2,9,9,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), VoltBreath",B,N,9,44,D,O
 "Dragon, Red, Very Young",1d4,2,9,10,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath",B,C,10,8,D,O
 "Dragon, Red, Young",1d4,2,9,10,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath",B,C,10,14,D,O
 "Dragon, Red, Sub-Adult",1d4,2,9,10,60,H,2,2d6,"DragonAge, Flight (24), Fear, Detection (15), FireBreath",B,C,10,23,D,O
