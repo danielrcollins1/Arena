@@ -1,31 +1,30 @@
 import java.io.IOException; 
 
 /******************************************************************************
-*  Matrix of how many spells can be memorized.
+*  Matrix of how many spells can be memorized daily.
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-05
-*  @version  1.0
 ******************************************************************************/
 
-public class SpellsUsable {
+public class SpellsDaily {
 
 	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Name of file with spells usable. */
-	final String SPELLS_USABLE_FILE = "SpellsUsable.csv";
+	/** Name of file with daily spells memorizable. */
+	final String SPELLS_DAILY_FILE = "SpellsDaily.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static SpellsUsable instance = null;
+	static SpellsDaily instance = null;
 
-	/** Table of spells usable. */
-	int[][] spellsUsableData;
+	/** Table of daily spells memorizible. */
+	int[][] spellsDailyData;
 
 	/** Maximum class level in matrix. */
 	int maxDataClassLevel;
@@ -40,14 +39,14 @@ public class SpellsUsable {
 	/**
 	*  Constructor (read from dedicated file).
 	*/
-	protected SpellsUsable () throws IOException {
-		String[][] table = CSVReader.readFile(SPELLS_USABLE_FILE);
+	protected SpellsDaily () throws IOException {
+		String[][] table = CSVReader.readFile(SPELLS_DAILY_FILE);
 		maxDataClassLevel = table.length - 1;
 		maxSpellLevel = table[0].length - 1;
-		spellsUsableData = new int[maxDataClassLevel][maxSpellLevel];
+		spellsDailyData = new int[maxDataClassLevel][maxSpellLevel];
 		for (int i = 1; i <= maxDataClassLevel; i++) {
 			for (int j = 1; j <= maxSpellLevel; j++) {
-				spellsUsableData[i-1][j-1] = CSVReader.parseInt(table[i][j]);
+				spellsDailyData[i-1][j-1] = CSVReader.parseInt(table[i][j]);
 			}
 		}		
 	}
@@ -59,13 +58,13 @@ public class SpellsUsable {
 	/**
 	*  Access the singleton class instance.
 	*/
-	public static SpellsUsable getInstance() {
+	public static SpellsDaily getInstance() {
 		if (instance == null) {
 			try {
-				instance = new SpellsUsable();
+				instance = new SpellsDaily();
 			}
 			catch (IOException e) {
-				System.err.println("Failed to read the Spells Usable file.");
+				System.err.println("Failed to read the Spells Daily file.");
 			}
 		}
 		return instance;
@@ -79,17 +78,17 @@ public class SpellsUsable {
 	}
 
 	/**
-	*  Get spells usable at class and spell level.
+	*  Get spells memorizable at class and spell level.
 	*/
-	public int getSpellsUsable (int classLevel, int spellLevel) {
+	public int getSpellsDaily (int classLevel, int spellLevel) {
 		if (spellLevel < 1 || maxSpellLevel < spellLevel) // Error
 			return 0;
 		else if (classLevel < 1) // Before matrix
 			return 0;
 		else if (classLevel <= maxDataClassLevel) // In matrix
-			return spellsUsableData[classLevel - 1][spellLevel - 1];
+			return spellsDailyData[classLevel - 1][spellLevel - 1];
 		else // After matrix (as per Vol-1, p. 19). 
-			return getSpellsUsable(classLevel - 2, spellLevel) + 1;
+			return getSpellsDaily(classLevel - 2, spellLevel) + 1;
 	}
 	
 	/**
@@ -97,16 +96,15 @@ public class SpellsUsable {
 	*/
 	public static void main (String[] args) {	
 		Dice.initialize();
-		SpellsUsable matrix = SpellsUsable.getInstance();
-		System.out.println("Spells Usable:");
+		SpellsDaily matrix = SpellsDaily.getInstance();
+		System.out.println("Spells Daily:");
 		for (int i = 1; i <= 30; i++) {
 			System.out.print("Level " + i + ": ");
 			for (int j = 1; j <= matrix.getMaxSpellLevel(); j++) {
-				System.out.print(matrix.getSpellsUsable(i, j) + " ");
+				System.out.print(matrix.getSpellsDaily(i, j) + " ");
 			}
 			System.out.println();
 		}
 		System.out.println();
 	}
 }
-
