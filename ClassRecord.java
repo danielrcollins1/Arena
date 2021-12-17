@@ -294,11 +294,11 @@ public class ClassRecord {
 	void addAllSpells() {
 		if (classType.usesSpells()) {
 			spellsKnown = new ArrayList<List<Spell>>();
-			SpellsUsable usable = SpellsUsable.getInstance();
-			for (int sLevel = 1; sLevel <= usable.getMaxSpellLevel(); sLevel++) {
-				spellsKnown.add(new ArrayList<Spell>());				
-				int spellsUsable = usable.getSpellsUsable(level, sLevel);
-				for (int num = 0; num < spellsUsable; num++) {
+			SpellsDaily spellsDaily = SpellsDaily.getInstance();
+			for (int sLevel = 1; sLevel <= spellsDaily.getMaxSpellLevel(); sLevel++) {
+				spellsKnown.add(new ArrayList<Spell>());
+				int numSpells = spellsDaily.getSpellsDaily(level, sLevel);
+				for (int num = 0; num < numSpells; num++) {
 					addOneSpell(sLevel);
 				}
 			}
@@ -311,12 +311,12 @@ public class ClassRecord {
 	*/
 	void addOneSpell (int sLevel) {
 		Spell spell;
-		SpellsTable table = SpellsTable.getInstance();
+		SpellsIndex index = SpellsIndex.getInstance();
 		List<Spell> list = spellsKnown.get(sLevel - 1);
-		if (list.size() < table.getNumAtLevel(sLevel)) {
+		if (list.size() < index.getNumAtLevel(sLevel)) {
 			do {
 				Spell.Usage usage = rollUsage();
-				spell = table.getRandom(sLevel, usage);
+				spell = index.getRandom(sLevel, usage);
 			} while (list.contains(spell));
 			list.add(spell);
 		}

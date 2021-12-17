@@ -14,14 +14,14 @@ s#k0D:\\Prog\\Java\\Arena\\pdfbox-app-2.0.19.jar\000
 s#j0D:\\Prog\\Java\\Arena\\pdfbox-app-2.0.19.jar
 s#l0
 !148;u
-a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!456;g
+a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!455;g
 %\011NameGenerator.java
 %\011Weapon.java
 %\011CharacterPDF.java
 %\011Armor.java
 %\011Alignment.java
+%\011SpellsIndex.java
 %\011Monster.java
-%\011SpellsUsable.java
 %\011ClassIndex.java
 %\011Equipment.java
 %\011PersonalityTraits.java
@@ -32,20 +32,20 @@ a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	
 %\011Attack.java
 %\011NPCGenerator.java
 %\011Wands.java
-%\011SpellsTable.java
 %\011Spell.java
 %\011Character.java
+%\011SpellsDaily.java
 %\011CSVReader.java
 %\011SpecialType.java
 %\011Ability.java
-!456;f
+!455;f
 %\011NameGenerator.java
 %\011Weapon.java
 %\011CharacterPDF.java
 %\011Armor.java
 %\011Alignment.java
+%\011SpellsIndex.java
 %\011Monster.java
-%\011SpellsUsable.java
 %\011ClassIndex.java
 %\011Equipment.java
 %\011PersonalityTraits.java
@@ -56,9 +56,9 @@ a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	
 %\011Attack.java
 %\011NPCGenerator.java
 %\011Wands.java
-%\011SpellsTable.java
 %\011Spell.java
 %\011Character.java
+%\011SpellsDaily.java
 %\011CSVReader.java
 %\011SpecialType.java
 %\011Ability.java
