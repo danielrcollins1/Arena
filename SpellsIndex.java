@@ -1,28 +1,27 @@
 import java.io.IOException; 
 
 /******************************************************************************
-*  Table of available spells.
+*  Index of available spells.
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-05
-*  @version  1.0
 ******************************************************************************/
 
-public class SpellsTable {
+public class SpellsIndex {
 
 	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
 	/** Name of file with spells. */
-	final String SPELLS_FILE = "SpellsTable.csv";
+	final String SPELLS_FILE = "SpellsIndex.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static SpellsTable instance = null;
+	static SpellsIndex instance = null;
 
 	/** Table of spell information. */
 	Spell[] spellList;
@@ -40,7 +39,7 @@ public class SpellsTable {
 	/**
 	*  Constructor (read from dedicated file).
 	*/
-	protected SpellsTable () throws IOException {
+	protected SpellsIndex () throws IOException {
 		String[][] table = CSVReader.readFile(SPELLS_FILE);
 		spellList = new Spell[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -57,13 +56,13 @@ public class SpellsTable {
 	/**
 	*  Access the singleton class instance.
 	*/
-	public static SpellsTable getInstance() {
+	public static SpellsIndex getInstance() {
 		if (instance == null) {
 			try {
-				instance = new SpellsTable();
+				instance = new SpellsIndex();
 			}
 			catch (IOException e) {
-				System.err.println("Failed to read the Spells Table file.");
+				System.err.println("Failed to read the Spells Index file.");
 			}
 		}
 		return instance;
@@ -137,12 +136,11 @@ public class SpellsTable {
 	*/
 	public static void main (String[] args) {	
 		Dice.initialize();
-		SpellsTable table = SpellsTable.getInstance();
+		SpellsIndex index = SpellsIndex.getInstance();
 		System.out.println("Random Spells:");
-		for (int i = 1; i <= table.getMaxLevel(); i++) {
-			System.out.println("Level " + i + ": " + table.getRandom(i));
+		for (int i = 1; i <= index.getMaxLevel(); i++) {
+			System.out.println("Level " + i + ": " + index.getRandom(i));
 		}
 		System.out.println();
 	}
 }
-
