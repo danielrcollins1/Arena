@@ -294,7 +294,6 @@ public class ClassRecord {
 	void addAllSpells() {
 		if (classType.usesSpells()) {
 			spellsKnown = new ArrayList<List<Spell>>();
-			SpellsTable table = SpellsTable.getInstance();
 			SpellsUsable usable = SpellsUsable.getInstance();
 			for (int sLevel = 1; sLevel <= usable.getMaxSpellLevel(); sLevel++) {
 				spellsKnown.add(new ArrayList<Spell>());				
@@ -308,6 +307,7 @@ public class ClassRecord {
 
 	/**
 	*  Add one spell to given level.
+	*  No duplicates; if we exhaust entire table, then skip addition.
 	*/
 	void addOneSpell (int sLevel) {
 		Spell spell;
