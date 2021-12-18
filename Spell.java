@@ -21,7 +21,7 @@ public class Spell {
 	//  Inner class
 	//--------------------------------------------------------------------------
 
-	private class AreaOfEffect {
+	private static class AreaOfEffect {
 		public int size;
 		public Shape shape;
 		public AreaOfEffect (Shape s, int i) {
@@ -75,7 +75,7 @@ public class Spell {
 	/**
 	*  Parse a range descriptor.
 	*/
-	private int parseRange (String s) {
+	private static int parseRange (String s) {
 		if (s.equals("1 mile")) return 1000;
 		else try {
 			return Integer.parseInt(s);
@@ -89,7 +89,7 @@ public class Spell {
 	/**
 	*  Parse a duration descriptor.
 	*/
-	private int parseDuration (String s) {
+	private static int parseDuration (String s) {
 		if (s.equals("1 day")) return 1500;
 		else if (s.equals("1 week")) return 10000;
 		else if (s.equals("1 month")) return 40000;
@@ -107,7 +107,7 @@ public class Spell {
 	/**
 	*  Parse a mode descriptor.
 	*/
-	private Mode parseMode (String s) {
+	private static Mode parseMode (String s) {
 		if (s.equals("A")) return Mode.Attack;
 		else if (s.equals("D")) return Mode.Defense;
 		else if (s.equals("M")) return Mode.Miscellany;
@@ -120,23 +120,23 @@ public class Spell {
 	/**
 	*  Parse area of effect descriptor.
 	*/
-	private AreaOfEffect parseArea (String s) {
-		AreaOfEffect area = new AreaOfEffect(Shape.None, 0);
+	private static AreaOfEffect parseArea (String s) {
+		AreaOfEffect aoe = new AreaOfEffect(Shape.None, 0);
 		if (!s.equals("-")) {
 			String[] part = s.split("-");
 			if (part.length == 2) {
-				area.shape = parseShape(part[0]);
-				area.size = parseSize(part[1]);			
+				aoe.shape = parseShape(part[0]);
+				aoe.size = parseSize(part[1]);			
 			}
 			else System.err.println("Could not parse area: " + s);
 		}
-		return area;
+		return aoe;
 	}
 
 	/**
 	*  Parse area shape from descriptor.
 	*/
-	private Shape parseShape (String s) {
+	private static Shape parseShape (String s) {
 		if (s.equals("ball")) return Shape.Ball;
 		else if (s.equals("disk")) return Shape.Disk;
 		else if (s.equals("line")) return Shape.Line;
@@ -150,7 +150,7 @@ public class Spell {
 	/**
 	*  Parse area size from descriptor.
 	*/
-	private int parseSize (String s) {
+	private static int parseSize (String s) {
 		try {
 			return Integer.parseInt(s);
 		}
@@ -215,6 +215,24 @@ public class Spell {
 	public String toString() {
 		return name; 
 	}	
+
+	/**
+	*  Get max targets in area of spell.
+	*  Assumes all targets are man-sized (1 inch space).
+	*/
+	public int getMaxTargetsInArea () {
+		switch (area.shape) {
+			case None: 
+				return 1;
+			case Line: case Wall: 
+				return area.size;
+			case Ball: case Disk:
+				return (int) (Math.PI * area.size * area.size);
+			default:
+				System.err.println("Error: Unhandled spell shape.");
+				return 0;			
+		}	
+	}
 	
 	/**
 	*  Main test function.
