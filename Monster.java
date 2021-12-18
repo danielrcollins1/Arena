@@ -538,6 +538,11 @@ public class Monster {
 		if (target.getGazeWeapon() != null) {
 			modifier -= 4;
 		}
+		
+		// Blindness
+		if (hasCondition(SpecialType.Blindness)) {
+			modifier -= 4;
+		}
 
 		return modifier;
 	}
