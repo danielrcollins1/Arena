@@ -121,13 +121,13 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Get random spell by level and usage.
+	*  Get random spell by level and mode.
 	*/
-	public Spell getRandom (int level, Spell.Usage usage) {
+	public Spell getRandom (int level, Spell.Mode mode) {
 		Spell s;
 		do {
 			s = getRandom(level);
-		} while (s.getUsage() != usage);
+		} while (s.getMode() != mode);
 		return s;
 	}
 	

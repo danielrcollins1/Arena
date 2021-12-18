@@ -315,21 +315,22 @@ public class ClassRecord {
 		List<Spell> list = spellsKnown.get(sLevel - 1);
 		if (list.size() < index.getNumAtLevel(sLevel)) {
 			do {
-				Spell.Usage usage = rollUsage();
-				spell = index.getRandom(sLevel, usage);
+				Spell.Mode mode = rollMode();
+				spell = index.getRandom(sLevel, mode);
 			} while (list.contains(spell));
 			list.add(spell);
 		}
 	}
 
 	/**
-	*  Roll random spell usage.
+	*  Roll random spell mode.
+	*  As per analysis of Gygax modules: see blog 2018-12-17.
 	*/
-	Spell.Usage rollUsage () {
+	Spell.Mode rollMode () {
 		switch (Dice.roll(6)) {
-			case 1: return Spell.Usage.Miscellany;
-			case 2: case 3: return Spell.Usage.Defensive;
-			default: return Spell.Usage.Offensive;
+			case 1: return Spell.Mode.Miscellany;
+			case 2: case 3: return Spell.Mode.Defense;
+			default: return Spell.Mode.Attack;
 		}	
 	}
 

@@ -1,12 +1,34 @@
 /******************************************************************************
-*  One magic spell.
+*  Magic spell class.
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-06
-*  @version  1.0
 ******************************************************************************/
 
 public class Spell {
+
+	//--------------------------------------------------------------------------
+	//  Enumerations
+	//--------------------------------------------------------------------------
+
+	/** Mode enumeration. */
+	public enum Mode {Attack, Defense, Miscellany};
+
+	/** Area shapes. */
+	public enum Shape {None, Ball, Disk, Line, Wall};
+
+	//--------------------------------------------------------------------------
+	//  Inner class
+	//--------------------------------------------------------------------------
+
+	private class AreaOfEffect {
+		public int size;
+		public Shape shape;
+		public AreaOfEffect (Shape s, int i) {
+			shape = s;
+			size = i;
+		}
+	}	
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -17,17 +39,19 @@ public class Spell {
 	
 	/** Level of the spell. */
 	int level;
-	
-	/** Usage of the spell. */
-	Usage usage;
-	
-	//--------------------------------------------------------------------------
-	//  Enumeration
-	//--------------------------------------------------------------------------
 
-	/** Usage enumeration. */
-	public enum Usage {Offensive, Defensive, Miscellany};
+	/** Range in inches (5-foot unit). */
+	int range;
+	
+	/** Duration in turns (1-minute unit). */
+	int duration;	
 
+	/** Area of effect. */
+	AreaOfEffect area;
+	
+	/** Mode of usage. */
+	Mode mode;
+	
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -38,16 +62,103 @@ public class Spell {
 	Spell (String[] s) {
 		name = s[0];
 		level = Integer.parseInt(s[1]);
-		switch (s[2].charAt(0)) {
-			case 'O': usage = Usage.Offensive; break;
-			case 'D': usage = Usage.Defensive; break;
-			default: usage = Usage.Miscellany;
-		}			
+		range = parseRange(s[2]);
+		duration = parseDuration(s[3]);
+		area = parseArea(s[4]);
+		mode = parseMode(s[5]);		
 	}
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
+
+	/**
+	*  Parse a range descriptor.
+	*/
+	private int parseRange (String s) {
+		if (s.equals("1 mile")) return 1000;
+		else try {
+			return Integer.parseInt(s);
+		}
+		catch (NumberFormatException n) {
+			System.err.println("Could not parse spell range: " + s);		
+			return 0;
+		}
+	}
+
+	/**
+	*  Parse a duration descriptor.
+	*/
+	private int parseDuration (String s) {
+		if (s.equals("1 day")) return 1500;
+		else if (s.equals("1 week")) return 10000;
+		else if (s.equals("1 month")) return 40000;
+		else if (s.equals("1 year")) return 500000;
+		else if (s.equals("infinite")) return Integer.MAX_VALUE;
+		else try {
+			return Integer.parseInt(s);
+		}
+		catch (NumberFormatException n) {
+			System.err.println("Could not parse spell duration: " + s);		
+			return 0;
+		}
+	}
+
+	/**
+	*  Parse a mode descriptor.
+	*/
+	private Mode parseMode (String s) {
+		if (s.equals("A")) return Mode.Attack;
+		else if (s.equals("D")) return Mode.Defense;
+		else if (s.equals("M")) return Mode.Miscellany;
+		else {
+			System.err.println("Could not parse spell mode: " + s);		
+			return Mode.Miscellany;
+		}
+	}
+
+	/**
+	*  Parse area of effect descriptor.
+	*/
+	private AreaOfEffect parseArea (String s) {
+		AreaOfEffect area = new AreaOfEffect(Shape.None, 0);
+		if (!s.equals("-")) {
+			String[] part = s.split("-");
+			if (part.length == 2) {
+				area.shape = parseShape(part[0]);
+				area.size = parseSize(part[1]);			
+			}
+			else System.err.println("Could not parse area: " + s);
+		}
+		return area;
+	}
+
+	/**
+	*  Parse area shape from descriptor.
+	*/
+	private Shape parseShape (String s) {
+		if (s.equals("ball")) return Shape.Ball;
+		else if (s.equals("disk")) return Shape.Disk;
+		else if (s.equals("line")) return Shape.Line;
+		else if (s.equals("wall")) return Shape.Wall;
+		else {
+			System.err.println("Could not parse spell shape: " + s);
+			return Shape.None;
+		}
+	}
+
+	/**
+	*  Parse area size from descriptor.
+	*/
+	private int parseSize (String s) {
+		try {
+			return Integer.parseInt(s);
+		}
+		catch (NumberFormatException n) {
+			System.err.println("Could not parse spell size: " + s);
+			return 0;
+		}
+	}
 
 	/**
 	*  Get the name.
@@ -64,10 +175,38 @@ public class Spell {
 	}
 
 	/**
-	*  Get the usage.
+	*  Get the range.
 	*/
-	public Usage getUsage () {
-		return usage;
+	public int getRange () {
+		return range;
+	}
+
+	/**
+	*  Get the duration.
+	*/
+	public int getDuration () {
+		return duration;
+	}
+
+	/**
+	*  Get the shape.
+	*/
+	public Shape getShape () {
+		return area.shape;
+	}
+
+	/**
+	*  Get the size.
+	*/
+	public int getSize () {
+		return area.size;	
+	}
+
+	/**
+	*  Get the mode.
+	*/
+	public Mode getMode () {
+		return mode;
 	}
 
 	/**
@@ -81,9 +220,8 @@ public class Spell {
 	*  Main test function.
 	*/
 	public static void main (String[] args) {	
-		String desc[] = new String[] {"Charm Person", "1", "O"};
+		String desc[] = new String[] {"Charm Person", "1", "12", "1 day", "-", "A"};
 		Spell spell = new Spell(desc);
 		System.out.println(spell);
 	}
 }
-
