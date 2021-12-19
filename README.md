@@ -5,7 +5,7 @@ This code package provides routines for simulating combat in
 a tabletop Fantasy Role-Playing Game (FRPG) similar to Original D&D
 or closely-related games. Combat is done as per "theater of the mind"
 without tracking exact spatial locations; targets of attacks
-are chosen by random method (as per 1E AD&D DMG p. 63 and 70). 
+are chosen by random method (as per 1E AD&D DMG). 
 In most cases, the intent here is to output aggregate statistics based on 
 many trials of the game between men and monsters. This package provides only 
 command-line, text output; there are no graphics or visualizations, 
