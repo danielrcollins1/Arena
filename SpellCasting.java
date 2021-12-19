@@ -3,6 +3,9 @@ import java.util.*;
 /******************************************************************************
 *  Code to handle casting spells in the combat simulator.
 *
+*  Compare use of Casting classes here to the Strategy pattern.
+*  Some implementations will be rough approximations of the real spell.
+*
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2021-12-18
 ******************************************************************************/
@@ -11,104 +14,302 @@ public class SpellCasting {
 
 	// TODO:
 	// - Make repository of castable spells
-	// - Test with dummy solo Party, Wiz12
-	// - Provide access to wizards picking those spells
+	// - Spell immunity.
 	// - Magic resistance.
 	// - Undead immunity to mind-affecting stuff.
 	// - Wisdom save bonuses to mind-affecting stuff?
-	// - Blindness prevents spell casting?
 
 	//--------------------------------------------------------------------------
-	//  Fields
+	//  Inner Classes
 	//--------------------------------------------------------------------------
 
-	/** The singleton class instance. */
-	static SpellCasting instance = null;
+	/** Casting abstract base class. */
+	public static abstract class Casting {
+		Spell spellInfo = null;
+		String getName () {
+			String sName = getClass().getSimpleName();
+			return sName.substring(0, sName.indexOf("Casting"));
+		}
+		void setSpellInfo (Spell s) { spellInfo = s; }
+		abstract void cast (int level, Party targets);
+	}
 
-	//--------------------------------------------------------------------------
-	//  Constructors
-	//--------------------------------------------------------------------------
+	/** Charm Person spell effect. */
+	static class CharmPersonCasting extends Casting {
+		void cast (int level, Party targets) {
+			Monster target = targets.random();
+			if (target.isPerson()) {
+				if (!target.rollSaveSpells())
+					target.addCondition(SpecialType.Charm);
+			}
+		}
+	}
 
-	/**
-	*  Constructor.
-	*/
-	protected SpellCasting () {
+	/** Magic Missile spell effect. */
+	static class MagicMissileCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numMissiles = Math.min((level + 1) / 2, 5);
+			for (int i = 0; i < numMissiles; i++) {
+				Monster target = targets.random();
+				int damage = Dice.roll(6) + 1;
+				boolean save = target.rollSaveSpells();
+				target.takeDamage(save ? damage / 2 : damage);
+			}		
+		}
+	}
+
+	/** Sleep spell effect. */
+	static class SleepCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int effectHD = new Dice(2, 6).roll();
+			for (Monster target: hitTargets) {
+				if (target.getHD() <= 4 && target.getHD() <= effectHD) {
+					effectHD -= target.getHD();
+					if (!target.rollSaveSpells())
+						target.addCondition(SpecialType.Sleep);
+				}
+			}	
+		}
+	}
+
+	/** Darkness spell effect. */
+	static class DarknessCasting extends Casting {
+		void cast (int level, Party targets) {
+
+			// Treat as targeted blindness for simplicity
+			Monster target = targets.random();
+			if (!target.rollSaveSpells())
+				target.addCondition(SpecialType.Blindness);
+		}
+	}
+	
+	/** Web spell effect. */
+	static class WebCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit); 
+			for (Monster target: hitTargets) {
+				if (!target.rollSave(SavingThrows.SaveType.Stone)) {
+
+					// Give one chance to break out by Strength
+					int strength = target.getAbilityScore(Ability.Str);
+					int strBonus = Ability.getBonus(strength);
+					boolean breakOut = Dice.roll(6) <= strBonus;
+					if (!breakOut) {
+						target.addCondition(SpecialType.Webbing);
+					}
+				}
+			}	
+		}
+	}
+	
+	/** Fireball spell effect. */
+	static class FireballCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int numDice = Math.min(level, 10);
+			int damage = new Dice(numDice, 6).roll();
+			for (Monster target: hitTargets) {
+				if (!target.isImmuneToEnergy(EnergyType.Fire)) { 
+					boolean saved = target.rollSaveSpells();
+					target.takeDamage(saved ? damage/2 : damage);
+				}
+			}	
+		}
+	}
+
+	/** Lightning Bolt spell effect. */
+	static class LightningBoltCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int numDice = Math.min(level, 10);
+			int damage = new Dice(numDice, 6).roll();
+			for (Monster target: hitTargets) {
+				if (!target.isImmuneToEnergy(EnergyType.Volt)) { 
+					boolean saved = target.rollSaveSpells();
+					target.takeDamage(saved ? damage/2 : damage);
+				}
+			}	
+		}
+	}
+
+	/** Hold Person spell effect. */
+	static class HoldPersonCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			numHit = Math.min(numHit, 4);
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int saveMod = hitTargets.size() == 1 ? -2 : 0;
+			for (Monster target: hitTargets) {
+				if (target.isPerson()) {
+					if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+						target.addCondition(SpecialType.Paralysis);
+				}
+			}	
+		}
+	}
+
+	/** Suggestion spell effect. */
+	static class SuggestionCasting extends Casting {
+		void cast (int level, Party targets) {
+
+			// Treat like a charm spell (order to leave, etc.)
+			Monster target = targets.random();
+			if (!target.rollSaveSpells())
+				target.addCondition(SpecialType.Charm);
+		}
+	}
+
+	/** Confusion spell effect. */
+	static class ConfusionCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			for (Monster target: hitTargets) {
+				if (!target.rollSaveSpells())
+					target.addCondition(SpecialType.Confusion);
+			}	
+		}
+	}
+
+	/** Fear spell effect. */
+	static class FearCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			for (Monster target: hitTargets) {
+				if (!target.rollSaveSpells())
+					target.addCondition(SpecialType.Fear);
+			}	
+		}
+	}
+
+	/** Ice Storm spell effect. */
+	static class IceStormCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int damage = new Dice(8, 6).roll();
+			for (Monster target: hitTargets) {
+				int myDamage = damage;
+				if (target.isImmuneToEnergy(EnergyType.Cold))
+					myDamage /= 2;
+				boolean saved = target.rollSaveSpells();
+				target.takeDamage(saved ? myDamage/2 : myDamage);
+			}	
+		}
+	}
+
+	/** Charm Monster spell effect. */
+	static class CharmMonsterCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			if (hitTargets.get(0).getHD() >= 4) {
+				Monster target = hitTargets.get(0);
+				if (!target.rollSaveSpells())
+					target.addCondition(SpecialType.Charm);
+			}
+			else {
+				int effectHD = new Dice(2, 6).roll();
+				for (Monster target: hitTargets) {
+					if (target.getHD() < 4 && target.getHD() <= effectHD) {
+						effectHD -= target.getHD();					
+						if (!target.rollSaveSpells())
+							target.addCondition(SpecialType.Charm);
+					}			
+				}			
+			}
+		}
+	}
+
+	/** Polymorph Other spell effect. */
+	static class PolymorphOtherCasting extends Casting {
+		void cast (int level, Party targets) {
+			Monster target = targets.random();
+			if (!target.rollSaveSpells())
+				target.addCondition(SpecialType.Polymorphism);
+		}
+	}
+
+	/** Cloudkill spell effect. */
+	static class CloudkillCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			for (Monster target: hitTargets) {
+				if (target.getHD() <= 6) {
+					if (!target.rollSave(SavingThrows.SaveType.Death))
+						target.instaKill();
+				}			
+			}
+		}
+	}
+
+	/** Hold Monster spell effect. */
+	static class HoldMonsterCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			numHit = Math.min(numHit, 4);
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int saveMod = hitTargets.size() == 1 ? -2 : 0;
+			for (Monster target: hitTargets) {
+				if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+					target.addCondition(SpecialType.Paralysis);
+			}	
+		}
+	}
+
+	/** Death Spell effect. */
+	static class DeathSpellCasting extends Casting {
+		void cast (int level, Party targets) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			int numDice = Math.min(level, 20);
+			int effectHD = new Dice(numDice, 6).roll();
+			for (Monster target: hitTargets) {
+				if (target.getHD() <= 8 && target.getHD() <= effectHD) {
+					effectHD -= target.getHD();				
+					if (!target.rollSave(SavingThrows.SaveType.Death))
+						target.instaKill();
+				}			
+			}
+		}
+	}
+
+	/** Disintegrate spell effect. */
+	static class DisintegrateCasting extends Casting {
+		void cast (int level, Party targets) {
+			Monster target = targets.random();
+			if (!target.rollSave(SavingThrows.SaveType.Death))
+				target.instaKill();
+		}
 	}
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-
-	/**
-	*  Access the singleton class instance.
-	*/
-	public static SpellCasting getInstance() {
-		if (instance == null) {
-			instance = new SpellCasting();
-		}
-		return instance;
-	}
-
-	/**
-	*  Try to cast a spell on a given party.
-	*  Targets will be limited by effect and randomly determined.
-	*
-	*  @spell The spell being cast.
-	*  @level The level of the caster.
-	*  @targets Party of potential targets.
-	*  @return true if spell was successfully cast/handled.
-	*/
-	public static boolean tryCastSpell (Spell spell, int level, Party targets) {
-		String sName = spell.getName();
-		if (sName.equals("Magic Missile")) return castMagicMissile(spell, level, targets);
-		if (sName.equals("Sleep")) return castSleep(spell, level, targets);
-		if (sName.equals("Darkness")) return castDarkness(spell, level, targets);
-		return false;
-	}
-
-	/**
-	*  Magic Missile casting.
-	*/
-	private static boolean castMagicMissile (Spell spell, int level, Party targets) {
-		Monster target = targets.random();
-		int numMissiles = Math.min((level + 1) / 2, 5);
-		int damage = new Dice(numMissiles, 6, numMissiles).roll();
-		boolean save = target.rollSave(SavingThrows.SaveType.Spells);
-		target.takeDamage(save ? damage / 2 : damage);
-		return true;	
-	}
-	
-	/**
-	*  Sleep casting.
-	*/
-	private static boolean castSleep (Spell spell, int level, Party targets) {
-		int numHit = spell.getMaxTargetsInArea();
-		List<Monster> hitTargets = targets.randomGroup(numHit); 
-		for (Monster target: hitTargets) {
-			if (!target.rollSave(SavingThrows.SaveType.Spells))
-				target.addCondition(SpecialType.Sleep);
-		}	
-		return true;	
-
-		// TODO: Undead immunity.
-	}
-
-	/**
-	*  Darkness casting.
-	*/
-	private static boolean castDarkness (Spell spell, int level, Party targets) {
-
-		// For simplicity, we assume this blinds one target creature.
-		Monster target = targets.random();
-		if (!target.rollSave(SavingThrows.SaveType.Spells))
-			target.addCondition(SpecialType.Blindness);
-		return true;
-	}
 	
 	/**
 	*  Main test function.
 	*/
 	public static void main (String[] args) {	
+
+		// Create target party
+		Dice.initialize();
+		Monster monster = new Monster("Orc", 6, 9, new Dice(1, 6), new Attack(1, 1));
+		Party party = new Party(monster, 10);
+		System.out.println(party);
+
+		// Cast a spell
+		Casting casting = new MagicMissileCasting();
+		System.out.println("Casting " + casting.getName());
+		casting.cast(12, party);
+		party.bringOutYourDead();
+		System.out.println(party);
 	}
 }
-

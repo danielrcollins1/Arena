@@ -28,7 +28,8 @@ public enum SpecialType {
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
-	SteamBreath, Stench, ResistStench, WebMove, Sleep, Blindness;
+	SteamBreath, Stench, ResistStench, WebMove, Webbing, Sleep, 
+	Blindness, Polymorphism;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -68,7 +69,8 @@ public enum SpecialType {
 		switch (this) {
 			case Poison: case Paralysis: case Petrification: 
 			case Swallowing: case SporeCloud: case Absorption: 
-			case Fear: case MindBlast: case Sleep: 
+			case Fear: case MindBlast: case Sleep: case Charm:
+			case Webbing: case Polymorphism:
 				return true;
 		}
 		return false;
@@ -109,4 +111,3 @@ public enum SpecialType {
 		return false;
 	}
 }
-

@@ -48,7 +48,6 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
-	Monster charmer;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
 
@@ -119,7 +118,6 @@ public class Monster {
 		hitDiceAsFloat = src.hitDiceAsFloat;
 		killTally = src.killTally;
 		host = src.host;
-		charmer = src.charmer;
 		specialList = new ArrayList<SpecialAbility>(src.specialList); 
 		conditionList = new ArrayList<SpecialAbility>(src.conditionList); 
 		maxHitPoints = src.maxHitPoints;
@@ -152,7 +150,6 @@ public class Monster {
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }
-	public boolean isCharmed () { return charmer != null; }
 
 	// Shortcut accessors
 	public int getAC () { return getArmorClass(); }
@@ -174,7 +171,6 @@ public class Monster {
 	public void drawBestWeapon (Monster m) {}
 	public void sheatheWeapon () {}
 	public void boostMagicItemsOneLevel () {}
-	public int getAbilityScore (Ability ability) { return 0; }
 	public void takeAbilityDamage (Ability a, int n) {} 
 	public void zeroAbilityDamage () {} 
 	public boolean hasNullAbilityScore () { return false; }
@@ -297,8 +293,7 @@ public class Monster {
 	public boolean horsDeCombat() {
 		return hitPoints <= 0
 			|| hasNullAbilityScore()
-			|| hasDisablingCondition()
-			|| isCharmed();
+			|| hasDisablingCondition();
 	}
 
 	/**
@@ -1128,7 +1123,7 @@ public class Monster {
 	void castCharm (Monster target, int saveMod) {
 		if (target.hasFeat(Feat.IronWill)) saveMod += 4;
 		if (!target.rollSave(SavingThrows.SaveType.Spells, saveMod)) {
-			target.setCharmed(this);
+			target.addCondition(SpecialType.Charm);
 		}
 	}
 
@@ -1243,13 +1238,6 @@ public class Monster {
 	}
 
 	/**
-	* Indicate that we are charmed by some other creature.
-	*/
-	public void setCharmed (Monster charmer) {
-		this.charmer = charmer;
-	}
-
-	/**
 	* Count current heads for multiheaded types.
 	* Set one attack per full hit die.
 	*/
@@ -1275,6 +1263,13 @@ public class Monster {
 			hitDice.setNum(HD - 1);
 		}
 		boundHitPoints();
+	}
+
+	/**
+	* Roll a saving throw vs. spells with no modifier.
+	*/
+	public boolean rollSaveSpells () {
+		return rollSave(SavingThrows.SaveType.Spells, 0);
 	}
 
 	/**
@@ -1433,6 +1428,26 @@ public class Monster {
 	}
 
 	/**
+	* Ability score defaults for a monster. 
+	* This is redefined for the Character class.
+	*/
+	public int getAbilityScore (Ability ability) { 
+		switch (ability) {
+			case Str: case Con: return getHD() / 2 * 3 + 10;
+			case Int: case Wis: case Cha: return 6;
+			default: return 10;
+		}	
+	}
+
+	/**
+	* Does this creature count as a person? (c.f., charm, hold spells)
+	*/
+	public boolean isPerson () {
+		return hasSpecial(SpecialType.NPC)
+			|| ((type == 'H' || type == 'M') && getHD() <= 1);
+	}
+
+	/**
 	* Main test method.
 	*/
 	public static void main (String[] args) {
@@ -1442,4 +1457,3 @@ public class Monster {
 		System.out.println(m);
 	}
 }
-

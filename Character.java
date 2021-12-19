@@ -1002,6 +1002,13 @@ public class Character extends Monster {
 		pctMagicPerLevel = pct;	
 	}
 
+	/**
+	*   Is this character a person? (redefines Monster method)
+	*/
+	public boolean isPerson () {
+		return true;
+	}
+
 	//--------------------------------------------------------------------------
 	//  Printing Methods
 	//--------------------------------------------------------------------------
@@ -1179,4 +1186,3 @@ public class Character extends Monster {
 		System.out.println(p);
 	}
 }
-
