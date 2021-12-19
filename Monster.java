@@ -56,6 +56,15 @@ public class Monster {
 	//--------------------------------------------------------------------------
 
 	/**
+	* Constructor (very basic).
+	*/
+	public Monster (String race, int AC, int MV, int hitDice, int damageDice) {
+		this(race, AC, MV, 
+			new Dice(hitDice, BASE_HIT_DIE), 
+			new Attack(hitDice, damageDice));
+	}
+
+	/**
 	* Constructor (basic).
 	*/
 	public Monster (String race, int AC, int MV, Dice hitDice, Attack attack) {

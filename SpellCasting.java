@@ -301,7 +301,7 @@ public class SpellCasting {
 
 		// Create target party
 		Dice.initialize();
-		Monster monster = new Monster("Orc", 6, 9, new Dice(1, 6), new Attack(1, 1));
+		Monster monster = new Monster("Orc", 6, 9, 1, 1);
 		Party party = new Party(monster, 10);
 		System.out.println(party);
 
