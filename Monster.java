@@ -1444,7 +1444,9 @@ public class Monster {
 	*/
 	public boolean isPerson () {
 		return hasSpecial(SpecialType.NPC)
-			|| ((type == 'H' || type == 'M') && getHD() <= 1);
+			|| (type == 'H' && getHD() <= 1)
+			|| type == 'M';
+
 	}
 
 	/**
