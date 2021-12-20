@@ -122,17 +122,6 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Get random spell by level and mode.
-	*/
-	public Spell getRandom (int level, Spell.Mode mode) {
-		Spell s;
-		do {
-			s = getRandom(level);
-		} while (s.getMode() != mode);
-		return s;
-	}
-
-	/**
 	*  Link spells to available in-game casting formulae.
 	*/
 	private void linkSpellsToCastings () {

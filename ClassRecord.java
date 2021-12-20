@@ -37,7 +37,7 @@ public class ClassRecord {
 	int XP;
 
 	/** Spells known for this class. */
-	List<List<Spell>> spellsKnown;
+	SpellMemory spellsKnown;
 
 	/** Feats known for this class. */
 	List<Feat> featsKnown;
@@ -120,6 +120,7 @@ public class ClassRecord {
 				hitPoints = hitPoints * (level - 1)/level;
 			level--;
 			XP = classType.getXpMidpoint(level);
+			// TODO: Wizards lose spells?
 		}
 	}
 
@@ -213,6 +214,29 @@ public class ClassRecord {
 	}
 
 	/**
+	*  Add all expected wizard spells.
+	*/
+	void addAllSpells() {
+		if (classType.usesSpells()) {
+			spellsKnown = new SpellMemory();
+			SpellsDaily spellsDaily = SpellsDaily.getInstance();
+			for (int sLevel = 1; sLevel <= spellsDaily.getMaxSpellLevel(); sLevel++) {
+				int numSpells = spellsDaily.getSpellsDaily(level, sLevel);
+				for (int num = 0; num < numSpells; num++) {
+					spellsKnown.addRandom(sLevel);
+				}
+			}
+		}
+	}
+
+	/**
+	*  String representation of spells known.
+	*/
+	String spellsString () {
+		return spellsKnown == null ? null : spellsKnown.toString();
+	}
+
+	/**
 	*  Get adjusted hit dice for this class.
 	*/
 	public Dice getHitDice () {
@@ -286,71 +310,6 @@ public class ClassRecord {
 		int diffBonus = newBonus - oldBonus;
 		int numDice = classType.getHitDiceTotal(level).getNum();
 		hitPoints = Math.max(numDice, hitPoints + diffBonus * numDice);
-	}
-
-	/**
-	*  Add all expected wizard spells.
-	*/
-	void addAllSpells() {
-		if (classType.usesSpells()) {
-			spellsKnown = new ArrayList<List<Spell>>();
-			SpellsDaily spellsDaily = SpellsDaily.getInstance();
-			for (int sLevel = 1; sLevel <= spellsDaily.getMaxSpellLevel(); sLevel++) {
-				spellsKnown.add(new ArrayList<Spell>());
-				int numSpells = spellsDaily.getSpellsDaily(level, sLevel);
-				for (int num = 0; num < numSpells; num++) {
-					addOneSpell(sLevel);
-				}
-			}
-		}
-	}
-
-	/**
-	*  Add one spell to given level.
-	*  No duplicates; if we exhaust entire table, then skip addition.
-	*/
-	void addOneSpell (int sLevel) {
-		Spell spell;
-		SpellsIndex index = SpellsIndex.getInstance();
-		List<Spell> list = spellsKnown.get(sLevel - 1);
-		if (list.size() < index.getNumAtLevel(sLevel)) {
-			do {
-				Spell.Mode mode = rollMode();
-				spell = index.getRandom(sLevel, mode);
-			} while (list.contains(spell));
-			list.add(spell);
-		}
-	}
-
-	/**
-	*  Roll random spell mode.
-	*  As per analysis of Gygax modules: see blog 2018-12-17.
-	*/
-	Spell.Mode rollMode () {
-		switch (Dice.roll(6)) {
-			case 1: return Spell.Mode.Miscellany;
-			case 2: case 3: return Spell.Mode.Defense;
-			default: return Spell.Mode.Attack;
-		}	
-	}
-
-	/**
-	*  String representation of spells known.
-	*/
-	String spellsString () {
-		if (spellsKnown == null)
-			return null;
-		else {
-			String s = "";
-			for (List<Spell> list: spellsKnown) {
-				for (Spell spell: list) {
-					if (s.length() > 0)
-						s += ", ";
-					s += spell.getName();				
-				}
-			}
-			return s;
-		}
 	}
 
 	/**
