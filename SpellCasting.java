@@ -177,15 +177,12 @@ public class SpellCasting {
 	/** Hold Person spell effect. */
 	static class HoldPersonCasting extends Casting {
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			numHit = Math.min(numHit, 4);
-			List<Monster> hitTargets = targets.randomGroup(numHit);
-			int saveMod = hitTargets.size() == 1 ? -2 : 0;
-			for (Monster target: hitTargets) {
-				if (target.isPerson()) {
-					if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
-						target.addCondition(SpecialType.Paralysis);
-				}
+
+			// For simplicity, use only the targeted version.
+			Monster target = targets.random();
+			if (target.isPerson()) {
+				if (!target.rollSave(SavingThrows.SaveType.Stone, -2))
+					target.addCondition(SpecialType.Paralysis);
 			}	
 		}
 	}
@@ -244,23 +241,11 @@ public class SpellCasting {
 	/** Charm Monster spell effect. */
 	static class CharmMonsterCasting extends Casting {
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
-			if (hitTargets.get(0).getHD() >= 4) {
-				Monster target = hitTargets.get(0);
-				if (!target.rollSaveSpells())
-					target.addCondition(SpecialType.Charm);
-			}
-			else {
-				int effectHD = new Dice(2, 6).roll();
-				for (Monster target: hitTargets) {
-					if (target.getHD() < 4 && target.getHD() <= effectHD) {
-						effectHD -= target.getHD();					
-						if (!target.rollSaveSpells())
-							target.addCondition(SpecialType.Charm);
-					}			
-				}			
-			}
+
+			// For simplicity, use only the targeted version.
+			Monster target = targets.random();
+			if (!target.rollSaveSpells())
+				target.addCondition(SpecialType.Charm);
 		}
 	}
 
@@ -290,14 +275,11 @@ public class SpellCasting {
 	/** Hold Monster spell effect. */
 	static class HoldMonsterCasting extends Casting {
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			numHit = Math.min(numHit, 4);
-			List<Monster> hitTargets = targets.randomGroup(numHit);
-			int saveMod = hitTargets.size() == 1 ? -2 : 0;
-			for (Monster target: hitTargets) {
-				if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
-					target.addCondition(SpecialType.Paralysis);
-			}	
+
+			// For simplicity, use only the targeted version.
+			Monster target = targets.random();
+			if (!target.rollSave(SavingThrows.SaveType.Stone, -2))
+				target.addCondition(SpecialType.Paralysis);
 		}
 	}
 

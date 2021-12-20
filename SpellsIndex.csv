@@ -31,7 +31,7 @@ Dispel Magic,3,12,0,-,D
 Fireball,3,24,0,ball-2,A
 Fly,3,0,12,-,D
 Haste,3,24,3,ball-6,D
-Hold Person,3,12,6,ball-2,A
+Hold Person,3,12,6,-,A
 Infravision,3,0,1 day,-,M
 Invisibility Sphere,3,24,1 week,ball-2,D
 Lightning Bolt,3,24,0,line-6,A
@@ -41,7 +41,7 @@ Rope Trick,3,0,12,-,D
 Slow,3,24,3,ball-6,A
 Suggestion,3,6,1 month,-,A
 Water Breathing,3,0,1 day,-,M
-Charm Monster,4,12,1 year,ball-2,A
+Charm Monster,4,12,1 year,-,A
 Confusion,4,12,6,ball-2,A
 Dimension Door,4,0,0,-,D
 Extend Spell,4,24,1 day,-,M
