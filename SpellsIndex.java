@@ -147,10 +147,20 @@ public class SpellsIndex {
 	public static void main (String[] args) {	
 		Dice.initialize();
 		SpellsIndex index = SpellsIndex.getInstance();
+
+		// Print random spell at each level
 		System.out.println("Random Spells:");
 		for (int i = 1; i <= index.getMaxLevel(); i++) {
 			System.out.println("Level " + i + ": " + index.getRandom(i));
 		}
 		System.out.println();
+		
+		// Print spells with in-game castings
+		System.out.println("Spells Castable In-Game:");
+		for (Spell s: index.spellList) {
+			if (s.isCastable()) {
+				System.out.println(s.getName());			
+			}		
+		}
 	}
 }
