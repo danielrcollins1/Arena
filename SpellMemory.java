@@ -18,7 +18,14 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	/**
 	*  Constructor.
 	*/
-	protected SpellMemory () {
+	public SpellMemory () {
+	}
+
+	/**
+	*  Copy constructor.
+	*/
+	public SpellMemory (SpellMemory src) {
+		super(src);
 	}
 
 	//--------------------------------------------------------------------------

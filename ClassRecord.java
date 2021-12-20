@@ -230,6 +230,20 @@ public class ClassRecord {
 	}
 
 	/**
+	*  Does this class have spells?
+	*/
+	public boolean hasSpells() {
+		return spellsKnown != null;
+	}
+
+	/**
+	*  Access our spell memory. 
+	*/
+	public SpellMemory getSpellMemory () {
+		return spellsKnown;
+	}
+
+	/**
 	*  String representation of spells known.
 	*/
 	String spellsString () {

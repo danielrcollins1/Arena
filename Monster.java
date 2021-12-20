@@ -50,6 +50,7 @@ public class Monster {
 	Monster host;
 	List<SpecialAbility> specialList;
 	List<SpecialAbility> conditionList;
+	SpellMemory spellMemory;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -77,6 +78,7 @@ public class Monster {
 		equivalentHitDice = hitDice.getNum();
 		specialList = new ArrayList<SpecialAbility>(); 
 		conditionList = new ArrayList<SpecialAbility>(); 
+		spellMemory = null;
 		rollHitPoints();
 	}
 
@@ -105,6 +107,7 @@ public class Monster {
 
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
+		spellMemory = null;
 		rollHitPoints();
 	}
 
@@ -132,6 +135,8 @@ public class Monster {
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
+		spellMemory = src.spellMemory == null ? null 
+			: new SpellMemory(src.spellMemory);
 	}
 
 	//--------------------------------------------------------------------------
@@ -184,6 +189,7 @@ public class Monster {
 	public void zeroAbilityDamage () {} 
 	public boolean hasNullAbilityScore () { return false; }
 	public boolean hasFeat (Feat feat) { return false; }
+	public List<Spell> getSpellList () { return null; }
 	public void addXP (int xp) {}
 	public int getSweepRate() { return 0; }
 
@@ -364,7 +370,7 @@ public class Monster {
 	* Take our turn against an enemy party.
 	*/
 	public void takeTurn (Party friends, Party enemies) {
-		if (!checkSpecialAbilitySuite(friends, enemies)) return;
+		if (!checkSpecialAbilityUse(friends, enemies)) return;
 		boolean isSweeping = useSweepAttacks(enemies);
 		int attackRate = getAttackRate(isSweeping);
 		for (int i = 0; i < attackRate; i++) {
@@ -382,7 +388,7 @@ public class Monster {
 	* Central special ability check function.
 	* @return if we can continue to make normal attacks.
 	*/
-	boolean checkSpecialAbilitySuite (Party friends, Party enemies) {
+	boolean checkSpecialAbilityUse (Party friends, Party enemies) {
 		checkRegeneration();
 		checkConstriction();
 		checkSlowing(enemies);
@@ -390,6 +396,7 @@ public class Monster {
 		if (checkDrainBlood()) return false;
 		if (checkBreathWeapon(enemies)) return false;
 		if (checkConfused(friends)) return false;
+		if (checkCastAttackSpell(enemies, false)) return false;
 		return true;
 	}
 
@@ -675,6 +682,12 @@ public class Monster {
 		Attack attack;
 		int modifier;
 
+		// Check for offensive spell-casting
+		if (checkCastAttackSpell(enemy, true)) {
+			return;
+		}
+
+		// Check monster special abilities list
 		for (SpecialAbility s: specialList) {
 			switch (s.getType()) {
 
@@ -1247,6 +1260,24 @@ public class Monster {
 	}
 
 	/**
+	* Check for casting an attack spell.
+	* @param enemies enemy party to be attacked.
+	* @param area true if area-effect spell desired.
+	* @return true if we cast a spell.
+	*/
+	public boolean checkCastAttackSpell (Party enemies, boolean area) {
+		if (hasSpells()) {
+			Spell spell = getBestAttackSpell(area);
+			if (spell != null) {
+				spell.cast(getLevel(), enemies);
+				wipeSpellFromMemory(spell);
+				return true;
+			} 
+		}
+		return false;	
+	}
+
+	/**
 	* Count current heads for multiheaded types.
 	* Set one attack per full hit die.
 	*/
@@ -1455,6 +1486,36 @@ public class Monster {
 		return type == 'M'
 			|| (type == 'H' && getHD() <= 1);
 	}
+
+	/**
+	*  Does this monster know any spells?
+	*/
+	public boolean hasSpells () {
+		return spellMemory != null;
+	}
+
+	/**
+	*  Get the best (highest-level) castable attack spell.
+	*  @param area true if area-effect spell desired.
+	*  @return the best spell in memory.
+	*/
+	public Spell getBestAttackSpell (boolean areaEffect) {
+		return spellMemory == null ? null 
+			: spellMemory.getBestAttackSpell(areaEffect);
+	}
+
+	/**
+	*  Remove a spell from memory.
+	*  Scan all classes to find a copy to remove.
+	*/
+	public boolean wipeSpellFromMemory (Spell s) {
+		if (spellMemory != null && spellMemory.remove(s))
+			return true;
+		else {
+			System.err.println("ERROR: Request to wipe a spell not in monster memory.");
+			return false;
+		}
+	}		
 
 	/**
 	* Main test method.

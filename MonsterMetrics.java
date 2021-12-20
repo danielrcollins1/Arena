@@ -25,6 +25,7 @@ public class MonsterMetrics {
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL = 15;
+	final int DEFAULT_WIZARD_FREQUENCY = 0;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -80,7 +81,7 @@ public class MonsterMetrics {
 		numberOfFights = DEFAULT_FIGHTS_GENERAL;
 		armorType = DEFAULT_ARMOR;
 		pctMagicSwordPerLevel = DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL;
-		wizardFrequency = 0;
+		wizardFrequency = DEFAULT_WIZARD_FREQUENCY;
 	}
 
 	//--------------------------------------------------------------------------
@@ -117,7 +118,8 @@ public class MonsterMetrics {
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
-		System.out.println("\t-z fraction of wizards in party (default =0)");
+		System.out.println("\t-z fraction of wizards in party "
+			+ "(default =" + DEFAULT_WIZARD_FREQUENCY + ")");
 		System.out.println();
 	}
 

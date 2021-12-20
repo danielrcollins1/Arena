@@ -253,6 +253,18 @@ public class Spell {
 	}
 
 	/**
+	*  Cast this spell in-game at a given party.
+	*/
+	public void cast (int casterLevel, Party enemies) {
+		if (isCastable()) {
+			casting.cast(casterLevel, enemies);
+		}
+		else {
+			System.err.println("ERROR: Request to cast an uncastable spell.");		
+		}
+	}
+
+	/**
 	*  Identify this object as a string.
 	*/
 	public String toString() {

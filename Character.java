@@ -727,7 +727,7 @@ public class Character extends Monster {
 		if (shieldHeld == null && getMagicBoost()) {
 			incrementRing();
 		}
-		if (getTopClass().getClassType().usesSpells() && getMagicBoost()) {
+		if (getTopClass().hasSpells() && getMagicBoost()) {
 			incrementWand();
 		}
 		updateStats();
@@ -1007,6 +1007,54 @@ public class Character extends Monster {
 	*/
 	public boolean isPerson () {
 		return true;
+	}
+
+	/**
+	*  Does this character know any spells?
+	*/
+	public boolean hasSpells () {
+		for (ClassRecord _class: classList) {
+			if (_class.hasSpells())
+				return true;
+		}
+		return false;	
+	}
+
+	/**
+	*  Get the best (highest-level) castable attack spell.
+	*  Scans all classes: ignores any monster-level spells.
+	*  @param area true if area-effect spell desired.
+	*  @return the best spell in memory.
+	*/
+	public Spell getBestAttackSpell (boolean areaEffect) {
+		Spell best = null;	
+		for (ClassRecord _class: classList) {
+			if (_class.hasSpells()) {
+				Spell bestInClass = _class.getSpellMemory()
+					.getBestAttackSpell(areaEffect);
+				if (best == null
+					|| best.getLevel() < bestInClass.getLevel())
+				{
+					best = bestInClass;
+				}
+			}		
+		}
+		return best;
+	}
+
+	/**
+	*  Remove a spell from memory.
+	*  Scan all classes to find a copy to remove.
+	*/
+	public boolean wipeSpellFromMemory (Spell s) {
+		for (ClassRecord _class: classList) {
+			if (_class.hasSpells()) {
+				if (_class.getSpellMemory().remove(s))
+					return true;
+			}
+		}
+		System.err.println("ERROR: Request to wipe a spell not in character memory.");
+		return false;
 	}
 
 	//--------------------------------------------------------------------------
