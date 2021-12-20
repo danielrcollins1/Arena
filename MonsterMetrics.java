@@ -43,6 +43,9 @@ public class MonsterMetrics {
 	/** Chance per level for magic sword. */
 	int pctMagicSwordPerLevel;
 
+	/** Fraction of party who are wizards. */
+	int wizardFrequency;
+
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
 
@@ -77,6 +80,7 @@ public class MonsterMetrics {
 		numberOfFights = DEFAULT_FIGHTS_GENERAL;
 		armorType = DEFAULT_ARMOR;
 		pctMagicSwordPerLevel = DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL;
+		wizardFrequency = 0;
 	}
 
 	//--------------------------------------------------------------------------
@@ -113,6 +117,7 @@ public class MonsterMetrics {
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
+		System.out.println("\t-z fraction of wizards in party (default =0)");
 		System.out.println();
 	}
 
@@ -134,6 +139,7 @@ public class MonsterMetrics {
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
+					case 'z': wizardFrequency = getParamInt(s); break;
 					default: exitAfterArgs = true; break;
 				}
 			}
@@ -480,10 +486,16 @@ public class MonsterMetrics {
 				party1.add(monsterType.spawn());
 			}
 
-			// Create fighter party
+			// Create character party
 			Party party2 = new Party();
 			for (int j = 0; j < fighterNumber; j++) {
-				party2.add(newFighter(fighterLevel));
+				Character character;
+				if (wizardFrequency > 0 
+						&& Dice.roll(wizardFrequency) == 1)
+					character = newWizard(fighterLevel);
+				else
+					character = newFighter(fighterLevel);
+				party2.add(character);
 			}
 
 			// Fight & see who wins
@@ -522,6 +534,17 @@ public class MonsterMetrics {
 			}
 		}
 		return Weapon.sword(bonus);
+	}
+
+	/**
+	*  Create a new wizard of the indicated level.
+	*  Equipment is kept to fixed baseline.
+	*  (So: Do not use standard Character equip or magic.)
+	*/
+	Character newWizard (int level) {
+		Character f = new Character("Human", "Wizard", level, null); 
+		f.addEquipment(Weapon.silverDagger());
+		return f;
 	}
 
 	/**
