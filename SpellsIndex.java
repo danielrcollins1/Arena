@@ -47,6 +47,7 @@ public class SpellsIndex {
 		}		
 		setMaxLevel();
 		countNumAtLevels();
+		linkSpellsToCastings();
 	}
 
 	//--------------------------------------------------------------------------
@@ -130,6 +131,15 @@ public class SpellsIndex {
 		} while (s.getMode() != mode);
 		return s;
 	}
+
+	/**
+	*  Link spells to available in-game casting formulae.
+	*/
+	private void linkSpellsToCastings () {
+		for (Spell s: spellList) {
+			SpellCasting.linkSpellWithCasting(s);		
+		}
+	}	
 	
 	/**
 	*  Main test function.

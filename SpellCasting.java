@@ -13,14 +13,13 @@ import java.util.*;
 public class SpellCasting {
 
 	// TODO:
-	// - Make repository of castable spells
 	// - Spell immunity.
 	// - Magic resistance.
 	// - Undead immunity to mind-affecting stuff.
 	// - Wisdom save bonuses to mind-affecting stuff?
 
 	//--------------------------------------------------------------------------
-	//  Inner Classes
+	//  Base Casting class
 	//--------------------------------------------------------------------------
 
 	/** Casting abstract base class. */
@@ -33,6 +32,44 @@ public class SpellCasting {
 		void setSpellInfo (Spell s) { spellInfo = s; }
 		abstract void cast (int level, Party targets);
 	}
+
+	//--------------------------------------------------------------------------
+	//  Fields
+	//--------------------------------------------------------------------------
+
+	/** List of available castings. */
+	private static final Casting castingFormula [] = {
+		new SleepCasting(), new CharmPersonCasting(), new MagicMissileCasting(),
+		new DarknessCasting(), new WebCasting(), new FireballCasting(), 
+		new HoldPersonCasting(), new LightningBoltCasting(), new SuggestionCasting(), 
+		new CharmMonsterCasting(), new ConfusionCasting(), new FearCasting(),
+		new IceStormCasting(), new PolymorphOtherCasting(), new CloudkillCasting(),
+		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting()
+	};
+
+	//--------------------------------------------------------------------------
+	//  Main class methods
+	//--------------------------------------------------------------------------
+
+	/**
+	*  Try to link a spell with its casting formula.
+	*  @return true if casting was found.
+	*/
+	public static boolean linkSpellWithCasting (Spell spell) {
+		String shortName = spell.getName().replaceAll(" ", "");
+		for (Casting c: castingFormula) {
+			if (c.getName().equals(shortName)) {
+				c.setSpellInfo(spell);
+				spell.setCasting(c);
+				return true;
+			}		
+		}
+		return false;	
+	}
+
+	//--------------------------------------------------------------------------
+	//  Spell-specific Casting subclasses
+	//--------------------------------------------------------------------------
 
 	/** Charm Person spell effect. */
 	static class CharmPersonCasting extends Casting {

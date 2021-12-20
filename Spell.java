@@ -51,6 +51,9 @@ public class Spell {
 	
 	/** Mode of usage. */
 	Mode mode;
+
+	/** Game-sim casting formula. */
+	SpellCasting.Casting casting;
 	
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -65,7 +68,8 @@ public class Spell {
 		range = parseRange(s[2]);
 		duration = parseDuration(s[3]);
 		area = parseArea(s[4]);
-		mode = parseMode(s[5]);		
+		mode = parseMode(s[5]);
+		casting = null;
 	}
 
 	//--------------------------------------------------------------------------
@@ -210,13 +214,6 @@ public class Spell {
 	}
 
 	/**
-	*  Identify this object as a string.
-	*/
-	public String toString() {
-		return name; 
-	}	
-
-	/**
 	*  Get max targets in area of spell.
 	*  Assumes all targets are man-sized (1 inch space).
 	*/
@@ -233,6 +230,34 @@ public class Spell {
 				return 0;			
 		}	
 	}
+
+	/**
+	*  Is this spell an area-effect type?
+	*/
+	public boolean isAreaEffect () {
+		return area.shape != Shape.None;
+	}
+
+	/**
+	*  Set the game-sim casting formula, if available.
+	*/
+	public void setCasting (SpellCasting.Casting c) {
+		casting = c;
+	}
+
+	/**
+	*  Does this spell have a casting formula usable in the sim?
+	*/
+	public boolean isCastable () {
+		return casting != null;	
+	}
+
+	/**
+	*  Identify this object as a string.
+	*/
+	public String toString() {
+		return name; 
+	}	
 	
 	/**
 	*  Main test function.
