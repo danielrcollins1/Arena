@@ -1452,10 +1452,8 @@ public class Monster {
 	* Does this creature count as a person? (c.f., charm, hold spells)
 	*/
 	public boolean isPerson () {
-		return hasSpecial(SpecialType.NPC)
-			|| (type == 'H' && getHD() <= 1)
-			|| type == 'M';
-
+		return type == 'M'
+			|| (type == 'H' && getHD() <= 1);
 	}
 
 	/**
