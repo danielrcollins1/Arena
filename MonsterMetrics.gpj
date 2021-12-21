@@ -15,12 +15,13 @@ s#j0
 s#l0
 !435;u
 a0	b68	c255	e%\\011Class-Fighter.csv\011%\\011Class-Thief.csv\011%\\011Class-Wizard.csv\011%\\011ClassIndex.csv\011%\\011GPL.txt\011%\\011MenTypes.csv\011%\\011MonsterDatabase.csv\011%\\011MonsterLevelMatrix.csv\011%\\011MonsterLevelMatrixRev.csv\011%\\011Names.csv\011%\\011SavingThrows.csv\011%\\011XPTable.csv	f%\011MonsterMetrics.jar	g%\011MonsterMetrics.zip	hManifest-Version\0111.0\011Main-Class\011MonsterMetrics	iMonsterMetrics!32;a
-a%\011MonsterMetrics_doc	b	c1	d0!622;g
+a%\011MonsterMetrics_doc	b	c1	d0!644;g
 %\011Weapon.java
 %\011SavingThrows.java
 %\011Armor.java
 %\011SpellCasting.java
 %\011ClassIndex.java
+%\011SpellMemory.java
 %\011FightManager.java
 %\011MonsterDatabase.java
 %\011SpecialAbility.java
@@ -46,12 +47,13 @@ a%\011MonsterMetrics_doc	b	c1	d0!622;g
 %\011Character.java
 %\011MapUtil.java
 %\011Ability.java
-!622;f
+!644;f
 %\011Weapon.java
 %\011SavingThrows.java
 %\011Armor.java
 %\011SpellCasting.java
 %\011ClassIndex.java
+%\011SpellMemory.java
 %\011FightManager.java
 %\011MonsterDatabase.java
 %\011SpecialAbility.java

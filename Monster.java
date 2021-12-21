@@ -370,7 +370,7 @@ public class Monster {
 	* Take our turn against an enemy party.
 	*/
 	public void takeTurn (Party friends, Party enemies) {
-		if (!checkSpecialAbilityUse(friends, enemies)) return;
+		if (checkSpecialsInMelee(friends, enemies)) return;
 		boolean isSweeping = useSweepAttacks(enemies);
 		int attackRate = getAttackRate(isSweeping);
 		for (int i = 0; i < attackRate; i++) {
@@ -385,19 +385,19 @@ public class Monster {
 	}
 
 	/**
-	* Central special ability check function.
-	* @return if we can continue to make normal attacks.
+	* Check for special ability use in melee.
+	* @return true if our turn is consumed (no melee attacks)
 	*/
-	boolean checkSpecialAbilityUse (Party friends, Party enemies) {
+	boolean checkSpecialsInMelee (Party friends, Party enemies) {
 		checkRegeneration();
 		checkConstriction();
 		checkSlowing(enemies);
-		if (checkGrabbing()) return false;
-		if (checkDrainBlood()) return false;
-		if (checkBreathWeapon(enemies)) return false;
-		if (checkConfused(friends)) return false;
-		if (checkCastAttackSpell(enemies, false)) return false;
-		return true;
+		if (checkGrabbing()) return true;
+		if (checkBloodDrain()) return true;
+		if (checkBreathWeapon(enemies)) return true;
+		if (checkConfused(friends)) return true;
+		if (checkCastSpellInMelee(enemies)) return true;
+		return false;
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class Monster {
 			int naturalRoll = Dice.roll(20);
 			int totalRoll = naturalRoll + attack.getBonus() 
 				+ target.getAC() + hitModifier(target);
-			if (naturalRoll == 20 || totalRoll >= 20) {
+			if (totalRoll >= 20 || naturalRoll == 20) {
 				int damage = attack.rollDamage();
 				damage = checkDamageReduction(target, damage);
 				target.takeDamage(damage);
@@ -675,7 +675,7 @@ public class Monster {
 	/**
 	* Make a special attack on an enemy party.
 	* Ranged/outside of melee specials should go here.
-	*  Uses all abilities possessed.
+	* Uses all abilities possessed.
 	*/
 	void makeSpecialAttack (Party enemy) {
 		Monster target;
@@ -683,7 +683,7 @@ public class Monster {
 		int modifier;
 
 		// Check for offensive spell-casting
-		if (checkCastAttackSpell(enemy, true)) {
+		if (checkCastSpellPreMelee(enemy)) {
 			return;
 		}
 
@@ -897,10 +897,10 @@ public class Monster {
 	}
 
 	/**
-	*  Drain blood from host if appropriate.
-	* @return Did we drain blood?
+	* Drain blood from host if appropriate.
+	* @return true if we drained blood
 	*/
-	public boolean checkDrainBlood () {
+	public boolean checkBloodDrain () {
 		SpecialAbility special = findSpecial(SpecialType.BloodDrain);
 		if (special != null && host != null) {
 			int maxDamage = special.getParam();
@@ -1260,12 +1260,12 @@ public class Monster {
 	}
 
 	/**
-	* Check for casting an attack spell.
-	* @param enemies enemy party to be attacked.
-	* @param area true if area-effect spell desired.
+	* Try to cast an attack spell at enemy group.
+	* @param enemies possible targets of attack spell.
+	* @param area true if we want area-effect spell.
 	* @return true if we cast a spell.
 	*/
-	public boolean checkCastAttackSpell (Party enemies, boolean area) {
+	private boolean tryCastSpellAttack (Party enemies, boolean area) {
 		if (hasSpells()) {
 			Spell spell = getBestAttackSpell(area);
 			if (spell != null) {
@@ -1275,6 +1275,30 @@ public class Monster {
 			} 
 		}
 		return false;	
+	}	
+
+	/**
+	* Check casting an attack spell before melee.
+	* Look for area-effects first; then if none, try targeted.
+	* @return true if we cast a spell.
+	*/
+	private boolean checkCastSpellPreMelee (Party enemies) {
+		if (hasSpells()) {
+			if (tryCastSpellAttack(enemies, true))
+				return true;
+			else if (tryCastSpellAttack(enemies, false))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	* Check casting an attack spell in melee.
+	* Only targeted spells are allowed (not area-effects).
+	* @return true if we cast a spell.
+	*/
+	private boolean checkCastSpellInMelee (Party enemies) {
+		return tryCastSpellAttack(enemies, false);
 	}
 
 	/**

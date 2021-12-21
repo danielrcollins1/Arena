@@ -59,7 +59,7 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 				spell = index.getRandom(level);
 			} while (contains(spell) || spell.getMode() != mode);
 			add(spell);
-			return true;		
+			return true;
 		}
 		return false;
 	}
