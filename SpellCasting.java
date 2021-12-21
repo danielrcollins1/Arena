@@ -178,12 +178,16 @@ public class SpellCasting {
 	static class HoldPersonCasting extends Casting {
 		void cast (int level, Party targets) {
 
-			// For simplicity, use only the targeted version.
-			Monster target = targets.random();
-			if (target.isPerson()) {
-				if (!target.rollSave(SavingThrows.SaveType.Stone, -2))
-					target.addCondition(SpecialType.Paralysis);
-			}	
+			// For utility, assume we can target up to 4 creatures in melee.
+			// Contrast with S&S specifier of 3" dia. area effect.
+			List<Monster> hitTargets = targets.randomGroup(4);
+			int saveMod = hitTargets.size() == 1 ? -2 : 0;
+			for (Monster target: hitTargets) {
+				if (target.isPerson()) {
+					if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+						target.addCondition(SpecialType.Paralysis);
+				}	
+			}
 		}
 	}
 
@@ -242,10 +246,24 @@ public class SpellCasting {
 	static class CharmMonsterCasting extends Casting {
 		void cast (int level, Party targets) {
 
-			// For simplicity, use only the targeted version.
-			Monster target = targets.random();
-			if (!target.rollSaveSpells())
-				target.addCondition(SpecialType.Charm);
+			// For utility, assume we can target many creatures in melee.
+			// Compare/contrast with S&S area specifier of 1 monster only.
+			List<Monster> shuffleParty = targets.randomGroup(targets.size());
+			Monster firstTarget = shuffleParty.get(0);
+			if (firstTarget.getHD() >= 4) {
+				if (!firstTarget.rollSaveSpells())
+					firstTarget.addCondition(SpecialType.Charm);
+			}
+			else {
+				int effectHD = new Dice(2, 6).roll();
+				for (Monster target: shuffleParty) {
+					if (target.getHD() < 4 && target.getHD() <= effectHD) {
+						effectHD -= target.getHD();									
+						if (!target.rollSaveSpells())
+							target.addCondition(SpecialType.Charm);
+					}
+				}			
+			}
 		}
 	}
 
@@ -276,10 +294,14 @@ public class SpellCasting {
 	static class HoldMonsterCasting extends Casting {
 		void cast (int level, Party targets) {
 
-			// For simplicity, use only the targeted version.
-			Monster target = targets.random();
-			if (!target.rollSave(SavingThrows.SaveType.Stone, -2))
-				target.addCondition(SpecialType.Paralysis);
+			// For utility, assume we can target up to 4 creatures in melee.
+			// Contrast with S&S specifier of 3" dia. area effect.
+			List<Monster> hitTargets = targets.randomGroup(4);
+			int saveMod = hitTargets.size() == 1 ? -2 : 0;
+			for (Monster target: hitTargets) {
+				if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+					target.addCondition(SpecialType.Paralysis);
+			}
 		}
 	}
 
