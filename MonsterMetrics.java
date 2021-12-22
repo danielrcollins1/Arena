@@ -82,6 +82,7 @@ public class MonsterMetrics {
 		armorType = DEFAULT_ARMOR;
 		pctMagicSwordPerLevel = DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL;
 		wizardFrequency = DEFAULT_WIZARD_FREQUENCY;
+		SpellMemory.setPreferCastableSpells(true);
 	}
 
 	//--------------------------------------------------------------------------

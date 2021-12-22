@@ -18,6 +18,9 @@ public class SpellMemory {
 	/** The set of spells in memory (no duplicates). */
 	LinkedHashSet<Spell> memory;
 
+	/** Should we select in-sim castable spells first? */
+	static boolean preferCastableSpells = false;
+
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -39,6 +42,13 @@ public class SpellMemory {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
+
+	/**
+	*  Set static preference for in-sim castable spells.
+	*/
+	public static void setPreferCastableSpells (boolean prefer) {
+		preferCastableSpells = prefer;	
+	}
 
 	/**
 	*  Add a spell.
@@ -80,12 +90,20 @@ public class SpellMemory {
 	*/
 	public boolean addRandom (int level) {
 		SpellsIndex index = SpellsIndex.getInstance();
-		if (countAtLevel(level) < index.getNumAtLevel(level)) {
+		int startCount = countAtLevel(level);
+		if (startCount < index.getNumAtLevel(level)) {
 			Spell.Mode mode;
 			Spell spell;
 			do {
 				mode = rollMode();
-				spell = index.getRandom(level);
+				if (preferCastableSpells
+					&& startCount < index.getNumAtLevelCastable(level))
+				{
+					spell = index.getRandomCastable(level);
+				}				
+				else {
+					spell = index.getRandom(level);
+				}
 			} while (contains(spell) || spell.getMode() != mode);
 			add(spell);
 			return true;

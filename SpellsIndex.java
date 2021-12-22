@@ -29,6 +29,9 @@ public class SpellsIndex {
 	/** Number of spells at each level. */
 	int[] numAtLevel;
 
+	/** Number of castable spells at each level. */
+	int[] numAtLevelCastable;
+
 	/** Maximum spell level. */
 	int maxLevel;
 
@@ -48,6 +51,7 @@ public class SpellsIndex {
 		setMaxLevel();
 		countNumAtLevels();
 		linkSpellsToCastings();
+		countNumCastable();
 	}
 
 	//--------------------------------------------------------------------------
@@ -68,6 +72,15 @@ public class SpellsIndex {
 		}
 		return instance;
 	}
+
+	/**
+	*  Link spells to available in-game casting formulae.
+	*/
+	private void linkSpellsToCastings () {
+		for (Spell s: spellList) {
+			SpellCasting.linkSpellWithCasting(s);		
+		}
+	}	
 
 	/**
 	*  Get the maximum level.
@@ -105,6 +118,24 @@ public class SpellsIndex {
 	}
 
 	/**
+	*  Get number castable at a given level.
+	*/
+	public int getNumAtLevelCastable (int level) {
+		return numAtLevelCastable[level - 1];
+	}
+
+	/**
+	*  Count spells castable by level.
+	*/
+	private void countNumCastable () {
+		numAtLevelCastable = new int[maxLevel];
+		for (Spell s: spellList) {
+			if (s.isCastable())
+				numAtLevelCastable[s.getLevel() - 1]++;
+		}
+	}
+
+	/**
 	*  Get random spell by level.
 	*/
 	public Spell getRandom (int level) {
@@ -122,14 +153,24 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Link spells to available in-game casting formulae.
+	*  Get random castable spell by level.
 	*/
-	private void linkSpellsToCastings () {
-		for (Spell s: spellList) {
-			SpellCasting.linkSpellWithCasting(s);		
+	public Spell getRandomCastable (int level) {
+		int count = getNumAtLevelCastable(level);
+		if (count > 0) {
+			int roll = Dice.roll(count);
+			for (Spell s: spellList) {
+				if (s.getLevel() == level
+						&& s.isCastable()) 
+				{
+					if (--roll == 0)
+						return s;
+				}
+			}
 		}
-	}	
-	
+		return null;
+	}
+
 	/**
 	*  Main test function.
 	*/
@@ -144,6 +185,13 @@ public class SpellsIndex {
 		}
 		System.out.println();
 		
+		// Print random castable spell at each level
+		System.out.println("Random Castable Spells:");
+		for (int i = 1; i <= index.getMaxLevel(); i++) {
+			System.out.println("Level " + i + ": " + index.getRandomCastable(i));
+		}
+		System.out.println();
+		
 		// Print spells with in-game castings
 		System.out.println("Spells Castable In-Game:");
 		for (Spell s: index.spellList) {
@@ -151,5 +199,6 @@ public class SpellsIndex {
 				System.out.println(s.getName());			
 			}		
 		}
+		System.out.println();
 	}
 }
