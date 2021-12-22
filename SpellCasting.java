@@ -205,7 +205,11 @@ public class SpellCasting {
 	/** Confusion spell effect. */
 	static class ConfusionCasting extends Casting {
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
+
+			// For utility, assume we can target many creatures in melee.
+			// Contrast with S&S specifier of 3" dia. area effect.
+			int numHit = new Dice(2, 6).roll();
+			if (level > 8) numHit += (level - 8);
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				if (!target.rollSaveSpells())
