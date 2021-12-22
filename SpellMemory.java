@@ -9,7 +9,14 @@ import java.util.LinkedHashSet;
 *  @since    2021-12-19
 ******************************************************************************/
 
-public class SpellMemory extends LinkedHashSet<Spell> {
+public class SpellMemory {
+
+	//--------------------------------------------------------------------------
+	//  Fields
+	//--------------------------------------------------------------------------
+
+	/** The set of spells in memory (no duplicates). */
+	LinkedHashSet<Spell> memory;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -19,13 +26,14 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	*  Constructor.
 	*/
 	public SpellMemory () {
+		memory = new LinkedHashSet<Spell>();
 	}
 
 	/**
 	*  Copy constructor.
 	*/
 	public SpellMemory (SpellMemory src) {
-		super(src);
+		memory = new LinkedHashSet<Spell>(src.memory);
 	}
 
 	//--------------------------------------------------------------------------
@@ -33,11 +41,32 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	//--------------------------------------------------------------------------
 
 	/**
+	*  Add a spell.
+	*/
+	public boolean add (Spell s) {
+		return memory.add(s);
+	}
+
+	/**
+	*  Remove a spell.
+	*/
+	public boolean remove (Spell s) {
+		return memory.remove(s);	
+	}
+
+	/**
+	*  Is this spell in our memory?
+	*/
+	public boolean contains (Spell s) {
+		return memory.contains(s);
+	}
+
+	/**
 	*  Count spells of a given level.
 	*/
 	public int countAtLevel (int level) {
 		int count = 0;
-		for (Spell s: this) {
+		for (Spell s: memory) {
 			if (s.getLevel() == level)
 				count++;
 		}
@@ -83,7 +112,7 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	*/
 	public Spell getBestAttackSpell (boolean areaEffect) {
 		Spell best = null;	
-		for (Spell s: this) {
+		for (Spell s: memory) {
 			if (s.isCastable()
 				&& s.getMode() == Spell.Mode.Attack
 				&& s.isAreaEffect() == areaEffect)
@@ -103,7 +132,7 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	*/
 	public String toString () {
 		String s = "";
-		for (Spell spell: this) {
+		for (Spell spell: memory) {
 			if (s.length() > 0)
 				s += ", ";
 			s += spell.getName();
@@ -116,5 +145,13 @@ public class SpellMemory extends LinkedHashSet<Spell> {
 	*/
 	public static void main (String[] args) {	
 		Dice.initialize();
+		SpellMemory mem = new SpellMemory();
+
+		// Add a random spell per level
+		System.out.println("Random spells in memory:");
+		for (int level = 1; level <= 6; level++) {
+			mem.addRandom(level);
+		}
+		System.out.println(mem);
 	}
 }
