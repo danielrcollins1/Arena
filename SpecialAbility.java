@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-01-20
-*  @version  1.01
 ******************************************************************************/
 
 public class SpecialAbility {

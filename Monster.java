@@ -108,6 +108,7 @@ public class Monster {
 		// Secondary fields
 		conditionList = new ArrayList<SpecialAbility>(); 
 		spellMemory = null;
+		addImpliedSpecials();
 		rollHitPoints();
 	}
 
@@ -244,6 +245,18 @@ public class Monster {
 	}
 
 	/**
+	* Add some special qualifiers based on name or type.
+	*/
+	private void addImpliedSpecials() {
+		if (getRace().startsWith("Dragon"))
+			specialList.add(0, new SpecialAbility(SpecialType.Dragon));
+		if (getRace().startsWith("Golem"))
+			specialList.add(0, new SpecialAbility(SpecialType.Golem));
+		if (getType() == 'U')
+			specialList.add(0, new SpecialAbility(SpecialType.Undead));
+	}
+
+	/**
 	* Parse the EHD value (possibly undefined).
 	*/
 	private int parseEHD (String s) {
@@ -273,7 +286,7 @@ public class Monster {
 	* Roll hit points from hit dice.
 	*/
 	private void rollHitPoints () {
-		if (hasSpecial(SpecialType.DragonAge)) {
+		if (hasSpecial(SpecialType.Dragon)) {
 			maxHitPoints = hitDice.getNum() * getDragonAge();
 		}
 		else if (hasSpecial(SpecialType.Multiheads)) {

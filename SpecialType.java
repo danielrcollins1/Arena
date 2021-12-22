@@ -23,13 +23,13 @@ public enum SpecialType {
 	Grabbing, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
 	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, Absorption,
 	Whirlwind, WallOfFire, ConeOfCold, AcidSpitting, Confusion, 
-	Displacement, Blinking, Phasing, CharmTouch, DragonAge, 
+	Displacement, Blinking, Phasing, CharmTouch, Dragon, 
 	FireBreath, ColdBreath, VoltBreath, AcidBreath, PoisonBreath, 
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
-	SteamBreath, Stench, ResistStench, WebMove, Webbing, Sleep, 
-	Blindness, Polymorphism;
+	SteamBreath, Stench, ResistStench, Webbing, WebMove, Sleep, 
+	Blindness, Polymorphism, Undead, Golem;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
