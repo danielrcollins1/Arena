@@ -128,7 +128,7 @@ public class SpellCasting {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit); 
 			for (Monster target: hitTargets) {
-				if (!target.rollSave(SavingThrows.SaveType.Stone)) {
+				if (!target.rollSave(SavingThrows.Type.Stone)) {
 
 					// Give one chance to break out by Strength
 					int strength = target.getAbilityScore(Ability.Str);
@@ -184,7 +184,7 @@ public class SpellCasting {
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
 				if (target.isPerson()) {
-					if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+					if (!target.rollSave(SavingThrows.Type.Stone, saveMod))
 						target.addCondition(SpecialType.Paralysis);
 				}	
 			}
@@ -283,7 +283,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 6) {
-					if (!target.rollSave(SavingThrows.SaveType.Death))
+					if (!target.rollSave(SavingThrows.Type.Death))
 						target.instaKill();
 				}			
 			}
@@ -299,7 +299,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(4);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
-				if (!target.rollSave(SavingThrows.SaveType.Stone, saveMod))
+				if (!target.rollSave(SavingThrows.Type.Stone, saveMod))
 					target.addCondition(SpecialType.Paralysis);
 			}
 		}
@@ -315,7 +315,7 @@ public class SpellCasting {
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 8 && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();				
-					if (!target.rollSave(SavingThrows.SaveType.Death))
+					if (!target.rollSave(SavingThrows.Type.Death))
 						target.instaKill();
 				}			
 			}
@@ -326,7 +326,7 @@ public class SpellCasting {
 	static class DisintegrateCasting extends Casting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
-			if (!target.rollSave(SavingThrows.SaveType.Death))
+			if (!target.rollSave(SavingThrows.Type.Death))
 				target.instaKill();
 		}
 	}

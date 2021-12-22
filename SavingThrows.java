@@ -5,7 +5,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-01-20
-*  @version  1.1
 ******************************************************************************/
 
 public class SavingThrows {
@@ -25,11 +24,11 @@ public class SavingThrows {
 	//--------------------------------------------------------------------------
 
 	/** Saving throw types. */
-	public enum SaveType {
+	public enum Type {
 		Death, Wands, Stone, Breath, Spells;
 
 		/** Total number of save types available. */
-		public static final int length = SaveType.values().length;
+		public static final int length = Type.values().length;
 	};
 
 	//--------------------------------------------------------------------------
@@ -44,15 +43,15 @@ public class SavingThrows {
 		SaveRecord (String[] s) {
 			className = s[0];
 			minLevel = Integer.parseInt(s[1]);
-			saveScore = new int[SaveType.length];
-			for (int i = 0; i < SaveType.length; i++) {
+			saveScore = new int[Type.length];
+			for (int i = 0; i < Type.length; i++) {
 				saveScore[i] = Integer.parseInt(s[i + 2]);
 			}
 		}
 
 		public String toString() {
 			String s = className + ", " + minLevel;
-			for (int i = 0; i < SaveType.length; i++) {
+			for (int i = 0; i < Type.length; i++) {
 				s += ", " + saveScore[i];			
 			}
 			return s;			
@@ -107,7 +106,7 @@ public class SavingThrows {
 	*  Roll a saving throw with a modifier.
 	*  @return True if the save was successful.
 	*/
-	public boolean rollSave (SaveType saveType, 
+	public boolean rollSave (Type saveType, 
 			String asClass, int level, int modifier) {
 
 		int natRoll = Dice.roll(20);
@@ -120,14 +119,14 @@ public class SavingThrows {
 	*  Roll a saving throw without a modifier.
 	*  @return True if the save was successful.
 	*/
-	public boolean rollSave (SaveType saveType, String asClass, int level) {
+	public boolean rollSave (Type saveType, String asClass, int level) {
 		return rollSave(saveType, asClass, level, 0);	
 	}
 
 	/**
 	*  Get the target score for a saving throw.
 	*/
-	public int getSaveTarget (SaveType saveType, String asClass, int level) {
+	public int getSaveTarget (Type saveType, String asClass, int level) {
 		SaveRecord record = getSaveRecord(asClass, level);
 		return record.saveScore[saveType.ordinal()];
 	}
@@ -168,7 +167,7 @@ public class SavingThrows {
 		System.out.println("Test Ftr1 vs. Poison (45%?)");
 		success = 0;
 		for (int i = 0; i < numRolls; i++) {
-			if (st.rollSave(SaveType.Death, "Fighter", 1))
+			if (st.rollSave(Type.Death, "Fighter", 1))
 				success++;		
 		}
 		ratio = (double) success / numRolls;
@@ -178,7 +177,7 @@ public class SavingThrows {
 		System.out.println("Test Wiz20 vs. Spells (90%?)");
 		success = 0;
 		for (int i = 0; i < numRolls; i++) {
-			if (st.rollSave(SaveType.Spells, "Wizard", 20))
+			if (st.rollSave(Type.Spells, "Wizard", 20))
 				success++;		
 		}
 		ratio = (double) success / numRolls;

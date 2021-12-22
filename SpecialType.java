@@ -50,13 +50,13 @@ public enum SpecialType {
 	/**
 	*	Map condition to appropriate saving throw type.
 	*/
-	public SavingThrows.SaveType getSaveType () {
+	public SavingThrows.Type getSaveType () {
 		switch (this) {
-			case Poison: return SavingThrows.SaveType.Death; 
-			case Paralysis: return SavingThrows.SaveType.Stone; 
-			case Petrification: return SavingThrows.SaveType.Stone;
-			case Confusion: return SavingThrows.SaveType.Spells; 
-			case SporeCloud: return SavingThrows.SaveType.Death; 
+			case Poison: return SavingThrows.Type.Death; 
+			case Paralysis: return SavingThrows.Type.Stone; 
+			case Petrification: return SavingThrows.Type.Stone;
+			case Confusion: return SavingThrows.Type.Spells; 
+			case SporeCloud: return SavingThrows.Type.Death; 
 			default: System.err.println("Error: No saveType for condition: " + this);
 				return null;			
 		}	

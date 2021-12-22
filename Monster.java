@@ -603,7 +603,7 @@ public class Monster {
 
 				case EnergyDrain:
 					boolean saved = SavingThrows.ENERGY_DRAIN_SAVE
-						&& target.rollSave(SavingThrows.SaveType.Death);
+						&& target.rollSave(SavingThrows.Type.Death);
 					if (!saved) {      
 						for (int j = 0; j < s.getParam(); j++) {
 							target.loseLevel();
@@ -619,13 +619,13 @@ public class Monster {
 					if (isLastAttack && new Dice(2, 6).roll() >= 7) {
 						int damage = new Dice(3, 6).roll();
 						castEnergy(target, damage, EnergyType.Fire, 
-							SavingThrows.SaveType.Breath);
+							SavingThrows.Type.Breath);
 					}
 					break;
 
 				case SappingStrands:
 					if (!isLastAttack && !target.hasCondition(SpecialType.SappingStrands)
-							&& !target.rollSave(SavingThrows.SaveType.Death)) {
+							&& !target.rollSave(SavingThrows.Type.Death)) {
 						int strength = target.getAbilityScore(Ability.Str);       
 						target.takeAbilityDamage(Ability.Str, strength/2);
 						target.addCondition(SpecialType.SappingStrands);
@@ -731,7 +731,7 @@ public class Monster {
 					int damage = new Dice(8, 6).roll();
 					int maxVictims = getMaxVictimsInCone(6);
 					castEnergyArea(enemy, maxVictims, damage, 
-						EnergyType.Cold, SavingThrows.SaveType.Spells);
+						EnergyType.Cold, SavingThrows.Type.Spells);
 					break;
 
 				case AcidSpitting:
@@ -775,7 +775,7 @@ public class Monster {
 					for (Monster targetStench: enemy) {
 						// Each enemy only needs to make one save vs. stinky monster party
 						if (!targetStench.hasCondition(SpecialType.ResistStench)) {
-							if (!targetStench.rollSave(SavingThrows.SaveType.Breath)) {
+							if (!targetStench.rollSave(SavingThrows.Type.Breath)) {
 								targetStench.addCondition(SpecialType.Stench);
 							}
 							else {
@@ -997,20 +997,20 @@ public class Monster {
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castEnergyArea(enemy, numVictims, damage, 
-						EnergyType.Fire, SavingThrows.SaveType.Breath);
+						EnergyType.Fire, SavingThrows.Type.Breath);
 					break;
 
 				case ColdBreath: // Dragon only
 					maxVictims = getMaxVictimsInCone(8);
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castEnergyArea(enemy, numVictims, maxHitPoints, 
-						EnergyType.Cold, SavingThrows.SaveType.Breath);
+						EnergyType.Cold, SavingThrows.Type.Breath);
 					break;
 
 				case VoltBreath: // Dragon only
 					numVictims = getBreathVictims(enemy, 5);
 					castEnergyArea(enemy, numVictims, maxHitPoints, 
-						EnergyType.Volt, SavingThrows.SaveType.Breath);
+						EnergyType.Volt, SavingThrows.Type.Breath);
 					break;
 
 				case AcidBreath:
@@ -1024,7 +1024,7 @@ public class Monster {
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castEnergyArea(enemy, numVictims, damage, 
-						EnergyType.Acid, SavingThrows.SaveType.Breath);
+						EnergyType.Acid, SavingThrows.Type.Breath);
 					break;
 
 				case PetrifyingBreath: // Gorgon only
@@ -1038,7 +1038,7 @@ public class Monster {
 						maxVictims = 10;
 						numVictims = getBreathVictims(enemy, maxVictims);
 						castEnergyArea(enemy, numVictims, maxHitPoints, 
-							EnergyType.Poison, SavingThrows.SaveType.Breath);
+							EnergyType.Poison, SavingThrows.Type.Breath);
 					}
 					else { // Iron Golem
 						castConditionArea(enemy, 1, SpecialType.Poison);
@@ -1082,7 +1082,7 @@ public class Monster {
 	* Apply energy damage to multiple enemy party numbers.
 	*/
 	void castEnergyArea (Party enemy, int number, int damage, 
-			EnergyType energy, SavingThrows.SaveType saveType) {
+			EnergyType energy, SavingThrows.Type saveType) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			castEnergy(m, damage, energy, saveType);
@@ -1093,7 +1093,7 @@ public class Monster {
 	* Apply energy damage to one enemy monster.
 	*/
 	void castEnergy (Monster target, int damage, 
-			EnergyType energy, SavingThrows.SaveType saveType) {
+			EnergyType energy, SavingThrows.Type saveType) {
 		if (!target.isImmuneToEnergy(energy)) {   
 			boolean saved = (saveType != null && target.rollSave(saveType));   
 			target.takeDamage(saved ? damage/2 : damage);
@@ -1144,7 +1144,7 @@ public class Monster {
 	*/
 	void castCharm (Monster target, int saveMod) {
 		if (target.hasFeat(Feat.IronWill)) saveMod += 4;
-		if (!target.rollSave(SavingThrows.SaveType.Spells, saveMod)) {
+		if (!target.rollSave(SavingThrows.Type.Spells, saveMod)) {
 			target.addCondition(SpecialType.Charm);
 		}
 	}
@@ -1188,7 +1188,7 @@ public class Monster {
 	public void checkSlowing (Party enemy) {
 		Monster target = enemy.random();
 		if (!target.hasCondition(SpecialType.Slowing)
-				&& !target.rollSave(SavingThrows.SaveType.Spells)) {
+				&& !target.rollSave(SavingThrows.Type.Spells)) {
 			target.addCondition(SpecialType.Slowing);
 		}
 	}
@@ -1333,20 +1333,20 @@ public class Monster {
 	* Roll a saving throw vs. spells with no modifier.
 	*/
 	public boolean rollSaveSpells () {
-		return rollSave(SavingThrows.SaveType.Spells, 0);
+		return rollSave(SavingThrows.Type.Spells, 0);
 	}
 
 	/**
 	* Roll a saving throw with no modifier.
 	*/
-	public boolean rollSave (SavingThrows.SaveType type) {
+	public boolean rollSave (SavingThrows.Type type) {
 		return rollSave(type, 0);
 	}
 
 	/**
 	* Roll a saving throw with modifier.
 	*/
-	public boolean rollSave (SavingThrows.SaveType type, int modifier) {
+	public boolean rollSave (SavingThrows.Type type, int modifier) {
 		modifier += getFixedSaveModifiers(type);
 		return SavingThrows.getInstance().rollSave(
 			type, "Fighter", getHD(), modifier);
@@ -1355,7 +1355,7 @@ public class Monster {
 	/**
 	* Add up fixed save modifiers for this monster.
 	*/
-	public int getFixedSaveModifiers (SavingThrows.SaveType type) {
+	public int getFixedSaveModifiers (SavingThrows.Type type) {
 		int modifier = 0;
 
 		// Save bonus special ability
@@ -1370,7 +1370,7 @@ public class Monster {
 		}
 
 		// Great Fortitude feat vs. death saves 
-		if (type == SavingThrows.SaveType.Death && 
+		if (type == SavingThrows.Type.Death && 
 				hasFeat(Feat.GreatFortitude)) {
 			modifier += 4;  
 		}

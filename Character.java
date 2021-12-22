@@ -792,7 +792,7 @@ public class Character extends Monster {
 	/**
 	*	Roll a saving throw with modifier.
 	*/
-	public boolean	rollSave (SavingThrows.SaveType type, int modifier) {
+	public boolean	rollSave (SavingThrows.Type type, int modifier) {
 		ClassRecord bestClass = bestClassForSave(type);
 		modifier += getFixedSaveModifiers(type);
 		if (ringWorn != null)
@@ -805,7 +805,7 @@ public class Character extends Monster {
 	/**
 	*	Find the best class to use for a given saving throw.
 	*/
-	private ClassRecord bestClassForSave (SavingThrows.SaveType saveType) {
+	private ClassRecord bestClassForSave (SavingThrows.Type saveType) {
 		ClassRecord bestClass = null;
 		int bestScore = Integer.MAX_VALUE;
 		for (ClassRecord record: classList) {
