@@ -172,6 +172,17 @@ public class SpellsIndex {
 	}
 
 	/**
+	*  Find a spell by name.
+	*/
+	public Spell findByName (String name) {
+		for (Spell s: spellList) {
+			if (s.getName().equals(name))
+				return s;
+		}
+		return null;
+	}
+
+	/**
 	*  Main test function.
 	*/
 	public static void main (String[] args) {	

@@ -94,11 +94,11 @@ Basilisk,1d6,4,6,6+1,40,F,1,1d6,"PetrifyingGaze, Petrification",B,N,6,25,D,O
 Purple Worm,1d4,6,6,15,25,D,2,2d6,"Swallowing, Poison, Fearlessness",B,N,15,28,D,O
 Dragon Turtle,1d4,2,3,12,60,H,2,2d6,"Swimming (9), Fear, Detection (15), SteamBreath",B,C,12,32,U,O
 "Golem, Stone",1,5,6,18,-,-,1,3d6,"MagicToHit (2), MagicImmunity, Slowing",B,N,18,40,D,S1
+Beholder,1,0,3,12,90,I,1,1d6,"Flight (3), EyeTyranny",B,N,12,105,D,S1
 "Golem, Iron",1,2,3,24,-,-,1,4d6,"MagicToHit (3), MagicImmunity, PoisonBreath (1)",B,N,24,125,D,S1
 Rust Monster,1d2,2,12,5,-,-,1,0,Corrosion,B,N,5,?,D,S1
 Lammasu,2d4,6,12,6+2,40,A,2,1d6,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil (10)",B,L,6,?,D,S1
 "Dragon, Gold",1d4,2,9,11,60,H,2,2d6,"Flight (24), Fear, Detection (15), FireBreath, PoisonBreath, Spells",B,L,11,?,D,O
-Beholder,1,2,3,12,90,I,1,1d6,"Flight (3), AntiMagic, Spells",B,N,12,?,D,S1
 Gnome,4d10x10,5,6,1,60,C,1,1d6,"SaveBonus (4), DodgeGiants",F,L,1,1,W,O
 Elf,3d10x10,5,12,1+1,25,E,1,1d6,"Camouflage, HitBonus (1)",F,L,1,1,W,O
 Pixie,1d10x10,6,9,1,25,C,1,1d3,"Flight (18), Invisibility",F,N,1,1,W,O

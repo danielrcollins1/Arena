@@ -29,7 +29,7 @@ public enum SpecialType {
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
 	SteamBreath, Stench, ResistStench, Webbing, WebMove, Sleep, 
-	Holding, Blindness, Polymorphism, Undead, Golem;
+	Holding, Blindness, Polymorphism, Undead, Golem, EyeTyranny;
 	
 	//--------------------------------------------------------------------------
 	//  Methods

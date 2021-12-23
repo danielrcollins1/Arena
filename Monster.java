@@ -410,6 +410,7 @@ public class Monster {
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkConfused(friends)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
+		if (checkEyeTyranny(enemies)) return true;
 		return false;
 	}
 
@@ -801,6 +802,10 @@ public class Monster {
 
 				case Charm:
 					castCharm(enemy.random(), -s.getParam());
+					break;
+					
+				case EyeTyranny:
+					eyeTyrantSalvo(enemy);
 					break;
 			}     
 		}
@@ -1586,6 +1591,45 @@ public class Monster {
 			return false;
 		}
 	}		
+
+	/**
+	* Beholder eye-tyranny salvo.
+	*
+	* References available castable spells.
+	*/
+	private void eyeTyrantSalvo (Party enemy) {
+		final String eyeEffectNames[] = {
+			"Charm Person", "Charm Monster", "Sleep", "Disintegrate", "Fear"};
+
+		// Construct list of available spell-effects.
+		ArrayList<Spell> eyeEffects = new ArrayList<Spell>(); 
+		for (String name: eyeEffectNames) {
+			Spell spell = SpellsIndex.getInstance().findByName(name);
+			if (spell != null) {
+				assert(spell.isCastable());
+				eyeEffects.add(spell);
+			}
+		}
+
+		// Cast random 1-4 of the spell-effects.
+		int numZaps = Dice.roll(4);
+		assert(eyeEffects.size() >= 4);
+		Collections.shuffle(eyeEffects);
+		for (int i = 0; i < numZaps; i++) {
+			eyeEffects.get(i).cast(getHD(), enemy);
+		}
+	}
+
+	/**
+	* Are we a beholder casting eye-effects in melee?
+	*/
+	private boolean checkEyeTyranny (Party enemy) {
+		if (hasSpecial(SpecialType.EyeTyranny)) {
+			eyeTyrantSalvo(enemy);		
+			return true;
+		}	
+		return false;
+	}
 
 	/**
 	* Main test method.
