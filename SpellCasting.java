@@ -264,7 +264,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 6) {
-					target.saveOrDie(level);
+					target.saveVsCondition(SpecialType.Death, level);
 				}			
 			}
 		}
@@ -294,7 +294,7 @@ public class SpellCasting {
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 8 && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					target.saveOrDie(level);
+					target.saveVsCondition(SpecialType.Death, level);
 				}			
 			}
 		}
@@ -304,7 +304,7 @@ public class SpellCasting {
 	static class DisintegrateCasting extends Casting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
-			target.saveOrDie(level);
+			target.saveVsCondition(SpecialType.Death, level);
 		}
 	}
 

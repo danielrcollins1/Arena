@@ -410,7 +410,7 @@ public class Monster {
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkConfused(friends)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
-		if (checkEyeTyranny(enemies)) return true;
+		if (checkManyEyesSalvo(enemies)) return true;
 		return false;
 	}
 
@@ -804,8 +804,8 @@ public class Monster {
 					castCharm(enemy.random(), -s.getParam());
 					break;
 					
-				case EyeTyranny:
-					eyeTyrantSalvo(enemy);
+				case ManyEyeFunctions:
+					manyEyesSalvo(enemy);
 					break;
 			}     
 		}
@@ -882,15 +882,6 @@ public class Monster {
 			}
 		}
 		return false;
-	}
-
-	/**
-	* Die unless we resist.
-	*/
-	public void saveOrDie (int casterLevel) {
-		if (!rollSave(SavingThrows.Type.Death)) {
-			instaKill();
-		}
 	}
 
 	/**
@@ -1593,39 +1584,39 @@ public class Monster {
 	}		
 
 	/**
-	* Beholder eye-tyranny salvo.
+	* Beholder many-eyes attacks.
 	*
 	* References available castable spells.
 	*/
-	private void eyeTyrantSalvo (Party enemy) {
-		final String eyeEffectNames[] = {
+	private void manyEyesSalvo (Party enemy) {
+		final String eyeFunctionNames[] = {
 			"Charm Person", "Charm Monster", "Sleep", "Disintegrate", "Fear"};
 
-		// Construct list of available spell-effects.
-		ArrayList<Spell> eyeEffects = new ArrayList<Spell>(); 
-		for (String name: eyeEffectNames) {
+		// Construct list of available spell-functions.
+		ArrayList<Spell> eyeFunctions = new ArrayList<Spell>(); 
+		for (String name: eyeFunctionNames) {
 			Spell spell = SpellsIndex.getInstance().findByName(name);
 			if (spell != null) {
 				assert(spell.isCastable());
-				eyeEffects.add(spell);
+				eyeFunctions.add(spell);
 			}
 		}
 
 		// Cast random 1-4 of the spell-effects.
 		int numZaps = Dice.roll(4);
-		assert(eyeEffects.size() >= 4);
-		Collections.shuffle(eyeEffects);
+		assert(eyeFunctions.size() >= 4);
+		Collections.shuffle(eyeFunctions);
 		for (int i = 0; i < numZaps; i++) {
-			eyeEffects.get(i).cast(getHD(), enemy);
+			eyeFunctions.get(i).cast(getHD(), enemy);
 		}
 	}
 
 	/**
-	* Are we a beholder casting eye-effects in melee?
+	* Are we a beholder casting eye-functions in melee?
 	*/
-	private boolean checkEyeTyranny (Party enemy) {
-		if (hasSpecial(SpecialType.EyeTyranny)) {
-			eyeTyrantSalvo(enemy);		
+	private boolean checkManyEyesSalvo (Party enemy) {
+		if (hasSpecial(SpecialType.ManyEyeFunctions)) {
+			manyEyesSalvo(enemy);		
 			return true;
 		}	
 		return false;

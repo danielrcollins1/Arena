@@ -29,7 +29,8 @@ public enum SpecialType {
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
 	SteamBreath, Stench, ResistStench, Webbing, WebMove, Sleep, 
-	Holding, Blindness, Polymorphism, Undead, Golem, EyeTyranny;
+	Holding, Blindness, Polymorphism, Undead, Golem, 
+	ManyEyeFunctions, Death;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -64,7 +65,7 @@ public enum SpecialType {
 				return SavingThrows.Type.Stone;
 
 			// Death saves
-			case Poison: case SporeCloud:
+			case Poison: case SporeCloud: case Death:
 				return SavingThrows.Type.Death; 
 		}	
 		System.err.println("Error: No saveType for condition: " + this);
@@ -79,7 +80,8 @@ public enum SpecialType {
 			case Poison: case Paralysis: case Petrification: 
 			case Swallowing: case SporeCloud: case Absorption: 
 			case Fear: case MindBlast: case Sleep: case Charm:
-			case Holding: case Webbing: case Polymorphism:
+			case Holding: case Webbing: case Polymorphism: 
+			case Death:
 				return true;
 		}
 		return false;
