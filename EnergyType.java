@@ -6,6 +6,6 @@
 ******************************************************************************/
 
 public enum EnergyType {
-	Fire, Cold, Volt, Acid, Poison
+	Fire, Cold, Acid, Volt, Poison, Other
 }
 

@@ -12,12 +12,6 @@ import java.util.*;
 
 public class SpellCasting {
 
-	// TODO:
-	// - Spell immunity.
-	// - Magic resistance.
-	// - Undead immunity to mind-affecting stuff.
-	// - Wisdom save bonuses to mind-affecting stuff?
-
 	//--------------------------------------------------------------------------
 	//  Base Casting class
 	//--------------------------------------------------------------------------
@@ -76,8 +70,7 @@ public class SpellCasting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
 			if (target.isPerson()) {
-				if (!target.rollSaveSpells())
-					target.addCondition(SpecialType.Charm);
+				target.saveVsCondition(SpecialType.Charm, level);
 			}
 		}
 	}
@@ -89,8 +82,8 @@ public class SpellCasting {
 			for (int i = 0; i < numMissiles; i++) {
 				Monster target = targets.random();
 				int damage = Dice.roll(6) + 1;
-				boolean save = target.rollSaveSpells();
-				target.takeDamage(save ? damage / 2 : damage);
+				target.saveVsEnergy(EnergyType.Other, damage, 
+					SavingThrows.Type.Spells, level);
 			}		
 		}
 	}
@@ -104,8 +97,7 @@ public class SpellCasting {
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 4 && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					if (!target.rollSaveSpells())
-						target.addCondition(SpecialType.Sleep);
+					target.saveVsCondition(SpecialType.Sleep, level);
 				}
 			}	
 		}
@@ -117,8 +109,7 @@ public class SpellCasting {
 
 			// Treat as targeted blindness for simplicity
 			Monster target = targets.random();
-			if (!target.rollSaveSpells())
-				target.addCondition(SpecialType.Blindness);
+				target.saveVsCondition(SpecialType.Blindness, level);
 		}
 	}
 	
@@ -128,16 +119,14 @@ public class SpellCasting {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit); 
 			for (Monster target: hitTargets) {
-				if (!target.rollSave(SavingThrows.Type.Stone)) {
-
-					// Give one chance to break out by Strength
-					int strength = target.getAbilityScore(Ability.Str);
-					int strBonus = Ability.getBonus(strength);
-					boolean breakOut = Dice.roll(6) <= strBonus;
-					if (!breakOut) {
-						target.addCondition(SpecialType.Webbing);
-					}
-				}
+			
+				// Give one chance to break out by Strength
+				int strength = target.getAbilityScore(Ability.Str);
+				int strBonus = Ability.getBonus(strength);
+				boolean breakOut = Dice.roll(6) <= strBonus;
+				if (!breakOut) {
+					target.saveVsCondition(SpecialType.Webbing, level);
+				}				
 			}	
 		}
 	}
@@ -150,10 +139,8 @@ public class SpellCasting {
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				if (!target.isImmuneToEnergy(EnergyType.Fire)) { 
-					boolean saved = target.rollSaveSpells();
-					target.takeDamage(saved ? damage/2 : damage);
-				}
+				target.saveVsEnergy(EnergyType.Fire, damage, 
+					SavingThrows.Type.Spells, level);
 			}	
 		}
 	}
@@ -166,10 +153,8 @@ public class SpellCasting {
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				if (!target.isImmuneToEnergy(EnergyType.Volt)) { 
-					boolean saved = target.rollSaveSpells();
-					target.takeDamage(saved ? damage/2 : damage);
-				}
+				target.saveVsEnergy(EnergyType.Volt, damage, 
+					SavingThrows.Type.Spells, level);
 			}	
 		}
 	}
@@ -184,8 +169,7 @@ public class SpellCasting {
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
 				if (target.isPerson()) {
-					if (!target.rollSave(SavingThrows.Type.Stone, saveMod))
-						target.addCondition(SpecialType.Paralysis);
+					target.saveVsCondition(SpecialType.Holding, level);
 				}	
 			}
 		}
@@ -197,8 +181,7 @@ public class SpellCasting {
 
 			// Treat like a charm spell (order to leave, etc.)
 			Monster target = targets.random();
-			if (!target.rollSaveSpells())
-				target.addCondition(SpecialType.Charm);
+			target.saveVsCondition(SpecialType.Charm, level);
 		}
 	}
 
@@ -212,8 +195,7 @@ public class SpellCasting {
 			if (level > 8) numHit += (level - 8);
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
-				if (!target.rollSaveSpells())
-					target.addCondition(SpecialType.Confusion);
+				target.saveVsCondition(SpecialType.Confusion, level);
 			}	
 		}
 	}
@@ -224,8 +206,7 @@ public class SpellCasting {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
-				if (!target.rollSaveSpells())
-					target.addCondition(SpecialType.Fear);
+				target.saveVsCondition(SpecialType.Fear, level);
 			}	
 		}
 	}
@@ -237,11 +218,10 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int damage = new Dice(8, 6).roll();
 			for (Monster target: hitTargets) {
-				int myDamage = damage;
-				if (target.isImmuneToEnergy(EnergyType.Cold))
-					myDamage /= 2;
-				boolean saved = target.rollSaveSpells();
-				target.takeDamage(saved ? myDamage/2 : myDamage);
+
+				// For simplicity, assume this is all cold damage
+				target.saveVsEnergy(EnergyType.Cold, damage, 
+					SavingThrows.Type.Spells, level);
 			}	
 		}
 	}
@@ -255,16 +235,14 @@ public class SpellCasting {
 			List<Monster> shuffleParty = targets.randomGroup(targets.size());
 			Monster firstTarget = shuffleParty.get(0);
 			if (firstTarget.getHD() >= 4) {
-				if (!firstTarget.rollSaveSpells())
-					firstTarget.addCondition(SpecialType.Charm);
+				firstTarget.saveVsCondition(SpecialType.Charm, level);
 			}
 			else {
 				int effectHD = new Dice(2, 6).roll();
 				for (Monster target: shuffleParty) {
 					if (target.getHD() < 4 && target.getHD() <= effectHD) {
 						effectHD -= target.getHD();									
-						if (!target.rollSaveSpells())
-							target.addCondition(SpecialType.Charm);
+						target.saveVsCondition(SpecialType.Charm, level);
 					}
 				}			
 			}
@@ -275,8 +253,7 @@ public class SpellCasting {
 	static class PolymorphOtherCasting extends Casting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
-			if (!target.rollSaveSpells())
-				target.addCondition(SpecialType.Polymorphism);
+			target.saveVsCondition(SpecialType.Polymorphism, level);
 		}
 	}
 
@@ -287,8 +264,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 6) {
-					if (!target.rollSave(SavingThrows.Type.Death))
-						target.instaKill();
+					target.saveOrDie(level);
 				}			
 			}
 		}
@@ -303,8 +279,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(4);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
-				if (!target.rollSave(SavingThrows.Type.Stone, saveMod))
-					target.addCondition(SpecialType.Paralysis);
+				target.saveVsCondition(SpecialType.Holding, level);
 			}
 		}
 	}
@@ -318,9 +293,8 @@ public class SpellCasting {
 			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= 8 && target.getHD() <= effectHD) {
-					effectHD -= target.getHD();				
-					if (!target.rollSave(SavingThrows.Type.Death))
-						target.instaKill();
+					effectHD -= target.getHD();
+					target.saveOrDie(level);
 				}			
 			}
 		}
@@ -330,8 +304,7 @@ public class SpellCasting {
 	static class DisintegrateCasting extends Casting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
-			if (!target.rollSave(SavingThrows.Type.Death))
-				target.instaKill();
+			target.saveOrDie(level);
 		}
 	}
 

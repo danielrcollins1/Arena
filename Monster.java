@@ -302,7 +302,7 @@ public class Monster {
 	/**
 	* Take damage (minimum 0 hp).
 	*/
-	public void takeDamage (int damage) {
+	private void takeDamage (int damage) {
 		hitPoints -= damage;
 		boundHitPoints();
 		headCount();
@@ -311,7 +311,7 @@ public class Monster {
 	/**
 	* Kill this monster (reduce to 0 hp).
 	*/
-	public void instaKill () {
+	private void instaKill () {
 		hitPoints = 0;
 	}
 
@@ -401,7 +401,7 @@ public class Monster {
 	* Check for special ability use in melee.
 	* @return true if our turn is consumed (no melee attacks)
 	*/
-	boolean checkSpecialsInMelee (Party friends, Party enemies) {
+	private boolean checkSpecialsInMelee (Party friends, Party enemies) {
 		checkRegeneration();
 		checkConstriction();
 		checkSlowing(enemies);
@@ -416,7 +416,7 @@ public class Monster {
 	/**
 	* Check if we should be making sweep attacks.
 	*/
-	boolean useSweepAttacks(Party enemies) {
+	private boolean useSweepAttacks(Party enemies) {
 		return Character.useSweepAttacks() 
 			&& getSweepRate() > getAttack().getRate()
 			&& enemies.isModeFirstLevel();
@@ -425,7 +425,7 @@ public class Monster {
 	/**
 	* Get the current attack rate.
 	*/
-	int getAttackRate(boolean isSweeping) {
+	private int getAttackRate(boolean isSweeping) {
 		if (isSweeping) {
 			return getSweepRate();
 		}
@@ -736,7 +736,8 @@ public class Monster {
 				case WallOfFire:
 					Dice fireDamage = new Dice(1, 6); 
 					for (Monster targetFire: enemy) {
-						targetFire.takeDamage(fireDamage.roll());
+						castEnergy(targetFire, fireDamage.roll(), 
+							EnergyType.Fire, SavingThrows.Type.Spells);
 					}
 					break;
 
@@ -827,8 +828,24 @@ public class Monster {
 	/**
 	* Add a condition suffered from a special ability.
 	*/
-	public void addCondition (SpecialType type) {
+	private void addCondition (SpecialType type) {
 		conditionList.add(new SpecialAbility(type));
+	}
+
+	/**
+	* Take a given condition unless we resist.
+	*/
+	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
+		if (!rollSave(condition.getSaveType(), saveMod)) {
+			addCondition(condition);
+		}
+	}
+
+	/**
+	* Take a given condition unless we resist (no modifier).
+	*/
+	public void saveVsCondition (SpecialType condition, int casterLevel) {
+		saveVsCondition(condition, casterLevel, 0);
 	}
 
 	/**
@@ -860,6 +877,26 @@ public class Monster {
 			}
 		}
 		return false;
+	}
+
+	/**
+	* Die unless we resist.
+	*/
+	public void saveOrDie (int casterLevel) {
+		if (!rollSave(SavingThrows.Type.Death)) {
+			instaKill();
+		}
+	}
+
+	/**
+	* Take energy damage; save for half. 
+	*/
+	public void saveVsEnergy (EnergyType energy, int damage, 
+		SavingThrows.Type saveType, int casterLevel) 
+	{
+		if (isImmuneToEnergy(energy)) return;
+		boolean saved = rollSave(saveType);
+		takeDamage(saved ? damage / 2 : damage);
 	}
 
 	/**
@@ -1076,7 +1113,7 @@ public class Monster {
 	*  Hence: Targets = 1/2 * L * (1/3 * L) = L^2/6 (round up). 
 	*  See AreasOfEffect experiment images for confirmation.
 	*/
-	int getMaxVictimsInCone (int length) {
+	private int getMaxVictimsInCone (int length) {
 		return length * length / 6 + 1;
 	}
 
@@ -1087,14 +1124,14 @@ public class Monster {
 	*  so at most we can hit half of enemy party (rounded up).
 	*  Do not use this method for specials prior to melee.
 	*/
-	int getBreathVictims (Party enemy, int maxVictimsByArea) {
+	private int getBreathVictims (Party enemy, int maxVictimsByArea) {
 		return Math.min((enemy.size() + 1) / 2, maxVictimsByArea);
 	}
 
 	/**
 	* Apply energy damage to multiple enemy party numbers.
 	*/
-	void castEnergyArea (Party enemy, int number, int damage, 
+	private void castEnergyArea (Party enemy, int number, int damage, 
 			EnergyType energy, SavingThrows.Type saveType) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
@@ -1105,18 +1142,16 @@ public class Monster {
 	/**
 	* Apply energy damage to one enemy monster.
 	*/
-	void castEnergy (Monster target, int damage, 
-			EnergyType energy, SavingThrows.Type saveType) {
-		if (!target.isImmuneToEnergy(energy)) {   
-			boolean saved = (saveType != null && target.rollSave(saveType));   
-			target.takeDamage(saved ? damage/2 : damage);
-		}
+	private void castEnergy (Monster target, int damage, 
+			EnergyType energy, SavingThrows.Type saveType) 
+	{
+		target.saveVsEnergy(energy, damage, saveType, getHD());			
 	}
 
 	/**
 	* Is this monster immune to this energy type?
 	*/
-	boolean isImmuneToEnergy (EnergyType energy) {
+	private boolean isImmuneToEnergy (EnergyType energy) {
 		switch (energy) {
 			case Fire: return hasSpecial(SpecialType.FireImmunity);
 			case Cold: return hasSpecial(SpecialType.ColdImmunity);
@@ -1127,9 +1162,9 @@ public class Monster {
 	} 
 
 	/**
-	* Apply condition to multiple enemy party numbers.
+	* Force a condition on multiple enemy party numbers.
 	*/
-	void castConditionArea (Party enemy, int number, SpecialType condition) {
+	private void castConditionArea (Party enemy, int number, SpecialType condition) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			castCondition(m, condition);
@@ -1137,25 +1172,23 @@ public class Monster {
 	}
 
 	/**
-	* Apply condition to one enemy monster (no save modifier).
+	* Force a condition on one enemy monster (no save modifier).
 	*/
-	void castCondition (Monster target, SpecialType condition) {
+	private void castCondition (Monster target, SpecialType condition) {
 		castCondition(target, condition, 0);
 	}
 
 	/**
-	* Apply condition to one enemy monster.
+	* Force a condition on one enemy monster.
 	*/
-	void castCondition (Monster target, SpecialType condition, int saveMod) {
-		if (!target.rollSave(condition.getSaveType(), saveMod)) {
-			target.addCondition(condition);
-		}
+	private void castCondition (Monster target, SpecialType condition, int saveMod) {
+		target.saveVsCondition(condition, saveMod);
 	}
 
 	/**
 	* Cast a charm on one enemy monster.
 	*/
-	void castCharm (Monster target, int saveMod) {
+	private void castCharm (Monster target, int saveMod) {
 		if (target.hasFeat(Feat.IronWill)) saveMod += 4;
 		if (!target.rollSave(SavingThrows.Type.Spells, saveMod)) {
 			target.addCondition(SpecialType.Charm);
@@ -1169,7 +1202,7 @@ public class Monster {
 	*  Any result other than Confusion/Enrage takes
 	*    condition MindBlast (thus, hors de combat). 
 	*/
-	void mindBlastArea (Party enemy, int number) {
+	private void mindBlastArea (Party enemy, int number) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			int intel = m.getAbilityScore(Ability.Int);
