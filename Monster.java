@@ -841,6 +841,7 @@ public class Monster {
 	* Take a given condition unless we resist.
 	*/
 	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
+		if (checkResistMagic(casterLevel)) return;
 		if (!rollSave(condition.getSaveType(), saveMod)) {
 			addCondition(condition);
 		}
@@ -891,8 +892,31 @@ public class Monster {
 		SavingThrows.Type saveType, int casterLevel) 
 	{
 		if (isImmuneToEnergy(energy)) return;
+		if (checkResistMagic(casterLevel)) return;
 		boolean saved = rollSave(saveType);
 		takeDamage(saved ? damage / 2 : damage);
+	}
+
+	/**
+	* Check if we specially resist a magic spell.
+	* @return true if we resist or have immunity to a spell.
+	*/
+	private boolean checkResistMagic (int casterLevel) {
+
+		// Magic immunity
+		if (hasSpecial(SpecialType.MagicImmunity))
+			return true;
+
+		// Magic resistance
+		if (hasSpecial(SpecialType.MagicResistance)) {
+			SpecialAbility ability = findSpecial(SpecialType.MagicResistance);
+			int resistPct = ability.getParam() + (casterLevel - 11) * 5;
+			if (Dice.roll(100) <= resistPct)
+				return true;
+		}
+			
+		// No resistance
+		return false;	
 	}
 
 	/**
