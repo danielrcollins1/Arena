@@ -56,7 +56,7 @@ Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,-,A,N,20,18,W,"O, S1, M1"
 "Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,"Swimming (15), Swallowing",A,N,45,35,U,"O, S1, S2"
 Homunculus,1,7,6,2,-,-,1,1d3,"Flight (18), Telepathy",B,N,2,1,S,S1
 Wererat,8d4,7,12,3,35,C,1,1d6,"Lycanthropy, SilverToHit, Stealth (2)",B,C,3,2,D,S1
-Shadow,2d10,7,9,2+2,50,F,1,1d3,"MagicToHit (1), StrengthDrain, Spawn",B,C,2,3,D,S1
+Shadow,2d10,7,9,2+2,50,F,1,1d3,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity",B,C,2,3,D,S1
 Werewolf,2d10,5,15,4,15,C,1,1d6,"Lycanthropy, SilverToHit",B,N,4,3,D,O
 Wereboar,2d10,4,12,4+1,15,C,1,1d6,"Lycanthropy, SilverToHit",B,N,4,3,D,O
 Blink Dog,4d4,5,12,4,30,C,1,1d6,Blinking,B,L,4,3,D,S1

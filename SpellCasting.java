@@ -125,7 +125,7 @@ public class SpellCasting {
 				int strBonus = Ability.getBonus(strength);
 				boolean breakOut = Dice.roll(6) <= strBonus;
 				if (!breakOut) {
-					target.saveVsCondition(SpecialType.Webbing, level);
+					target.saveVsCondition(SpecialType.Webs, level);
 				}				
 			}	
 		}
@@ -169,7 +169,7 @@ public class SpellCasting {
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
 				if (target.isPerson()) {
-					target.saveVsCondition(SpecialType.Holding, level);
+					target.saveVsCondition(SpecialType.Hold, level);
 				}	
 			}
 		}
@@ -279,7 +279,7 @@ public class SpellCasting {
 			List<Monster> hitTargets = targets.randomGroup(4);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
-				target.saveVsCondition(SpecialType.Holding, level);
+				target.saveVsCondition(SpecialType.Hold, level);
 			}
 		}
 	}

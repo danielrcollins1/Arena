@@ -842,9 +842,12 @@ public class Monster {
 	*/
 	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
 		if (checkResistMagic(casterLevel)) return;
-		if (!rollSave(condition.getSaveType(), saveMod)) {
-			addCondition(condition);
+		if (condition.isUndeadImmune() && hasUndeadImmunity()) return;
+		if (condition.isMentalAttack()) {
+			saveMod += Ability.getBonus(getAbilityScore(Ability.Wis));
 		}
+		if (rollSave(condition.getSaveType(), saveMod)) return;
+		addCondition(condition);
 	}
 
 	/**
@@ -1564,9 +1567,11 @@ public class Monster {
 	public int getAbilityScore (Ability ability) { 
 		switch (ability) {
 			case Str: case Con: return getHD() / 2 * 3 + 10;
-			case Int: case Wis: case Cha: return 6;
-			default: return 10;
+			case Dex: case Wis: return 10;
+			case Int: case Cha: return 8;
 		}	
+		System.err.println("Error: Unknown ability score type.");
+		return 0;
 	}
 
 	/**
@@ -1644,6 +1649,14 @@ public class Monster {
 			return true;
 		}	
 		return false;
+	}
+
+	/**
+	* Does this creature have undead-style immunities?
+	*/
+	private boolean hasUndeadImmunity () {
+		return hasSpecial(SpecialType.Undead)
+			|| hasSpecial(SpecialType.UndeadImmunity);
 	}
 
 	/**

@@ -28,9 +28,9 @@ public enum SpecialType {
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
-	SteamBreath, Stench, ResistStench, Webbing, WebMove, Sleep, 
-	Holding, Blindness, Polymorphism, Undead, Golem, Death, 
-	ManyEyeFunctions, MagicResistance, MagicImmunity;
+	SteamBreath, Stench, ResistStench, Webs, WebMove, Sleep, 
+	Hold, Blindness, Polymorphism, Undead, Golem, Death, 
+	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -61,7 +61,7 @@ public enum SpecialType {
 
 			// Stone saves
 			case Paralysis: case Petrification: 
-			case Holding: case Webbing:
+			case Hold: case Webs:
 				return SavingThrows.Type.Stone;
 
 			// Death saves
@@ -73,28 +73,27 @@ public enum SpecialType {
 	}	
 	
 	/**
-	*  Does this type confer a disabling condition?
+	*  Does this confer a disabling condition?
 	*/
 	public boolean isDisabling () {
 		switch (this) {
 			case Poison: case Paralysis: case Petrification: 
 			case Swallowing: case SporeCloud: case Absorption: 
 			case Fear: case MindBlast: case Sleep: case Charm:
-			case Holding: case Webbing: case Polymorphism: 
-			case Death:
+			case Hold: case Webs: case Polymorphism: case Death:
 				return true;
 		}
 		return false;
 	}
 
 	/**
-	*  Is this type a breath weapon?
+	*  Is this a breath weapon?
 	*/
 	public boolean isBreathWeapon () {
 		switch (this) {
-			case FireBreath: case ColdBreath: case VoltBreath:
-			case AcidBreath: case PoisonBreath: case PetrifyingBreath:
-			case SteamBreath:
+			case FireBreath: case ColdBreath: case AcidBreath:
+			case VoltBreath: case PoisonBreath: case SteamBreath:
+			case PetrifyingBreath:
 				return true;
 		}	
 		return false;
@@ -112,7 +111,7 @@ public enum SpecialType {
 	}
 	
 	/**
-	*  Is this type a summons ability?
+	*  Is this a summons ability?
 	*/
 	public boolean isSummonsAbility () {
 		switch (this) {
@@ -120,5 +119,28 @@ public enum SpecialType {
 				return true;
 		}	
 		return false;
+	}
+
+	/**
+	*  Is this a mental attack form?
+	*/
+	public boolean isMentalAttack () {
+		switch (this) {
+			case Charm: case Hold: case Sleep:
+			case Fear: case Confusion: case MindBlast:
+				return true;
+		}	
+		return false;
+	}
+	
+	/**
+	*  Is the undead class immune to this?
+	*
+	*  OD&D is explicit that charm, hold, and sleep don't affect undead.
+	*  For simplicity & utility, we assume that includes any mental attack.
+	*  (1E also expands that to poison, paralysis, cold, and death spell.)
+	*/
+	public boolean isUndeadImmune () {
+		return isMentalAttack();
 	}
 }
