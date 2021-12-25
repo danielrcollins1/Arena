@@ -189,10 +189,11 @@ public class SpellCasting {
 	static class ConfusionCasting extends Casting {
 		void cast (int level, Party targets) {
 
-			// For utility, assume we can target many creatures in melee.
-			// Contrast with S&S specifier of 3" dia. area effect.
-			int numHit = new Dice(2, 6).roll();
-			if (level > 8) numHit += (level - 8);
+			// S&S gives an area for this spell, which we use
+			int maxHit = spellInfo.getMaxTargetsInArea();
+			int numEffect = new Dice(2, 6).roll();
+			if (level > 8) numEffect += (level - 8);
+			int numHit = Math.min(maxHit, numEffect);
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				target.saveVsCondition(SpecialType.Confusion, level);
@@ -203,6 +204,8 @@ public class SpellCasting {
 	/** Fear spell effect. */
 	static class FearCasting extends Casting {
 		void cast (int level, Party targets) {
+
+			// S&S give a circular area for this spell, which we use
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
@@ -230,22 +233,13 @@ public class SpellCasting {
 	static class CharmMonsterCasting extends Casting {
 		void cast (int level, Party targets) {
 
-			// For utility, assume we can target many creatures in melee.
-			// Compare/contrast with S&S area specifier of 1 monster only.
-			List<Monster> shuffleParty = targets.randomGroup(targets.size());
-			Monster firstTarget = shuffleParty.get(0);
-			if (firstTarget.getHD() >= 4) {
-				firstTarget.saveVsCondition(SpecialType.Charm, level);
-			}
-			else {
-				int effectHD = new Dice(2, 6).roll();
-				for (Monster target: shuffleParty) {
-					if (target.getHD() < 4 && target.getHD() <= effectHD) {
-						effectHD -= target.getHD();									
-						target.saveVsCondition(SpecialType.Charm, level);
-					}
-				}			
-			}
+			// OD&D Vol-1 gives an option for one creature or many of low level.
+			// The former implies targeted use, the latter area-effect
+			// (but our setup here can't handle both).
+			// S&S sets an area of "1 monster" only;
+			// we follow that for balance & simplicity.
+			Monster target = targets.random();
+			target.saveVsCondition(SpecialType.Charm, level);
 		}
 	}
 

@@ -94,7 +94,7 @@ Basilisk,1d6,4,6,6+1,40,F,1,1d6,"PetrifyingGaze, Petrification",B,N,6,25,D,O
 Purple Worm,1d4,6,6,15,25,D,2,2d6,"Swallowing, Poison, Fearlessness",B,N,15,28,D,O
 Dragon Turtle,1d4,2,3,12,60,H,2,2d6,"Swimming (9), Fear, Detection (15), SteamBreath",B,C,12,32,U,O
 "Golem, Stone",1,5,6,18,-,-,1,3d6,"MagicToHit (2), MagicImmunity, Slowing",B,N,18,40,D,S1
-Beholder,1,0,3,12,90,I,1,1d6,"Flight (3), ManyEyeFunctions",B,N,12,105,D,S1
+Beholder,1,0,3,12,90,I,1,1d6,"Flight (3), ManyEyeFunctions",B,N,12,100,D,S1
 "Golem, Iron",1,2,3,24,-,-,1,4d6,"MagicToHit (3), MagicImmunity, PoisonBreath (1)",B,N,24,125,D,S1
 Rust Monster,1d2,2,12,5,-,-,1,0,Corrosion,B,N,5,?,D,S1
 Lammasu,2d4,6,12,6+2,40,A,2,1d6,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil (10)",B,L,6,?,D,S1
@@ -144,26 +144,26 @@ Buccaneer,3d10x10,6,12,1,15,A,1,1d6,-,M,N,1,1,W,O
 Pirate,3d10x10,6,12,1,15,A,1,1d6,-,M,C,1,1,W,O
 Merman,3d10x10,7,3,1+1,40,A,1,1d6,"Swimming (15), Grappling, LandWeakness (-1)",M,N,1,1,U,"O, S2"
 Caveman,3d10,9,12,2,15,A,1,1d6+1,Cowardice (-1),M,N,2,2,W,O
-Veteran,1,4,9,1,15,A,1,1d8,NPC,M,N,1,1,D,O
-Warrior,1,4,9,2,15,A,1,1d8,NPC,M,N,2,2,D,O
-Swordsman,1,2,9,3,15,A,1,1d8,NPC,M,N,3,3,D,O
-Hero,1,2,9,4,15,A,1,1d8,NPC,M,N,4,4,D,O
-Swashbuckler,1,2,9,5,15,A,1,1d8,NPC,M,N,5,5,D,O
-Myrmidon,1,2,9,6,15,A,1,1d8,NPC,M,N,6,6,D,O
-Champion,1,2,9,7,15,A,1,1d8,NPC,M,N,7,7,D,O
-Superhero,1,2,9,8,15,A,1,1d8,NPC,M,N,8,8,D,O
-Lord,1,2,9,9,15,A,1,1d8,NPC,M,N,9,9,D,O
-Medium,1,9,12,1,15,A,1,1d4,"NPC, Spells",M,N,1,2,D,O
-Seer,1,9,12,2,15,A,1,1d4,"NPC, Spells",M,N,2,4,D,O
-Conjurer,1,9,12,3,15,A,1,1d4,"NPC, Spells",M,N,3,6,D,O
-Theurgist,1,9,12,4,15,A,1,1d4,"NPC, Spells",M,N,4,8,D,O
-Thaumaturgist,1,9,12,5,15,A,1,1d4,"NPC, Spells",M,N,5,10,D,O
-Magician,1,9,12,6,15,A,1,1d4,"NPC, Spells",M,N,6,12,D,O
-Enchanter,1,9,12,7,15,A,1,1d4,"NPC, Spells",M,N,7,17,D,O
-Warlock,1,9,12,8,15,A,1,1d4,"NPC, Spells",M,N,8,19,D,O
-Sorcerer,1,9,12,9,15,A,1,1d4,"NPC, Spells",M,N,9,21,D,O
-Necromancer,1,9,12,10,15,A,1,1d4,"NPC, Spells",M,N,10,23,D,O
-Wizard,1,9,12,11,15,A,1,1d4,"NPC, Spells",M,N,11,25,D,O
+Veteran,1,4,9,1,-,-,1,1d8,NPC,M,N,1,1,D,O
+Warrior,1,4,9,2,-,-,1,1d8,NPC,M,N,2,2,D,O
+Swordsman,1,2,9,3,-,-,1,1d8,NPC,M,N,3,3,D,O
+Hero,1,2,9,4,-,-,1,1d8,NPC,M,N,4,4,D,O
+Swashbuckler,1,2,9,5,-,-,1,1d8,NPC,M,N,5,5,D,O
+Myrmidon,1,2,9,6,-,-,1,1d8,NPC,M,N,6,6,D,O
+Champion,1,2,9,7,-,-,1,1d8,NPC,M,N,7,7,D,O
+Superhero,1,2,9,8,-,-,1,1d8,NPC,M,N,8,8,D,O
+Lord,1,2,9,9,-,-,1,1d8,NPC,M,N,9,9,D,O
+Medium,1,9,12,1,-,-,1,1d4,"NPC, Spells",M,N,1,2,D,O
+Seer,1,9,12,2,-,-,1,1d4,"NPC, Spells",M,N,2,4,D,O
+Conjurer,1,9,12,3,-,-,1,1d4,"NPC, Spells",M,N,3,6,D,O
+Theurgist,1,9,12,4,-,-,1,1d4,"NPC, Spells",M,N,4,8,D,O
+Thaumaturgist,1,9,12,5,-,-,1,1d4,"NPC, Spells",M,N,5,10,D,O
+Magician,1,9,12,6,-,-,1,1d4,"NPC, Spells",M,N,6,12,D,O
+Enchanter,1,9,12,7,-,-,1,1d4,"NPC, Spells",M,N,7,15,D,O
+Warlock,1,9,12,8,-,-,1,1d4,"NPC, Spells",M,N,8,18,D,O
+Sorcerer,1,9,12,9,-,-,1,1d4,"NPC, Spells",M,N,9,20,D,O
+Necromancer,1,9,12,10,-,-,1,1d4,"NPC, Spells",M,N,10,22,D,O
+Wizard,1,9,12,11,-,-,1,1d4,"NPC, Spells",M,N,11,24,D,O
 Gray Ooze,1,8,1,3,-,-,1,2d6,"Grabbing, Corrosion, FireImmunity, ColdImmunity",O,N,3,3,D,O
 Gelatinous Cube,1,8,6,4,-,-,1,1d6,"Paralysis, VoltImmunity, ColdImmunity",O,N,4,5,D,S1
 Yellow Mold,1,9,0,1,-,-,1,0,"SporeCloud, VoltImmunity, ColdImmunity, ChopImmunity",O,N,1,?,D,O
