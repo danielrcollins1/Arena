@@ -425,8 +425,9 @@ public class Monster {
 		checkSlowing(enemies);
 		if (checkGrabbing()) return true;
 		if (checkBloodDrain()) return true;
+		if (checkWebbing()) return true;
 		if (checkBreathWeapon(enemies)) return true;
-		if (checkConfused(friends)) return true;
+		if (checkConfusion(friends)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
 		if (checkManyEyesSalvo(enemies)) return true;
 		return false;
@@ -868,6 +869,14 @@ public class Monster {
 	*/
 	private void addCondition (SpecialType type) {
 		conditionList.add(new SpecialAbility(type));
+	}
+
+	/**
+	* Remove a condition of a given special type.
+	*/
+	private void removeCondition (SpecialType type) {
+		SpecialAbility special = findSpecial(type);
+		conditionList.remove(special);
 	}
 
 	/**
@@ -1322,7 +1331,7 @@ public class Monster {
 	/**
 	* Check if we are confused on our turn to attack.
 	*/
-	public boolean checkConfused (Party party) {
+	public boolean checkConfusion (Party party) {
 		if (hasCondition(SpecialType.Confusion)) {
 			int reaction = new Dice(2, 6).roll();
 			if (reaction <= 5)   // act normally
@@ -1336,6 +1345,22 @@ public class Monster {
 				}
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	* Check if we are entangled in webs on our turn.
+	*/
+	public boolean checkWebbing () {
+		if (hasCondition(SpecialType.Webs)) {
+
+			// Make check vs. strength bonus to break out
+			int strength = getAbilityScore(Ability.Str);
+			int strBonus = Ability.getBonus(strength);
+			boolean breakOut = Dice.roll(6) <= strBonus;
+			if (breakOut) removeCondition(SpecialType.Webs);
+			return true;
 		}
 		return false;
 	}

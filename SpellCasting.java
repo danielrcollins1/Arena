@@ -119,14 +119,7 @@ public class SpellCasting {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit); 
 			for (Monster target: hitTargets) {
-			
-				// Give one chance to break out by Strength
-				int strength = target.getAbilityScore(Ability.Str);
-				int strBonus = Ability.getBonus(strength);
-				boolean breakOut = Dice.roll(6) <= strBonus;
-				if (!breakOut) {
-					target.saveVsCondition(SpecialType.Webs, level);
-				}				
+				target.saveVsCondition(SpecialType.Webs, level);
 			}	
 		}
 	}
