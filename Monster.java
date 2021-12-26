@@ -15,14 +15,17 @@ public class Monster {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Sides on standard hit dice. */
-	static final int BASE_HIT_DIE = 6;
-
-	/** Maximum enemies who can melee us at once. */
-	static final int MAX_MELEERS = 6;
-
 	/** Sentinel value for undefined EHD. */
 	public static final int UNDEFINED_EHD = -1;
+
+	/** Sides on standard hit dice. */
+	private static final int BASE_HIT_DIE = 6;
+
+	/** Maximum enemies who can melee us at once. */
+	private static final int MAX_MELEERS = 6;
+
+	/** Starting Special & Condition set capacity. */
+	private static final int START_SPECIAL_CAPACITY = 4;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -49,8 +52,8 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
-	List<SpecialAbility> specialList;
-	List<SpecialAbility> conditionList;
+	AbstractSet<SpecialAbility> specialList;
+	AbstractSet<SpecialAbility> conditionList;
 	SpellMemory spellMemory;
 
 	//--------------------------------------------------------------------------
@@ -77,8 +80,8 @@ public class Monster {
 		this.attack = attack;
 		this.alignment = Alignment.Neutral;
 		equivalentHitDice = hitDice.getNum();
-		specialList = new ArrayList<SpecialAbility>(); 
-		conditionList = new ArrayList<SpecialAbility>(); 
+		specialList = new HashSet<SpecialAbility>(); 
+		conditionList = new HashSet<SpecialAbility>();
 		spellMemory = null;
 		rollHitPoints();
 	}
@@ -112,7 +115,8 @@ public class Monster {
 		sourceBook = s[15];
 
 		// Secondary fields
-		conditionList = new ArrayList<SpecialAbility>(); 
+		conditionList = 
+			new HashSet<SpecialAbility>(START_SPECIAL_CAPACITY); 
 		spellMemory = null;
 		addImpliedSpecials();
 		rollHitPoints();
@@ -137,8 +141,10 @@ public class Monster {
 		hitDiceAsFloat = src.hitDiceAsFloat;
 		killTally = src.killTally;
 		host = src.host;
-		specialList = new ArrayList<SpecialAbility>(src.specialList); 
-		conditionList = new ArrayList<SpecialAbility>(src.conditionList); 
+		specialList = 
+			new HashSet<SpecialAbility>(src.specialList);
+		conditionList = 
+			new HashSet<SpecialAbility>(src.conditionList); 
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
@@ -235,8 +241,9 @@ public class Monster {
 	/**
 	* Parse special ability list from descriptor string.
 	*/
-	private List<SpecialAbility> parseSpecialAbilityList (String s) {
-		List<SpecialAbility> list = new ArrayList<SpecialAbility>(); 
+	private AbstractSet<SpecialAbility> parseSpecialAbilityList (String s) {
+		HashSet<SpecialAbility> list = 
+			new HashSet<SpecialAbility>(START_SPECIAL_CAPACITY); 
 		if (s.length() > 1) {
 			String parts[] = s.split(", ");
 			for (String part: parts) {
@@ -255,13 +262,13 @@ public class Monster {
 	*/
 	private void addImpliedSpecials() {
 		if (getRace().startsWith("Dragon")) {
-			specialList.add(0, new SpecialAbility(SpecialType.Dragon));
+			specialList.add(new SpecialAbility(SpecialType.Dragon));
 			dragonAge = parseDragonAge();
 		}
 		if (getRace().startsWith("Golem"))
-			specialList.add(0, new SpecialAbility(SpecialType.Golem));
+			specialList.add(new SpecialAbility(SpecialType.Golem));
 		if (getType() == 'U')
-			specialList.add(0, new SpecialAbility(SpecialType.Undead));
+			specialList.add(new SpecialAbility(SpecialType.Undead));
 	}
 
 	/**
