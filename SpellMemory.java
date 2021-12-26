@@ -70,6 +70,13 @@ public class SpellMemory {
 	public boolean contains (Spell s) {
 		return memory.contains(s);
 	}
+	
+	/**
+	*  Is our memory empty?
+	*/
+	public boolean isBlank () {
+		return memory.isEmpty();	
+	}
 
 	/**
 	*  Count spells of a given level.
@@ -143,6 +150,27 @@ public class SpellMemory {
 			}
 		}	
 		return best;
+	}
+
+	/**
+	*  Add a spell by naming it.
+	*/
+	public void addByName (String name) {
+		add(SpellsIndex.getInstance().findByName(name));
+	}
+
+	/**
+	*  Add all spells for a wizard of a given level.
+	*/
+	public void addSpellsForWizard (int level) {
+		SpellsDaily spellsDaily = SpellsDaily.getInstance();
+		int maxPower = spellsDaily.getMaxSpellLevel();
+		for (int power = 1; power <= maxPower; power++) {
+			int numSpells = spellsDaily.getSpellsDaily(level, power);
+			for (int num = 0; num < numSpells; num++) {
+				addRandom(power);
+			}
+		}
 	}
 
 	/**

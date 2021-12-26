@@ -29,8 +29,9 @@ public enum SpecialType {
 	MindBlast, BrainConsumption, SappingStrands, Slowing, 
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
 	SteamBreath, Stench, ResistStench, Webs, WebMove, Sleep, 
-	Hold, Blindness, Polymorphism, Undead, Golem, Death, 
-	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity;
+	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
+	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
+	Fearlessness, ProtectionFromEvil;
 	
 	//--------------------------------------------------------------------------
 	//  Methods

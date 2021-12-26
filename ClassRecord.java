@@ -219,13 +219,7 @@ public class ClassRecord {
 	void addAllSpells() {
 		if (classType.usesSpells()) {
 			spellsKnown = new SpellMemory();
-			SpellsDaily spellsDaily = SpellsDaily.getInstance();
-			for (int sLevel = 1; sLevel <= spellsDaily.getMaxSpellLevel(); sLevel++) {
-				int numSpells = spellsDaily.getSpellsDaily(level, sLevel);
-				for (int num = 0; num < numSpells; num++) {
-					spellsKnown.addRandom(sLevel);
-				}
-			}
+			spellsKnown.addSpellsForWizard(level);
 		}
 	}
 

@@ -44,6 +44,7 @@ public class Monster {
 	int equivalentHitDice;
 	int hitPoints;
 	int maxHitPoints;
+	int dragonAge;
 	int breathCharges;
 	int killTally;
 	int timesMeleed;
@@ -57,7 +58,7 @@ public class Monster {
 	//--------------------------------------------------------------------------
 
 	/**
-	* Constructor (very basic).
+	* Very basic constructor (for testing).
 	*/
 	public Monster (String race, int AC, int MV, int hitDice, int damageDice) {
 		this(race, AC, MV, 
@@ -66,7 +67,7 @@ public class Monster {
 	}
 
 	/**
-	* Constructor (basic).
+	* Fairly basic constructor (for testing).
 	*/
 	public Monster (String race, int AC, int MV, Dice hitDice, Attack attack) {
 		this.race = race;
@@ -83,8 +84,13 @@ public class Monster {
 	}
 
 	/**
-	* Constructor (from String array).
-	* @param s String array.
+   * Creates a prototype monster from text file specification.
+	*
+	* Some values are left undefined by this method:
+	* E.g., dragon random ages (and hp), spells memorized.
+	* For those, see the spawn() function.
+	*
+	* @param s specification string array.
 	*/
 	public Monster (String[] s) {
 
@@ -136,8 +142,8 @@ public class Monster {
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
-		spellMemory = src.spellMemory == null ? null 
-			: new SpellMemory(src.spellMemory);
+		dragonAge = src.dragonAge;
+		spellMemory = null;
 	}
 
 	//--------------------------------------------------------------------------
@@ -213,7 +219,7 @@ public class Monster {
 			}
 			return new Dice(num, BASE_HIT_DIE, mul, add);
 		}
-		System.err.println("Error: Could not parse hit dice descriptor: " + s);
+		System.err.println("Could not parse hit dice descriptor: " + s);
 		return null;
 	}
 
@@ -248,8 +254,10 @@ public class Monster {
 	* Add some special qualifiers based on name or type.
 	*/
 	private void addImpliedSpecials() {
-		if (getRace().startsWith("Dragon"))
+		if (getRace().startsWith("Dragon")) {
 			specialList.add(0, new SpecialAbility(SpecialType.Dragon));
+			dragonAge = parseDragonAge();
+		}
 		if (getRace().startsWith("Golem"))
 			specialList.add(0, new SpecialAbility(SpecialType.Golem));
 		if (getType() == 'U')
@@ -267,16 +275,26 @@ public class Monster {
 	* Spawn a new monster of this type, with different hit points.
 	*/
 	public Monster spawn () {
+
+		// NPC-types
 		if (hasSpecial(SpecialType.NPC)) {
 			Character c = Character.evilNPCFromTitle(race);
-			c.race = race; // Reset monster race/title for kill tally
+			c.race = race; // Reset race name for kill tally
 			for (SpecialAbility s: specialList) {
 				c.specialList.add(s);
 			}
 			return c;
 		}
+		
+		// Standard monsters
 		else {
 			Monster m = new Monster(this);
+			if (m.hasSpecial(SpecialType.Dragon)) {
+				m.rollDragonAge();
+			}
+			if (m.hasSpecial(SpecialType.Spells)) {
+				m.memorizeSpells();
+			}
 			m.rollHitPoints();
 			return m;
 		}
@@ -548,6 +566,11 @@ public class Monster {
 			modifier -= 2;		
 		}
 
+		// Blindness
+		if (hasCondition(SpecialType.Blindness)) {
+			modifier -= 4;
+		}
+
 		// Target displacement
 		if (target.hasSpecial(SpecialType.Displacement)) {
 			modifier -= 2;
@@ -563,10 +586,10 @@ public class Monster {
 		if (target.getGazeWeapon() != null) {
 			modifier -= 4;
 		}
-		
-		// Blindness
-		if (hasCondition(SpecialType.Blindness)) {
-			modifier -= 4;
+
+		// Target protection from evil
+		if (target.hasSpecial(SpecialType.ProtectionFromEvil)) {
+			modifier -= 1;		
 		}
 
 		return modifier;
@@ -687,14 +710,23 @@ public class Monster {
 	}
 
 	/**
-	* Make a special attack on an enemy party.
-	* Ranged/outside of melee specials should go here.
-	* Uses all abilities possessed.
+	* Make one special attack on an enemy party.
+	* Pre-melee, ranged-attack specials go here.
+	* Mostly uses just one ability (first one in monster list).
 	*/
 	void makeSpecialAttack (Party enemy) {
 		Monster target;
 		Attack attack;
 		int modifier;
+
+		// Fear aura takes effect in addition to others
+		if (hasSpecial(SpecialType.Fear)) {
+			int maxLevel = getSpecialParam(SpecialType.Fear);
+			for (Monster m: enemy) {
+				if (m.getHD() <= maxLevel)
+					m.saveVsCondition(SpecialType.Fear, getHD());
+			}			
+		}
 
 		// Check for offensive spell-casting
 		if (checkCastSpellPreMelee(enemy)) {
@@ -709,7 +741,7 @@ public class Monster {
 					target = enemy.random();
 					attack = new Attack("Rock", 1, getHD(), new Dice(2, 6));
 					singleAttack(attack, target, false);
-					break;
+					return;
 
 				case TailSpikes:
 					attack = new Attack("Tail Spike", 1, getHD(), new Dice(1, 6));
@@ -717,22 +749,13 @@ public class Monster {
 						target = enemy.random();
 						singleAttack(attack, target, false);
 					}
-					break;
+					return;
 
 				case PetrifyingGaze:
 					for (Monster targetPetrify: enemy) {
 						castCondition(targetPetrify, SpecialType.Petrification);
 					}
-					break;
-
-				case Fear:
-					Dice moraleDice = new Dice(2, 6); 
-					for (Monster targetFear: enemy) {
-						if (moraleDice.roll() + targetFear.getHD() < 9) {
-							targetFear.addCondition(SpecialType.Fear);
-						}
-					}
-					break;
+					return;
 
 				case WallOfFire:
 					Dice fireDamage = new Dice(1, 6); 
@@ -740,20 +763,20 @@ public class Monster {
 						castEnergy(targetFire, fireDamage.roll(), 
 							EnergyType.Fire, SavingThrows.Type.Spells);
 					}
-					break;
+					return;
 
 				case ConeOfCold:
 					int damage = new Dice(8, 6).roll();
 					int maxVictims = getMaxVictimsInCone(6);
 					castEnergyArea(enemy, maxVictims, damage, 
 						EnergyType.Cold, SavingThrows.Type.Spells);
-					break;
+					return;
 
 				case AcidSpitting:
 					target = enemy.random();
 					attack = new Attack("Acid Spit", 1, getHD(), new Dice(2, 6));
 					singleAttack(attack, target, false);
-					break;
+					return;
 
 				case Whirlwind:
 					int diameter = s.getParam();
@@ -764,19 +787,19 @@ public class Monster {
 							m.instaKill();
 						}     
 					}
-					break;
+					return;
 
 				case Confusion:
 					target = enemy.random();
 					modifier = -s.getParam();
 					if (target.hasFeat(Feat.IronWill)) modifier += 4;
 					castCondition(target, SpecialType.Confusion, modifier);
-					break;
+					return;
 
 				case MindBlast: 
 					maxVictims = getMaxVictimsInCone(6);
 					mindBlastArea(enemy, maxVictims);
-					break;    
+					return;    
 
 				case SappingStrands:
 					attack = new Attack("Sapping Strand", 1, getHD(), new Dice(0, 6));
@@ -784,7 +807,7 @@ public class Monster {
 						target = enemy.random();
 						singleAttack(attack, target, false);
 					}
-					break;
+					return;
 
 				case Stench:
 					for (Monster targetStench: enemy) {
@@ -798,15 +821,15 @@ public class Monster {
 							}
 						}
 					}
-					break;
+					return;
 
 				case Charm:
 					castCharm(enemy.random(), -s.getParam());
-					break;
+					return;
 					
 				case ManyEyeFunctions:
 					manyEyesSalvo(enemy);
-					break;
+					return;
 			}     
 		}
 	}
@@ -814,7 +837,7 @@ public class Monster {
 	/**
 	* Find if we have a given type of special ability.
 	*/
-	public SpecialAbility findSpecial (SpecialType type) {
+	private SpecialAbility findSpecial (SpecialType type) {
 		for (SpecialAbility s: specialList) {
 			if (s.getType() == type) {
 				return s;
@@ -826,9 +849,19 @@ public class Monster {
 	/**
 	* Check if this monster has a given type of special ability.
 	*/
-	public boolean hasSpecial (SpecialType type) {
+	private boolean hasSpecial (SpecialType type) {
 		return findSpecial(type) != null;
 	}
+
+	/**
+	* Get the parameter for a given special ability.
+	*/
+	private int getSpecialParam (SpecialType type) {
+		SpecialAbility special = findSpecial(type);
+		if (special != null) return special.getParam();	
+		System.err.println("Requested parameter for absent special type: " + type);
+		return 0;				
+	}	
 
 	/**
 	* Add a condition suffered from a special ability.
@@ -843,6 +876,7 @@ public class Monster {
 	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
 		if (checkResistMagic(casterLevel)) return;
 		if (condition.isUndeadImmune() && hasUndeadImmunity()) return;
+		if (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)) return;
 		if (condition.isMentalAttack()) {
 			saveMod += Ability.getBonus(getAbilityScore(Ability.Wis));
 		}
@@ -1093,7 +1127,7 @@ public class Monster {
 						case 2: damage = new Dice(2, 6).roll(); // Beetle
 							maxVictims = 1; break;
 						default: damage = 0; maxVictims = 0;
-							System.err.println("Error: Unknown acid breath.");
+							System.err.println("Unknown acid breath.");
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castEnergyArea(enemy, numVictims, damage, 
@@ -1119,7 +1153,7 @@ public class Monster {
 					break;
 
 				default:
-					System.err.println("Error: Breath weapon type not handled:"
+					System.err.println("Breath weapon type not handled:"
 						+ breath.getType());
 			}
 			breathCharges--;
@@ -1279,7 +1313,7 @@ public class Monster {
 					break;
 
 				default:
-					System.err.println("Error: Summons type not found: " 
+					System.err.println("Summons type not found: " 
 						+ summons.getType());
 			}  
 		}
@@ -1428,9 +1462,8 @@ public class Monster {
 		int modifier = 0;
 
 		// Save bonus special ability
-		SpecialAbility saveBonus = findSpecial(SpecialType.SaveBonus);
-		if (saveBonus != null) {
-			modifier += saveBonus.getParam();  
+		if (hasSpecial(SpecialType.SaveBonus)) {
+			modifier += getSpecialParam(SpecialType.SaveBonus);
 		}
 
 		// Displacement effect
@@ -1447,6 +1480,11 @@ public class Monster {
 		// Berserker bonus (Feat)
 		if (hasFeat(Feat.Berserking)) {
 			modifier += 4;
+		}
+
+		// Protection from evil
+		if (hasSpecial(SpecialType.ProtectionFromEvil)) {
+			modifier += 1;
 		}
 
 		return modifier;
@@ -1547,17 +1585,35 @@ public class Monster {
 	}
 
 	/**
-	* Get a dragon's age category from the name.
-	* If no descriptor match, return a random age.
+	* Parse a dragon's age value from the name.
+	* @return the age bracket (1-6, or 0 if not given)
 	*/
-	int getDragonAge () {
-		String ageDesc[] = {"Very Young", "Young", 
+	private int parseDragonAge () {
+		assert(hasSpecial(SpecialType.Dragon));
+		final String ageDesc[] = {"Very Young", "Young", 
 			"Sub-Adult", "Adult", "Old", "Very Old"};
-		for (int i = 0; i < ageDesc.length; i++) {
-			if (race.endsWith(", " + ageDesc[i]))
-				return i + 1;
+		for (int age = 1; age <= ageDesc.length; age++) {
+			if (race.endsWith(", " + ageDesc[age - 1]))
+				return age;
 		}
-		return Dice.roll(BASE_HIT_DIE);
+		return 0;
+	}
+
+	/**
+	* Roll a dragon's age category, if not set already.
+	*/
+	private void rollDragonAge () {
+		assert(hasSpecial(SpecialType.Dragon));
+		if (dragonAge < 1) 
+			dragonAge = Dice.roll(BASE_HIT_DIE);
+	}
+
+	/**
+	* Get a dragon's age category.
+	*/
+	private int getDragonAge () {
+		assert(hasSpecial(SpecialType.Dragon));
+		return dragonAge;
 	}
 
 	/**
@@ -1570,7 +1626,7 @@ public class Monster {
 			case Dex: case Wis: return 10;
 			case Int: case Cha: return 8;
 		}	
-		System.err.println("Error: Unknown ability score type.");
+		System.err.println("Unknown ability score type.");
 		return 0;
 	}
 
@@ -1657,6 +1713,74 @@ public class Monster {
 	private boolean hasUndeadImmunity () {
 		return hasSpecial(SpecialType.Undead)
 			|| hasSpecial(SpecialType.UndeadImmunity);
+	}
+
+	/**
+	* Memorize spells for a monster that has them.
+	*/
+	private void memorizeSpells () {
+		assert(hasSpecial(SpecialType.Spells));
+		spellMemory = new SpellMemory();
+
+		// Gold Dragon
+		// - Gain one level of spell per age category.
+		// - As per AD&D idiom, gain two such spells per level.
+		if (race.startsWith("Dragon, Gold")) {
+			int age = getDragonAge();
+			for (int level = 1; level <= age; level++) {
+				for (int num = 0; num < 2; num++)
+					spellMemory.addRandom(level);
+			}
+		}
+
+		// Titan
+		// - Gain two spells per level available.
+		// - Inspired by AD&D rule, roll for levels available.
+		// - Ignore cleric spells (post-melee recovery)
+		if (race.equals("Titan")) {
+			int maxLevel = Dice.roll(3) + 3;
+			for (int level = 1; level <= maxLevel; level++) {
+				for (int num = 0; num < 2; num++)
+					spellMemory.addRandom(level);
+			}
+		}
+
+		// Triton
+		// - Handle different HD classes.
+		// - Estimate 2 spells per level available.
+		if (race.equals("Triton")) {
+			int maxLevel = getHD() - 3;
+			for (int level = 1; level <= maxLevel; level++) {
+				for (int num = 0; num < 2; num++)
+					spellMemory.addRandom(level);
+			}
+		}
+			
+		// Lich
+		// - Assume the "typical" 18th level of wizardry.
+		if (race.equals("Lich")) {
+			final int wizLevel = 18;
+			spellMemory.addSpellsForWizard(wizLevel);
+		}
+
+		// Ogre Mage
+		// - Spells are fixed per book description.
+		if (race.equals("Ogre Mage")) {
+			spellMemory.addByName("Sleep");
+			spellMemory.addByName("Charm Person");
+			spellMemory.addByName("Ice Storm");
+		}
+		
+		// Lammasu
+		// - Spells are clerical, which we ignore here (post-melee recovery)
+		if (race.equals("Lammasu")) {
+			return;		
+		}		
+
+		// Check for unrecognized monster with spells.
+		if (spellMemory.isBlank()) {
+			System.err.println("Unknown monster with spells: " + race);
+		}
 	}
 
 	/**
