@@ -69,6 +69,7 @@ public enum SpecialType {
 			case Poison: case SporeCloud: case Death:
 				return SavingThrows.Type.Death; 
 		}	
+
 		System.err.println("Error: No saveType for condition: " + this);
 		return null;
 	}	

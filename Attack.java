@@ -7,6 +7,14 @@
 ******************************************************************************/
 
 public class Attack {
+
+	//--------------------------------------------------------------------------
+	//  Constant
+	//--------------------------------------------------------------------------
+
+	/** Base damage die type. */
+	private static final int BASE_DIE = 6;
+
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -23,6 +31,9 @@ public class Attack {
 	/** Damage dice on successful hit. */
 	Dice damage;
 
+	/** Energy type applicable to this attack. */
+	EnergyType energy;
+
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
@@ -30,25 +41,33 @@ public class Attack {
 	/**	
 	*  Constructor (full fields).
 	*/
-	Attack (String name, int rate, int bonus, Dice damage) {
+	Attack (String name, int rate, int bonus, Dice damage, EnergyType energy) {
 		this.name = name;
 		this.rate = rate;
 		this.bonus = bonus;
 		this.damage = damage;
+		this.energy = energy;
+	}
+
+	/**	
+	*  Constructor (name, rate, bonus, damage).
+	*/
+	Attack (String name, int rate, int bonus, Dice damage) {
+		this(name, rate, bonus, damage, null);
 	}
 
 	/**	
 	*  Constructor (rate, bonus, damage dice).
 	*/
 	Attack (int rate, int bonus, int damDice) {
-		this(null, rate, bonus, new Dice(damDice, 6));
+		this(null, rate, bonus, new Dice(damDice, BASE_DIE), null);
 	}
 
 	/**	
 	*  Constructor (bonus, damage dice).
 	*/
 	Attack (int bonus, int damDice) {
-		this(null, 1, bonus, new Dice(damDice, 6));
+		this(null, 1, bonus, new Dice(damDice, BASE_DIE), null);
 	}
 
 	//--------------------------------------------------------------------------
@@ -58,6 +77,7 @@ public class Attack {
 	public int getBonus() { return bonus; }
 	public int getRate() { return rate; }
 	public Dice getDamage() { return damage; }
+	public EnergyType getEnergy() { return energy; }
 	public void setBonus (int bonus)  { this.bonus = bonus; }
 	public void setRate (int rate)  { this.rate = rate; }
 
@@ -95,4 +115,3 @@ public class Attack {
 		System.out.println(atk);
 	}
 }
-

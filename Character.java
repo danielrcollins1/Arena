@@ -457,7 +457,8 @@ public class Character extends Monster {
 				damageAdd += 2;
 			}
 			damageDice.setAdd(damageAdd);
-			return new Attack(name, rate, atkBonus, damageDice);
+			EnergyType energy = weaponInHand.getEnergy();
+			return new Attack(name, rate, atkBonus, damageDice, energy);
 		}	
 	}
 

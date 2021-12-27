@@ -7,7 +7,7 @@
 ******************************************************************************/
 
 public class Weapon extends Equipment {
-	enum Material {Steel, Silver}
+	enum Material {Wood, Steel, Silver}
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -20,14 +20,17 @@ public class Weapon extends Equipment {
 	//  Fields
 	//--------------------------------------------------------------------------
 
-	/** Material. */
+	/** Material type. */
 	Material material;
 
-	/** Base damage. */
-	Dice baseDamage;
+	/** Damage basis. */
+	Dice damage;
+
+	/** Energy type. */
+	EnergyType energy;
 
 	/** Hands used. */
-	int handsUsed;
+	int hands;
 	
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -36,43 +39,52 @@ public class Weapon extends Equipment {
 	/**
 	*  Constructor (all fields).
 	*/
-	Weapon (String name, Dice baseDamage, float weight, int handsUsed, 
-			int magicBonus, Material material) {
-		super(name, weight, magicBonus); 
-		this.baseDamage = baseDamage;
-		this.handsUsed = handsUsed;
+	Weapon (String name, Dice damage, float weight, int hands, 
+			int magic, Material material, EnergyType energy) {
+		super(name, weight, magic); 
+		this.damage = damage;
+		this.hands = hands;
 		this.material = material;
+		this.energy = energy;
 	}
 
 	/**
-	*  Constructor (no material).
+	*  Constructor (name, damage, weight, hands, magic).
 	*/
-	Weapon (String name, Dice baseDamage, float weight, int handsUsed, 
-			int magicBonus) {
-		this(name, baseDamage, weight, handsUsed, magicBonus, Material.Steel);
+	Weapon (String name, Dice damage, float weight, int hands, int magic) {
+		this(name, damage, weight, hands, magic, Material.Steel, null);
+	}
+
+	/**
+	*  Constructor (name, damage, weight, hands, material).
+	*/
+	Weapon (String name, Dice damage, float weight, int hands, 
+			Material material) {
+		this(name, damage, weight, hands, 0, material, null);
 	}
 
 	/**
 	*  Constructor (name, damage, weight, hands).
 	*/
-	Weapon (String name, Dice baseDamage, float weight, int handsUsed) {
-		this(name, baseDamage, weight, handsUsed, 0, Material.Steel);
+	Weapon (String name, Dice damage, float weight, int hands) {
+		this(name, damage, weight, hands, 0, Material.Steel, null);
 	}
 
 	/**
 	*  Constructor (copy)
 	*/
 	Weapon (Weapon w) {
-		this(w.name, new Dice(w.baseDamage), w.weight, w.handsUsed, 
-			w.magicBonus, w.material);
+		this(w.name, new Dice(w.damage), w.weight, w.hands, 
+			w.magicBonus, w.material, w.energy);
 	}
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-	public Dice getBaseDamage () { return baseDamage; }
+	public Dice getBaseDamage () { return damage; }
 	public Material getMaterial () { return material; }
-	public int getHandsUsed () { return handsUsed; }
+	public EnergyType getEnergy () { return energy; }
+	public int getHandsUsed () { return hands; }
 	
 	/**
 	*  Make a random primary melee weapon.
@@ -121,21 +133,29 @@ public class Weapon extends Equipment {
 	*  Make a normal dagger.
 	*/
 	static public Weapon dagger () {
-		return new Weapon("Dagger", new Dice(4), 0, 1, 0, Material.Steel);
+		return new Weapon("Dagger", new Dice(4), 0, 1);
 	}
 	
 	/**
 	*  Make a silver dagger.
 	*/
 	static public Weapon silverDagger () {
-		return new Weapon("Dagger", new Dice(4), 0, 1, 0, Material.Silver);
+		return new Weapon("Dagger", new Dice(4), 0, 1, Material.Silver);
 	}
 
 	/**
 	*  Make a possibly-magic sword.
 	*/
 	static public Weapon sword (int bonus) {
-		return new Weapon("Sword", new Dice(8), ONE_THIRD, 1, bonus, Material.Steel);
+		return new Weapon("Sword", new Dice(8), ONE_THIRD, 1, bonus);
+	}
+
+	/**
+	*  Make a torch.
+	*/
+	static public Weapon torch () {
+		return new Weapon("Torch", new Dice(3), ONE_THIRD, 1, 0, 
+			Material.Wood, EnergyType.Fire);
 	}
 
 	/**
@@ -143,7 +163,7 @@ public class Weapon extends Equipment {
 	*/
 	public String toString() {
 		String s = getName();
-		if (material != Material.Steel) {
+		if (material == Material.Silver) {
 			s = material + " " + s;		
 		}
 		if (magicBonus != 0) {
@@ -151,6 +171,4 @@ public class Weapon extends Equipment {
 		}
 		return s;
 	}
-	
 }
-

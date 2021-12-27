@@ -523,6 +523,7 @@ public class MonsterMetrics {
 		f.setShield(Armor.makeType(Armor.Type.Shield));
 		f.addEquipment(newSword(level));
 		f.addEquipment(Weapon.silverDagger());
+		f.addEquipment(Weapon.torch());
 		return f;
 	}
 

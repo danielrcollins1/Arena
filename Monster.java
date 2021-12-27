@@ -489,7 +489,7 @@ public class Monster {
 				&& getWeapon().getMaterial() == Weapon.Material.Silver);
 			boolean atkSilverToHit = hasSpecial(SpecialType.SilverToHit);
 			if (!hasSilverWeapon && !atkSilverToHit && getMagicHitLevel() <= 0)
-				canHit = false;			
+				canHit = false;
 		}
 
 		// Check magic to hit
@@ -499,9 +499,11 @@ public class Monster {
 				canHit = false;
 		}
 
-		// Check total weapon immunity
+		// Check chop-immunity (non-energy weapon blows)
 		if (target.hasSpecial(SpecialType.ChopImmunity)) {
-			canHit = false;
+			EnergyType atkEnergy = getAttack().getEnergy();
+			if (atkEnergy == null || target.isImmuneToEnergy(atkEnergy))
+				canHit = false;
 		}
 
 		// Check phasing (3-in-6 to be out of phase)
