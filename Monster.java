@@ -104,18 +104,18 @@ public class Monster {
 		inLairPct = CSVReader.parseInt(s[5]);
 		treasureType = s[6].charAt(0);
 		attack = parseAttackRoutine(s[7], s[8]);
-		type = s[10].charAt(0);
-		alignment = Alignment.getFromChar(s[11].charAt(0));
-		hitDiceAsFloat = parseFloat(s[12]);
-		equivalentHitDice = parseEHD(s[13]);
-		environment = s[14].charAt(0);
-		sourceBook = s[15];
+		type = s[9].charAt(0);
+		alignment = Alignment.getFromChar(s[10].charAt(0));
+		hitDiceAsFloat = parseFloat(s[11]);
+		equivalentHitDice = parseEHD(s[12]);
+		environment = s[13].charAt(0);
+		sourceBook = s[14];
 
 		// Special abilities & conditions
 		specialList = EnumSet.noneOf(SpecialType.class);
 		conditionList = EnumSet.noneOf(SpecialType.class);
 		specialValues = new EnumMap<SpecialType, Integer>(SpecialType.class);
-		setSpecialAbilities(s[9]);
+		setSpecialAbilities(s[15]);
 
 		// Other fields
 		spellMemory = null;
