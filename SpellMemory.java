@@ -1,4 +1,4 @@
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /******************************************************************************
 *  Memory of spells known by one creature.
@@ -16,7 +16,7 @@ public class SpellMemory {
 	//--------------------------------------------------------------------------
 
 	/** The set of spells in memory (no duplicates). */
-	LinkedHashSet<Spell> memory;
+	Set<Spell> memory;
 
 	/** Should we select in-sim castable spells first? */
 	static boolean preferCastableSpells = false;

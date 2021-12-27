@@ -25,7 +25,7 @@ public class Monster {
 	private static final int MAX_MELEERS = 6;
 
 	/** Starting Special & Condition set capacity. */
-	private static final int START_SPECIAL_CAPACITY = 4;
+	private static final int START_SPECIAL_CAP = 4;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -52,8 +52,9 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
-	AbstractSet<SpecialAbility> specialList;
-	AbstractSet<SpecialAbility> conditionList;
+	Set<SpecialAbility> specialValues;
+	Set<SpecialType> specialList;
+	Set<SpecialType> conditionList;
 	SpellMemory spellMemory;
 
 	//--------------------------------------------------------------------------
@@ -80,9 +81,10 @@ public class Monster {
 		this.attack = attack;
 		this.alignment = Alignment.Neutral;
 		equivalentHitDice = hitDice.getNum();
-		specialList = new HashSet<SpecialAbility>(); 
-		conditionList = new HashSet<SpecialAbility>();
-		spellMemory = null;
+		specialValues = 
+			new HashSet<SpecialAbility>(START_SPECIAL_CAP);
+		specialList = EnumSet.noneOf(SpecialType.class);
+		conditionList = EnumSet.noneOf(SpecialType.class);
 		rollHitPoints();
 	}
 
@@ -106,7 +108,6 @@ public class Monster {
 		inLairPct = CSVReader.parseInt(s[5]);
 		treasureType = s[6].charAt(0);
 		attack = parseAttackRoutine(s[7], s[8]);
-		specialList = parseSpecialAbilityList(s[9]);
 		type = s[10].charAt(0);
 		alignment = Alignment.getFromChar(s[11].charAt(0));
 		hitDiceAsFloat = parseFloat(s[12]);
@@ -114,11 +115,15 @@ public class Monster {
 		environment = s[14].charAt(0);
 		sourceBook = s[15];
 
-		// Secondary fields
-		conditionList = 
-			new HashSet<SpecialAbility>(START_SPECIAL_CAPACITY); 
+		// Special abilities & conditions
+		specialValues = 
+			new HashSet<SpecialAbility>(START_SPECIAL_CAP);
+		specialList = EnumSet.noneOf(SpecialType.class);
+		conditionList = EnumSet.noneOf(SpecialType.class);
+		setSpecialAbilities(s[9]);
+
+		// Other fields
 		spellMemory = null;
-		addImpliedSpecials();
 		rollHitPoints();
 	}
 
@@ -141,10 +146,10 @@ public class Monster {
 		hitDiceAsFloat = src.hitDiceAsFloat;
 		killTally = src.killTally;
 		host = src.host;
-		specialList = 
-			new HashSet<SpecialAbility>(src.specialList);
-		conditionList = 
-			new HashSet<SpecialAbility>(src.conditionList); 
+		specialValues = 
+			new HashSet<SpecialAbility>(src.specialValues);
+		specialList = EnumSet.copyOf(src.specialList);
+		conditionList = EnumSet.copyOf(src.conditionList);
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
@@ -241,20 +246,18 @@ public class Monster {
 	/**
 	* Parse special ability list from descriptor string.
 	*/
-	private AbstractSet<SpecialAbility> parseSpecialAbilityList (String s) {
-		HashSet<SpecialAbility> list = 
-			new HashSet<SpecialAbility>(START_SPECIAL_CAPACITY); 
+	private void setSpecialAbilities (String s) {
 		if (s.length() > 1) {
 			String parts[] = s.split(", ");
 			for (String part: parts) {
 				SpecialAbility ability = 
 					SpecialAbility.createFromString(part);
 				if (ability != null) {
-					list.add(ability);
+					addSpecial(ability);
 				}
 			}     
 		}
-		return list;
+		addImpliedSpecials();
 	}
 
 	/**
@@ -262,13 +265,13 @@ public class Monster {
 	*/
 	private void addImpliedSpecials() {
 		if (getRace().startsWith("Dragon")) {
-			specialList.add(new SpecialAbility(SpecialType.Dragon));
+			addSpecial(new SpecialAbility(SpecialType.Dragon));
 			dragonAge = parseDragonAge();
 		}
 		if (getRace().startsWith("Golem"))
-			specialList.add(new SpecialAbility(SpecialType.Golem));
+			addSpecial(new SpecialAbility(SpecialType.Golem));
 		if (getType() == 'U')
-			specialList.add(new SpecialAbility(SpecialType.Undead));
+			addSpecial(new SpecialAbility(SpecialType.Undead));
 	}
 
 	/**
@@ -287,8 +290,8 @@ public class Monster {
 		if (hasSpecial(SpecialType.NPC)) {
 			Character c = Character.evilNPCFromTitle(race);
 			c.race = race; // Reset race name for kill tally
-			for (SpecialAbility s: specialList) {
-				c.specialList.add(s);
+			for (SpecialAbility s: specialValues) {
+				c.addSpecial(s);
 			}
 			return c;
 		}
@@ -497,8 +500,8 @@ public class Monster {
 
 		// Check magic to hit
 		if (target.hasSpecial(SpecialType.MagicToHit)) {
-			SpecialAbility magicSpecial = target.findSpecial(SpecialType.MagicToHit);
-			if (getMagicHitLevel() < magicSpecial.getParam())
+			int targetMagicReq = target.getSpecialParam(SpecialType.MagicToHit);
+			if (getMagicHitLevel() < targetMagicReq)
 				canHit = false;
 		}
 
@@ -520,12 +523,13 @@ public class Monster {
 	* Find what level of magic-to-hit we can strike.
 	*/
 	public int getMagicHitLevel () {
+		int magicHitLevel = 0;
 
-		// Check if we are also magic-to-hit
-		SpecialAbility special = findSpecial(SpecialType.MagicToHit);
-		int magicHitLevel = (special == null ? 0 : special.getParam());
+		// Check if this monster has magic-to-hit
+		if (hasSpecial(SpecialType.MagicToHit))
+			magicHitLevel = getSpecialParam(SpecialType.MagicToHit);
 
-		// Check if we have high hit dice
+		// Check if this monster has high hit dice
 		int fractionHD = getHD() / 4;
 		return Math.max(magicHitLevel, fractionHD);
 	}
@@ -539,7 +543,7 @@ public class Monster {
 
 		// General hit bonus
 		if (hasSpecial(SpecialType.HitBonus)) {
-			modifier += findSpecial(SpecialType.HitBonus).getParam();
+			modifier += getSpecialParam(SpecialType.HitBonus);
 		}
 
 		// Berserker bonus (NPC)
@@ -629,7 +633,7 @@ public class Monster {
 	public void checkSpecialOnHit (Monster target, int totalRoll, boolean isLastAttack) {
 
 		// Special abilities of this attacking monster
-		for (SpecialAbility s: specialList) {
+		for (SpecialAbility s: specialValues) {
 			switch (s.getType()) {
 
 				case Poison:
@@ -742,7 +746,7 @@ public class Monster {
 		}
 
 		// Check monster special abilities list
-		for (SpecialAbility s: specialList) {
+		for (SpecialAbility s: specialValues) {
 			switch (s.getType()) {
 
 				case RockHurling: 
@@ -843,31 +847,31 @@ public class Monster {
 	}
 
 	/**
-	* Find if we have a given type of special ability.
+	* Add a special ability.
 	*/
-	private SpecialAbility findSpecial (SpecialType type) {
-		for (SpecialAbility s: specialList) {
-			if (s.getType() == type) {
-				return s;
-			}
-		}
-		return null;
+	protected void addSpecial (SpecialAbility special) {
+		specialValues.add(special);
+		specialList.add(special.getType());	
 	}
 
 	/**
 	* Check if this monster has a given type of special ability.
 	*/
 	private boolean hasSpecial (SpecialType type) {
-		return findSpecial(type) != null;
+		return specialList.contains(type);
 	}
 
 	/**
 	* Get the parameter for a given special ability.
 	*/
 	private int getSpecialParam (SpecialType type) {
-		SpecialAbility special = findSpecial(type);
-		if (special != null) return special.getParam();	
-		System.err.println("Requested parameter for absent special type: " + type);
+		assert(hasSpecial(type));
+		for (SpecialAbility s: specialValues) {
+			if (s.getType() == type) {
+				return s.getParam();
+			}
+		}
+		System.err.println("Asked parameter for absent special type: " + type);
 		return 0;				
 	}	
 
@@ -875,15 +879,40 @@ public class Monster {
 	* Add a condition suffered from a special ability.
 	*/
 	private void addCondition (SpecialType type) {
-		conditionList.add(new SpecialAbility(type));
+		conditionList.add(type);
 	}
 
 	/**
 	* Remove a condition of a given special type.
 	*/
 	private void removeCondition (SpecialType type) {
-		SpecialAbility special = findSpecial(type);
-		conditionList.remove(special);
+		conditionList.remove(type);
+	}
+
+	/**
+	* Check if we suffer from a given condition.
+	*/
+	public boolean hasCondition (SpecialType type) {
+		return conditionList.contains(type);
+	}
+
+	/**
+	* Check if we suffer from a disabling condition.
+	*/
+	public boolean hasDisablingCondition () {
+		for (SpecialType s: conditionList) {
+			if (s.isDisabling()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	* Take a given condition unless we resist (no modifier).
+	*/
+	public void saveVsCondition (SpecialType condition, int casterLevel) {
+		saveVsCondition(condition, casterLevel, 0);
 	}
 
 	/**
@@ -898,44 +927,6 @@ public class Monster {
 		}
 		if (rollSave(condition.getSaveType(), saveMod)) return;
 		addCondition(condition);
-	}
-
-	/**
-	* Take a given condition unless we resist (no modifier).
-	*/
-	public void saveVsCondition (SpecialType condition, int casterLevel) {
-		saveVsCondition(condition, casterLevel, 0);
-	}
-
-	/**
-	* Find if we suffer from a given condition.
-	*/
-	public SpecialAbility findCondition (SpecialType type) {
-		for (SpecialAbility s: conditionList) {
-			if (s.getType() == type) {
-				return s;
-			}
-		}
-		return null;
-	}
-
-	/**
-	* Check if we suffer from a given condition.
-	*/
-	public boolean hasCondition (SpecialType type) {
-		return findCondition(type) != null; 
-	}
-
-	/**
-	* Check if we suffer from a disabling condition.
-	*/
-	public boolean hasDisablingCondition () {
-		for (SpecialAbility s: conditionList) {
-			if (s.getType().isDisabling()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -962,9 +953,9 @@ public class Monster {
 
 		// Magic resistance
 		if (hasSpecial(SpecialType.MagicResistance)) {
-			SpecialAbility ability = findSpecial(SpecialType.MagicResistance);
-			int resistPct = ability.getParam() + (casterLevel - 11) * 5;
-			if (Dice.roll(100) <= resistPct)
+			int basePct = getSpecialParam(SpecialType.MagicResistance);
+			int adjustPct = basePct + (casterLevel - 11) * 5;
+			if (Dice.roll(100) <= adjustPct)
 				return true;
 		}
 			
@@ -976,7 +967,7 @@ public class Monster {
 	* Get our breath weapon (if any).
 	*/
 	public SpecialAbility getBreathWeapon () {
-		for (SpecialAbility s: specialList) {
+		for (SpecialAbility s: specialValues) {
 			if (s.getType().isBreathWeapon()) {
 				return s;
 			}
@@ -988,7 +979,7 @@ public class Monster {
 	* Get our gaze weapon (if any).
 	*/
 	public SpecialAbility getGazeWeapon () {
-		for (SpecialAbility s: specialList) {
+		for (SpecialAbility s: specialValues) {
 			if (s.getType().isGazeWeapon()) {
 				return s;
 			}
@@ -1000,7 +991,7 @@ public class Monster {
 	* Get our summons ability (if any).
 	*/
 	public SpecialAbility getSummonsAbility () {
-		for (SpecialAbility s: specialList) {
+		for (SpecialAbility s: specialValues) {
 			if (s.getType().isSummonsAbility()) {
 				return s;
 			}
@@ -1012,9 +1003,8 @@ public class Monster {
 	* Regenerate hit points if appropriate.
 	*/
 	public void checkRegeneration () {
-		SpecialAbility special = findSpecial(SpecialType.Regeneration);
-		if (special != null) {
-			hitPoints += special.getParam();
+		if (hasSpecial(SpecialType.Regeneration)) {
+			hitPoints += getSpecialParam(SpecialType.Regeneration);
 			boundHitPoints();
 		}
 	}
@@ -1024,9 +1014,8 @@ public class Monster {
 	* @return true if we drained blood
 	*/
 	public boolean checkBloodDrain () {
-		SpecialAbility special = findSpecial(SpecialType.BloodDrain);
-		if (special != null && host != null) {
-			int maxDamage = special.getParam();
+		if (hasSpecial(SpecialType.BloodDrain) && host != null) {
+			int maxDamage = getSpecialParam(SpecialType.BloodDrain);
 			int drain = new Dice(1, maxDamage).roll();
 			host.takeDamage(drain);
 			if (host.horsDeCombat()) {
@@ -1042,8 +1031,7 @@ public class Monster {
 	* @return Did we constrict?
 	*/
 	public boolean checkConstriction () {
-		SpecialAbility special = findSpecial(SpecialType.Constriction);
-		if (special != null && host != null) {
+		if (hasSpecial(SpecialType.Constriction) && host != null) {
 			int damage = new Dice(1, 6).roll();
 			host.takeDamage(damage);
 			if (host.horsDeCombat()) {
@@ -1059,8 +1047,7 @@ public class Monster {
 	* @return Did we grab?
 	*/
 	public boolean checkGrabbing () {
-		SpecialAbility special = findSpecial(SpecialType.Grabbing);
-		if (special != null && host != null) {
+		if (hasSpecial(SpecialType.Grabbing) && host != null) {
 
 			// Absorption: game over, man.
 			if (hasSpecial(SpecialType.Absorption)) {

@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 /******************************************************************************
 *  Record of one class gained by a character (XP, level, hit points, etc.).
@@ -16,6 +15,9 @@ public class ClassRecord {
 
 	/** Hit die for level 0. */
 	static final int LEVEL_ZERO_HIT_DIE = 6;
+
+	/** Starting Feat set capacity. */
+	private static final int START_FEATS_CAP = 4;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -40,7 +42,7 @@ public class ClassRecord {
 	SpellMemory spellsKnown;
 
 	/** Feats known for this class. */
-	List<Feat> featsKnown;
+	Set<Feat> featsKnown;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
@@ -138,7 +140,7 @@ public class ClassRecord {
 	*/
 	void addAllFeats () {
 		if (Character.useFeats() && classType.usesFeats()) {
-			featsKnown = new ArrayList<Feat>();
+			featsKnown = new HashSet<Feat>(START_FEATS_CAP);
 			for (int i = 1; i <= level; i++) {
 				if (isFeatLevel(i)) {
 					addFeat();
@@ -162,19 +164,21 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Lose the last feat for this character.
+	*  Lose a random feat for this character.
 	*/
 	void loseFeat () {
-		if (featsKnown.size() > 1) {
-			featsKnown.remove(featsKnown.size() - 1);
-		}	
+		for (Feat f: featsKnown) {
+			featsKnown.remove(f);
+			break;
+		}
 	}
 
 	/**
 	*  Is this feat known by this class record?
 	*/
 	public boolean hasFeat (Feat f) {
-		return featsKnown != null && featsKnown.contains(f);
+		if (featsKnown == null) return false;
+		return featsKnown.contains(f);
 	}
 
 	/**
