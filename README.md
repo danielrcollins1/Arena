@@ -72,10 +72,5 @@ as expressed in the Original Edition Delta (OED) House Rules set. In some
 cases, software switches allow toggling between different modes. See
 www.oedgames.com for more information. 
 
-Note that the data in the MonsterDatabase file is primarily maintained 
-in a spreadsheet external to this package, MonsterDatabase.ods. Changes
-to the database should be made there first, and then exported to the CSV 
-file in this software package. See www.oedgames.com/addons/houserules.
-
 - Daniel R. Collins ("Delta")
 www.oedgames.com
