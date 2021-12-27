@@ -16,9 +16,6 @@ public class ClassRecord {
 	/** Hit die for level 0. */
 	static final int LEVEL_ZERO_HIT_DIE = 6;
 
-	/** Starting Feat set capacity. */
-	private static final int START_FEATS_CAP = 4;
-
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -122,7 +119,6 @@ public class ClassRecord {
 				hitPoints = hitPoints * (level - 1)/level;
 			level--;
 			XP = classType.getXpMidpoint(level);
-			// TODO: Wizards lose spells?
 		}
 	}
 
@@ -140,7 +136,7 @@ public class ClassRecord {
 	*/
 	void addAllFeats () {
 		if (Character.useFeats() && classType.usesFeats()) {
-			featsKnown = new HashSet<Feat>(START_FEATS_CAP);
+			featsKnown = EnumSet.noneOf(Feat.class);
 			for (int i = 1; i <= level; i++) {
 				if (isFeatLevel(i)) {
 					addFeat();

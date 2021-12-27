@@ -24,9 +24,6 @@ public class Monster {
 	/** Maximum enemies who can melee us at once. */
 	private static final int MAX_MELEERS = 6;
 
-	/** Starting Special & Condition set capacity. */
-	private static final int START_SPECIAL_CAP = 4;
-
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -52,9 +49,9 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
-	Set<SpecialAbility> specialValues;
 	Set<SpecialType> specialList;
 	Set<SpecialType> conditionList;
+	AbstractMap<SpecialType, Integer> specialValues;
 	SpellMemory spellMemory;
 
 	//--------------------------------------------------------------------------
@@ -81,10 +78,9 @@ public class Monster {
 		this.attack = attack;
 		this.alignment = Alignment.Neutral;
 		equivalentHitDice = hitDice.getNum();
-		specialValues = 
-			new HashSet<SpecialAbility>(START_SPECIAL_CAP);
 		specialList = EnumSet.noneOf(SpecialType.class);
 		conditionList = EnumSet.noneOf(SpecialType.class);
+		specialValues = new EnumMap<SpecialType, Integer>(SpecialType.class);
 		rollHitPoints();
 	}
 
@@ -116,10 +112,9 @@ public class Monster {
 		sourceBook = s[15];
 
 		// Special abilities & conditions
-		specialValues = 
-			new HashSet<SpecialAbility>(START_SPECIAL_CAP);
 		specialList = EnumSet.noneOf(SpecialType.class);
 		conditionList = EnumSet.noneOf(SpecialType.class);
+		specialValues = new EnumMap<SpecialType, Integer>(SpecialType.class);
 		setSpecialAbilities(s[9]);
 
 		// Other fields
@@ -146,10 +141,9 @@ public class Monster {
 		hitDiceAsFloat = src.hitDiceAsFloat;
 		killTally = src.killTally;
 		host = src.host;
-		specialValues = 
-			new HashSet<SpecialAbility>(src.specialValues);
 		specialList = EnumSet.copyOf(src.specialList);
 		conditionList = EnumSet.copyOf(src.conditionList);
+		specialValues = new EnumMap<SpecialType, Integer>(src.specialValues);
 		maxHitPoints = src.maxHitPoints;
 		hitPoints = src.hitPoints;
 		breathCharges = src.breathCharges;
@@ -253,7 +247,7 @@ public class Monster {
 				SpecialAbility ability = 
 					SpecialAbility.createFromString(part);
 				if (ability != null) {
-					addSpecial(ability);
+					addSpecial(ability.getType(), ability.getParam());
 				}
 			}     
 		}
@@ -265,13 +259,13 @@ public class Monster {
 	*/
 	private void addImpliedSpecials() {
 		if (getRace().startsWith("Dragon")) {
-			addSpecial(new SpecialAbility(SpecialType.Dragon));
+			addSpecial(SpecialType.Dragon);
 			dragonAge = parseDragonAge();
 		}
 		if (getRace().startsWith("Golem"))
-			addSpecial(new SpecialAbility(SpecialType.Golem));
+			addSpecial(SpecialType.Golem);
 		if (getType() == 'U')
-			addSpecial(new SpecialAbility(SpecialType.Undead));
+			addSpecial(SpecialType.Undead);
 	}
 
 	/**
@@ -290,8 +284,8 @@ public class Monster {
 		if (hasSpecial(SpecialType.NPC)) {
 			Character c = Character.evilNPCFromTitle(race);
 			c.race = race; // Reset race name for kill tally
-			for (SpecialAbility s: specialValues) {
-				c.addSpecial(s);
+			for (SpecialType s: specialList) {
+				c.addSpecial(s, getSpecialParam(s));
 			}
 			return c;
 		}
@@ -633,12 +627,12 @@ public class Monster {
 	public void checkSpecialOnHit (Monster target, int totalRoll, boolean isLastAttack) {
 
 		// Special abilities of this attacking monster
-		for (SpecialAbility s: specialValues) {
-			switch (s.getType()) {
+		for (SpecialType s: specialList) {
+			switch (s) {
 
 				case Poison:
 					if (isLastAttack) {
-						castCondition(target, SpecialType.Poison, -s.getParam());
+						castCondition(target, SpecialType.Poison, -getSpecialParam(s));
 					}
 					break;
 
@@ -654,7 +648,7 @@ public class Monster {
 					boolean saved = SavingThrows.ENERGY_DRAIN_SAVE
 						&& target.rollSave(SavingThrows.Type.Death);
 					if (!saved) {      
-						for (int j = 0; j < s.getParam(); j++) {
+						for (int j = 0; j < getSpecialParam(s); j++) {
 							target.loseLevel();
 						}
 					}
@@ -692,7 +686,7 @@ public class Monster {
 					break;
 
 				case CharmTouch:
-					castCharm(target, -s.getParam());
+					castCharm(target, -getSpecialParam(s));
 					break;
 
 				case Corrosion:
@@ -746,8 +740,8 @@ public class Monster {
 		}
 
 		// Check monster special abilities list
-		for (SpecialAbility s: specialValues) {
-			switch (s.getType()) {
+		for (SpecialType s: specialList) {
+			switch (s) {
 
 				case RockHurling: 
 					target = enemy.random();
@@ -791,7 +785,7 @@ public class Monster {
 					return;
 
 				case Whirlwind:
-					int diameter = s.getParam();
+					int diameter = getSpecialParam(s);
 					int numVictims = diameter * diameter;
 					List<Monster> victims = enemy.randomGroup(numVictims);
 					for (Monster m: victims) {
@@ -803,7 +797,7 @@ public class Monster {
 
 				case Confusion:
 					target = enemy.random();
-					modifier = -s.getParam();
+					modifier = -getSpecialParam(s);
 					if (target.hasFeat(Feat.IronWill)) modifier += 4;
 					castCondition(target, SpecialType.Confusion, modifier);
 					return;
@@ -836,7 +830,7 @@ public class Monster {
 					return;
 
 				case Charm:
-					castCharm(enemy.random(), -s.getParam());
+					castCharm(enemy.random(), -getSpecialParam(s));
 					return;
 					
 				case ManyEyeFunctions:
@@ -847,11 +841,18 @@ public class Monster {
 	}
 
 	/**
+	* Add a special ability (no parameter).
+	*/
+	protected void addSpecial (SpecialType type) {
+		addSpecial(type, 0);
+	}
+
+	/**
 	* Add a special ability.
 	*/
-	protected void addSpecial (SpecialAbility special) {
-		specialValues.add(special);
-		specialList.add(special.getType());	
+	protected void addSpecial (SpecialType type, int param) {
+		specialList.add(type);	
+		specialValues.put(type, Integer.valueOf(param));
 	}
 
 	/**
@@ -865,14 +866,7 @@ public class Monster {
 	* Get the parameter for a given special ability.
 	*/
 	private int getSpecialParam (SpecialType type) {
-		assert(hasSpecial(type));
-		for (SpecialAbility s: specialValues) {
-			if (s.getType() == type) {
-				return s.getParam();
-			}
-		}
-		System.err.println("Asked parameter for absent special type: " + type);
-		return 0;				
+		return specialValues.get(type).intValue();
 	}	
 
 	/**
@@ -966,9 +960,9 @@ public class Monster {
 	/**
 	* Get our breath weapon (if any).
 	*/
-	public SpecialAbility getBreathWeapon () {
-		for (SpecialAbility s: specialValues) {
-			if (s.getType().isBreathWeapon()) {
+	public SpecialType getBreathWeapon () {
+		for (SpecialType s: specialList) {
+			if (s.isBreathWeapon()) {
 				return s;
 			}
 		}
@@ -978,9 +972,9 @@ public class Monster {
 	/**
 	* Get our gaze weapon (if any).
 	*/
-	public SpecialAbility getGazeWeapon () {
-		for (SpecialAbility s: specialValues) {
-			if (s.getType().isGazeWeapon()) {
+	public SpecialType getGazeWeapon () {
+		for (SpecialType s: specialList) {
+			if (s.isGazeWeapon()) {
 				return s;
 			}
 		}
@@ -990,9 +984,9 @@ public class Monster {
 	/**
 	* Get our summons ability (if any).
 	*/
-	public SpecialAbility getSummonsAbility () {
-		for (SpecialAbility s: specialValues) {
-			if (s.getType().isSummonsAbility()) {
+	public SpecialType getSummonsAbility () {
+		for (SpecialType s: specialList) {
+			if (s.isSummonsAbility()) {
 				return s;
 			}
 		}
@@ -1091,10 +1085,10 @@ public class Monster {
 	*/
 	public boolean checkBreathWeapon (Party enemy) {
 		if (breathCharges > 0 && new Dice(2, 6).roll() >= 7) {
-			SpecialAbility breath = getBreathWeapon();
-			int param = breath.getParam();
+			SpecialType breathType = getBreathWeapon();
+			int param = getSpecialParam(breathType);
 			int damage, maxVictims, numVictims;
-			switch (breath.getType()) {
+			switch (breathType) {
 
 				case FireBreath: case SteamBreath:
 					// As a data simplifying assumption, 
@@ -1157,7 +1151,7 @@ public class Monster {
 
 				default:
 					System.err.println("Breath weapon type not handled:"
-						+ breath.getType());
+						+ breathType);
 			}
 			breathCharges--;
 			return true;
@@ -1303,9 +1297,9 @@ public class Monster {
 	* Summon any minions to our party.
 	*/
 	public void summonMinions (Party party) {
-		SpecialAbility summons = getSummonsAbility();
-		if (summons != null) {
-			switch (summons.getType()) {
+		SpecialType summonsType = getSummonsAbility();
+		if (summonsType != null) {
+			switch (summonsType) {
 
 				case SummonVermin: 
 					party.addMonsters("Wolf", new Dice(3, 6).roll()); 
@@ -1317,7 +1311,7 @@ public class Monster {
 
 				default:
 					System.err.println("Summons type not found: " 
-						+ summons.getType());
+						+ summonsType);
 			}  
 		}
 	}
