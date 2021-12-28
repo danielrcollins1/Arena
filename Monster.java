@@ -424,16 +424,22 @@ public class Monster {
 	* @return true if our turn is consumed (no melee attacks)
 	*/
 	private boolean checkSpecialsInMelee (Party friends, Party enemies) {
+
+		// Primary abilities & conditions
 		checkRegeneration();
-		checkConstriction();
-		checkSlowing(enemies);
-		if (checkGrabbing()) return true;
-		if (checkBloodDrain()) return true;
 		if (checkWebbing()) return true;
-		if (checkBreathWeapon(enemies)) return true;
 		if (checkConfusion(friends)) return true;
+		if (checkBreathWeapon(enemies)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
-		if (checkManyEyesSalvo(enemies)) return true;
+
+		// Secondary abilities (in block for performance)
+		if (!specialList.isEmpty()) {
+			checkConstriction();
+			checkSlowing(enemies);
+			if (checkGrabbing()) return true;
+			if (checkBloodDrain()) return true;
+			if (checkManyEyesSalvo(enemies)) return true;
+		}
 		return false;
 	}
 
@@ -1345,8 +1351,7 @@ public class Monster {
 		if (hasCondition(SpecialType.Webs)) {
 
 			// Make check vs. strength bonus to break out
-			int strength = getAbilityScore(Ability.Str);
-			int strBonus = Ability.getBonus(strength);
+			int strBonus = getAbilityBonus(Ability.Str);
 			boolean breakOut = Dice.roll(6) <= strBonus;
 			if (breakOut) removeCondition(SpecialType.Webs);
 			return true;
@@ -1642,6 +1647,14 @@ public class Monster {
 		}	
 		System.err.println("Unknown ability score type.");
 		return 0;
+	}
+
+	/**
+	*  Get an ability score bonus/modifier.
+	*/
+	public int getAbilityBonus (Ability ability) {
+		int score = getAbilityScore(ability);
+		return Ability.getBonus(score);
 	}
 
 	/**

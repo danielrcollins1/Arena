@@ -274,27 +274,20 @@ public class Character extends Monster {
 	public int getAbilityScore (Ability ability) {
 		int idx = ability.ordinal();
 		int score = abilityScore[idx];
-		score -= abilityScoreDamage[idx];
 		if (ability == Ability.Str 
 				&& hasFeat(Feat.ExceptionalStrength)) {
 			score += 3;
 		}
+		score -= abilityScoreDamage[idx];
+		if (score < 0) score = 0;
 		return score;
-	}
-
-	/**
-	*  Get an ability score bonus/modifier.
-	*/
-	public int getAbilityBonus (Ability ability) {
-		int score = getAbilityScore(ability);
-		return Ability.getBonus(score);
 	}
 
 	/*
 	*  Take damage to an ability score.
 	*/
 	public void takeAbilityDamage (Ability ability, int damage) {
-		abilityScoreDamage[ability.ordinal()] += damage;	
+		abilityScoreDamage[ability.ordinal()] += damage;
 		updateStats();
 	}
 
@@ -335,10 +328,15 @@ public class Character extends Monster {
 	*  Because then we are dead.
 	*/
 	public boolean hasNullAbilityScore () {
-		for (int a: abilityScore) {
-			if (a <= 0) return true;
-		}
-		return false;
+
+		// This is a critical-path function.
+		// For performance, check only the Strength ability
+		// (c.f. Shadow Strength draining)
+		// If other ability-drain abilities arise, add here.
+		if (getAbilityScore(Ability.Str) <= 0)
+			return true;
+		else
+			return false;
 	}
 
 	/**
