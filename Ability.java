@@ -16,14 +16,14 @@ public enum Ability {
 	//--------------------------------------------------------------------------
 
 	/** Available bonus formula methods. */
-	enum BonusType {Bonus_BX, Bonus_OED};
+	enum BonusType {BX, OED};
 
 	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
 	/** Constant switch for bonus formula. */
-	final static BonusType BONUS_TYPE = BonusType.Bonus_OED;
+	final static BonusType BONUS_TYPE = BonusType.OED;
 
 	/** Prioritized preference for any class based on prime requisite. */
 	final static Ability[][] abilityPriority = 
@@ -36,12 +36,12 @@ public enum Ability {
 		{"Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma"};
 
 	/** Array of B/X style ability bonuses (for performance.) */
-	final static int[] BonusValue_BX =
+	final static int[] BonusValueBX =
 		{-5, -4, -3, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0,
 		1, 1, 1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6};
 	
 	/** Array of OED style ability bonuses (for performance). */
-	final static int[] BonusValue_OED =
+	final static int[] BonusValueOED =
 	 	{-3, -3, -3, -2, -2, -2, -1, -1, -1, 0, 0, 0, 0, 
 		1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5};
 	
@@ -60,19 +60,19 @@ public enum Ability {
 	*  Gives the bonus for a given ability score.
 	*/
 	public static int getBonus (int score) {
-		if (BONUS_TYPE == BonusType.Bonus_OED)
-			return getBonus_OED(score);
+		if (BONUS_TYPE == BonusType.OED)
+			return getBonusOED(score);
 		else
-			return getBonus_BX(score);
+			return getBonusBX(score);
 	}
 
 	/**
 	*  BX-style bonus for a given ability score.
 	*/
-	static int getBonus_BX (int score) {
+	static int getBonusBX (int score) {
 		assert(score >= 0);
-		if (score < BonusValue_BX.length)
-			return BonusValue_BX[score];
+		if (score < BonusValueBX.length)
+			return BonusValueBX[score];
 		else
 			// See Mentzer's Immortals rules for 
 			// further extension of scores up to 100.
@@ -82,10 +82,10 @@ public enum Ability {
 	/**
 	*  OED-style bonus for a given ability score.
 	*/
-	static int getBonus_OED (int score) {
+	static int getBonusOED (int score) {
 		assert(score >= 0);
-		if (score < BonusValue_OED.length)
-			return BonusValue_OED[score];
+		if (score < BonusValueOED.length)
+			return BonusValueOED[score];
 		else 
 			return (score - 11) / 3;
 	}
