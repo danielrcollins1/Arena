@@ -65,6 +65,9 @@ public class MonsterMetrics {
 	/** Did we print anything on this run? */
 	boolean printedSomeMonster;
 
+	/** Should we wait for a keypress to start (for profiler)? */
+	boolean waitForKeypress;
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
 
@@ -114,6 +117,7 @@ public class MonsterMetrics {
 		System.out.println("\t-f number of fights per point in search space " 
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
 		System.out.println("\t-g graph power per level for each monster");
+		System.out.println("\t-k wait for keypress to start processing");		
 		System.out.println("\t-m chance for magic weapon bonus per level " 
 			+ "(default =" + DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL + ")");
 		System.out.println("\t-r display only monsters with revised EHD from database");
@@ -138,6 +142,7 @@ public class MonsterMetrics {
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
+					case 'k': waitForKeypress = true; break;
 					case 'm': pctMagicSwordPerLevel = getParamInt(s); break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
@@ -573,6 +578,11 @@ public class MonsterMetrics {
 			metrics.printUsage();
 		}
 		else {
+			if (metrics.waitForKeypress) {
+				System.out.println("Press Enter to start...");
+				try { System.in.read(); } 
+				catch (Exception e) {};
+			}
 			metrics.displayUnknownSpecials();
 			metrics.reportMonsters();
 		}
