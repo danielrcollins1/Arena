@@ -62,7 +62,7 @@ public enum SpecialType {
 
 			// Stone saves
 			case Paralysis: case Petrification: 
-			case Hold: case Webs:
+			case Hold: case Webs: case Slowing:
 				return SavingThrows.Type.Stone;
 
 			// Death saves

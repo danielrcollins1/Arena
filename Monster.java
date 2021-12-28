@@ -614,9 +614,9 @@ public class Monster {
 			damage /= 2;
 		}
 
-		// Corroding oozes delay damage until bare flesh
+		// Corroding slimes delay damage until bare flesh
 		if (hasSpecial(SpecialType.Corrosion)
-				&& target.getArmor() != null){
+				&& target.getArmor() != null) {
 			damage = 0;
 		}
 
@@ -1288,10 +1288,9 @@ public class Monster {
 	* Cast slow on one of the enemy.
 	*/
 	public void checkSlowing (Party enemy) {
-		Monster target = enemy.random();
-		if (!target.hasCondition(SpecialType.Slowing)
-				&& !target.rollSave(SavingThrows.Type.Spells)) {
-			target.addCondition(SpecialType.Slowing);
+		if (hasSpecial(SpecialType.Slowing)) {
+			Monster target = enemy.random();
+			target.saveVsCondition(SpecialType.Slowing, getHD());
 		}
 	}
 
