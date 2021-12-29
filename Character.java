@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 /******************************************************************************
 *  One character (player or non-player personae).
@@ -49,10 +48,10 @@ public class Character extends Monster {
 	String name;
 
 	/** The six ability scores. */
-	int[] abilityScore;
+	AbstractMap<Ability, Integer> abilityScores;
 
 	/** Ability score damage. */
-	int[] abilityScoreDamage;
+	AbstractMap<Ability, Integer> abilityScoreDamage;
 
 	/** List of classes with XP scores. */
 	List<ClassRecord> classList;
@@ -139,9 +138,10 @@ public class Character extends Monster {
 		age = BASE_AGE;
 		name = NameGenerator.getInstance().getRandom();
 		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
-		abilityScore = new int[Ability.length];
+		abilityScores = new EnumMap<Ability, Integer>(Ability.class);
 		rollAbilityScores(classType, level);
-		abilityScoreDamage = new int[Ability.length];
+		abilityScoreDamage = new EnumMap<Ability, Integer>(Ability.class);
+		zeroAbilityDamage();
 		classList = new ArrayList<ClassRecord>(1);
 		equipList = new ArrayList<Equipment>(4);
 		classList.add(new ClassRecord(this, classType, level));
@@ -203,8 +203,8 @@ public class Character extends Monster {
 			rollPriorityAbilityScores(type.getAbilityPriority(), level);
 		}
 		else {		
-			for (int i = 0; i < Ability.length; i++) {
-				abilityScore[i] = ABILITY_DICE[0].roll();
+			for (Ability a: Ability.values()) {
+				abilityScores.put(a, ABILITY_DICE[0].roll());
 			}
 		}
 	}
@@ -233,10 +233,11 @@ public class Character extends Monster {
 	*  Roll boosted random ability scores as per given priority.
 	*/
 	private void rollPriorityAbilityScores(Ability[] priorityList, int level) {
-		for (int i = 0; i < Ability.length; i++) {
-			int idx = priorityList[i].ordinal();
-			abilityScore[idx] = getBoostedAbilityDice(level, i).roll();
- 		}
+		int priority = 0;
+		for (Ability a: priorityList) {
+			abilityScores.put(a, getBoostedAbilityDice(level, priority).roll());
+			priority++;
+		}
 	}
 
 	/**
@@ -271,14 +272,13 @@ public class Character extends Monster {
 	/**
 	*  Get an ability score.
 	*/
-	public int getAbilityScore (Ability ability) {
-		int idx = ability.ordinal();
-		int score = abilityScore[idx];
-		if (ability == Ability.Str 
+	public int getAbilityScore (Ability a) {
+		int score = abilityScores.get(a).intValue();
+		score -= abilityScoreDamage.get(a).intValue();
+		if (a == Ability.Str 
 				&& hasFeat(Feat.ExceptionalStrength)) {
 			score += 3;
 		}
-		score -= abilityScoreDamage[idx];
 		if (score < 0) score = 0;
 		return score;
 	}
@@ -286,8 +286,10 @@ public class Character extends Monster {
 	/*
 	*  Take damage to an ability score.
 	*/
-	public void takeAbilityDamage (Ability ability, int damage) {
-		abilityScoreDamage[ability.ordinal()] += damage;
+	public void takeAbilityDamage (Ability a, int damage) {
+		int val = abilityScoreDamage.get(a).intValue();
+		val += damage;
+		abilityScoreDamage.put(a, Integer.valueOf(val));
 		updateStats();
 	}
 
@@ -295,9 +297,8 @@ public class Character extends Monster {
 	*  Clear any ability score damage.
 	*/
 	public void zeroAbilityDamage () {
- 		for (int i = 0; i < Ability.length; i++) {
- 			abilityScoreDamage[i] = 0;
- 		}
+		for (Ability a: Ability.values())
+			abilityScoreDamage.put(a, 0);
 	}
 
 	/*
@@ -305,10 +306,11 @@ public class Character extends Monster {
 	*/
 	private void adjustAllAbilityScores (int... modifiers) {
 		int oldCon = getAbilityScore(Ability.Con);
-		int index = 0;
-		for (int mod: modifiers) {
-			abilityScore[index] += mod;		
-			index++;
+		int idx = 0;
+		for (Ability a: Ability.values()) {
+			int val = abilityScores.get(a).intValue();
+			val += modifiers[idx];
+			abilityScores.put(a, Integer.valueOf(val));
 		}
 		handleConChange(oldCon); 
 		updateStats();
