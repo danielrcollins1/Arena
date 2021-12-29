@@ -648,9 +648,7 @@ public class Monster {
 					break;
 
 				case EnergyDrain:
-					boolean saved = SavingThrows.ENERGY_DRAIN_SAVE
-						&& target.rollSave(SavingThrows.Type.Death);
-					if (!saved) {      
+					if (!target.rollSave(SavingThrows.Type.Death)) {
 						for (int j = 0; j < getSpecialParam(s); j++) {
 							target.loseLevel();
 						}

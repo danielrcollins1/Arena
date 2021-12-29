@@ -16,9 +16,6 @@ public class SavingThrows {
 	/** Name of file with saving throw scores. */
 	final String SAVING_THROWS_FILE = "SavingThrows.csv";
 
-	/** Allow a save versus energy drain? */
-	public static final boolean ENERGY_DRAIN_SAVE = true;
-
 	//--------------------------------------------------------------------------
 	//  Enumerations
 	//--------------------------------------------------------------------------
