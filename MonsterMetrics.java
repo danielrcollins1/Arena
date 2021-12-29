@@ -21,12 +21,12 @@ public class MonsterMetrics {
 
 	final int MAX_LEVEL = 12;
 	final int MAX_ENEMIES = 256;
-	final int GRAPH_Y_INTERVAL = 5;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
-	final int DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL = 15;
-	final int DEFAULT_WIZARD_FREQUENCY = 0;
+	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
+	final int DEFAULT_WIZARD_RATIO = 4;
 	final int NUM_TORCHES_CARRIED = 3;
+	final int GRAPH_Y_INTERVAL = 5;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ public class MonsterMetrics {
 	Armor.Type armorType;
 
 	/** Chance per level for magic sword. */
-	int pctMagicSwordPerLevel;
+	int pctMagicPerLevel;
 
 	/** Fraction of party who are wizards. */
 	int wizardFrequency;
@@ -84,8 +84,8 @@ public class MonsterMetrics {
 		spotlightMonster = null;
 		numberOfFights = DEFAULT_FIGHTS_GENERAL;
 		armorType = DEFAULT_ARMOR;
-		pctMagicSwordPerLevel = DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL;
-		wizardFrequency = DEFAULT_WIZARD_FREQUENCY;
+		pctMagicPerLevel = DEFAULT_MAGIC_PER_LEVEL_PCT;
+		wizardFrequency = DEFAULT_WIZARD_RATIO;
 		SpellMemory.setPreferCastableSpells(true);
 	}
 
@@ -120,12 +120,12 @@ public class MonsterMetrics {
 		System.out.println("\t-g graph power per level for each monster");
 		System.out.println("\t-k wait for keypress to start processing");		
 		System.out.println("\t-m chance for magic weapon bonus per level " 
-			+ "(default =" + DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL + ")");
+			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-z fraction of wizards in party "
-			+ "(default =" + DEFAULT_WIZARD_FREQUENCY + ")");
+			+ "(default =" + DEFAULT_WIZARD_RATIO + ")");
 		System.out.println();
 	}
 
@@ -144,7 +144,7 @@ public class MonsterMetrics {
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'k': waitForKeypress = true; break;
-					case 'm': pctMagicSwordPerLevel = getParamInt(s); break;
+					case 'm': pctMagicPerLevel = getParamInt(s); break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
@@ -541,7 +541,7 @@ public class MonsterMetrics {
 	Weapon newSword (int level) {
 		int bonus = 0;
 		for (int i = 0; i < level; i++) {
-			if (Dice.roll(100) <= pctMagicSwordPerLevel) {
+			if (Dice.roll(100) <= pctMagicPerLevel) {
 				bonus++;
 			}
 		}
