@@ -9,6 +9,13 @@
 public class Equipment {
 
 	//--------------------------------------------------------------------------
+	//  Enumeration
+	//--------------------------------------------------------------------------
+
+	/** Material types enumeration. */
+	enum Material {Unknown, Wood, Leather, Steel, Silver}
+
+	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
@@ -25,36 +32,34 @@ public class Equipment {
 	/** Name of this piece of equipment. */
 	String name;
 
-	/** Magic bonus value. */
-	int magicBonus;
+	/** Material type. */
+	Material material;
 
 	/** Encumbrance in stone units. */
 	float weight;
+
+	/** Magic bonus value. */
+	int magicBonus;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Basic constructor
+	*  Constructor
 	*/
-	Equipment (String name, float weight, int magicBonus) {
+	Equipment (String name, Material material, float weight, int magic) {
 		this.name = name;
+		this.material = material;
 		this.weight = weight;
-		setMagicBonus(magicBonus);
-	}
-
-	/**
-	*  Nonmagic constructor
-	*/
-	Equipment (String name, float weight) {
-		this(name, weight, 0);	
+		setMagicBonus(magic);
 	}
 	
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
 	public String getName () { return name; }
+	public Material getMaterial () { return material; }
 	public float getWeight () { return weight; }
 	public int getMagicBonus () { return magicBonus; }
 
@@ -70,6 +75,24 @@ public class Equipment {
 	*/
 	public void incMagicBonus () {
 		setMagicBonus(magicBonus + 1);
+	}
+
+	/**
+	*  Is this piece of equipment made of metal?
+	*/
+	public boolean isMetallic () {
+		switch (material) {
+			case Steel: case Silver: return true;
+		}
+		return false;
+	}
+
+	/**
+	*  Roll a saving throw for this equipment.
+	*  Roughly equal to that seen on OD&D Vol-2, p. 38.
+	*/
+	public boolean rollSave () {
+		return Dice.roll(6) <= 1 + magicBonus;
 	}
 
 	/**

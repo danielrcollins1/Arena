@@ -12,7 +12,7 @@ public class Armor extends Equipment {
 	//  Enumeration
 	//--------------------------------------------------------------------------
 
-	public enum Type {Plate, Chain, Leather, Shield};
+	public enum Type {Shield, Leather, Chain, Plate};
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -29,26 +29,21 @@ public class Armor extends Equipment {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (all fields)
+	*  Full constructor
 	*/
-	Armor (Type armorType, int baseArmor, float weight, int magicBonus) {
-		super(armorType.toString(), weight, magicBonus); 
+	Armor (Type armorType, Equipment.Material material, 
+		int baseArmor, float weight, int magicBonus)
+	{
+		super(armorType.toString(), material, weight, magicBonus);
 		this.armorType = armorType;
 		this.baseArmor = baseArmor;
 	}
 
 	/**
-	*  Constructor (no magic)
-	*/
-	Armor (Type armorType, int baseArmor, float weight) {
-		this(armorType, baseArmor, weight, 0);
-	}
-
-	/**
-	*  Constructor (copy)
+	*  Copy constructor
 	*/
 	Armor (Armor a) {
-		this(a.armorType, a.baseArmor, a.weight, a.magicBonus);
+		this(a.armorType, a.material, a.baseArmor, a.weight, a.magicBonus);
 	}
 
 	//--------------------------------------------------------------------------
@@ -71,14 +66,12 @@ public class Armor extends Equipment {
 	*/
 	static public Armor makeType (Type type) {
 		switch (type) {
-			case Plate: return new Armor(type, 6, 4);
-			case Chain: return new Armor(type, 4, 2);
-			case Leather: return new Armor(type, 2, 1);
-			case Shield: return new Armor(type, 1, 1);
-			default: 
-				System.err.println("Armor type has undefined values.");
-				return null;			
+			case Shield: return new Armor(type, Material.Wood, 1, 1, 0);
+			case Leather: return new Armor(type, Material.Leather, 2, 1, 0);
+			case Chain: return new Armor(type, Material.Steel, 4, 2, 0);
+			case Plate: return new Armor(type, Material.Steel, 6, 4, 0);
 		}	
+		System.err.println("Armor type has unknown value: " + type);
+		return null;
 	}
 }
-

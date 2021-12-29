@@ -17,11 +17,11 @@ public enum SpecialType {
 	//--------------------------------------------------------------------------
 
 	NPC, Poison, Paralysis, Petrification, BloodDrain, EnergyDrain,
-	Constriction, Corrosion, Immolation, Rotting, Swallowing,
+	Constriction, Immolation, Rotting, Swallowing,
 	SilverToHit, MagicToHit, ChopImmunity, DamageReduction,
 	Multiheads, Berserking, HitBonus, Invisibility, Detection, 
 	Grabbing, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
-	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, Absorption,
+	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, FleshEating, 
 	Whirlwind, WallOfFire, ConeOfCold, AcidSpitting, Confusion, 
 	Displacement, Blinking, Phasing, CharmTouch, Dragon, 
 	FireBreath, ColdBreath, VoltBreath, AcidBreath, PoisonBreath, 
@@ -31,7 +31,7 @@ public enum SpecialType {
 	SteamBreath, Stench, ResistStench, Webs, WebMove, Sleep, 
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
-	Fearlessness, ProtectionFromEvil;
+	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -67,6 +67,7 @@ public enum SpecialType {
 
 			// Death saves
 			case Poison: case SporeCloud: case Death:
+			case FleshEating:
 				return SavingThrows.Type.Death; 
 		}	
 
@@ -80,7 +81,7 @@ public enum SpecialType {
 	public boolean isDisabling () {
 		switch (this) {
 			case Poison: case Paralysis: case Petrification: 
-			case Swallowing: case SporeCloud: case Absorption: 
+			case Swallowing: case SporeCloud: case FleshEating: 
 			case Fear: case MindBlast: case Sleep: case Charm:
 			case Hold: case Webs: case Polymorphism: case Death:
 				return true;

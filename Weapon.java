@@ -7,7 +7,6 @@
 ******************************************************************************/
 
 public class Weapon extends Equipment {
-	enum Material {Wood, Steel, Silver}
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -19,9 +18,6 @@ public class Weapon extends Equipment {
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
-
-	/** Material type. */
-	Material material;
 
 	/** Damage basis. */
 	Dice damage;
@@ -39,50 +35,34 @@ public class Weapon extends Equipment {
 	/**
 	*  Constructor (all fields).
 	*/
-	Weapon (String name, Dice damage, float weight, int hands, 
-			int magic, Material material, EnergyType energy) {
-		super(name, weight, magic); 
+	Weapon (String name, Material material, float weight, int magic,
+		Dice damage, EnergyType energy, int hands)
+	{
+		super(name, material, weight, magic); 
 		this.damage = damage;
-		this.hands = hands;
-		this.material = material;
 		this.energy = energy;
-	}
-
-	/**
-	*  Constructor (name, damage, weight, hands, magic).
-	*/
-	Weapon (String name, Dice damage, float weight, int hands, int magic) {
-		this(name, damage, weight, hands, magic, Material.Steel, null);
-	}
-
-	/**
-	*  Constructor (name, damage, weight, hands, material).
-	*/
-	Weapon (String name, Dice damage, float weight, int hands, 
-			Material material) {
-		this(name, damage, weight, hands, 0, material, null);
+		this.hands = hands;
 	}
 
 	/**
 	*  Constructor (name, damage, weight, hands).
 	*/
 	Weapon (String name, Dice damage, float weight, int hands) {
-		this(name, damage, weight, hands, 0, Material.Steel, null);
+		this(name, Material.Steel, weight, 0, damage, null, hands);
 	}
 
 	/**
 	*  Constructor (copy)
 	*/
 	Weapon (Weapon w) {
-		this(w.name, new Dice(w.damage), w.weight, w.hands, 
-			w.magicBonus, w.material, w.energy);
+		this(w.name, w.material, w.weight, w.magicBonus,
+			w.damage, w.energy, w.hands);
 	}
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
 	public Dice getBaseDamage () { return damage; }
-	public Material getMaterial () { return material; }
 	public EnergyType getEnergy () { return energy; }
 	public int getHandsUsed () { return hands; }
 	
@@ -140,22 +120,24 @@ public class Weapon extends Equipment {
 	*  Make a silver dagger.
 	*/
 	static public Weapon silverDagger () {
-		return new Weapon("Dagger", new Dice(4), 0, 1, Material.Silver);
+		return new Weapon("Dagger", Material.Silver, 0, 0, 
+			new Dice(4), null, 1);
 	}
 
 	/**
 	*  Make a possibly-magic sword.
 	*/
 	static public Weapon sword (int bonus) {
-		return new Weapon("Sword", new Dice(8), ONE_THIRD, 1, bonus);
+		return new Weapon("Sword", Material.Steel, ONE_THIRD, bonus,
+			new Dice(8), null, 1);
 	}
 
 	/**
 	*  Make a torch.
 	*/
 	static public Weapon torch () {
-		return new Weapon("Torch", new Dice(3), ONE_THIRD, 1, 0, 
-			Material.Wood, EnergyType.Fire);
+		return new Weapon("Torch", Material.Wood, ONE_THIRD, 0,
+			new Dice(3), EnergyType.Fire, 1);
 	}
 
 	/**

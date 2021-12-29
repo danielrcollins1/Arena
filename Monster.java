@@ -193,9 +193,9 @@ public class Monster {
 	public Armor getArmor () { return null; }
 	public Armor getShield () { return null; }
 	public Weapon getWeapon () { return null; }
-	public void setArmor (Armor a) {}
 	public void drawBestWeapon (Monster m) {}
 	public void sheatheWeapon () {}
+	public void loseEquipment (Equipment e) {}
 	public void boostMagicItemsOneLevel () {}
 	public void takeAbilityDamage (Ability a, int n) {} 
 	public void zeroAbilityDamage () {} 
@@ -431,6 +431,7 @@ public class Monster {
 		if (checkConfusion(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
+		if (checkDrawWeapon(enemies)) return true;
 
 		// Secondary abilities (in block for performance)
 		if (!specialList.isEmpty()) {
@@ -620,12 +621,6 @@ public class Monster {
 			damage /= 2;
 		}
 
-		// Corroding slimes delay damage until bare flesh
-		if (hasSpecial(SpecialType.Corrosion)
-				&& target.getArmor() != null) {
-			damage = 0;
-		}
-
 		return damage;
 	}
 
@@ -697,10 +692,6 @@ public class Monster {
 					castCharm(target, -getSpecialParam(s));
 					break;
 
-				case Corrosion:
-					corrodeArmor(target);
-					break;
-
 				case Grabbing:
 					setHost(target);
 					break;
@@ -712,12 +703,28 @@ public class Monster {
 				case BloodDrain: 
 					setHost(target);
 					break;
+					
+				case FleshEating:
+					target.saveVsCondition(SpecialType.FleshEating, getHD());
 			}
 		}
 
-		// Special abilities of the target monster
+		// Check attacker eating a piece of equipment
+		if (canEatEquipment()) {
+			eatEquipment(target);
+		}
+
+		// Check target eating weapon its hit with
+		if (target.canEatEquipment()) {
+			Weapon weapon = getWeapon();
+			if (target.canEatEquipment(weapon)) {
+				saveVsEquipmentLoss(weapon);			
+			}
+		}
+
+		// Check target throwing off spores on hit
 		if (target.hasSpecial(SpecialType.SporeCloud)) {
-			if (Dice.roll(100) <= 50) {
+			if (Dice.roll(6) <= 3) {
 				target.castCondition(this, SpecialType.SporeCloud);
 			}  
 		}
@@ -1051,13 +1058,6 @@ public class Monster {
 	public boolean checkGrabbing () {
 		if (hasSpecial(SpecialType.Grabbing) && host != null) {
 
-			// Absorption: game over, man.
-			if (hasSpecial(SpecialType.Absorption)) {
-				host.instaKill();
-				host = null;
-				return true;
-			}
-
 			// Brain Consumption: comparable to 40% to kill/round.
 			if (hasSpecial(SpecialType.BrainConsumption)) {
 				if (Dice.roll(10) <= 4) {
@@ -1065,14 +1065,6 @@ public class Monster {
 					host = null;
 				}   
 				return true;
-			}
-
-			// Corrosion: must dissolve armor before damage.
-			if (hasSpecial(SpecialType.Corrosion)) {
-				if (host.getArmor() != null) {
-					corrodeArmor(host);    
-					return true;    
-				}   
 			}
 
 			// Automatic damage per attack form
@@ -1357,21 +1349,6 @@ public class Monster {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	* Corrode target's armor (metal or leather).
-	*/
-	public void corrodeArmor (Monster target) {
-		Armor armor = target.getArmor();
-		if (armor != null) {
-			if (armor.getMagicBonus() > 0) {
-				armor.setMagicBonus(armor.getMagicBonus() - 1);
-			}
-			else {
-				target.setArmor(null);
-			}
-		}
 	}
 
 	/**
@@ -1808,6 +1785,63 @@ public class Monster {
 		if (spellMemory.isBlank()) {
 			System.err.println("Unknown monster with spells: " + race);
 		}
+	}
+
+	/**
+	* Eat one piece of target equipment, if available.
+	*/
+	private void eatEquipment (Monster target) {
+		if (canEatEquipment(target.getShield()))
+			target.saveVsEquipmentLoss(target.getShield());
+		else if (canEatEquipment(target.getArmor()))
+			target.saveVsEquipmentLoss(target.getArmor());
+		else if (canEatEquipment(target.getWeapon()))
+			target.saveVsEquipmentLoss(target.getWeapon());
+	}
+
+	/**
+	* Can this monster eat a given type of equipment?
+	*/
+	private boolean canEatEquipment (Equipment equip) {
+		if (equip == null)
+			return false;
+		else if (hasSpecial(SpecialType.MetalEating)
+				&& equip.isMetallic())
+			return true;
+		else if (hasSpecial(SpecialType.WoodEating)
+				&& equip.getMaterial() == Equipment.Material.Wood)
+			return true;
+		else
+			return false;	
+	}
+
+	/**
+	* Can this monster eat some kind of equipment?
+	*/
+	private boolean canEatEquipment () {
+		return hasSpecial(SpecialType.WoodEating)
+			|| hasSpecial(SpecialType.MetalEating);	
+	}
+
+	/**
+	* A piece of this creature's equipment must save or be lost.
+	*/
+	private void saveVsEquipmentLoss (Equipment equip) {
+		if (!equip.rollSave()) {
+			loseEquipment(equip);
+		}	
+	}
+
+	/**
+	* Check if we need to draw a new weapon mid-fight.
+	* @return true if we drew a new weapon
+	*/
+	private boolean checkDrawWeapon (Party enemies) {
+		if (getAttack() == null) {
+			drawBestWeapon(enemies.random());
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -578,8 +578,21 @@ public class Character extends Monster {
 				bestWeapon = weaponInHand;
 			}							
 		}
-		assert(bestWeapon != null);
 		drawWeapon(bestWeapon);
+	}
+
+	/**
+	*  Lose a given piece of equipment.
+	*/
+	public void loseEquipment (Equipment equip) {
+		assert(equip != null);
+		equipList.remove(equip);
+		if (equip == armorWorn) armorWorn = null;
+		if (equip == shieldHeld) shieldHeld = null;
+		if (equip == weaponInHand) weaponInHand = null;
+		if (equip == ringWorn) ringWorn = null;
+		if (equip == wandHeld) wandHeld = null;
+		updateStats();
 	}
 
 	/**
@@ -754,7 +767,8 @@ public class Character extends Monster {
 	*/
 	void incrementRing () {
 		if (ringWorn == null) {
-			ringWorn = new Equipment("Ring of Protection", 0, 1);
+			ringWorn = new Equipment("Ring of Protection", 
+				Equipment.Material.Steel, 0, 1);
 			equipList.add(ringWorn);
 		}
 		else {
