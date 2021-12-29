@@ -431,7 +431,7 @@ public class Monster {
 		if (checkConfusion(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
-		if (checkDrawWeapon(enemies)) return true;
+		if (checkDrawNewWeapon(enemies)) return true;
 
 		// Secondary abilities (in block for performance)
 		if (!specialList.isEmpty()) {
@@ -955,8 +955,10 @@ public class Monster {
 	private boolean checkResistMagic (int casterLevel) {
 
 		// Magic immunity
-		if (hasSpecial(SpecialType.MagicImmunity))
+		if (hasSpecial(SpecialType.MagicImmunity)
+				|| hasCondition(SpecialType.AntimagicSphere))
 			return true;
+		
 
 		// Magic resistance
 		if (hasSpecial(SpecialType.MagicResistance)) {
@@ -1065,13 +1067,14 @@ public class Monster {
 				return true;
 			}
 
-			// Automatic damage per attack form
+			// Default: automatic damage per attack form
 			int damage = attack.getDamage().roll();
 			host.takeDamage(damage);
 			if (host.horsDeCombat()) {
 				host = null;
 			}
 			return true;
+			
 		}
 		return false;
 	}
@@ -1362,8 +1365,10 @@ public class Monster {
 	* @param area true if we want area-effect spell.
 	* @return true if we cast a spell.
 	*/
-	private boolean tryCastSpellAttack (Party enemies, boolean area) {
-		if (hasSpells()) {
+	private boolean tryCastAttackSpell (Party enemies, boolean area) {
+		if (hasSpells() 
+			&& !hasCondition(SpecialType.AntimagicSphere)) 
+		{
 			Spell spell = getBestAttackSpell(area);
 			if (spell != null) {
 				spell.cast(getLevel(), enemies);
@@ -1381,9 +1386,9 @@ public class Monster {
 	*/
 	private boolean checkCastSpellPreMelee (Party enemies) {
 		if (hasSpells()) {
-			if (tryCastSpellAttack(enemies, true))
+			if (tryCastAttackSpell(enemies, true))
 				return true;
-			else if (tryCastSpellAttack(enemies, false))
+			else if (tryCastAttackSpell(enemies, false))
 				return true;
 		}
 		return false;
@@ -1395,7 +1400,7 @@ public class Monster {
 	* @return true if we cast a spell.
 	*/
 	private boolean checkCastSpellInMelee (Party enemies) {
-		return tryCastSpellAttack(enemies, false);
+		return tryCastAttackSpell(enemies, false);
 	}
 
 	/**
@@ -1671,6 +1676,19 @@ public class Monster {
 	}		
 
 	/**
+	* Are we a beholder casting eye-functions in melee?
+	*/
+	private boolean checkManyEyesSalvo (Party enemy) {
+		if (hasSpecial(SpecialType.ManyEyeFunctions)
+			&& !enemy.allHaveCondition(SpecialType.AntimagicSphere))
+		{		
+			manyEyesSalvo(enemy);		
+			return true;
+		}	
+		return false;
+	}
+
+	/**
 	* Beholder many-eyes attacks.
 	*
 	* References available castable spells.
@@ -1696,17 +1714,14 @@ public class Monster {
 		for (int i = 0; i < numZaps; i++) {
 			eyeFunctions.get(i).cast(getHD(), enemy);
 		}
-	}
-
-	/**
-	* Are we a beholder casting eye-functions in melee?
-	*/
-	private boolean checkManyEyesSalvo (Party enemy) {
-		if (hasSpecial(SpecialType.ManyEyeFunctions)) {
-			manyEyesSalvo(enemy);		
-			return true;
-		}	
-		return false;
+		
+		// Cast the central antimagic ray at a spellcaster.
+		List<Monster> enemyShuffle = enemy.randomGroup(enemy.size());
+		for (Monster m: enemyShuffle) {
+			if (m.hasSpells() && !m.hasCondition(SpecialType.AntimagicSphere)) {
+				m.saveVsCondition(SpecialType.AntimagicSphere, getHD());			
+			}
+		}		
 	}
 
 	/**
@@ -1760,6 +1775,7 @@ public class Monster {
 			
 		// Lich
 		// - Assume the "typical" 18th level of wizardry.
+		// - Note levels for spell effects just use the hit dice.
 		if (race.equals("Lich")) {
 			final int wizLevel = 18;
 			spellMemory.addSpellsForWizard(wizLevel);
@@ -1834,7 +1850,7 @@ public class Monster {
 	* Check if we need to draw a new weapon mid-fight.
 	* @return true if we drew a new weapon
 	*/
-	private boolean checkDrawWeapon (Party enemies) {
+	private boolean checkDrawNewWeapon (Party enemies) {
 		if (getAttack() == null) {
 			drawBestWeapon(enemies.random());
 			return true;

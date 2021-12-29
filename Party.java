@@ -5,7 +5,6 @@ import java.util.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-01-31
-*  @version  1.01
 ******************************************************************************/
 
 public class Party implements Iterable<Monster> {
@@ -328,6 +327,17 @@ public class Party implements Iterable<Monster> {
 			list.add(m.getHP());    
 		} 
 		return list;
+	}
+
+	/**
+	* Do all members of this party have a given conditon?
+	*/
+	public boolean allHaveCondition (SpecialType condition) {
+		for (Monster m: this) {
+			if (!m.hasCondition(condition))
+				return false;
+		}
+		return true;
 	}
 
 	/**

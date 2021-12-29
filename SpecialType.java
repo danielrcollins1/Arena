@@ -31,7 +31,8 @@ public enum SpecialType {
 	SteamBreath, Stench, ResistStench, Webs, WebMove, Sleep, 
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
-	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating;
+	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
+	AntimagicSphere;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -58,6 +59,7 @@ public enum SpecialType {
 			// Spells saves
 			case Charm: case Sleep: case Confusion:
 			case Blindness: case Fear: case Polymorphism:
+			case AntimagicSphere:
 				return SavingThrows.Type.Spells; 
 
 			// Stone saves
@@ -71,7 +73,7 @@ public enum SpecialType {
 				return SavingThrows.Type.Death; 
 		}	
 
-		System.err.println("Error: No saveType for condition: " + this);
+		System.err.println("No saveType for condition: " + this);
 		return null;
 	}	
 	
