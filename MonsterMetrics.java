@@ -26,6 +26,7 @@ public class MonsterMetrics {
 	final int DEFAULT_FIGHTS_SPOTLIGHT = 1000;
 	final int DEFAULT_PCT_MAGIC_SWORD_PER_LEVEL = 15;
 	final int DEFAULT_WIZARD_FREQUENCY = 0;
+	final int NUM_TORCHES_CARRIED = 3;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
 
 	//--------------------------------------------------------------------------
@@ -528,7 +529,9 @@ public class MonsterMetrics {
 		f.setShield(Armor.makeType(Armor.Type.Shield));
 		f.addEquipment(newSword(level));
 		f.addEquipment(Weapon.silverDagger());
-		f.addEquipment(Weapon.torch());
+		for (int i = 0; i < NUM_TORCHES_CARRIED; i++) {
+			f.addEquipment(Weapon.torch());
+		}			
 		return f;
 	}
 
