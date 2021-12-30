@@ -481,13 +481,13 @@ public class MonsterMetrics {
 	double ratioMonstersBeatFighters (
 			Monster monsterType, int monsterNumber, 
 			int fighterLevel, int fighterNumber, 
-			boolean invert) {
-
+			boolean invert) 
+	{
 		assert (monsterType != null); 
 		if (fighterLevel < 0) return 1.0;
 
 		int wins = 0;
-		for (int i = 0; i < numberOfFights; i++)   {
+		for (int fight = 1; fight <= numberOfFights; fight++)   {
 
 			// Create monster party
 			Party party1 = new Party();
@@ -511,9 +511,29 @@ public class MonsterMetrics {
 			FightManager.fight(party1, party2);
 			if (party1.isLive()) {
 				wins++;
-			}                 
+			}
+			
+			// Spot-check to shortcut a very lopsided fight.
+			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
+			// See Weiss Introductory Statistics:
+			// Procedure 12.2, handicap enemy 5 fights,
+			// do some algebra.
+			if ((fight == 20 && wins >= 18)
+				|| (fight == 50 && wins >= 35)
+				|| (fight == 100 && wins >= 63))
+			{
+				return computeWinRatio(wins, fight, invert);
+			}
 		}
-		double winRatio = (double) wins / numberOfFights;
+
+		return computeWinRatio(wins, numberOfFights, invert);
+	}
+
+	/**
+	*  Compute the winRatio at end of fight sequence.
+	*/
+	double computeWinRatio (int wins, int fights, boolean invert) {
+		double winRatio = (double) wins / fights;
 		return invert ? 1 - winRatio : winRatio;
 	}
 
