@@ -6,7 +6,6 @@ import java.util.ArrayList;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-07-01
-*  @version  1.02
 ******************************************************************************/
 
 public class StatBin {

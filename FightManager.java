@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-10
-*  @version  1.0
 ******************************************************************************/
 
 public class FightManager {

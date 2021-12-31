@@ -6,7 +6,6 @@ import java.util.TreeMap;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-07-31
-*  @version  1.01
 ******************************************************************************/
 
 public class SpecialUnknownList {

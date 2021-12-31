@@ -5,7 +5,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-12
-*  @version  1.0
 ******************************************************************************/
 
 public class NameGenerator {

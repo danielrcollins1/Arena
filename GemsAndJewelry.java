@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-11-18
-*  @version  1.0
 ******************************************************************************/
 
 public class GemsAndJewelry {

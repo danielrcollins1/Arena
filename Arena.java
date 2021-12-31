@@ -5,7 +5,6 @@ import java.util.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20
-*  @version  1.13
 ******************************************************************************/
 
 public class Arena {

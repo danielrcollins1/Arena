@@ -5,7 +5,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-11-18
-*  @version  1.1
 ******************************************************************************/
 
 public class DungeonTreasureTable {

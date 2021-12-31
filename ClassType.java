@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-22
-*  @version  1.1
 ******************************************************************************/
 
 public class ClassType {

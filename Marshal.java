@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-15
-*  @version  1.2
 ******************************************************************************/
 
 public class Marshal {

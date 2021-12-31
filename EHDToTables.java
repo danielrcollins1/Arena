@@ -5,7 +5,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-11-19
-*  @version  1.0
 ******************************************************************************/
 
 public class EHDToTables {

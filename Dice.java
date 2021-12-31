@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-20
-*  @version  1.4
 ******************************************************************************/
 
 public class Dice {

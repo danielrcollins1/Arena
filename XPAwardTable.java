@@ -5,7 +5,6 @@ import java.io.IOException;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2015-12-27
-*  @version  1.03
 ******************************************************************************/
 
 public class XPAwardTable {

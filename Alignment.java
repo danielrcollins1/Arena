@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-05-19
-*  @version  1.0
 ******************************************************************************/
 
 public enum Alignment {

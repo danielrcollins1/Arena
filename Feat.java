@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-12-08
-*  @version  1.00
 ******************************************************************************/
 
 public enum Feat {

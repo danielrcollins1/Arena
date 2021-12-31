@@ -7,7 +7,6 @@ import java.util.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-07-18
-*  @version  1.1
 ******************************************************************************/
 
 public class MonsterTables implements Iterable<List<Monster>> {

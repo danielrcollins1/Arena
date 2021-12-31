@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-07-16
-*  @version  1.04
 ******************************************************************************/
 
 public class CSVReader {

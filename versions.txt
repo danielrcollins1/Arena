@@ -1,0 +1,124 @@
+
+---------- ABILITY.JAVA
+
+---------- ALIGNMENT.JAVA
+*  @version  1.0
+
+---------- ARENA.JAVA
+*  @version  1.13
+
+---------- ARMOR.JAVA
+*  @version  1.0
+
+---------- ATHENA.JAVA
+
+---------- ATTACK.JAVA
+*  @version  1.0
+
+---------- CHARACTER.JAVA
+
+---------- CHARACTERPDF.JAVA
+
+---------- CLASSINDEX.JAVA
+*  @version  1.1
+
+---------- CLASSRECORD.JAVA
+
+---------- CLASSTYPE.JAVA
+*  @version  1.1
+
+---------- CSVREADER.JAVA
+*  @version  1.04
+
+---------- DICE.JAVA
+*  @version  1.4
+
+---------- DUNGEONTREASURETABLE.JAVA
+*  @version  1.1
+
+---------- EHDTOTABLES.JAVA
+*  @version  1.0
+
+---------- ENERGYTYPE.JAVA
+
+---------- EQUIPMENT.JAVA
+*  @version  1.0
+
+---------- FEAT.JAVA
+*  @version  1.00
+
+---------- FIGHTMANAGER.JAVA
+*  @version  1.0
+
+---------- GEMSANDJEWELRY.JAVA
+*  @version  1.0
+
+---------- MAPUTIL.JAVA
+*  @version  1.00
+
+---------- MARSHAL.JAVA
+*  @version  1.2
+
+---------- MENTYPE.JAVA
+*  @version  1.0
+
+---------- MENTYPELIST.JAVA
+*  @version  1.0
+
+---------- MONSTER.JAVA
+
+---------- MONSTERDATABASE.JAVA
+
+---------- MONSTERMETRICS.JAVA
+
+---------- MONSTERTABLES.JAVA
+*  @version  1.1
+
+---------- MONSTERTREASURETABLE.JAVA
+*  @version  1.1
+
+---------- NAMEGENERATOR.JAVA
+*  @version  1.0
+
+---------- NPCGENERATOR.JAVA
+
+---------- PARTY.JAVA
+
+---------- PERSONALITYTRAITS.JAVA
+*  @version  1.0
+
+---------- SAVINGTHROWS.JAVA
+
+---------- SPECIALABILITY.JAVA
+
+---------- SPECIALTYPE.JAVA
+
+---------- SPECIALUNKNOWNLIST.JAVA
+*  @version  1.01
+
+---------- SPELL.JAVA
+
+---------- SPELLCASTING.JAVA
+
+---------- SPELLMEMORY.JAVA
+
+---------- SPELLSDAILY.JAVA
+
+---------- SPELLSINDEX.JAVA
+
+---------- STATBIN.JAVA
+*  @version  1.02
+
+---------- TREASURETYPE.JAVA
+*  @version  1.0
+
+---------- WANDS.JAVA
+*  @version  1.0
+
+---------- WEAPON.JAVA
+*  @version  1.0
+
+---------- WINMATRIX.JAVA
+
+---------- XPAWARDTABLE.JAVA
+*  @version  1.03

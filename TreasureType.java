@@ -3,7 +3,6 @@
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2018-02-13
-*  @version  1.0
 ******************************************************************************/
 
 public class TreasureType {

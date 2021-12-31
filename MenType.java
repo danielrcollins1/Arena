@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2016-02-14
-*  @version  1.0
 ******************************************************************************/
 
 public class MenType {

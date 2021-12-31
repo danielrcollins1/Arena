@@ -6,7 +6,6 @@ import java.util.*;
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2017-08-02
-*  @version  1.00
 ******************************************************************************/
 
 public class MapUtil {
