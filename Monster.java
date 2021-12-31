@@ -201,7 +201,7 @@ public class Monster {
 	public void zeroAbilityDamage () {} 
 	public boolean hasNullAbilityScore () { return false; }
 	public boolean hasFeat (Feat feat) { return false; }
-	public List<Spell> getSpellList () { return null; }
+	public SpellMemory getSpellMemory () { return spellMemory; }
 	public void addXP (int xp) {}
 	public int getSweepRate() { return 0; }
 
@@ -1369,7 +1369,7 @@ public class Monster {
 		if (hasSpells() 
 			&& !hasCondition(SpecialType.AntimagicSphere)) 
 		{
-			Spell spell = getBestAttackSpell(area);
+			Spell spell = getBestAttackSpell(enemies, area);
 			if (spell != null) {
 				spell.cast(getLevel(), enemies);
 				wipeSpellFromMemory(spell);
@@ -1649,17 +1649,50 @@ public class Monster {
 	*  Does this monster know any spells?
 	*/
 	public boolean hasSpells () {
-		return spellMemory != null;
+		return getSpellMemory() != null;
 	}
 
 	/**
-	*  Get the best (highest-level) castable attack spell.
+	*  Get the best castable attack spell.
+	*  Search for viable spell that affects the most targets.
 	*  @param area true if area-effect spell desired.
 	*  @return the best spell in memory.
 	*/
-	public Spell getBestAttackSpell (boolean areaEffect) {
-		return spellMemory == null ? null 
-			: spellMemory.getBestAttackSpell(areaEffect);
+	public Spell getBestAttackSpell (Party enemies, boolean areaEffect) {
+		assert(hasSpells());
+		Spell bestSpell = null;
+		Monster sampleFoe = enemies.random();
+		for (Spell spell: getSpellMemory()) {
+
+			// Is this spell viable in our current situation?
+			if (spell.isCastable()
+				&& spell.isAreaEffect() == areaEffect
+				&& sampleFoe.getHD() <= spell.getMaxTargetHD()
+				&& (sampleFoe.isPerson() || !spell.isPersonEffectOnly()))
+			{
+				if (bestSpell == null) {
+					bestSpell = spell;
+				}			
+				else {
+
+					// Compare which spell affects more targets
+					int bestSpellHits = Math.min(
+						enemies.size(), bestSpell.getMaxTargetNum());
+					int thisSpellHits = Math.min(
+						enemies.size(), spell.getMaxTargetNum());
+					if (bestSpellHits < thisSpellHits) {
+						bestSpell = spell;
+					}
+
+					// Break ties by spell level
+					else if (bestSpellHits == thisSpellHits) {
+						if (bestSpell.getLevel() < spell.getLevel())
+							bestSpell = spell;					
+					}
+				}			
+			}
+		}
+		return bestSpell;		
 	}
 
 	/**
@@ -1667,10 +1700,12 @@ public class Monster {
 	*  Scan all classes to find a copy to remove.
 	*/
 	public boolean wipeSpellFromMemory (Spell s) {
-		if (spellMemory != null && spellMemory.remove(s))
+		SpellMemory memory = getSpellMemory();
+		assert(memory != null);
+		if (memory.remove(s))
 			return true;
 		else {
-			System.err.println("ERROR: Request to wipe a spell not in monster memory.");
+			System.err.println("Request to wipe a spell not in memory.");
 			return false;
 		}
 	}		

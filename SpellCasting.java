@@ -18,12 +18,19 @@ public class SpellCasting {
 
 	/** Casting abstract base class. */
 	public static abstract class Casting {
+
+		// Fields
 		Spell spellInfo = null;
+
+		// Methods
 		String getName () {
 			String sName = getClass().getSimpleName();
 			return sName.substring(0, sName.indexOf("Casting"));
 		}
 		void setSpellInfo (Spell s) { spellInfo = s; }
+		int getMaxTargetNum () { return spellInfo.getMaxTargetsInArea(); }
+		int getMaxTargetHD () { return Integer.MAX_VALUE; }
+		boolean isPersonEffectOnly () { return false; }
 		abstract void cast (int level, Party targets);
 	}
 
@@ -67,6 +74,7 @@ public class SpellCasting {
 
 	/** Charm Person spell effect. */
 	static class CharmPersonCasting extends Casting {
+		boolean isPersonEffectOnly () { return true; }
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
 			if (target.isPerson()) {
@@ -77,8 +85,10 @@ public class SpellCasting {
 
 	/** Magic Missile spell effect. */
 	static class MagicMissileCasting extends Casting {
+		static final int MAX_TARGETS = 5;
+		int getMaxTargetNum () { return MAX_TARGETS; }
 		void cast (int level, Party targets) {
-			int numMissiles = Math.min((level + 1) / 2, 5);
+			int numMissiles = Math.min((level + 1) / 2, MAX_TARGETS);
 			for (int i = 0; i < numMissiles; i++) {
 				Monster target = targets.random();
 				int damage = Dice.roll(6) + 1;
@@ -90,12 +100,14 @@ public class SpellCasting {
 
 	/** Sleep spell effect. */
 	static class SleepCasting extends Casting {
+		static final int MAX_HD = 4;
+		int getMaxTargetHD () { return MAX_HD; }
 		void cast (int level, Party targets) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int effectHD = new Dice(2, 6).roll();
 			for (Monster target: hitTargets) {
-				if (target.getHD() <= 4 && target.getHD() <= effectHD) {
+				if (target.getHD() <= MAX_HD && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
 					target.saveVsCondition(SpecialType.Sleep, level);
 				}
@@ -154,11 +166,13 @@ public class SpellCasting {
 
 	/** Hold Person spell effect. */
 	static class HoldPersonCasting extends Casting {
+		static final int MAX_TARGETS = 4;
+		int getMaxTargetNum () { return MAX_TARGETS; }
 		void cast (int level, Party targets) {
 
 			// For utility, assume we can target up to 4 creatures in melee.
 			// Contrast with S&S specifier of 3" dia. area effect.
-			List<Monster> hitTargets = targets.randomGroup(4);
+			List<Monster> hitTargets = targets.randomGroup(MAX_TARGETS);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
 				if (target.isPerson()) {
@@ -246,11 +260,13 @@ public class SpellCasting {
 
 	/** Cloudkill spell effect. */
 	static class CloudkillCasting extends Casting {
+		static final int MAX_HD = 6;
+		int getMaxTargetHD () { return MAX_HD; }
 		void cast (int level, Party targets) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
-				if (target.getHD() <= 6) {
+				if (target.getHD() <= MAX_HD) {
 					target.saveVsCondition(SpecialType.Death, level);
 				}			
 			}
@@ -259,11 +275,13 @@ public class SpellCasting {
 
 	/** Hold Monster spell effect. */
 	static class HoldMonsterCasting extends Casting {
+		static final int MAX_TARGETS = 4;
+		int getMaxTargetNum () { return MAX_TARGETS; }
 		void cast (int level, Party targets) {
 
 			// For utility, assume we can target up to 4 creatures in melee.
 			// Contrast with S&S specifier of 3" dia. area effect.
-			List<Monster> hitTargets = targets.randomGroup(4);
+			List<Monster> hitTargets = targets.randomGroup(MAX_TARGETS);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
 				target.saveVsCondition(SpecialType.Hold, level);
@@ -273,13 +291,16 @@ public class SpellCasting {
 
 	/** Death Spell effect. */
 	static class DeathSpellCasting extends Casting {
+		static final int MAX_HD = 8;
+		int getMaxTargetHD () { return MAX_HD; }
+		int getMaxTargetNum () { return 120; }
 		void cast (int level, Party targets) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int numDice = Math.min(level, 20);
 			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				if (target.getHD() <= 8 && target.getHD() <= effectHD) {
+				if (target.getHD() <= MAX_HD && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
 					target.saveVsCondition(SpecialType.Death, level);
 				}			

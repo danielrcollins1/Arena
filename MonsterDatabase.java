@@ -1,12 +1,11 @@
-import java.io.IOException; 
 import java.util.*;
+import java.io.IOException; 
 
 /******************************************************************************
 *  Database of available monster types (singleton pattern).
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2014-07-18
-*  @version  1.0
 ******************************************************************************/
 
 public class MonsterDatabase implements Iterable<Monster> {

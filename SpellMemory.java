@@ -9,7 +9,7 @@ import java.util.*;
 *  @since    2021-12-19
 ******************************************************************************/
 
-public class SpellMemory {
+public class SpellMemory implements Iterable<Spell> {
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -131,28 +131,6 @@ public class SpellMemory {
 	}
 
 	/**
-	*  Get the best (highest-level) castable attack spell.
-	*  @param area true if area-effect spell desired.
-	*  @return the best spell in memory.
-	*/
-	public Spell getBestAttackSpell (boolean areaEffect) {
-		Spell best = null;	
-		for (Spell s: memory) {
-			if (s.isCastable()
-				&& s.getMode() == Spell.Mode.Attack
-				&& s.isAreaEffect() == areaEffect)
-			{
-				if (best == null 
-					|| best.getLevel() < s.getLevel()) 
-				{
-					best = s;
-				}							
-			}
-		}	
-		return best;
-	}
-
-	/**
 	*  Add a spell by naming it.
 	*/
 	public void addByName (String name) {
@@ -184,6 +162,13 @@ public class SpellMemory {
 			s += spell.getName();
 		}
 		return s;
+	}
+
+	/**
+	*	Return iterator for the iterable interface.
+	*/
+	public Iterator<Spell> iterator() {        
+		return memory.iterator();
 	}
 
 	/**
