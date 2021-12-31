@@ -513,18 +513,14 @@ public class MonsterMetrics {
 				wins++;
 			}
 			
-			// Spot-check to shortcut a very lopsided fight.
+			// Shortcut a lopsided matchup.
 			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
 			// See Weiss Introductory Statistics:
-			// Procedure 12.2, handicap enemy 10 fights,
-			// do some algebra.
-			if ((fight == 25 && wins >= 24)
-				|| (fight == 50 && wins >= 38)
-				|| (fight == 100 && wins >= 66)
-				|| (fight == 200 && wins >= 120))
-			{
-				return computeWinRatio(wins, fight, invert);
-			}
+			// Procedure 12.2, handicap enemy 10 fights.
+			double z = Math.sqrt(fight + 10) 
+				* ((double) 2 * wins/(fight + 10) - 1);
+			if (z >= 2.0)
+ 				return computeWinRatio(wins, fight, invert);
 		}
 
 		return computeWinRatio(wins, numberOfFights, invert);
