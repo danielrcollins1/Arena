@@ -14,14 +14,16 @@ s#j0
 s#l0
 !134;u
 a0	b68	c255	f%\011Athena.jar	g%\011Athena.zip	hManifest-Version\0111.0\011Class-Path\011pdfbox-app.jar\011Main-Class\011Athena	iAthena!26;a
-a%\011Athena_doc%s	b	c1	d0!949;g
+a%\011Athena_doc%s	b	c1	d0!1014;g
 %\011MonsterTreasureTable.java
 %\011Weapon.java
 %\011SavingThrows.java
 %\011TreasureType.java
 %\011Armor.java
 %\011MenType.java
+%\011SpellCasting.java
 %\011ClassIndex.java
+%\011SpellMemory.java
 %\011FightManager.java
 %\011MonsterDatabase.java
 %\011SpecialAbility.java
@@ -44,6 +46,7 @@ a%\011Athena_doc%s	b	c1	d0!949;g
 %\011Marshal.java
 %\011Athena.java
 %\011Monster.java
+%\011WinMatrix.java
 %\011EHDToTables.java
 %\011Equipment.java
 %\011StatBin.java
@@ -60,14 +63,16 @@ a%\011Athena_doc%s	b	c1	d0!949;g
 %\011MenTypeList.java
 %\011MapUtil.java
 %\011Ability.java
-!949;f
+!1014;f
 %\011MonsterTreasureTable.java
 %\011Weapon.java
 %\011SavingThrows.java
 %\011TreasureType.java
 %\011Armor.java
 %\011MenType.java
+%\011SpellCasting.java
 %\011ClassIndex.java
+%\011SpellMemory.java
 %\011FightManager.java
 %\011MonsterDatabase.java
 %\011SpecialAbility.java
@@ -90,6 +95,7 @@ a%\011Athena_doc%s	b	c1	d0!949;g
 %\011Marshal.java
 %\011Athena.java
 %\011Monster.java
+%\011WinMatrix.java
 %\011EHDToTables.java
 %\011Equipment.java
 %\011StatBin.java
