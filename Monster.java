@@ -798,13 +798,17 @@ public class Monster {
 					return;
 
 				case Whirlwind:
-					int diameter = getSpecialParam(s);
-					int numVictims = diameter * diameter;
+
+					// Assume we plow a straight line of given diameter
+					// through roughly square enemy formation.
+					int enemyLength = (int) Math.sqrt(enemy.size());
+					int widthEffect = Math.min(getSpecialParam(s), enemyLength);
+					int lengthEffect = Math.min(getMoveInches(), enemyLength);
+					int numVictims = widthEffect * lengthEffect;
 					List<Monster> victims = enemy.randomGroup(numVictims);
 					for (Monster m: victims) {
-						if (m.getHD() < 2) {
-							m.instaKill();
-						}     
+						if (m.getHD() <= 1)
+							m.saveVsCondition(SpecialType.BlownAway, getHD());
 					}
 					return;
 
@@ -830,6 +834,7 @@ public class Monster {
 
 				case Stench:
 					for (Monster targetStench: enemy) {
+
 						// Each enemy only needs to make one save vs. stinky monster party
 						if (!targetStench.hasCondition(SpecialType.ResistStench)) {
 							if (!targetStench.rollSave(SavingThrows.Type.Breath)) {

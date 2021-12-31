@@ -32,7 +32,7 @@ public enum SpecialType {
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
-	AntimagicSphere;
+	AntimagicSphere, BlownAway;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -69,7 +69,7 @@ public enum SpecialType {
 
 			// Death saves
 			case Poison: case SporeCloud: case Death:
-			case FleshEating:
+			case FleshEating: case BlownAway:
 				return SavingThrows.Type.Death; 
 		}	
 
@@ -86,6 +86,7 @@ public enum SpecialType {
 			case Swallowing: case SporeCloud: case FleshEating: 
 			case Fear: case MindBlast: case Sleep: case Charm:
 			case Hold: case Webs: case Polymorphism: case Death:
+			case BlownAway:
 				return true;
 		}
 		return false;
