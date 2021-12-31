@@ -60,10 +60,12 @@ GPJ project files for use with jGRASP are included for each of the
 applications above. It's easiest to simply use **Athena.gpj** to build the master 
 program and all the child applications. 
 
-While common monster special abilities are modeled, we have not implemented 
-magic-user/wizard spells (so: no mixed PC parties with wizards, nor NPC wizard 
-opponents). One round of special attacks is allowed for monster abilities
-at the start of combat (e.g., dragon breath, giant boulders, medusa gaze, etc.). 
+Many of the most common attack spells and monster abilities have been implemented.
+The MonsterMetrics tool assumes by default that parties of fighters have a 1/4
+incidence of wizards with them of the same level (this is adjustable via the
+command-line switch -z). Our combat idiom assumes that there is one initial round
+allowing ranged special abilities and area attacks and spells, followed by a general 
+melee (following principles in 1E AD&D DMG p. 63 and 70). 
 
 To the extent that the original rules are ambiguous or in need of DM
 adjudication (as in many cases), the author has attempted to research 
