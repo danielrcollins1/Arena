@@ -78,5 +78,17 @@ public enum Alignment {
 			default: return Chaotic;
 		}	
 	}
+	
+	/**
+	*  Randomize an alignment biased toward a given one.
+	*/
+	public static Alignment randomBias (Alignment align) {
+		switch (align) {
+			case Lawful: return randomLawfulBias();
+			case Chaotic: return randomChaoticBias();		
+			default: return randomNormal();
+		}
+	}
+	
 }
 

@@ -2,9 +2,9 @@ Category,HD,Align,Leaders,Casters,Composition,Notes
 Bandits,1,Chaotic/Neutral,Plate,Yes,"50% Light Foot (AC 6, MV 12); 20% Light Crossbow (AC 7, MV 12); 20% Light Horse (AC 6, MV 24); 10% Medium Horse (AC 4, MV 18)",Leaders on heavy barded horses.
 Brigands,1,Chaotic,Plate,Yes,"50% Light Foot (AC 6, MV 12); 20% Light Crossbow (AC 7, MV 12); 20% Light Horse (AC 6, MV 24); 10% Medium Horse (AC 4, MV 18)",Leaders on heavy barded horses; morale +1.
 Nomads,1,Chaotic/Neutral,Chain,Yes,"50% Light Horse (AC 6, MV 24); 30% Medium Horse (AC 4, MV 18); 20% Horse Archers (AC 7, MV 24)","Camp has 20-40 medium foot, composite bows."
-Dervishes,1+1,Lawful,Chain,Yes,"50% Light Horse (AC 6, MV 24); 30% Medium Horse (AC 4, MV 18); 20% Horse Archers (AC 7, MV 24)",Attacks +2; no morale checks; led by Cleric (8th-10th).
+Dervishes,1+1,Lawful,Chain,Yes,"50% Light Horse (AC 6, MV 24); 30% Medium Horse (AC 4, MV 18); 20% Horse Archers (AC 7, MV 24)",Attacks +2; fearless; led by Cleric (8th-10th).
 Buccaneers,1,Chaotic/Neutral,Chain,Yes,"60% Light Foot (AC 6, MV 12); 30% Light Crossbow (AC 7, MV 12); 10% Heavy Crossbow (AC 5, MV 9)",Longship or sailed warship per 60-80 men.
 Pirates,1,Chaotic,Chain,Yes,"60% Light Foot (AC 6, MV 12); 30% Light Crossbow (AC 7, MV 12); 10% Heavy Crossbow (AC 5, MV 9)",Longship or sailed warship per 60-80 men.
-Berserkers,1+1,Neutral,Leather,No,"100% Light Foot (AC 6, MV 12)",Attacks +2; no morale checks.
+Berserkers,1+1,Neutral,Leather,No,"100% Light Foot (AC 6, MV 12)",Attacks +2; fearless.
 Cavemen,2,Neutral,Leather,No,"100% Light Foot (AC 9, MV 12)",Morale -1; clubs as morning stars.
-Mermen,1+1,Neutral,Leather,No,"50% Tridents (AC 7, MV 12); 50% Darts (AC 7, MV 12)",Attacks +2; -1 on land.
+Mermen,1+1,Neutral,Leather,No,"50% Tridents (AC 7, MV 12); 50% Darts (AC 7, MV 12)",Attacks +2; -1 on land; fearless.

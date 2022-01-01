@@ -213,27 +213,17 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Roll for an alignment.
-	*/
-	String rollAlign() {
-		switch (Dice.roll(6)) {
-			case 1: return "Lawful";
-			default: return "Neutral";
-			case 6: return "Chaotic";
-		}
-	}
-
-	/**
 	*  Create one fully-formed profile from incomplete source.
 	*/
 	GenProfile fillProfile (GenProfile ip) {
 		GenProfile profile = new GenProfile();
- 		profile.race = ip.race == null ? rollRace() : ip.race;
- 		profile.class1 = ip.class1 == null ? rollClass() : ip.class1;
- 		profile.level1 = ip.level1 == 0 ? 1 : ip.level1;
+ 		profile.race = ip.race != null ? ip.race: rollRace();
+ 		profile.class1 = ip.class1 != null ? ip.class1: rollClass();
+ 		profile.level1 = ip.level1 > 0 ? ip.level1: 1;
 		profile.class2 = ip.class2;
 		profile.level2 = ip.level2;
-		profile.align = ip.align == null ? rollAlign() : ip.align;
+		profile.align = ip.align != null ? ip.align : 
+			Alignment.randomNormal().toString();
 		if (profile.race.equals("Elf")) {
 			fillElfProfile(profile);
 		}

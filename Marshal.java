@@ -27,6 +27,13 @@ public class Marshal {
 	*  selection, leaders will be observed with a higher frequency of magic.
 	*/	
 	static final int PCT_MAGIC_PER_LEVEL = 5;
+
+	/** 
+	*  Percent chance for wizards magic per level.
+	*  Since wizards aren't developed evolutionarily, 
+	*  need higher percentage to maintain par.
+	*/	
+	static final int PCT_WIZARD_MAGIC_PER_LEVEL = 15;
 	
 	/** 
 	*  Number of leaders to print. 
@@ -38,6 +45,9 @@ public class Marshal {
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
+
+	/** Arena object to develop fighters. */
+	Arena arena;
 
 	/** Type of men to construct. */
 	MenType menType;
@@ -121,65 +131,64 @@ public class Marshal {
 	*  Main method.
 	*/
 	public void assembleMen () {
+		runArena();
 		reportHeader();
-		reportNotes();
+		reportWizard();
 		reportLeaders();
-		reportGrunts();
+		reportTroops();
 	}
 
 	/**
-	*  Generate and report unit header.
+	*  Run Arena to develop leader figures.
 	*/
-	void reportHeader () {
-		String header = menType + ", " 
-			+ menTotal + " Total ";
-		System.out.println(header);
-	}
-
-	/**
-	*  Generate and report miscellaneous notes.
-	*/
-	void reportNotes () {
-		String notes = "";
-		if (menType.getNotes().length() > 1)
-			notes += menType.getNotes() + " ";
-		String casterString = casterString();
-		if (casterString.length() > 1)
-			notes += casterString;
-		if (notes.length() > 1)
-			System.out.println("Notes: " + notes);
-		System.out.println();
-	}
-
-	/**
-	*  String descriptor of spellcasters.
-	*/
-	String casterString () {
-		if (menTotal < 200 || !menType.hasCasters()) 
-			return "";
-		else if (menTotal < 300)
-			return "50% for Magic-User (10th-11th), 25% for Cleric (8th).";
-		else
-			return "100% for Magic-User (10th-11th), 50% for Cleric (8th).";
-	}
-
-	/**
-	*  Generate and report on leader-types.
-	*/
-	void reportLeaders () {
-		Arena arena = new Arena(menTotal, false, true);
+	void runArena () {
+		arena = new Arena(menTotal, false, true);
 		arena.setBaseArmor(menType.getLeaderArmor());
 		arena.setTypicalAlignment(menType.getAlignment());
 		arena.setFightCycles(menTotal * FIGHTS_PER_MAN);
 		arena.setPctMagicPerLevel(PCT_MAGIC_PER_LEVEL);
 		arena.runSim();
+	}
+
+	/**
+	*  Report unit header information.
+	*/
+	void reportHeader () {
+		System.out.println(menType + ", " + menTotal + " Total");
+		if (menType.getNotes().length() > 1)
+			System.out.println("Notes: " + menType.getNotes());
+		System.out.println();
+	}
+
+	/**
+	*  Report on wizard-types.
+	*/
+	void reportWizard () {
+		if (menType.hasCasters() 
+			&& (menTotal >= 300
+				|| (menTotal >= 200 && Dice.roll(6) <= 3)))
+		{
+			int level = (Dice.roll(6) <= 4 ? 10 : 11);
+			Character w = new Character("Human", "Wizard", level, null);
+			Character.setPctMagicPerLevel(PCT_WIZARD_MAGIC_PER_LEVEL);
+			w.setAlignment(Alignment.randomBias(menType.getAlignment()));
+			w.setBasicEquipment();
+			w.boostMagicItemsToLevel();
+			System.out.println(w);
+		}	
+	}
+
+	/**
+	*  Report on leader-types.
+	*/
+	void reportLeaders () {
 		arena.printTopFighters(NUM_LEADERS_TO_PRINT);
 	}
 
 	/**
-	*  Generate and report on grunt-types.
+	*  Report on troop-types.
 	*/
-	void reportGrunts () {
+	void reportTroops () {
 		MenType.Component[] comp = menType.createComponents(menTotal);
 		for (MenType.Component c: comp) {
 			System.out.println(c.number + " " + c.description + ".");
