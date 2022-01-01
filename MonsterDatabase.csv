@@ -178,7 +178,7 @@ Wraith,2d8,3,12,4,20,E,1,1d6,U,C,4,4,D,O,"Flight (24), SilverToHit, EnergyDrain 
 Ghast,1d6,4,15,4,10,G,1,1d6+2,U,C,4,6,D,M1,"Paralysis, Stench"
 Mummy,1d12,3,6,5+1,30,D,1,1d6,U,C,5,7,D,O,"MagicToHit (1), DamageReduction, Rotting"
 Spectre,1d8,2,15,6,25,E,1,1d6,U,C,6,8,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
-Vampire,1d4,2,12,8,20,F,1,1d6,U,C,8,30,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
+Vampire,1d4,2,12,8,20,F,1,1d6,U,C,8,32,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
 Lich,1d4,3,6,10,100,A,1,1d6,U,N,10,45,D,S1,"Fear (4), Paralysis, Spells"
 Djinni,1,5,9,7+1,-,-,1,2d6-1,X,N,7,7,S,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,X,N,8,8,S,O,"Invisibility, Tracking"

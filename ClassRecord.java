@@ -112,6 +112,8 @@ public class ClassRecord {
 		else {
 			if (isFeatLevel(level))
 				loseFeat();
+			if (hasSpells())
+				spellsKnown.loseSpellLevel(level);
 			Dice diceInc = classType.getHitDiceInc(level);
 			if (diceInc.getAdd() > 0)
 				hitPoints -= diceInc.getAdd();

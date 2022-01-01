@@ -170,10 +170,12 @@ public class Party implements Iterable<Monster> {
 	*/
 	public void addMonsters (String race, int number) {
 		Monster m = MonsterDatabase.getInstance().getByRace(race);
-		if (m != null) {
-			for (int i = 0; i <number; i++) {
+		if (m == null) {
+			System.err.println("Request to add monster not found in database: " + race);
+		}
+		else {
+			for (int i = 0; i < number; i++)
 				add(m.spawn());  
-			}
 		}
 	}
 

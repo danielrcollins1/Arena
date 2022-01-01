@@ -87,8 +87,19 @@ public class SpellMemory implements Iterable<Spell> {
 			if (s.getLevel() == level)
 				count++;
 		}
-		return count;		
+		return count;
 	}	
+
+	/**
+	*  Get a random spell of a given level.
+	*/
+	private Spell getAtLevel (int level) {
+		for (Spell s: memory) {
+			if (s.getLevel() == level)
+				return s;
+		}
+		return null;			
+	}
 
 	/**
 	*  Add a random spell from index at a given level.
@@ -147,6 +158,28 @@ public class SpellMemory implements Iterable<Spell> {
 			int numSpells = spellsDaily.getSpellsDaily(level, power);
 			for (int num = 0; num < numSpells; num++) {
 				addRandom(power);
+			}
+		}
+	}
+
+	/**
+	*  Lose the top character level load-out of spells.
+	*  Bound memory by next lower level daily spells.
+	*/
+	public void loseSpellLevel (int level) {
+		if (level <= 1) {
+			memory.clear();		
+			return;
+		}
+		SpellsDaily spellsDaily = SpellsDaily.getInstance();
+		int maxPower = spellsDaily.getMaxSpellLevel();
+		for (int power = 1; power <= maxPower; power++) {
+			int inMemory = countAtLevel(power);
+			int maxAllowed = spellsDaily.getSpellsDaily(level - 1, power);
+			int numToWipe = inMemory - maxAllowed;
+			for (int i = 0; i < numToWipe; i++) {
+				Spell spell = getAtLevel(power);
+				remove(spell);
 			}
 		}
 	}
