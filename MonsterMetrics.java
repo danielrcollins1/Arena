@@ -27,7 +27,28 @@ public class MonsterMetrics {
 	final int DEFAULT_WIZARD_RATIO = 4;
 	final int NUM_TORCHES_CARRIED = 3;
 	final int GRAPH_Y_INTERVAL = 5;
+	final int STANDARD_PARTY_SIZE = 5;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
+
+	//--------------------------------------------------------------------------
+	//  Inner class
+	//--------------------------------------------------------------------------
+
+	/** Statistics for battles at a given search point. */
+	class BattleStats {
+
+		// Fields
+		double winRatio;
+		double avgTurns;	
+		boolean okMatchup;
+
+		// Methods
+		BattleStats (double wins, double turns, boolean accept) {
+			winRatio = wins;
+			avgTurns = turns;
+			okMatchup = accept;
+		}
+	};
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -62,6 +83,12 @@ public class MonsterMetrics {
 
 	/** Flag to graph equated fighters HD. */
 	boolean graphEquatedFightersHD; 
+
+	/** Flag to show parity win ratios. */
+	boolean showParityWinRatios;
+
+	/** Flag to show quick battle states exclusively. */
+	boolean showQuickBattleStats;
 
 	/** Did we print anything on this run? */
 	boolean printedSomeMonster;
@@ -121,6 +148,8 @@ public class MonsterMetrics {
 		System.out.println("\t-k wait for keypress to start processing");		
 		System.out.println("\t-m chance for magic weapon bonus per level " 
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
+		System.out.println("\t-p show parity win ratios vs. standard-size party");
+		System.out.println("\t-q show quick battle stats only");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
@@ -145,6 +174,8 @@ public class MonsterMetrics {
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'k': waitForKeypress = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
+					case 'p': showParityWinRatios = true; break;
+					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
@@ -221,18 +252,19 @@ public class MonsterMetrics {
 	*  Report number of fighters at each level to match all monsters.
 	*/
 	void reportAllMonsters () {
-		MonsterDatabase db = MonsterDatabase.getInstance();
-		if (db == null) return;
-		for (Monster m: db) {
+
+		// Analyze each monster
+		for (Monster m: MonsterDatabase.getInstance()) {
 			if (!m.hasUndefinedEHD()) {
 				reportOneMonster(m);
 			}
 		}
+		
+		// Give notice if no monsters reported
 		if (!printedSomeMonster) {
-			if (displayOnlyRevisions)
-				System.out.println("No revised EHDs found versus database.");
-			else
-				System.out.println("No measurable monsters found in database.");				
+			System.out.println(displayOnlyRevisions ?
+				"All EHDs in database found valid." :
+				"No measurable monsters found in database.");
 		}
 		System.out.println();
 	}
@@ -247,6 +279,8 @@ public class MonsterMetrics {
 		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
 		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
 		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD);
+		double[] parityWins = showParityWinRatios ?
+			getParityWinRatios(monster): null;
 
 		// Print stats as requested
 		if (reviseEHD || !displayOnlyRevisions || spotlightMonster == monster) {
@@ -254,14 +288,14 @@ public class MonsterMetrics {
 				+ "Old EHD " + monster.getEHD() + ", "
 				+ "New EHD " + Math.round(estEHD)
 				+ " (" + roundDbl(estEHD, 2) + ")");
-			if (estEHD * 2 > getDblArrayMin(eqFightersHD) * MAX_LEVEL)
-				System.out.println("\tEHD over half of harmonic mean threshold.");
 			if (displayEquatedFighters)
 				System.out.println("\tEF " + toString(eqFighters, 1));
 			if (displayEquatedFightersHD)
 				System.out.println("\tEFHD " + toString(eqFightersHD, 1));
  			if (graphEquatedFightersHD)
  				graphDblArray(eqFightersHD);
+			if (showParityWinRatios)
+				System.out.println("\tPWR " + toString(parityWins, 2));		
 			if (anySpecialPrinting())
 				System.out.println();
 			printedSomeMonster = true;
@@ -302,7 +336,7 @@ public class MonsterMetrics {
 	*/
 	boolean anySpecialPrinting () {
 		return displayEquatedFighters	|| displayEquatedFightersHD 
-			|| graphEquatedFightersHD;
+			|| graphEquatedFightersHD || showParityWinRatios;
 	}
 
 	/**
@@ -479,9 +513,9 @@ public class MonsterMetrics {
 	*  @param invert If true, returns chance of fighters beating monsters.
 	*/
 	double ratioMonstersBeatFighters (
-			Monster monsterType, int monsterNumber, 
-			int fighterLevel, int fighterNumber, 
-			boolean invert) 
+		Monster monsterType, int monsterNumber, 
+		int fighterLevel, int fighterNumber, 
+		boolean invert) 
 	{
 		assert (monsterType != null); 
 		if (fighterLevel < 0) return 1.0;
@@ -489,29 +523,13 @@ public class MonsterMetrics {
 		int wins = 0;
 		for (int fight = 1; fight <= numberOfFights; fight++)   {
 
-			// Create monster party
-			Party party1 = new Party();
-			for (int j = 0; j < monsterNumber; j++) {
-				party1.add(monsterType.spawn());
-			}
-
-			// Create character party
-			Party party2 = new Party();
-			for (int j = 0; j < fighterNumber; j++) {
-				Character character;
-				if (wizardFrequency > 0 
-						&& Dice.roll(wizardFrequency) == 1)
-					character = newWizard(fighterLevel);
-				else
-					character = newFighter(fighterLevel);
-				party2.add(character);
-			}
-
-			// Fight & see who wins
-			FightManager.fight(party1, party2);
-			if (party1.isLive()) {
+			// Fight & track if monster wins
+			Party ftrParty = makeFighterParty(fighterLevel, fighterNumber);
+			Party monParty = new Party(monsterType, monsterNumber);
+			FightManager manager = new FightManager(ftrParty, monParty);
+			if (manager.fight() == monParty) {
 				wins++;
-			}
+			}			
 			
 			// Shortcut a lopsided matchup.
 			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
@@ -524,6 +542,23 @@ public class MonsterMetrics {
 		}
 
 		return computeWinRatio(wins, numberOfFights, invert);
+	}
+
+	/**
+	*  Create a specified party of fighters.
+	*/
+	Party makeFighterParty (int level, int number) {
+		Party party = new Party();
+		for (int i = 0; i < number; i++) {
+			Character character;
+			if (wizardFrequency > 0 
+					&& Dice.roll(wizardFrequency) == 1)
+				character = newWizard(level);
+			else
+				character = newFighter(level);
+			party.add(character);
+		}
+		return party;
 	}
 
 	/**
@@ -558,7 +593,7 @@ public class MonsterMetrics {
 	Weapon newSword (int level) {
 		int bonus = 0;
 		for (int i = 0; i < level; i++) {
-			if (Dice.roll(100) <= pctMagicPerLevel) {
+			if (Dice.rollPct() <= pctMagicPerLevel) {
 				bonus++;
 			}
 		}
@@ -573,6 +608,7 @@ public class MonsterMetrics {
 	Character newWizard (int level) {
 		Character f = new Character("Human", "Wizard", level, null); 
 		f.addEquipment(Weapon.silverDagger());
+		f.addEquipment(Weapon.torch());
 		return f;
 	}
 
@@ -585,6 +621,70 @@ public class MonsterMetrics {
 			SpecialUnknownList list = SpecialUnknownList.getInstance();
 			System.out.println("Unknown specials: " + list + "\n");
 		}
+	}
+
+	/**
+	*  Compute stats for monster vs. standard-sized party at a given level.
+	*  Here we assume the database EHD is viable to compute matching monsters.
+	*/
+	private BattleStats getMatchupStats (Monster monster, int ftrLevel) {
+
+		// Check for 0-EHD monster
+		if (monster.getEHD() <= 0)
+			return new BattleStats(-1, -1, false);
+
+		// Compute fair numbers
+		int partySize = STANDARD_PARTY_SIZE;
+		int monNumber = (int) Math.round((double) 
+			partySize * ftrLevel / monster.getEHD());
+		if (monNumber <= 0)
+			return new BattleStats(-1, -1, false);
+
+		// Run fights
+		long monWins = 0;
+		long sumTurns = 0;
+		for (int fight = 0; fight < numberOfFights; fight++) {
+			Party ftrParty = makeFighterParty(ftrLevel, partySize);
+			Party monParty = new Party(monster, monNumber);
+			FightManager manager = new FightManager(ftrParty, monParty);
+			if (manager.fight() == monParty) monWins++;
+			sumTurns += manager.getTurnCount();
+		}
+		
+		// Return result
+		double winRatio = (double) monWins / numberOfFights;
+		double avgTurns = (double) sumTurns / numberOfFights;
+		return new BattleStats(winRatio, avgTurns, true);
+	}
+
+	/**
+	*  Print simple report of parity battle stats.
+	*/
+	private void printQuickBattleStats () {
+		System.out.println("Monster\tWin Ratio\tAverage Turns");
+		for (Monster m: MonsterDatabase.getInstance()) {
+			if (!m.hasUndefinedEHD()) {
+				int ftrLevel = Math.min(m.getEHD(), MAX_LEVEL);
+				BattleStats stats = getMatchupStats(m, ftrLevel);
+				System.out.println(m.getRace() 
+					+ "\t" + stats.winRatio
+					+ "\t" + stats.avgTurns);
+			}
+		}
+		System.out.println();
+	}
+
+	/**
+	*  Compute an array of win ratios for monster at partity 
+	*  numbers vs. standard party at various levels.
+	*/
+	private double[] getParityWinRatios (Monster monster) {
+		double array[] = new double[MAX_LEVEL];
+		for (int level = 1; level <= MAX_LEVEL; level++) {
+			BattleStats stats = getMatchupStats(monster, level);
+			array[level - 1] = stats.winRatio;
+		}	
+		return array;
 	}
 
 	/**
@@ -604,7 +704,10 @@ public class MonsterMetrics {
 				catch (Exception e) {};
 			}
 			metrics.displayUnknownSpecials();
-			metrics.reportMonsters();
+			if (metrics.showQuickBattleStats)
+				metrics.printQuickBattleStats();
+			else		
+				metrics.reportMonsters();
 		}
 	}
 }

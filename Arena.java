@@ -314,11 +314,11 @@ public class Arena {
 		for (int i = 0; i < fighterList.size() - 1; i += 2) {
 			Party party1 = new Party(fighterList.get(i));
 			Party party2 = new Party(fighterList.get(i+1));
+			FightManager manager = new FightManager(party1, party2);
 			if (reportEveryEncounter) {
-				System.out.println("Arena event: " 
-					+ party1 + " vs. " + party2);
+				System.out.println("Arena event: "  + manager);
 			}
-			FightManager.fight(party1, party2);
+			manager.fight();
 			grantFightAwards(party1, party2, -1);
 		}
 	}
@@ -331,12 +331,12 @@ public class Arena {
 			int dungeonLevel = Math.max(fighter.getLevel(), 1);
 			Party fighters = createFighterParty(fighter, fighterPartySize);
 			Party monsters = createMonsterParty(dungeonLevel, fighterPartySize);
-			Monster chiefMonster = monsters.get(0); // for kill tally
+			FightManager manager = new FightManager(fighters, monsters);
 			if (reportEveryEncounter) {
-				System.out.println("Dungeon level " + dungeonLevel + ": " 
-					+ fighters + " vs. " + monsters);
+				System.out.println("Dungeon level " + dungeonLevel + ": " + manager);
 			}
-			FightManager.fight(fighters, monsters);
+			Monster chiefMonster = monsters.get(0); // for kill tally
+			manager.fight();
 			grantFightAwards(fighters, monsters, dungeonLevel);
 			if (fighter.horsDeCombat()) {
 				addToKillTally(chiefMonster);
@@ -393,7 +393,7 @@ public class Arena {
 	void grantFightAwards (Party party1, Party party2, int level) {
 		if (party1.isLive())
 			grantVictorAwards(party1, party2, level);
-		else if (party2.isLive())
+		if (party2.isLive())
 			grantVictorAwards(party2, party1, level);
 	}
 

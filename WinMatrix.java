@@ -1,5 +1,5 @@
 /******************************************************************************
-*  Make matrix of win percentages.
+*  Make matrix of win ratios for opposing solo fighters of different levels.
 *
 *  @author   Daniel R. Collins (dcollins@superdan.net)
 *  @since    2021-07-10
@@ -30,12 +30,11 @@ public class WinMatrix {
 			for (int j = 1; j <= MAX_LEVEL; j++) {
 				int numFtr1Wins = 0;
 				for (int n = 1; n <= NUM_TRIALS; n++) {
-					Character fighter1 = arena.newFighter(i);
-					Character fighter2 = arena.newFighter(j);
-					FightManager.fight(fighter1, fighter2);										
-					if (fighter2.horsDeCombat()) {
+					Party party1 = new Party(arena.newFighter(i));
+					Party party2 = new Party(arena.newFighter(j));
+					FightManager manager = new FightManager(party1, party2);
+					if (manager.fight() == party1)
 						numFtr1Wins++;
-					}
 				}
 				int winPct = 100 * numFtr1Wins / NUM_TRIALS;
 				System.out.print(winPct + "\t");				

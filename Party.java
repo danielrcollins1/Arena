@@ -350,6 +350,29 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
+	* Does this party have any way to win against that party?
+	*/
+	public boolean isViableAgainst (Party enemy) {
+		if (!isLive()) return false;
+		for (Monster foe: enemy) {
+			if (!isViableAgainst(foe))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	* Does this party have any way to win against that monster?
+	*/
+	public boolean isViableAgainst (Monster mon) {
+		for (Monster friend: this) {
+			if (friend.isViableAgainst(mon))
+				return true;		
+		}
+		return false;
+	}
+
+	/**
 	* Main test method.
 	*/
 	public static void main (String[] args) {

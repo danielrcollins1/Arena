@@ -166,7 +166,7 @@ public class Marshal {
 	void reportWizard () {
 		if (menType.hasCasters() 
 			&& (menTotal >= 300
-				|| (menTotal >= 200 && Dice.roll(6) <= 3)))
+				|| (menTotal >= 200 && Dice.coinFlip())))
 		{
 			int level = (Dice.roll(6) <= 4 ? 10 : 11);
 			Character w = new Character("Human", "Wizard", level, null);

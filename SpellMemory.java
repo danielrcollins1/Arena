@@ -145,7 +145,8 @@ public class SpellMemory implements Iterable<Spell> {
 	*  Add a spell by naming it.
 	*/
 	public void addByName (String name) {
-		add(SpellsIndex.getInstance().findByName(name));
+		Spell spell = SpellsIndex.getInstance().findByName(name);
+		if (spell != null) add(spell);
 	}
 
 	/**
@@ -182,6 +183,17 @@ public class SpellMemory implements Iterable<Spell> {
 				remove(spell);
 			}
 		}
+	}
+
+	/**
+	*  Are there any castable spells in this memory?
+	*/
+	public boolean hasCastableSpells () {
+		for (Spell spell: memory) {
+			if (spell.isCastable())
+				return true;
+		}
+		return false;	
 	}
 
 	/**

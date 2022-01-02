@@ -462,7 +462,7 @@ public class Monster {
 		}
 		else {
 			int rate = getAttack().getRate();
-			if (hasFeat(Feat.RapidStrike) && Dice.roll(6) <= 3) rate++;
+			if (hasFeat(Feat.RapidStrike) && Dice.coinFlip()) rate++;
 			return rate;
 		}
 	}
@@ -471,7 +471,7 @@ public class Monster {
 	* Make one attack on another creature.
 	*/
 	public void singleAttack (Attack attack, Monster target, boolean last) {
-		if (canAttack(target)) {
+		if (canAttack(target) && target.isInPhase()) {
 			int naturalRoll = Dice.roll(20);
 			int totalRoll = naturalRoll + attack.getBonus() 
 				+ target.getAC() + hitModifier(target);
@@ -485,10 +485,16 @@ public class Monster {
 	}
 
 	/**
-	* Can we feasibly attack this target?
+	* Can we feasibly attack this target in melee?
+	* This needs to be deterministic (no random rolls),
+	* because it's checked by the FightManager to stop a fight.
 	*/
 	public boolean canAttack (Monster target) {
-		boolean canHit = true;
+
+		// Check any attack available
+		if (getAttack() == null) {
+			return false;
+		}
 
 		// Check silver to hit
 		if (target.hasSpecial(SpecialType.SilverToHit)) {
@@ -496,30 +502,24 @@ public class Monster {
 				&& getWeapon().getMaterial() == Weapon.Material.Silver);
 			boolean atkSilverToHit = hasSpecial(SpecialType.SilverToHit);
 			if (!hasSilverWeapon && !atkSilverToHit && getMagicHitLevel() <= 0)
-				canHit = false;
+				return false;
 		}
 
 		// Check magic to hit
 		if (target.hasSpecial(SpecialType.MagicToHit)) {
 			int targetMagicReq = target.getSpecialParam(SpecialType.MagicToHit);
 			if (getMagicHitLevel() < targetMagicReq)
-				canHit = false;
+				return false;
 		}
 
 		// Check chop-immunity (non-energy weapon blows)
 		if (target.hasSpecial(SpecialType.ChopImmunity)) {
 			EnergyType atkEnergy = getAttack().getEnergy();
 			if (atkEnergy == null || target.isImmuneToEnergy(atkEnergy))
-				canHit = false;
+				return false;
 		}
 
-		// Check phasing (3-in-6 to be out of phase)
-		if (target.hasSpecial(SpecialType.Phasing) 
-				&& new Dice(6).roll() <= 3) {
-			canHit = false;
-		}
-
-		return canHit;
+		return true;
 	}
 
 	/**
@@ -722,7 +722,7 @@ public class Monster {
 
 		// Check target throwing off spores on hit
 		if (target.hasSpecial(SpecialType.SporeCloud)) {
-			if (Dice.roll(6) <= 3) {
+			if (Dice.coinFlip()) {
 				target.castCondition(this, SpecialType.SporeCloud);
 			}  
 		}
@@ -969,7 +969,7 @@ public class Monster {
 		if (hasSpecial(SpecialType.MagicResistance)) {
 			int basePct = getSpecialParam(SpecialType.MagicResistance);
 			int adjustPct = basePct + (casterLevel - 11) * 5;
-			if (Dice.roll(100) <= adjustPct)
+			if (Dice.rollPct() <= adjustPct)
 				return true;
 		}
 			
@@ -1658,6 +1658,14 @@ public class Monster {
 	}
 
 	/**
+	*  Does this monster have any castable spells?
+	*/
+	private boolean hasCastableSpells () {
+		SpellMemory memory = getSpellMemory();
+		return memory != null && memory.hasCastableSpells();
+	}
+
+	/**
 	*  Get the best castable attack spell.
 	*  Search for viable spell that affects the most targets.
 	*  @param area true if area-effect spell desired.
@@ -1737,22 +1745,22 @@ public class Monster {
 		final String eyeFunctionNames[] = {
 			"Charm Person", "Charm Monster", "Sleep", "Disintegrate", "Fear"};
 
-		// Construct list of available spell-functions.
-		ArrayList<Spell> eyeFunctions = new ArrayList<Spell>(); 
+		// Construct list of castable spell-functions.
+		ArrayList<Spell> eyeFuncs = new ArrayList<Spell>(); 
 		for (String name: eyeFunctionNames) {
 			Spell spell = SpellsIndex.getInstance().findByName(name);
 			if (spell != null) {
 				assert(spell.isCastable());
-				eyeFunctions.add(spell);
+				eyeFuncs.add(spell);
 			}
 		}
 
 		// Cast random 1-4 of the spell-effects.
 		int numZaps = Dice.roll(4);
-		assert(eyeFunctions.size() >= 4);
-		Collections.shuffle(eyeFunctions);
+		numZaps = Math.min(numZaps, eyeFuncs.size());
+		Collections.shuffle(eyeFuncs);
 		for (int i = 0; i < numZaps; i++) {
-			eyeFunctions.get(i).cast(getHD(), enemy);
+			eyeFuncs.get(i).cast(getHD(), enemy);
 		}
 		
 		// Cast the central antimagic ray at a spellcaster.
@@ -1896,6 +1904,25 @@ public class Monster {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	* Does this monster have any way of harming that enemy?
+	*/
+	public boolean isViableAgainst (Monster enemy) {
+		return canAttack(enemy) 
+			|| (hasCastableSpells() 
+				&& !enemy.hasSpecial(SpecialType.MagicImmunity));
+	}
+
+	/**
+	* Is this monster currently in phase and subject to attack?
+	* Per Dragon #131, Sage Advice, this comes down to initiative,
+	* i.e., basically just a coin-flip.
+	*/
+	private boolean isInPhase () {
+		boolean outOfPhase = hasSpecial(SpecialType.Phasing) && Dice.coinFlip();
+		return !outOfPhase;
 	}
 
 	/**

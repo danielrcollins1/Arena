@@ -146,6 +146,22 @@ public class Dice {
 	}
 
 	/** 
+	*  Flip a coin from a static context.
+	*  @return true if coin is heads
+	*/
+	public static boolean coinFlip () {
+		return random.nextInt(2) == 0;	
+	}
+
+	/** 
+	*  Roll percentile dice from a static context.
+	*  @return The die-roll.
+	*/
+	public static int rollPct () {
+		return random.nextInt(100) + 1;
+	}
+
+	/** 
 	*  Apply adjustments after raw dice roll.
 	*  @return Roll after modifiers.
 	*/
