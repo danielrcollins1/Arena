@@ -677,7 +677,7 @@ public class Monster {
 					break;
 
 				case Swallowing:
-					if (!isLastAttack && totalRoll > 24) {
+					if (!isLastAttack && totalRoll >= 25) {
 						target.addCondition(SpecialType.Swallowing);
 					}
 					break;
@@ -690,12 +690,14 @@ public class Monster {
 					castCharm(target, -getSpecialParam(s));
 					break;
 
-				case Grabbing:
+				case Constriction:
 					setHost(target);
 					break;
 
-				case Constriction:
-					setHost(target);
+				case Grabbing:
+					if (totalRoll >= 25) {
+						setHost(target);
+					}
 					break;
 
 				case BloodDrain: 
@@ -1042,12 +1044,31 @@ public class Monster {
 
 	/**
 	* Constrict host if appropriate.
+	* This ability is used by serpent/tentacle-type monsters.
+	* Automatic initiation on any hit.
 	* @return Did we constrict?
 	*/
 	public boolean checkConstriction () {
 		if (hasSpecial(SpecialType.Constriction) && host != null) {
-			int damage = new Dice(1, 6).roll();
-			host.takeDamage(damage);
+
+			// Brain Consumption: comparable to 40% to kill/round.
+			if (hasSpecial(SpecialType.BrainConsumption)) {
+				if (Dice.rollPct() <= 40) {
+					host.instaKill();
+					host = null;
+				}   
+				return true;
+			}
+
+			// Default approximation is to automatically 
+			// score half the full attack routine
+			// (in book usually double per-tentacle hit)
+			Attack atk = getAttack();
+			int freeHits = (atk.getRate() + 1) / 2;
+			for (int i = 0; i < freeHits; i++) {
+				int damage = atk.getDamage().roll();
+				host.takeDamage(damage);
+			}
 			if (host.horsDeCombat()) {
 				host = null;   
 			}
@@ -1058,23 +1079,20 @@ public class Monster {
 
 	/**
 	* Grab host if appropriate.
+	* This ability is used by animals like bears and cats.
+	* Requires high total hit score to initiate (25+)
+	* (book is nat 18+, converted here for convenience)
 	* @return Did we grab?
 	*/
 	public boolean checkGrabbing () {
 		if (hasSpecial(SpecialType.Grabbing) && host != null) {
 
-			// Brain Consumption: comparable to 40% to kill/round.
-			if (hasSpecial(SpecialType.BrainConsumption)) {
-				if (Dice.roll(10) <= 4) {
-					host.instaKill();
-					host = null;
-				}   
-				return true;
+			// Automatically score full attack
+			Attack atk = getAttack();
+			for (int i = 0; i < atk.getRate(); i++) {
+				int damage = atk.getDamage().roll();
+				host.takeDamage(damage);
 			}
-
-			// Default: automatic damage per attack form
-			int damage = attack.getDamage().roll();
-			host.takeDamage(damage);
 			if (host.horsDeCombat()) {
 				host = null;
 			}
