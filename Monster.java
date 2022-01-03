@@ -1885,6 +1885,8 @@ public class Monster {
 	private boolean canEatEquipment (Equipment equip) {
 		if (equip == null)
 			return false;
+		else if (isFlamingWeapon(equip))
+			return false;
 		else if (hasSpecial(SpecialType.MetalEating)
 				&& equip.isMetallic())
 			return true;
@@ -1910,6 +1912,16 @@ public class Monster {
 		if (!equip.rollSave()) {
 			loseEquipment(equip);
 		}	
+	}
+
+	/**
+	* Is this equipment a flaming weapon?
+	*/
+	private boolean isFlamingWeapon (Equipment equip) {
+		return equip != null
+			&& equip instanceof Weapon
+			&& ((Weapon) equip).getEnergy() != null
+			&& ((Weapon) equip).getEnergy() == EnergyType.Fire;
 	}
 
 	/**
