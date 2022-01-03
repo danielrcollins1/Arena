@@ -64,17 +64,17 @@ Werewolf,2d10,5,15,4,15,C,1,1d6,B,N,4,3,D,O,"Lycanthropy, SilverToHit"
 Harpy,2d6,7,6,3,20,C,1,1d6,B,C,3,4,D,S1,"Flight (15), AlluringSong, CharmTouch"
 Hell Hound,2d4,4,12,3,25,C,1,1d6,B,C,3,4,D,S1,"FireBreath (3), Stealth (2), Detection"
 Gargoyle,2d10,5,9,4,25,C,2,1d6,B,C,4,5,D,O,"Flight (15), MagicToHit (1)"
-Rust Monster,1d2,2,12,5,-,-,1,1d3,B,N,5,5,D,S1,MetalEating
 Weretiger,2d10,3,12,5,15,C,2,1d6,B,N,5,5,D,O,"Lycanthropy, SilverToHit"
+Rust Monster,1d2,2,12,5,-,-,1,1d3,B,N,5,6,D,S1,MetalEating
 Owl Bear,1d4+1,5,12,5,40,C,2,1d6+1,B,N,5,6,D,S1,Grabbing
 Cockatrice,1d8,6,9,5,35,D,1,1d6,B,N,5,6,D,O,"Flight (9), Petrification"
 Displacer Beast,1d4+1,4,15,6,35,D,2,1d6,B,C,6,6,D,S1,"Displacement, SaveBonus (6)"
 Lammasu,2d4,6,12,6+2,40,A,2,1d6,B,L,6,6,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
 Minotaur,1d8,6,12,6,10,C,2,1d6+2,B,N,6,6,D,O,Fearlessness
 Werebear,2d10,2,9,6,15,C,2,1d6,B,L,6,7,D,"O, S1","Lycanthropy, SilverToHit, Grabbing"
+Phase Spider,1d6,6,6,5,80,E,1,1d6,B,N,5,8,D,S1,"Phasing, Poison"
 "Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,B,N,6,8,D,O,Multiheads
 Carrion Crawler,1d6,7,12,3+1,60,B,8,0,B,N,3,9,D,S1,Paralysis
-Phase Spider,1d6,6,6,5,80,E,1,1d6,B,N,5,9,D,S1,"Phasing, Poison"
 Manticore,1d4,4,12,6+1,25,D,3,1d6,B,C,6,9,D,O,"Flight (18), TailSpikes"
 Wyvern,1d6,3,9,7,60,E,1,1d6+2,B,N,7,9,D,O,"Flight (24), Poison"
 Salamander,1d4+1,5,9,7+3,65,F,2,2d6,B,C,7,10,D,S1,"Heat, Constriction, FireImmunity"
