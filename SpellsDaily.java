@@ -81,14 +81,25 @@ public class SpellsDaily {
 	*  Get spells memorizable at class and spell level.
 	*/
 	public int getSpellsDaily (int classLevel, int spellLevel) {
-		if (spellLevel < 1 || maxSpellLevel < spellLevel) // Error
+		assert(1 <= spellLevel && spellLevel <= maxSpellLevel);
+
+		// Before matrix data
+		if (classLevel < 1)
 			return 0;
-		else if (classLevel < 1) // Before matrix
-			return 0;
-		else if (classLevel <= maxDataClassLevel) // In matrix
+
+		// Inside matrix data
+		else if (classLevel <= maxDataClassLevel)
 			return spellsDailyData[classLevel - 1][spellLevel - 1];
-		else // After matrix (as per Vol-1, p. 19). 
-			return getSpellsDaily(classLevel - 2, spellLevel) + 1;
+
+		// After matrix data (pattern per Vol-1, p. 19)
+		else { 
+			int spellsAtMatrixEnd = 
+				spellsDailyData[maxDataClassLevel - 1][spellLevel - 1];
+			int levelsPastMatrix = classLevel - maxDataClassLevel;
+			int spells = spellsAtMatrixEnd + levelsPastMatrix / 2;
+			if (classLevel % 2 == 1 && spellLevel <= maxSpellLevel / 2) spells++;
+			return spells;			
+		}
 	}
 	
 	/**
