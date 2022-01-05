@@ -331,13 +331,6 @@ public class Monster {
 	}
 
 	/**
-	* Kill this monster (reduce to 0 hp).
-	*/
-	private void instaKill () {
-		hitPoints = 0;
-	}
-
-	/**
 	* Check if the monster is out of the fight.
 	*/
 	public boolean horsDeCombat() {
@@ -1054,7 +1047,7 @@ public class Monster {
 			// Brain Consumption: comparable to 40% to kill/round.
 			if (hasSpecial(SpecialType.BrainConsumption)) {
 				if (Dice.rollPct() <= 40) {
-					host.instaKill();
+					host.addCondition(SpecialType.Death);
 					host = null;
 				}   
 				return true;
@@ -1287,7 +1280,7 @@ public class Monster {
 			if (intel > 0) {
 				if (Dice.roll(20) + intel < 20) {
 					if (intel < 5) {
-						m.instaKill();     
+						m.addCondition(SpecialType.Death);
 					}
 					else if (intel < 13) {
 						m.addCondition(SpecialType.MindBlast);

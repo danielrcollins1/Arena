@@ -1,4 +1,5 @@
 import java.util.function.Function;
+import java.util.Arrays;
 
 /******************************************************************************
 *  Application to measure monster power levels.
@@ -18,7 +19,6 @@ public class MonsterMetrics {
 	* 80 orcs, 150 kobolds, or 240 rats (1 hp). The MAX_ENEMIES
 	* value below is set to handle numbers like these.
 	*/
-
 	final int MAX_LEVEL = 12;
 	final int MAX_ENEMIES = 256;
 	final int DEFAULT_FIGHTS_GENERAL = 100;
@@ -26,8 +26,14 @@ public class MonsterMetrics {
 	final int DEFAULT_MAGIC_PER_LEVEL_PCT = 15;
 	final int DEFAULT_WIZARD_RATIO = 4;
 	final int GRAPH_Y_INTERVAL = 5;
-	final int STANDARD_PARTY_SIZE = 5;
 	final Armor.Type DEFAULT_ARMOR = Armor.Type.Chain;
+
+	/*
+	* Constants for best level and number matches.
+	*/
+	final int MAX_OPP_LEVEL = 200;
+	final int MAX_MON_NUMBER = 500;
+	final int STANDARD_PARTY_SIZE = 5;
 
 	//--------------------------------------------------------------------------
 	//  Inner class
@@ -86,8 +92,14 @@ public class MonsterMetrics {
 	/** Flag to show parity win ratios. */
 	boolean showParityWinRatios;
 
-	/** Flag to show quick battle states exclusively. */
+	/** Flag to show quick battle stats exclusively. */
 	boolean showQuickBattleStats;
+	
+	/** Flag to show suggested best level match. */
+	boolean showBestLevelMatch;	
+
+	/** Flag to show suggested best number matches. */
+	boolean showBestNumberMatch;
 
 	/** Did we print anything on this run? */
 	boolean printedSomeMonster;
@@ -97,6 +109,12 @@ public class MonsterMetrics {
 
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
+
+	/** Process start time. */
+	long timeStart;
+
+	/** Process stop time. */
+	long timeStop;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -145,10 +163,12 @@ public class MonsterMetrics {
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
 		System.out.println("\t-g graph power per level for each monster");
 		System.out.println("\t-k wait for keypress to start processing");		
+		System.out.println("\t-l show suggested best level match at standard party size");		
 		System.out.println("\t-m chance for magic weapon bonus per level " 
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
-		System.out.println("\t-p show parity win ratios vs. standard-size party");
-		System.out.println("\t-q show quick battle stats only");
+		System.out.println("\t-n show suggested best number matches at standard party size");		
+		System.out.println("\t-p show EHD-parity win ratios vs. standard-size party");
+		System.out.println("\t-q show only quick win ratio, average turns at EHD = PC level");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
@@ -172,7 +192,9 @@ public class MonsterMetrics {
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'k': waitForKeypress = true; break;
+					case 'l': showBestLevelMatch = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
+					case 'n': showBestNumberMatch = true; break;
 					case 'p': showParityWinRatios = true; break;
 					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
@@ -273,13 +295,11 @@ public class MonsterMetrics {
 	*/
 	void reportOneMonster (Monster monster) {
 
-		// Compute stats
+		// Compute EHD values
 		double[] eqFighters = getEquatedFighters(monster);
 		double[] eqFightersHD = getEquatedFightersHD(eqFighters);
 		double estEHD = getDblArrayHarmonicMean(eqFightersHD);
 		boolean reviseEHD = !isEHDClose(monster.getEHD(), estEHD);
-		double[] parityWins = showParityWinRatios ?
-			getParityWinRatios(monster): null;
 
 		// Print stats as requested
 		if (reviseEHD || !displayOnlyRevisions || spotlightMonster == monster) {
@@ -293,12 +313,31 @@ public class MonsterMetrics {
 				System.out.println("\tEFHD " + toString(eqFightersHD, 1));
  			if (graphEquatedFightersHD)
  				graphDblArray(eqFightersHD);
-			if (showParityWinRatios)
-				System.out.println("\tPWR " + toString(parityWins, 2));		
+			if (showParityWinRatios) {
+				double[] parityWins = getParityWinRatios(monster);
+				System.out.println("\tPWR " + toString(parityWins, 2));
+			}
+			if (showBestNumberMatch) {
+				int[] bestNumbers = getBestNumberArray(monster);
+				System.out.println("\tBNM " + Arrays.toString(bestNumbers));
+			}
+			if (showBestLevelMatch) {
+				int bestLevelMatch = getBestLevelMatch(monster);
+				System.out.println("\tBest level match: " + bestLevelMatch);
+			}								
 			if (anySpecialPrinting())
 				System.out.println();
 			printedSomeMonster = true;
 		}
+	}
+
+	/**
+	*  Any special printing done per monster?
+	*/
+	boolean anySpecialPrinting () {
+		return displayEquatedFighters	|| displayEquatedFightersHD 
+			|| graphEquatedFightersHD || showParityWinRatios
+			|| showBestLevelMatch || showBestNumberMatch;
 	}
 
 	/**
@@ -329,14 +368,6 @@ public class MonsterMetrics {
 		errBar = Math.max(errBar, ERRBAR_MIN);
 		return Math.abs(oldEHD - newEHD) <= errBar;
 	} 
-
-	/**
-	*  Any special printing done per monster?
-	*/
-	boolean anySpecialPrinting () {
-		return displayEquatedFighters	|| displayEquatedFightersHD 
-			|| graphEquatedFightersHD || showParityWinRatios;
-	}
 
 	/**
 	*  Get equated fighters per level for a monster.
@@ -490,22 +521,30 @@ public class MonsterMetrics {
 		int high = MAX_ENEMIES;
 
 		// Binary search on parameter
-		while (low <= high) {
-			int mid = (low + high)/2;
+		while (high - low > 1) {
+			int mid = (low + high) / 2;
 			double midVal = winRatioFunc.apply(mid);
-			if (midVal < 0.5) {
-				low = mid + 1;
-			}
-			else {
-				high = mid - 1;
-			}
+			if (midVal < 0.5)
+				low = mid;
+			else
+				high = mid;
 		}
 
 		// Choose from adjacent values
-		double lowDiff = Math.abs(0.5 - winRatioFunc.apply(low));
-		double highDiff = Math.abs(0.5 - winRatioFunc.apply(high));  
-		return lowDiff < highDiff ? low : high;
-	} 
+		double lowVal = winRatioFunc.apply(low);
+		double highVal = winRatioFunc.apply(high);
+		return isCloserToHalf(lowVal, highVal) ? low : high;
+	}
+
+	/**
+	*  Is the first number closer to one half than the second number?
+	*  @return true if val1 is at least as close to 0.5 as val2
+	*/
+	boolean isCloserToHalf (double val1, double val2) {
+		double diffVal1 = Math.abs(0.5 - val1);
+		double diffVal2 = Math.abs(0.5 - val2);  
+		return diffVal1 <= diffVal2;	
+	}
 
 	/**
 	*  Find the probability that these monsters beat these fighters.
@@ -622,9 +661,10 @@ public class MonsterMetrics {
 
 	/**
 	*  Compute stats for monster vs. standard-sized party at a given level.
-	*  Here we assume the database EHD is viable to compute matching monsters.
+	*  Here we assume a linear matching function based on database EHD
+	*  (similar to rough idea on Vol-3, p. 11)
 	*/
-	private BattleStats getMatchupStats (Monster monster, int ftrLevel) {
+	private BattleStats getBattleStats (Monster monster, int ftrLevel) {
 
 		// Check for 0-EHD monster
 		if (monster.getEHD() <= 0)
@@ -662,7 +702,7 @@ public class MonsterMetrics {
 		for (Monster m: MonsterDatabase.getInstance()) {
 			if (!m.hasUndefinedEHD()) {
 				int ftrLevel = Math.min(m.getEHD(), MAX_LEVEL);
-				BattleStats stats = getMatchupStats(m, ftrLevel);
+				BattleStats stats = getBattleStats(m, ftrLevel);
 				System.out.println(m.getRace() 
 					+ "\t" + stats.winRatio
 					+ "\t" + stats.avgTurns);
@@ -672,16 +712,129 @@ public class MonsterMetrics {
 	}
 
 	/**
-	*  Compute an array of win ratios for monster at partity 
-	*  numbers vs. standard party at various levels.
+	*  Compute an array of win ratios for monster at 
+	*  linear-EHD-parity vs. standard party at various levels.
 	*/
 	private double[] getParityWinRatios (Monster monster) {
 		double array[] = new double[MAX_LEVEL];
 		for (int level = 1; level <= MAX_LEVEL; level++) {
-			BattleStats stats = getMatchupStats(monster, level);
+			BattleStats stats = getBattleStats(monster, level);
 			array[level - 1] = stats.winRatio;
 		}	
 		return array;
+	}
+
+	/**
+	*  Get monster win ratio for same-size parties.
+	*/
+	double ratioMonstersBeatFighters(Monster monster, int ftrLevel) {
+		return ratioMonstersBeatFighters(monster, STANDARD_PARTY_SIZE, 
+			ftrLevel, STANDARD_PARTY_SIZE, false);	
+	}
+
+	/**
+	*  Get the best level match for a given monster.
+	*  Assumes monster numbers fixed at standard party size.
+	*  Searches for level where they're a match for same-size party of PCs
+	*  (i.e., closest to 50% chance to win against each other)
+	*  @return level at which monsters & PCs are closest to 50% win ratio
+	*/
+	int getBestLevelMatch (Monster monster) {
+		int lowLevel = 1;
+		int highLevel = monster.getHD();
+
+		// Raise the high-level bound until the monster loses
+		double maxRatio = ratioMonstersBeatFighters(monster, highLevel);
+		while (maxRatio > 0.5) {
+			highLevel *= 2;
+			maxRatio = ratioMonstersBeatFighters(monster, highLevel);
+			if (highLevel > MAX_OPP_LEVEL) {
+				highLevel = MAX_OPP_LEVEL;
+				break;
+			}
+		}
+
+		// Binary search on level
+		while (highLevel - lowLevel > 1) {
+			int midLevel = (lowLevel + highLevel) / 2;
+			double midRatio = ratioMonstersBeatFighters(monster, midLevel);
+			if (midRatio > 0.5)
+				lowLevel = midLevel;
+			else
+				highLevel = midLevel;
+		}
+
+		// Choose from adjacent values
+		double lowRatio = ratioMonstersBeatFighters(monster, lowLevel);
+		double highRatio = ratioMonstersBeatFighters(monster, highLevel);
+		return isCloserToHalf(lowRatio, highRatio) ? lowLevel : highLevel;
+	} 
+
+	/**
+	*  Get monster win ratio for variable number of monsters.
+	*/
+	double ratioMonstersBeatFighters(Monster monster, int monNumber, int ftrLevel) {
+		return ratioMonstersBeatFighters(monster, monNumber, 
+			ftrLevel, STANDARD_PARTY_SIZE, false);	
+	}
+
+	/**
+	*  Get the best number-appearing match for a given monster.
+	*  Assumes opposing PC party levels and size are fixed.
+	*  Searches for number where they're a match for same-size party of PCs
+	*  (i.e., closest to 50% chance to win against each other)
+	*  @return level at which monsters & PCs are closest to 50% win ratio
+	*/
+	int getBestNumberMatch (Monster monster, int ftrLevel) {
+		int lowNumber = 0;
+		int highNumber = MAX_MON_NUMBER;
+
+		// Binary search on number
+		while (highNumber - lowNumber > 1) {
+			int midNumber = (lowNumber + highNumber) / 2;
+			double midRatio = ratioMonstersBeatFighters(monster, midNumber, ftrLevel);
+			if (midRatio < 0.5)
+				lowNumber = midNumber;
+			else
+				highNumber = midNumber;
+		}
+
+		// Choose from adjacent values
+		double lowRatio = ratioMonstersBeatFighters(monster, lowNumber);
+		double highRatio = ratioMonstersBeatFighters(monster, highNumber);
+		return isCloserToHalf(lowRatio, highRatio) ? lowNumber : highNumber;
+	} 
+
+	/**
+	*  Construct an array of best number matches per level.
+	*/
+	int[] getBestNumberArray (Monster monster) {
+		int array[] = new int[MAX_LEVEL];
+		for (int level = 1; level <= MAX_LEVEL; level++) {
+			array[level - 1] = getBestNumberMatch(monster, level);
+		}
+		return array;
+	}
+
+	/**
+	*  Start the process timer.
+	*/
+	void startClock () {
+		timeStart = System.currentTimeMillis();
+	}
+
+	/**
+	*  Stop the process timer & report.
+	*/
+	void stopClock () {
+		timeStop = System.currentTimeMillis();
+		if (spotlightMonster == null) {
+			long secDiff = (timeStop - timeStart) / 1000;
+			long minDisplay = secDiff / 60;
+			long secDisplay = secDiff % 60;
+			System.out.println("Process elapsed time: " 
+				+ minDisplay + " min " + secDisplay + " sec\n");
+		}
 	}
 
 	/**
@@ -700,11 +853,13 @@ public class MonsterMetrics {
 				try { System.in.read(); } 
 				catch (Exception e) {};
 			}
+			metrics.startClock();
 			metrics.displayUnknownSpecials();
 			if (metrics.showQuickBattleStats)
 				metrics.printQuickBattleStats();
 			else		
 				metrics.reportMonsters();
+			metrics.stopClock();
 		}
 	}
 }
