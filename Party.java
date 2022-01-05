@@ -183,7 +183,7 @@ public class Party implements Iterable<Monster> {
 	public void makeSpecialAttacks (Party enemy) {
 		if (enemy.isLive()) {
 			for (Monster m: this) {
-				m.makeSpecialAttack(enemy);
+				m.makeSpecialAttack(this, enemy);
 			}
 			enemy.bringOutYourDead();
 		}

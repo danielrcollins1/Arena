@@ -419,8 +419,7 @@ public class Monster {
 
 		// Primary abilities & conditions
 		checkRegeneration();
-		if (checkWebbing()) return true;
-		if (checkConfusion(friends)) return true;
+		if (checkHandicaps(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkCastSpellInMelee(enemies)) return true;
 		if (checkDrawNewWeapon(enemies)) return true;
@@ -431,6 +430,16 @@ public class Monster {
 			if (checkAttachment()) return true;
 			if (checkManyEyesSalvo(enemies)) return true;
 		}
+		return false;
+	}
+
+	/**
+	* Check for handicap conditions.
+	* @return true if we are unable to take a normal action
+	*/
+	private boolean checkHandicaps (Party friends) {
+		if (checkWebbing()) return true;
+		if (checkConfusion(friends)) return true;
 		return false;
 	}
 
@@ -732,7 +741,7 @@ public class Monster {
 	* Pre-melee, ranged-attack specials go here.
 	* Mostly uses just one ability (first one in monster list).
 	*/
-	public void makeSpecialAttack (Party enemy) {
+	public void makeSpecialAttack (Party friends, Party enemy) {
 		Monster target;
 		Attack attack;
 		int modifier;
@@ -744,6 +753,11 @@ public class Monster {
 				if (m.getHD() <= maxLevel)
 					m.saveVsCondition(SpecialType.Fear, getHD());
 			}			
+		}
+
+		// Check for handicap conditions
+		if (checkHandicaps(friends)) {
+			return;
 		}
 
 		// Check for offensive spell-casting
