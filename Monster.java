@@ -174,7 +174,6 @@ public class Monster {
 	public char getEnvironment () { return environment; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
-	public Monster getHost () { return host; }
 
 	// Shortcut accessors
 	public int getAC () { return getArmorClass(); }
@@ -188,21 +187,22 @@ public class Monster {
 	public void clearTimesMeleed () { timesMeleed = 0; }
 	public void incTimesMeleed () { timesMeleed++; }
 
-	// Null methods for Character inheritance
+	// Public null methods for subclass inheritance
 	public Armor getArmor () { return null; }
 	public Armor getShield () { return null; }
 	public Weapon getWeapon () { return null; }
 	public void drawBestWeapon (Monster m) {}
 	public void sheatheWeapon () {}
-	public void loseEquipment (Equipment e) {}
 	public void boostMagicItemsOneLevel () {}
-	public void takeAbilityDamage (Ability a, int n) {} 
 	public void zeroAbilityDamage () {} 
-	public boolean hasNullAbilityScore () { return false; }
-	public boolean hasFeat (Feat feat) { return false; }
-	public SpellMemory getSpellMemory () { return spellMemory; }
 	public void addXP (int xp) {}
-	public int getSweepRate() { return 0; }
+
+	// Protected null methods for subclass inheritance
+	protected void loseEquipment (Equipment e) {}
+	protected void takeAbilityDamage (Ability a, int n) {} 
+	protected boolean hasNullAbilityScore () { return false; }
+	protected boolean hasFeat (Feat feat) { return false; }
+	protected int getSweepRate() { return 0; }
 
 	/**
 	* Parse hit dice record from short descriptor.
@@ -350,7 +350,7 @@ public class Monster {
 	/**
 	* Bound current hit points.
 	*/
-	public void boundHitPoints () {
+	protected void boundHitPoints () {
 		int min = 0;
 		int max = getMaxHitPoints();
 		if (hitPoints < min) hitPoints = min;
@@ -462,7 +462,7 @@ public class Monster {
 	/**
 	* Make one attack on another creature.
 	*/
-	public void singleAttack (Attack attack, Monster target, boolean last) {
+	private void singleAttack (Attack attack, Monster target, boolean last) {
 		if (canAttack(target) && target.isInPhase()) {
 			int naturalRoll = Dice.roll(20);
 			int totalRoll = naturalRoll + attack.getBonus() 
@@ -481,7 +481,7 @@ public class Monster {
 	* This needs to be deterministic (no random rolls),
 	* because it's checked by the FightManager to stop a fight.
 	*/
-	public boolean canAttack (Monster target) {
+	protected boolean canAttack (Monster target) {
 
 		// Check any attack available
 		if (getAttack() == null) {
@@ -517,7 +517,7 @@ public class Monster {
 	/**
 	* Find what level of magic-to-hit we can strike.
 	*/
-	public int getMagicHitLevel () {
+	protected int getMagicHitLevel () {
 		int magicHitLevel = 0;
 
 		// Check if this monster has magic-to-hit
@@ -533,7 +533,7 @@ public class Monster {
 	* Return hit modifier against a target.
 	* @return Modifier to hit.
 	*/
-	public int hitModifier (Monster target) {
+	protected int hitModifier (Monster target) {
 		int modifier = 0;
 
 		// General hit bonus
@@ -606,7 +606,7 @@ public class Monster {
 	* Check for damage reduction on target.
 	* @return Adjusted damage.
 	*/
-	public int checkDamageReduction (Monster target, int damage) {
+	private int checkDamageReduction (Monster target, int damage) {
 
 		// Damage reduction ability
 		if (target.hasSpecial(SpecialType.DamageReduction)) {
@@ -619,7 +619,7 @@ public class Monster {
 	/**
 	* Check for special ability triggers when we hit.
 	*/
-	public void checkSpecialOnHit (Monster target, int totalRoll, boolean isLastAttack) {
+	private void checkSpecialOnHit (Monster target, int totalRoll, boolean isLastAttack) {
 
 		// Special abilities of this attacking monster
 		for (SpecialType s: specialList) {
@@ -727,7 +727,7 @@ public class Monster {
 	* Pre-melee, ranged-attack specials go here.
 	* Mostly uses just one ability (first one in monster list).
 	*/
-	void makeSpecialAttack (Party enemy) {
+	public void makeSpecialAttack (Party enemy) {
 		Monster target;
 		Attack attack;
 		int modifier;
@@ -905,7 +905,7 @@ public class Monster {
 	/**
 	* Check if we suffer from a disabling condition.
 	*/
-	public boolean hasDisablingCondition () {
+	private boolean hasDisablingCondition () {
 		for (SpecialType s: conditionList) {
 			if (s.isDisabling()) {
 				return true;
@@ -974,7 +974,7 @@ public class Monster {
 	/**
 	* Get our breath weapon (if any).
 	*/
-	public SpecialType getBreathWeapon () {
+	private SpecialType getBreathWeapon () {
 		for (SpecialType s: specialList) {
 			if (s.isBreathWeapon()) {
 				return s;
@@ -986,7 +986,7 @@ public class Monster {
 	/**
 	* Get our gaze weapon (if any).
 	*/
-	public SpecialType getGazeWeapon () {
+	private SpecialType getGazeWeapon () {
 		for (SpecialType s: specialList) {
 			if (s.isGazeWeapon()) {
 				return s;
@@ -998,7 +998,7 @@ public class Monster {
 	/**
 	* Get our summons ability (if any).
 	*/
-	public SpecialType getSummonsAbility () {
+	private SpecialType getSummonsAbility () {
 		for (SpecialType s: specialList) {
 			if (s.isSummonsAbility()) {
 				return s;
@@ -1010,7 +1010,7 @@ public class Monster {
 	/**
 	* Regenerate hit points if appropriate.
 	*/
-	public void checkRegeneration () {
+	private void checkRegeneration () {
 		if (hasSpecial(SpecialType.Regeneration)) {
 			hitPoints += getSpecialParam(SpecialType.Regeneration);
 			boundHitPoints();
@@ -1021,7 +1021,7 @@ public class Monster {
 	* Drain blood from host if appropriate.
 	* @return true if we drained blood
 	*/
-	public boolean checkBloodDrain () {
+	private boolean checkBloodDrain () {
 		if (hasSpecial(SpecialType.BloodDrain) && host != null) {
 			int maxDamage = getSpecialParam(SpecialType.BloodDrain);
 			int drain = new Dice(1, maxDamage).roll();
@@ -1040,7 +1040,7 @@ public class Monster {
 	* Automatic initiation on any hit.
 	* @return Did we constrict?
 	*/
-	public boolean checkConstriction () {
+	private boolean checkConstriction () {
 		if (hasSpecial(SpecialType.Constriction) && host != null) {
 
 			// Brain Consumption: OED converts this to 2-in-6
@@ -1077,7 +1077,7 @@ public class Monster {
 	* (book is nat 18+, converted here for convenience)
 	* @return Did we grab?
 	*/
-	public boolean checkGrabbing () {
+	private boolean checkGrabbing () {
 		if (hasSpecial(SpecialType.Grabbing) && host != null) {
 
 			// Automatically score full attack
@@ -1100,7 +1100,7 @@ public class Monster {
 	*  Estimates max number hit for given area.
 	* @return Did we make a breath attack?
 	*/
-	public boolean checkBreathWeapon (Party enemy) {
+	private boolean checkBreathWeapon (Party enemy) {
 		if (breathCharges > 0 && new Dice(2, 6).roll() >= 7) {
 			SpecialType breathType = getBreathWeapon();
 			int param = getSpecialParam(breathType);
@@ -1302,7 +1302,7 @@ public class Monster {
 	/**
 	* Cast slow on one of the enemy.
 	*/
-	public void checkSlowing (Party enemy) {
+	private void checkSlowing (Party enemy) {
 		if (hasSpecial(SpecialType.Slowing)) {
 			Monster target = enemy.random();
 			target.saveVsCondition(SpecialType.Slowing, getHD());
@@ -1335,7 +1335,7 @@ public class Monster {
 	/**
 	* Check if we are confused on our turn to attack.
 	*/
-	public boolean checkConfusion (Party party) {
+	private boolean checkConfusion (Party party) {
 		if (hasCondition(SpecialType.Confusion)) {
 			int reaction = new Dice(2, 6).roll();
 			if (reaction <= 5)   // act normally
@@ -1356,7 +1356,7 @@ public class Monster {
 	/**
 	* Check if we are entangled in webs on our turn.
 	*/
-	public boolean checkWebbing () {
+	private boolean checkWebbing () {
 		if (hasCondition(SpecialType.Webs)) {
 
 			// Make check vs. strength bonus to break out
@@ -1371,7 +1371,7 @@ public class Monster {
 	/**
 	* Attach ourselves to some creature (e.g., blood drain).
 	*/
-	public void setHost (Monster host) {
+	private void setHost (Monster host) {
 		this.host = host; 
 	}
 
@@ -1423,7 +1423,7 @@ public class Monster {
 	* Count current heads for multiheaded types.
 	* Set one attack per full hit die.
 	*/
-	void headCount () {
+	private void headCount () {
 		if (hasSpecial(SpecialType.Multiheads)) {
 			int hitDieSides = getHitDice().getSides();
 			int newRate = (getHP() - 1) / hitDieSides + 1;
@@ -1434,7 +1434,7 @@ public class Monster {
 	/**
 	* Lose a level (e.g., energy drain).
 	*/
-	public void loseLevel () {
+	protected void loseLevel () {
 		int HD = getHitDiceNum();
 		if (HD <= 1) {
 			maxHitPoints = 0;
@@ -1450,21 +1450,21 @@ public class Monster {
 	/**
 	* Roll a saving throw vs. spells with no modifier.
 	*/
-	public boolean rollSaveSpells () {
+	private boolean rollSaveSpells () {
 		return rollSave(SavingThrows.Type.Spells, 0);
 	}
 
 	/**
 	* Roll a saving throw with no modifier.
 	*/
-	public boolean rollSave (SavingThrows.Type type) {
+	private boolean rollSave (SavingThrows.Type type) {
 		return rollSave(type, 0);
 	}
 
 	/**
 	* Roll a saving throw with modifier.
 	*/
-	public boolean rollSave (SavingThrows.Type type, int modifier) {
+	protected boolean rollSave (SavingThrows.Type type, int modifier) {
 		modifier += getFixedSaveModifiers(type);
 		return SavingThrows.getInstance().rollSave(
 			type, "Fighter", getHD(), modifier);
@@ -1473,7 +1473,7 @@ public class Monster {
 	/**
 	* Add up fixed save modifiers for this monster.
 	*/
-	public int getFixedSaveModifiers (SavingThrows.Type type) {
+	protected int getFixedSaveModifiers (SavingThrows.Type type) {
 		int modifier = 0;
 
 		// Save bonus special ability
@@ -1515,7 +1515,7 @@ public class Monster {
 	/**
 	* Get the XP award value for defeating this monster.
 	*/
-	int getXPAward () {
+	public int getXPAward () {
 		return XPAwardTable.getInstance().getXPAward(this);
 	}
 
@@ -1524,7 +1524,7 @@ public class Monster {
 	* for one monster, scaled by nominal number appearing.
 	* (Recommended for wilderness encounters only.)
 	*/
-	int getTreasureValue () {
+	public int getTreasureValue () {
 		int avgNum = numberAppearing.avgRoll();
 		return MonsterTreasureTable.getInstance()
 			.randomValueByCode(treasureType) / avgNum;
@@ -1533,7 +1533,7 @@ public class Monster {
 	/**
 	* Return if this monster has an undefined EHD.
 	*/
-	boolean hasUndefinedEHD () {
+	public boolean hasUndefinedEHD () {
 		return getEHD() == UNDEFINED_EHD;
 	}
 
@@ -1572,7 +1572,7 @@ public class Monster {
 	/**
 	* Identify special abilities as a string.
 	*/
-	public String specialString() {
+	private String specialString() {
 		String s = specialList.toString();
 		return s.substring(1, s.length()-1);
 	}
@@ -1580,7 +1580,7 @@ public class Monster {
 	/**
 	* Identify EHD as a string.
 	*/
-	public String EHDString() {
+	private String EHDString() {
 		int EHD = getEHD();
 		return (EHD == UNDEFINED_EHD ? "?" : String.valueOf(EHD));
 	}
@@ -1633,7 +1633,6 @@ public class Monster {
 
 	/**
 	* Ability score defaults for a monster. 
-	* This is redefined for the Character class.
 	*/
 	public int getAbilityScore (Ability ability) { 
 		switch (ability) {
@@ -1789,6 +1788,13 @@ public class Monster {
 	private boolean hasUndeadImmunity () {
 		return hasSpecial(SpecialType.Undead)
 			|| hasSpecial(SpecialType.UndeadImmunity);
+	}
+
+	/**
+	* Get this monster's spell memory.
+	*/
+	public SpellMemory getSpellMemory () { 
+		return spellMemory; 
 	}
 
 	/**

@@ -286,7 +286,7 @@ public class Character extends Monster {
 	/*
 	*  Take damage to an ability score.
 	*/
-	public void takeAbilityDamage (Ability a, int damage) {
+	protected void takeAbilityDamage (Ability a, int damage) {
 		int val = abilityScoreDamage.get(a).intValue();
 		val += damage;
 		abilityScoreDamage.put(a, Integer.valueOf(val));
@@ -329,7 +329,7 @@ public class Character extends Monster {
 	*  Are any of our ability scores zero?
 	*  Because then we are dead.
 	*/
-	public boolean hasNullAbilityScore () {
+	protected boolean hasNullAbilityScore () {
 
 		// This is a critical-path function.
 		// For performance, check only the Strength ability
@@ -477,7 +477,7 @@ public class Character extends Monster {
 	/**
 	*  Find what level of magic-to-hit we can strike.
 	*/
-	public int getMagicHitLevel () {
+	protected int getMagicHitLevel () {
 		return (weaponInHand == null ? 0 : weaponInHand.getMagicBonus());
 	}
 
@@ -586,7 +586,7 @@ public class Character extends Monster {
 	/**
 	*  Lose a given piece of equipment.
 	*/
-	public void loseEquipment (Equipment equip) {
+	protected void loseEquipment (Equipment equip) {
 		assert(equip != null);
 		equipList.remove(equip);
 		if (equip == armorWorn) armorWorn = null;
@@ -652,8 +652,9 @@ public class Character extends Monster {
 
 	/**
 	*  Lose a level (e.g., energy drain).
+	*  Overrides method in Monster.
 	*/
-	public void loseLevel () {
+	protected void loseLevel () {
 		int damage = maxHitPoints - hitPoints;
 		getTopClass().loseLevel();
 		updateStats();
@@ -807,7 +808,7 @@ public class Character extends Monster {
 	/**
 	*	Roll a saving throw with modifier.
 	*/
-	public boolean	rollSave (SavingThrows.Type type, int modifier) {
+	protected boolean rollSave (SavingThrows.Type type, int modifier) {
 		ClassRecord bestClass = bestClassForSave(type);
 		modifier += getFixedSaveModifiers(type);
 		if (ringWorn != null)
@@ -852,7 +853,7 @@ public class Character extends Monster {
 	/**
 	*  Does this character have a given feat?
 	*/
-	public boolean hasFeat (Feat feat) {
+	protected boolean hasFeat (Feat feat) {
 		for (ClassRecord rec: classList) {
 			if (rec.hasFeat(feat))
 				return true;
@@ -893,7 +894,7 @@ public class Character extends Monster {
 	*  Get this character's recorded sweep rate.
 	*  Redefines dummy method in Monster class.
 	*/
-	public int getSweepRate () {
+	protected int getSweepRate () {
 		return sweepRate;
 	}
 	
@@ -972,7 +973,7 @@ public class Character extends Monster {
 	*  scaled by level and nominal men number appearing.
 	*  (Recommended for wilderness encounters only.)
 	*/
-	int getTreasureValue () {
+	public int getTreasureValue () {
 		final int avgNum = 165;
 		int level = Math.max(getLevel(), 1);
 		return MonsterTreasureTable.getInstance()
@@ -1026,6 +1027,7 @@ public class Character extends Monster {
 
 	/**
 	*  Get the character's spell memory, if any.
+	*  Overrides method in Monster.
 	*  Warning: This assumes a character has at most one spellcasting class.
 	*  If multiple spell classes supported, this system needs reworking.
 	*/

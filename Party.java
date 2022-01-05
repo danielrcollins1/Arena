@@ -145,13 +145,11 @@ public class Party implements Iterable<Monster> {
 	*  Prepare for battle against an enemy.
 	*/
 	public void prepBattle (Party enemy) {
-		if (enemy.isLive()) {
-			summonAllMinions();
-			for (Monster m: members) {
-				m.drawBestWeapon(enemy.random());
-				m.initBreathCharges();
-			} 
-		}
+		summonAllMinions();
+		for (Monster m: members) {
+			m.drawBestWeapon(enemy.random());
+			m.initBreathCharges();
+		} 
 	}
 
 	/**
