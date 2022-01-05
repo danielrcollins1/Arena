@@ -8,40 +8,37 @@
 public enum Ability {
 	Str, Int, Wis, Dex, Con, Cha;
 
-	/** Total number of ability scores available. */
-	public static final int length = Ability.values().length;
-
 	//--------------------------------------------------------------------------
 	//  Inner Enumeration
 	//--------------------------------------------------------------------------
 
-	/** Available bonus formula methods. */
-	enum BonusType {BX, OED};
+	/** Available ability bonus rules. */
+	private enum BonusRule {BX, OED};
 
 	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
 	/** Constant switch for bonus formula. */
-	final static BonusType BONUS_TYPE = BonusType.OED;
+	private static final BonusRule BONUS_RULE = BonusRule.OED;
 
 	/** Prioritized preference for any class based on prime requisite. */
-	final static Ability[][] abilityPriority = 
+	private static final Ability[][] abilityPriority = 
 		{{Str, Dex, Con, Int, Wis, Cha}, {Int, Dex, Con, Cha, Wis, Str},
 		 {Wis, Con, Str, Int, Cha, Dex}, {Dex, Str, Con, Int, Cha, Wis},
 		 {Con, Str, Dex, Wis, Cha, Int}, {Cha, Dex, Int, Wis, Con, Str}};
 
 	/** Long-form names for abilities. */
-	final static String[] fullName =
+	private static final String[] fullName =
 		{"Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma"};
 
 	/** Array of B/X style ability bonuses (for performance.) */
-	final static int[] BonusValueBX =
+	private static final int[] BonusValueBX =
 		{-5, -4, -3, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0,
 		1, 1, 1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6};
 	
 	/** Array of OED style ability bonuses (for performance). */
-	final static int[] BonusValueOED =
+	private static final int[] BonusValueOED =
 	 	{-3, -3, -3, -2, -2, -2, -1, -1, -1, 0, 0, 0, 0, 
 		1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5};
 	
@@ -60,7 +57,7 @@ public enum Ability {
 	*  Gives the bonus for a given ability score.
 	*/
 	public static int getBonus (int score) {
-		if (BONUS_TYPE == BonusType.OED)
+		if (BONUS_RULE == BonusRule.OED)
 			return getBonusOED(score);
 		else
 			return getBonusBX(score);

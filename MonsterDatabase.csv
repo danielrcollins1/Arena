@@ -52,8 +52,8 @@ Fire Lizard,1d4,2,9,12,60,E,2,2d6,N,A,13,12,D,S2,"FireBreath (2), FireImmunity"
 "Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,N,A,14,15,U,"O, S1, S2","Swimming (15), Swallowing"
 Mastodon,1d12,6,15,12,-,-,3,2d6,N,A,16,12,W,"S1, M1",-
 Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,N,A,18,20,W,"O, S1, M1",-
-"Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,N,A,23,30,U,"O, S1, S2","Swimming (15), Swallowing"
-"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,33,45,U,"O, S1, S2","Swimming (15), Swallowing"
+"Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,N,A,30,30,U,"O, S1, S2","Swimming (15), Swallowing"
+"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,40,45,U,"O, S1, S2","Swimming (15), Swallowing"
 Homunculus,1,7,6,2,-,-,1,1d3,N,B,1,2,S,S1,"Flight (18), Telepathy"
 Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"
 Shadow,2d10,7,9,2+2,50,F,1,1d3,C,B,3,2.6,D,S1,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity"
@@ -96,7 +96,7 @@ Basilisk,1d6,4,6,6+1,40,F,1,1d6,N,B,20,6.3,D,O,"PetrifyingGaze, Petrification"
 Dragon Turtle,1d4,2,3,12,60,H,2,2d6,C,B,24,12,U,O,"Swimming (9), Detection (15), Fear (2), SteamBreath"
 Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,25,15,D,O,"Swallowing, Poison, Fearlessness"
 "Dragon, Gold",1d4,2,9,11,60,H,2,2d6,L,B,35,11,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
-"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,50,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
+"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,45,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
 "Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,150,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
@@ -134,7 +134,7 @@ Ettin,1d4,3,12,10,20,C,2,2d6,C,H,12,10,D,M1,Alertness
 "Giant, Cloud",1d8,4,12,12+2,30,E,1,3d6,C,H,12,12.6,D,O,"RockHurling, Detection"
 "Giant, Storm",1d8,4,15,15,30,E,1,3d6+3,N,H,17,15,D,S1,"RockHurling, WeatherControl"
 Ogre Mage,1d6,4,9,5+2,40,E,1,2d6,C,H,18,5.6,D,S1,"Flight (15), Invisibility, Darkness, Polymorphism, Regeneration (1), Spells"
-Titan,1,2,15,20,5,A,1,3d6+3,N,H,50,20,D,"S1, S3","MagicResistance (60), Spells"
+Titan,1,2,15,20,5,A,1,3d6+3,N,H,55,20,D,"S1, S3","MagicResistance (60), Spells"
 Bandit,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,D,O,-
 Brigand,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,Bravery (1)
 Buccaneer,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
@@ -187,12 +187,12 @@ Efreeti,1,3,9,10,-,-,1,2d6,C,X,12,10,X,O,"Flight (24), Creation, Illusion, Invis
 "Fire Elemental, Small",1,2,12,8,-,-,1,2d6,N,X,14,8,X,"O, S1",MagicToHit (2)
 "Water Elemental, Small",1,2,6,8,-,-,1,2d6,N,X,14,8,X,"O, S1","Swimming (18), MagicToHit (2)"
 "Earth Elemental, Small",1,2,6,8,-,-,1,3d6,N,X,15,8,X,"O, S1",MagicToHit (2)
-"Air Elemental, Medium",1,2,36,12,-,-,1,1d6,N,X,15,12,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
-"Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,N,X,18,12,X,"O, S1",MagicToHit (2)
-"Water Elemental, Medium",1,2,6,12,-,-,1,2d6,N,X,18,12,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Air Elemental, Medium",1,2,36,12,-,-,1,1d6,N,X,16,12,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
+"Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,N,X,19,12,X,"O, S1",MagicToHit (2)
+"Water Elemental, Medium",1,2,6,12,-,-,1,2d6,N,X,19,12,X,"O, S1","Swimming (18), MagicToHit (2)"
 "Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,19,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
 Will-O-Wisp,1,-8,18,9,1,A,1,2d6,N,X,20,9,D,S1,"Light, Invisibility"
-"Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,N,X,21,12,X,"O, S1",MagicToHit (2)
-"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,24,16,X,"O, S1",MagicToHit (2)
-"Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,25,16,X,"O, S1","Swimming (18), MagicToHit (2)"
-"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,N,X,30,16,X,"O, S1",MagicToHit (2)
+"Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,N,X,24,12,X,"O, S1",MagicToHit (2)
+"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,28,16,X,"O, S1",MagicToHit (2)
+"Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,28,16,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,N,X,33,16,X,"O, S1",MagicToHit (2)

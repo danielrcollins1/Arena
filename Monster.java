@@ -21,7 +21,10 @@ public class Monster {
 	/** Sides on standard hit dice. */
 	private static final int BASE_HIT_DIE = 6;
 
-	/** Maximum enemies who can melee us at once. */
+	/** 
+	* Maximum enemies who can melee us at once. 
+	* As per 1E DMG p. 69 (assumes same-size attackers)
+	*/
 	private static final int MAX_MELEERS = 6;
 
 	//--------------------------------------------------------------------------
@@ -1773,10 +1776,10 @@ public class Monster {
 	private boolean checkManyEyesSalvo (Party enemy) {
 		if (hasSpecial(SpecialType.ManyEyeFunctions)
 			&& !enemy.allHaveCondition(SpecialType.AntimagicSphere))
-		{		
-			manyEyesSalvo(enemy);		
+		{
+			manyEyesSalvo(enemy);
 			return true;
-		}	
+		}
 		return false;
 	}
 

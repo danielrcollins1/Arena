@@ -10,13 +10,6 @@ import java.io.IOException;
 public class SavingThrows {
 
 	//--------------------------------------------------------------------------
-	//  Constants
-	//--------------------------------------------------------------------------
-
-	/** Name of file with saving throw scores. */
-	final String SAVING_THROWS_FILE = "SavingThrows.csv";
-
-	//--------------------------------------------------------------------------
 	//  Enumerations
 	//--------------------------------------------------------------------------
 
@@ -28,15 +21,33 @@ public class SavingThrows {
 		public static final int length = Type.values().length;
 	};
 
+	/** Available saving throw rules. */
+	private enum SaveRule {ODD, OED};
+
+	//--------------------------------------------------------------------------
+	//  Constants
+	//--------------------------------------------------------------------------
+
+	/** Rule to use for adjudications. */
+	static final SaveRule SAVE_RULE = SaveRule.OED;
+
+	/** Name of file for ODD-style saves table. */
+	static final String SAVING_THROWS_FILE = "SavingThrows.csv";
+
+	/** OED-style adjustments per save type. */
+	static final int[] OED_ADJUST = {4, 3, 2, 1, 0};
+
 	//--------------------------------------------------------------------------
 	//  Inner class
 	//--------------------------------------------------------------------------
 
+	/** Class to store save targets at one class level. */
 	class SaveRecord {
 		String className;
 		int minLevel;
 		int[] saveScore;
 
+		/** Constructor */
 		SaveRecord (String[] s) {
 			className = s[0];
 			minLevel = Integer.parseInt(s[1]);
@@ -46,6 +57,7 @@ public class SavingThrows {
 			}
 		}
 
+		/** String representation */
 		public String toString() {
 			String s = className + ", " + minLevel;
 			for (int i = 0; i < Type.length; i++) {
@@ -124,14 +136,29 @@ public class SavingThrows {
 	*  Get the target score for a saving throw.
 	*/
 	public int getSaveTarget (Type saveType, String asClass, int level) {
-		SaveRecord record = getSaveRecord(asClass, level);
-		return record.saveScore[saveType.ordinal()];
+
+		// Use the OD&D book table
+		if (SAVE_RULE == SaveRule.ODD) {
+			SaveRecord record = getSaveRecord(asClass, level);
+			return record.saveScore[saveType.ordinal()];
+		}
+		
+		// Use the OED formula
+		else if (SAVE_RULE == SaveRule.OED) {
+			return 20 - level - OED_ADJUST[saveType.ordinal()];
+		}
+
+		// Handle error
+		else {
+			System.err.println("Unknown saving throw rule type.");
+			return 20;
+		}
 	}
 
 	/**
 	*  Find the correct SaveRecord for this class/level.
 	*/
-	SaveRecord getSaveRecord (String asClass, int level) {
+	private SaveRecord getSaveRecord (String asClass, int level) {
 		level = Math.max(1, level);
 		for (int i = targetsTable.length - 1; i > -1; i--) {
 			SaveRecord record = targetsTable[i];
@@ -181,4 +208,3 @@ public class SavingThrows {
 		System.out.println("Success ratio: " + ratio + "\n");
 	}
 }
-
