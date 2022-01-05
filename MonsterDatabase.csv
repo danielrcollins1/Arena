@@ -1,198 +1,198 @@
-Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Type,Align,HD#,EHD,Env,Source,Special
-Rat,1d100,7,15,1/6,-,-,1,1,A,N,0.2,0,D,M2,-
-Giant Centipede,2d12,9,15,1/3,-,-,1,0,A,N,0.3,1,D,M1,Poison (-4)
-Giant Rat,5d10,7,12,1/2,10,C,1,1d3,A,N,0.5,1,D,"S1, M1",Disease
-Jackal,1d6,8,12,1/2,-,-,1,1d3,A,N,0.5,1,W,"S1, M1",-
-"Giant Beetle, Fire",3d4,4,9,1-1,-,-,1,1d6,A,N,0.8,1,D,S2,Light
-Stirge,3d10,7,18,1,55,D,1,1d3,A,N,1,1,D,S1,"Flight (18), HitBonus (3), BloodDrain (4)"
-"Horse, Light",1,7,24,2,-,-,1,1d6,A,N,2,1,W,"CM, O, SS",-
-Wolf,2d10,7,18,2,10,-,1,1d6,A,N,2,1,W,"S1, SS, M1",-
-"Giant Beetle, Bombardier",3d4,4,9,1,-,-,1,1d6+1,A,N,1,2,W,S2,AcidBreath (2)
-Large Spider,2d10,8,6,1+1,75,-,1,1d3,A,N,1,2,D,"S1, M1",Poison (-2)
-"Giant Ant, Worker",2d10,3,18,2,10,-,1,1d6,A,N,2,2,D,M1,-
-Giant Frog,4d10,7,3,2,-,-,1,1d6,A,N,2,2,D,S2,"Leaping, Constriction"
-Giant Leech,2d6,8,6,2,-,-,1,1d6+1,A,N,2,2,U,"O, S2",BloodDrain (2)
-"Horse, Draft",1,7,12,2+1,-,-,1,1d6,A,N,2,2,W,O,-
-"Horse, Medium",1,7,18,2+1,-,-,2,1d6,A,N,2,2,W,"CM, O, SS",-
-Mule,1,7,12,2+1,-,-,1,1d6,A,N,2,2,W,O,-
-Crocodile,3d8,5,9,3,-,-,1,1d6,A,N,3,2,U,"O, M1",Swimming (15)
-Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,A,N,3,2,W,"S1, M1",-
-Giant Hog,1d12,7,15,3+3,-,-,1,1d6,A,N,3,2,D,M1,-
-Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,A,N,3,2,D,"S1, M1",-
-Giant Tick,3d4,4,3,3,-,-,1,1d3,A,N,3,2,D,S1,"BloodDrain (4), Disease"
-Ram,1d6,7,15,3,-,-,1,1d6,A,N,3,2,W,"S1, M2",Charge
-Giant Toad,2d6,6,3,2,-,-,1,1d6,A,N,2,3,D,"S1, S2","Leaping, Constriction, Poison"
-Huge Spider,1d12,6,18,2+2,50,-,1,1d6,A,N,2,3,D,M1,"Poison (-1), Stealth (3), Hopping"
-Boar,1d12,7,15,3+3,-,-,1,1d6+1,A,N,3,3,W,M1,-
-Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,A,N,3,3,D,"S1, M1",BloodDrain (6)
-"Horse, Heavy",1,7,12,3,-,-,2,1d6,A,N,3,3,W,"CM, O, SS",-
-Bull,1d20,6,15,4,-,-,1,1d6+2,A,N,4,3,W,"S1, M1",Charge
-"Giant Ant, Warrior",1d20,3,18,3,10,-,1,1d6,A,N,3,4,D,M1,Poison
-Giant Crab,3d4,2,6,3,-,-,2,1d6+1,A,N,3,4,U,"O, S1, S2",-
-Giant Wasp,3d10,5,6,3,-,-,1,1d6,A,N,3,4,D,S2,"Flight (24), Poison"
-Giant Octopus,1d4,7,3,4,30,A,8,1d3,A,N,4,5,U,"O, S2, M1","Swimming (9), Constriction, Jet, InkCloud"
-"Giant Snake, Poisonous",1d6,5,15,4+2,-,-,1,1d6,A,N,4,5,D,M1,Poison
-Lion,2d6,6,12,5,25,-,2,1d6,A,N,5,5,W,"S1, M1","Stealth (2), Grabbing"
-"Giant Beetle, Boring",2d6,3,6,5,50,A,1,2d6,A,N,5,5,D,S2,-
-Giant Crocodile,2d6,5,9,6,-,-,1,2d6,A,N,6,5,U,"O, S2","Swimming (15), Grabbing, Capsizing"
-White Ape,2d4,6,12,6,10,C,2,1d6,A,N,6,5,D,"M1, WM",-
-Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,A,C,4,6,D,M1,"Poison, WebMove (12)"
-Bear,1d6,5,12,6,-,-,2,1d6,A,N,6,6,W,"S1, M1",Grabbing
-"Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,A,N,6,6,W,S2,-
-"Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,A,N,6,6,D,M1,Constriction
-Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,A,N,7,7,W,"S1, M1","Stealth (2), Grabbing"
-Giant Slug,1,8,6,12+2,-,-,1,1d6+1,A,N,12,8,D,S1,AcidSpitting
-Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,A,N,5,9,D,"S1, M1",Poison
-"Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,A,N,6,9,U,"O, M1","Swimming (20), Poison, Constriction"
-Minotaur Lizard,1d6,3,9,8,50,E,2,2d6,A,N,8,10,D,S2,-
-"Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,A,N,12,10,W,S2,-
-Giant Squid,2d6,7,3,6,20,A,10,1d6,A,N,6,11,U,"O, S2, M1","Swimming (12), Constriction, Jet, InkCloud"
-Giant Fish,1,6,0,15,-,-,1,2d6,A,N,15,11,U,"O, M2","Swimming (15), Whirlpool"
-Fire Lizard,1d4,2,9,12,60,E,2,2d6,A,N,12,13,D,S2,"FireBreath (2), FireImmunity"
-"Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,A,N,15,14,U,"O, S1, S2","Swimming (15), Swallowing"
-Mastodon,1d12,6,15,12,-,-,3,2d6,A,N,12,16,W,"S1, M1",-
-Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,A,N,20,18,W,"O, S1, M1",-
-"Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,A,N,30,23,U,"O, S1, S2","Swimming (15), Swallowing"
-"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,A,N,45,33,U,"O, S1, S2","Swimming (15), Swallowing"
-Homunculus,1,7,6,2,-,-,1,1d3,B,N,2,1,S,S1,"Flight (18), Telepathy"
-Wererat,8d4,7,12,3,35,C,1,1d6,B,C,3,2,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"
-Shadow,2d10,7,9,2+2,50,F,1,1d3,B,C,2,3,D,S1,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity"
-Blink Dog,4d4,5,12,4,30,C,1,1d6,B,L,4,3,D,S1,Blinking
-Doppleganger,3d4,5,9,4,25,E,1,1d6+1,B,N,4,3,D,S1,"Polymorphism, SaveBonus (6)"
-Wereboar,2d10,4,12,4+1,15,C,1,1d6,B,N,4,3,D,O,"Lycanthropy, SilverToHit"
-Werewolf,2d10,5,15,4,15,C,1,1d6,B,N,4,3,D,O,"Lycanthropy, SilverToHit"
-Harpy,2d6,7,6,3,20,C,1,1d6,B,C,3,4,D,S1,"Flight (15), AlluringSong, CharmTouch"
-Hell Hound,2d4,4,12,3,25,C,1,1d6,B,C,3,4,D,S1,"FireBreath (3), Stealth (2), Detection"
-Gargoyle,2d10,5,9,4,25,C,2,1d6,B,C,4,5,D,O,"Flight (15), MagicToHit (1)"
-Weretiger,2d10,3,12,5,15,C,2,1d6,B,N,5,5,D,O,"Lycanthropy, SilverToHit"
-Rust Monster,1d2,2,12,5,-,-,1,1d3,B,N,5,5,D,S1,MetalEating
-Owl Bear,1d4+1,5,12,5,40,C,2,1d6+1,B,N,5,6,D,S1,Grabbing
-Cockatrice,1d8,6,9,5,35,D,1,1d6,B,N,5,6,D,O,"Flight (9), Petrification"
-Displacer Beast,1d4+1,4,15,6,35,D,2,1d6,B,C,6,6,D,S1,"Displacement, SaveBonus (6)"
-Minotaur,1d8,6,12,6,10,C,2,1d6+2,B,N,6,6,D,O,Fearlessness
-Lammasu,2d4,6,12,6+2,40,A,2,1d6,B,L,6,7,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
-Werebear,2d10,2,9,6,15,C,2,1d6,B,L,6,7,D,"O, S1","Lycanthropy, SilverToHit, Grabbing"
-Phase Spider,1d6,6,6,5,80,E,1,1d6,B,N,5,8,D,S1,"Phasing, Poison"
-"Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,B,N,6,8,D,O,Multiheads
-Carrion Crawler,1d6,7,12,3+1,60,B,8,0,B,N,3,9,D,S1,Paralysis
-Manticore,1d4,4,12,6+1,25,D,3,1d6,B,C,6,9,D,O,"Flight (18), TailSpikes"
-Wyvern,1d6,3,9,7,60,E,1,1d6+2,B,N,7,9,D,O,"Flight (24), Poison"
-Salamander,1d4+1,5,9,7+3,65,F,2,2d6,B,C,7,10,D,S1,"Heat, Constriction, FireImmunity"
-Chimera,1d4,4,12,9,50,F,3,1d6,B,N,9,10,D,O,"Flight (18), FireBreath (3)"
-Medusa,1d4,8,9,4,75,F,2,1d6,B,C,4,11,D,O,"PetrifyingGaze, Poison"
-"Dragon, White",1d4,2,9,6,60,H,2,2d6,B,C,6,11,D,O,"Flight (24), Detection (15), Fear (2), ColdBreath"
-Gorgon,1d4,2,12,8,50,E,1,2d6,B,C,8,11,D,O,PetrifyingBreath
-"Dragon, Black",1d4,2,9,7,60,H,2,2d6,B,C,7,12,D,O,"Flight (24), Detection (15), Fear (2), AcidBreath"
-Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,B,N,8,12,D,S1,Confusion
-"Golem, Flesh",1,9,9,12,-,-,1,2d6,B,N,12,13,D,S1,"MagicToHit (1), MagicImmunity"
-"Dragon, Green",1d4,2,9,8,60,H,2,2d6,B,N,8,14,D,O,"Flight (24), Detection (15), Fear (2), PoisonBreath"
-"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,B,N,9,15,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
-Mind Flayer,1d4,5,12,8+3,50,F,4,0,B,N,8,16,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
-Roper,1d3,0,3,10,90,D,1,3d6,B,C,10,16,D,SR2,"MagicResistance (80), SappingStrands, VoltImmunity, ColdResistance, FireVulnerability"
-Balrog,1d6,2,6,10,25,F,2,2d6,B,C,10,17,D,O,"Flight (15), MagicResistance (75), Immolation"
-"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,B,N,10,17,D,O,Multiheads
-Basilisk,1d6,4,6,6+1,40,F,1,1d6,B,N,6,20,D,O,"PetrifyingGaze, Petrification"
-"Dragon, Red",1d4,2,9,10,60,H,2,2d6,B,C,10,20,D,O,"Flight (24), Detection (15), Fear (2), FireBreath"
-Dragon Turtle,1d4,2,3,12,60,H,2,2d6,B,C,12,24,U,O,"Swimming (9), Detection (15), Fear (2), SteamBreath"
-Purple Worm,1d4,6,6,15,25,D,2,2d6,B,N,15,25,D,O,"Swallowing, Poison, Fearlessness"
-"Dragon, Gold",1d4,2,9,11,60,H,2,2d6,B,L,11,35,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
-"Golem, Stone",1,5,6,18,-,-,1,3d6,B,N,18,50,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
-Beholder,1,0,3,12,90,I,1,1d6,B,N,12,60,D,S1,"Flight (3), ManyEyeFunctions"
-"Golem, Iron",1,2,3,24,-,-,1,4d6,B,N,24,150,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
-Dwarf,4d10x10,4,6,1,50,G,1,1d6,F,L,1,1,W,O,"SaveBonus (4), DodgeGiants"
-Elf,3d10x10,5,12,1+1,25,E,1,1d6,F,L,1,1,W,O,"Camouflage, HitBonus (1)"
-Gnome,4d10x10,5,6,1,60,C,1,1d6,F,L,1,1,W,O,"SaveBonus (4), DodgeGiants"
-Nixie,1d10x10,7,12,1,100,B,1,1d3,F,N,1,1,U,O,"Swimming (12), Grappling"
-Pixie,1d10x10,6,9,1,25,C,1,1d3,F,N,1,1,W,O,"Flight (18), Invisibility"
-Pegasus,1d12,6,24,2+2,-,-,2,1d6,F,L,2,2,W,O,Flight (48)
-Hippogriff,2d8,5,18,3+1,-,-,2,1d6,F,L,3,3,W,O,Flight (36)
-Centaur,2d10,5,18,4,5,A,2,1d6,F,L,4,4,W,O,-
-Dryad,1d6,5,12,2,20,D,1,1d3,F,N,2,5,W,O,Charm (2)
-"Roc, Small",1d20,4,6,6,20,I,2,1d6,F,L,6,5,W,O,"Flight (48), Detection"
-Unicorn,1d4,2,24,4,-,-,2,1d6+2,F,L,4,6,W,O,"SaveBonus (6), Detection (24), DimensionDoor (36)"
-Griffon,2d8,3,12,7,10,E,2,1d6+2,F,N,7,8,W,O,Flight (30)
-"Tree, Animated",1d2,2,3,8,-,-,2,2d6,F,L,8,10,W,O,-
-"Roc, Medium",1d20,4,6,12,20,I,2,2d6,F,L,12,12,W,O,"Flight (48), Detection"
-"Roc, Large",1d20,4,6,18,20,I,2,3d6,F,L,18,24,W,O,"Flight (48), Detection"
-Treant,1d4,2,6,8,-,-,2,2d6,F,L,8,25,W,O,SummonTrees
-Kobold,4d10x10,7,6,1/2,50,C,1,1d3,H,C,0.5,1,D,O,LightSensitivity
-Goblin,4d10x10,6,6,1-1,50,C,1,1d3,H,C,0.8,1,D,O,LightSensitivity
-Hobgoblin,2d10x10,5,9,1+1,30,D,1,1d6,H,C,1,1,D,O,Bravery (1)
-Orc,3d10x10,6,9,1,50,D,1,1d6,H,C,1,1,D,O,LightSensitivity
-Gnoll,3d10,5,9,2,30,D,1,1d6,H,C,2,2,D,O,Bravery (2)
-Lizard Man,1d4x10,5,6,2+1,40,D,1,1d6,H,N,2,2,D,S1,Swimming (12)
-Troglodyte,3d10,5,12,2,15,A,1,1d6,H,C,2,2,D,M1,"Stealth (2), Stench"
-Bugbear,5d4,5,9,3+1,30,B,1,1d6+1,H,C,3,3,D,S1,Stealth (1)
-Ogre,3d6,5,9,4+1,30,C,1,1d6+2,H,C,4,4,D,O,-
-Troll,2d6,4,12,6+3,50,D,2,1d6,H,C,6,8,D,O,Regeneration (3)
-"Giant, Hill",1d8,4,12,8,30,E,1,2d6,H,C,8,8,D,O,RockHurling
-Triton,5d6,6,15,5,25,F,1,2d6,H,N,5,9,U,S1,"MagicResistance (90), Spells"
-"Giant, Stone",1d8,4,12,9,30,E,1,2d6,H,C,9,9,D,O,RockHurling
-"Giant, Frost",1d8,4,12,10+1,30,E,1,2d6+1,H,C,10,10,D,O,"RockHurling, ColdImmunity"
-"Giant, Fire",1d8,4,12,11+3,30,E,1,2d6+2,H,C,11,11,D,O,"RockHurling, FireImmunity"
-Ettin,1d4,3,12,10,20,C,2,2d6,H,C,10,12,D,M1,Alertness
-"Giant, Cloud",1d8,4,12,12+2,30,E,1,3d6,H,C,12,12,D,O,"RockHurling, Detection"
-"Giant, Storm",1d8,4,15,15,30,E,1,3d6+3,H,N,15,17,D,S1,"RockHurling, WeatherControl"
-Ogre Mage,1d6,4,9,5+2,40,E,1,2d6,H,C,5,18,D,S1,"Flight (15), Invisibility, Darkness, Polymorphism, Regeneration (1), Spells"
-Titan,1,2,15,20,5,A,1,3d6+3,H,N,20,50,D,"S1, S3","MagicResistance (60), Spells"
-Bandit,3d10x10,6,12,1,15,A,1,1d6,M,N,1,1,D,O,-
-Berserker,3d10x10,7,12,1+1,15,A,1,1d6,M,N,1,1,D,O,"Fearlessness, HitBonus (2)"
-Brigand,3d10x10,6,12,1,15,A,1,1d6,M,C,1,1,W,O,Bravery (1)
-Buccaneer,3d10x10,6,12,1,15,A,1,1d6,M,N,1,1,W,O,-
-Dervish,3d10x10,6,12,1+1,15,A,1,1d6,M,L,1,1,W,O,"Fearlessness, HitBonus (1)"
-Merman,3d10x10,7,3,1+1,40,A,1,1d6,M,N,1,1,U,"O, S2","Swimming (15), Grappling, LandWeakness (-1)"
-Nomad,3d10x10,6,12,1,15,A,1,1d6,M,N,1,1,W,O,-
-Pirate,3d10x10,6,12,1,15,A,1,1d6,M,C,1,1,W,O,-
-Caveman,3d10,9,12,2,15,A,1,1d6+1,M,N,2,2,W,O,Cowardice (-1)
-Veteran,1,4,9,1,-,-,1,1d8,M,N,1,1,D,O,NPC
-Warrior,1,4,9,2,-,-,1,1d8,M,N,2,2,D,O,NPC
-Swordsman,1,2,9,3,-,-,1,1d8,M,N,3,3,D,O,NPC
-Hero,1,2,9,4,-,-,1,1d8,M,N,4,4,D,O,NPC
-Swashbuckler,1,2,9,5,-,-,1,1d8,M,N,5,5,D,O,NPC
-Myrmidon,1,2,9,6,-,-,1,1d8,M,N,6,6,D,O,NPC
-Champion,1,2,9,7,-,-,1,1d8,M,N,7,7,D,O,NPC
-Superhero,1,2,9,8,-,-,1,1d8,M,N,8,8,D,O,NPC
-Lord,1,2,9,9,-,-,1,1d8,M,N,9,9,D,O,NPC
-Medium,1,9,12,1,-,-,1,1d4,M,N,1,2,D,O,"NPC, Spells"
-Seer,1,9,12,2,-,-,1,1d4,M,N,2,4,D,O,"NPC, Spells"
-Conjurer,1,9,12,3,-,-,1,1d4,M,N,3,6,D,O,"NPC, Spells"
-Theurgist,1,9,12,4,-,-,1,1d4,M,N,4,8,D,O,"NPC, Spells"
-Thaumaturgist,1,9,12,5,-,-,1,1d4,M,N,5,10,D,O,"NPC, Spells"
-Magician,1,9,12,6,-,-,1,1d4,M,N,6,12,D,O,"NPC, Spells"
-Enchanter,1,9,12,7,-,-,1,1d4,M,N,7,14,D,O,"NPC, Spells"
-Warlock,1,9,12,8,-,-,1,1d4,M,N,8,16,D,O,"NPC, Spells"
-Sorcerer,1,9,12,9,-,-,1,1d4,M,N,9,18,D,O,"NPC, Spells"
-Necromancer,1,9,12,10,-,-,1,1d4,M,N,10,20,D,O,"NPC, Spells"
-Wizard,1,9,12,11,-,-,1,1d4,M,N,11,24,D,O,"NPC, Spells"
-Yellow Mold,1,9,0,1,-,-,1,1d6,S,N,1,2,D,O,"SporeCloud, WoodEating, VoltImmunity, ColdImmunity, ChopImmunity"
-Green Slime,1,9,0,2,-,-,1,0,S,N,2,3,D,O,"FleshEating, WoodEating, MetalEating, VoltImmunity, ChopImmunity"
-Ochre Jelly,1,8,3,5,-,-,1,1d6,S,N,5,4,D,O,"WoodEating, VoltImmunity, ChopImmunity, Splitting"
-Gray Ooze,1,8,1,3,-,-,1,2d6,S,N,3,5,D,O,"MetalEating, FireImmunity, ColdImmunity"
-Gelatinous Cube,1,8,6,4,-,-,1,1d6,S,N,4,5,D,S1,"Paralysis, VoltImmunity, ColdImmunity"
-Black Pudding,1,6,6,10,-,-,1,3d6,S,N,10,15,D,O,"WoodEating, MetalEating, VoltImmunity, ColdImmunity, ChopImmunity, Splitting"
-Skeleton,3d10,7,6,1,-,-,1,1d6,U,N,1,1,D,O,Fearlessness
-Zombie,3d10,8,6,2,-,-,1,1d6,U,N,2,2,D,O,Fearlessness
-Ghoul,2d12,6,9,2,20,B,1,1d6,U,C,2,3,D,O,"Paralysis, Spawn"
-Wight,2d12,5,9,3,60,B,1,1d6,U,C,3,3,D,O,"SilverToHit, EnergyDrain (1), Spawn"
-Wraith,2d8,3,12,4,20,E,1,1d6,U,C,4,4,D,O,"Flight (24), SilverToHit, EnergyDrain (1), Spawn"
-Ghast,1d6,4,15,4,10,G,1,1d6+2,U,C,4,6,D,M1,"Paralysis, Stench"
-Mummy,1d12,3,6,5+1,30,D,1,1d6,U,C,5,7,D,O,"MagicToHit (1), DamageReduction, Rotting"
-Spectre,1d8,2,15,6,25,E,1,1d6,U,C,6,8,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
-Vampire,1d4,2,12,8,20,F,1,1d6,U,C,8,30,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
-Lich,1d4,3,6,10,100,A,1,1d6,U,N,10,45,D,S1,"Fear (4), Paralysis, Spells"
-Djinni,1,5,9,7+1,-,-,1,2d6-1,X,N,7,7,S,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
-Invisible Stalker,1,3,12,8,-,-,1,1d6+2,X,N,8,8,S,O,"Invisibility, Tracking"
-"Air Elemental, Small",1,2,36,8,-,-,1,1d6,X,N,8,11,S,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
-Efreeti,1,3,9,10,-,-,1,2d6,X,C,10,12,S,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, WallOfFire"
-"Fire Elemental, Small",1,2,12,8,-,-,1,2d6,X,N,8,14,S,"O, S1",MagicToHit (2)
-"Water Elemental, Small",1,2,6,8,-,-,1,2d6,X,N,8,14,S,"O, S1","Swimming (18), MagicToHit (2)"
-"Earth Elemental, Small",1,2,6,8,-,-,1,3d6,X,N,8,15,S,"O, S1",MagicToHit (2)
-"Air Elemental, Medium",1,2,36,12,-,-,1,1d6,X,N,12,15,S,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
-"Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,X,N,12,18,S,"O, S1",MagicToHit (2)
-"Water Elemental, Medium",1,2,6,12,-,-,1,2d6,X,N,12,18,S,"O, S1","Swimming (18), MagicToHit (2)"
-"Air Elemental, Large",1,2,36,16,-,-,1,1d6,X,N,16,19,S,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
-Will-O-Wisp,1,-8,18,9,1,A,1,2d6,X,N,9,20,D,S1,"Light, Invisibility"
-"Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,X,N,12,21,S,"O, S1",MagicToHit (2)
-"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,X,N,16,24,S,"O, S1",MagicToHit (2)
-"Water Elemental, Large",1,2,6,16,-,-,1,2d6,X,N,16,25,S,"O, S1","Swimming (18), MagicToHit (2)"
-"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,X,N,16,30,S,"O, S1",MagicToHit (2)
+Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
+Rat,1d100,7,15,1/6,-,-,1,1,N,A,0,0.3,D,M2,-
+Giant Centipede,2d12,9,15,1/3,-,-,1,0,N,A,1,0.4,D,M1,Poison (-4)
+Giant Rat,5d10,7,12,1/2,10,C,1,1d3,N,A,1,0.6,D,"S1, M1",Disease
+Jackal,1d6,8,12,1/2,-,-,1,1d3,N,A,1,0.6,W,"S1, M1",-
+"Giant Beetle, Fire",3d4,4,9,1-1,-,-,1,1d6,N,A,1,0.8,D,S2,Light
+Stirge,3d10,7,18,1,55,D,1,1d3,N,A,1,1,D,S1,"Flight (18), HitBonus (3), BloodDrain (4)"
+"Horse, Light",1,7,24,2,-,-,1,1d6,N,A,1,2,W,"CM, O, SS",-
+Wolf,2d10,7,18,2,10,-,1,1d6,N,A,1,2,W,"S1, SS, M1",-
+"Giant Beetle, Bombardier",3d4,4,9,1,-,-,1,1d6+1,N,A,2,1,W,S2,AcidBreath (2)
+Large Spider,2d10,8,6,1+1,75,-,1,1d3,N,A,2,1.3,D,"S1, M1",Poison (-2)
+"Giant Ant, Worker",2d10,3,18,2,10,-,1,1d6,N,A,2,2,D,M1,-
+Giant Frog,4d10,7,3,2,-,-,1,1d6,N,A,2,2,D,S2,"Leaping, Constriction"
+Giant Leech,2d6,8,6,2,-,-,1,1d6+1,N,A,2,2,U,"O, S2",BloodDrain (2)
+"Horse, Draft",1,7,12,2+1,-,-,1,1d6,N,A,2,2.3,W,O,-
+"Horse, Medium",1,7,18,2+1,-,-,2,1d6,N,A,2,2.3,W,"CM, O, SS",-
+Mule,1,7,12,2+1,-,-,1,1d6,N,A,2,2.3,W,O,-
+Crocodile,3d8,5,9,3,-,-,1,1d6,N,A,2,3,U,"O, M1",Swimming (15)
+Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,N,A,2,3.9,W,"S1, M1",-
+Giant Hog,1d12,7,15,3+3,-,-,1,1d6,N,A,2,3.9,D,M1,-
+Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,N,A,2,3.3,D,"S1, M1",-
+Giant Tick,3d4,4,3,3,-,-,1,1d3,N,A,2,3,D,S1,"BloodDrain (4), Disease"
+Ram,1d6,7,15,3,-,-,1,1d6,N,A,2,3,W,"S1, M2",Charge
+Giant Toad,2d6,6,3,2,-,-,1,1d6,N,A,3,2,D,"S1, S2","Leaping, Constriction, Poison"
+Huge Spider,1d12,6,18,2+2,50,-,1,1d6,N,A,3,2.6,D,M1,"Poison (-1), Stealth (3), Hopping"
+Boar,1d12,7,15,3+3,-,-,1,1d6+1,N,A,3,3.9,W,M1,-
+Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,N,A,3,3.9,D,"S1, M1",BloodDrain (6)
+"Horse, Heavy",1,7,12,3,-,-,2,1d6,N,A,3,3,W,"CM, O, SS",-
+Bull,1d20,6,15,4,-,-,1,1d6+2,N,A,3,4,W,"S1, M1",Charge
+"Giant Ant, Warrior",1d20,3,18,3,10,-,1,1d6,N,A,4,3,D,M1,Poison
+Giant Crab,3d4,2,6,3,-,-,2,1d6+1,N,A,4,3,U,"O, S1, S2",-
+Giant Wasp,3d10,5,6,3,-,-,1,1d6,N,A,4,3,D,S2,"Flight (24), Poison"
+Giant Octopus,1d4,7,3,4,30,A,8,1d3,N,A,5,4,U,"O, S2, M1","Swimming (9), Constriction, Jet, InkCloud"
+"Giant Snake, Poisonous",1d6,5,15,4+2,-,-,1,1d6,N,A,5,4.6,D,M1,Poison
+Lion,2d6,6,12,5,25,-,2,1d6,N,A,5,5,W,"S1, M1","Stealth (2), Grabbing"
+"Giant Beetle, Boring",2d6,3,6,5,50,A,1,2d6,N,A,5,5,D,S2,-
+Giant Crocodile,2d6,5,9,6,-,-,1,2d6,N,A,5,6,U,"O, S2","Swimming (15), Grabbing, Capsizing"
+White Ape,2d4,6,12,6,10,C,2,1d6,N,A,5,6,D,"M1, WM",-
+Giant Spider,1d8,4,3,4+4,70,C,1,1d6+2,C,A,6,5.1,D,M1,"Poison, WebMove (12)"
+Bear,1d6,5,12,6,-,-,2,1d6,N,A,6,6,W,"S1, M1",Grabbing
+"Giant Beetle, Stag",2d6,3,6,6,-,-,2,1d6+1,N,A,6,6,W,S2,-
+"Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,N,A,6,6.3,D,M1,Constriction
+Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,N,A,7,7.6,W,"S1, M1","Stealth (2), Grabbing"
+Giant Slug,1,8,6,12+2,-,-,1,1d6+1,N,A,8,12.6,D,S1,AcidSpitting
+Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,N,A,9,6.4,D,"S1, M1",Poison
+"Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,N,A,9,6,U,"O, M1","Swimming (20), Poison, Constriction"
+Minotaur Lizard,1d6,3,9,8,50,E,2,2d6,N,A,10,8,D,S2,-
+"Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,N,A,10,12,W,S2,-
+Giant Squid,2d6,7,3,6,20,A,10,1d6,N,A,11,6,U,"O, S2, M1","Swimming (12), Constriction, Jet, InkCloud"
+Giant Fish,1,6,0,15,-,-,1,2d6,N,A,11,15,U,"O, M2","Swimming (15), Whirlpool"
+Fire Lizard,1d4,2,9,12,60,E,2,2d6,N,A,13,12,D,S2,"FireBreath (2), FireImmunity"
+"Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,N,A,14,15,U,"O, S1, S2","Swimming (15), Swallowing"
+Mastodon,1d12,6,15,12,-,-,3,2d6,N,A,16,12,W,"S1, M1",-
+Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,N,A,18,20,W,"O, S1, M1",-
+"Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,N,A,23,30,U,"O, S1, S2","Swimming (15), Swallowing"
+"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,33,45,U,"O, S1, S2","Swimming (15), Swallowing"
+Homunculus,1,7,6,2,-,-,1,1d3,N,B,1,2,S,S1,"Flight (18), Telepathy"
+Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"
+Shadow,2d10,7,9,2+2,50,F,1,1d3,C,B,3,2.6,D,S1,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity"
+Blink Dog,4d4,5,12,4,30,C,1,1d6,L,B,3,4,D,S1,Blinking
+Doppleganger,3d4,5,9,4,25,E,1,1d6+1,N,B,3,4,D,S1,"Polymorphism, SaveBonus (6)"
+Wereboar,2d10,4,12,4+1,15,C,1,1d6,N,B,3,4.3,D,O,"Lycanthropy, SilverToHit"
+Werewolf,2d10,5,15,4,15,C,1,1d6,N,B,3,4,D,O,"Lycanthropy, SilverToHit"
+Harpy,2d6,7,6,3,20,C,1,1d6,C,B,4,3,D,S1,"Flight (15), AlluringSong, CharmTouch"
+Hell Hound,2d4,4,12,3,25,C,1,1d6,C,B,4,3,D,S1,"FireBreath (3), Stealth (2), Detection"
+Gargoyle,2d10,5,9,4,25,C,2,1d6,C,B,5,4,D,O,"Flight (15), MagicToHit (1)"
+Weretiger,2d10,3,12,5,15,C,2,1d6,N,B,5,5,D,O,"Lycanthropy, SilverToHit"
+Rust Monster,1d2,2,12,5,-,-,1,1d3,N,B,5,5,D,S1,MetalEating
+Owl Bear,1d4+1,5,12,5,40,C,2,1d6+1,N,B,6,5,D,S1,Grabbing
+Cockatrice,1d8,6,9,5,35,D,1,1d6,N,B,6,5,D,O,"Flight (9), Petrification"
+Displacer Beast,1d4+1,4,15,6,35,D,2,1d6,C,B,6,6,D,S1,"Displacement, SaveBonus (6)"
+Minotaur,1d8,6,12,6,10,C,2,1d6+2,N,B,6,6,D,O,Fearlessness
+Lammasu,2d4,6,12,6+2,40,A,2,1d6,L,B,7,6.6,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
+Werebear,2d10,2,9,6,15,C,2,1d6,L,B,7,6,D,"O, S1","Lycanthropy, SilverToHit, Grabbing"
+Phase Spider,1d6,6,6,5,80,E,1,1d6,N,B,8,5,D,S1,"Phasing, Poison"
+"Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,Multiheads
+Carrion Crawler,1d6,7,12,3+1,60,B,8,0,N,B,9,3.3,D,S1,Paralysis
+Manticore,1d4,4,12,6+1,25,D,3,1d6,C,B,9,6.3,D,O,"Flight (18), TailSpikes"
+Wyvern,1d6,3,9,7,60,E,1,1d6+2,N,B,9,7,D,O,"Flight (24), Poison"
+Salamander,1d4+1,5,9,7+3,65,F,2,2d6,C,B,10,7.9,D,S1,"Heat, Constriction, FireImmunity"
+Chimera,1d4,4,12,9,50,F,3,1d6,N,B,10,9,D,O,"Flight (18), FireBreath (3)"
+Medusa,1d4,8,9,4,75,F,2,1d6,C,B,11,4,D,O,"PetrifyingGaze, Poison"
+"Dragon, White",1d4,2,9,6,60,H,2,2d6,C,B,11,6,D,O,"Flight (24), Detection (15), Fear (2), ColdBreath"
+Gorgon,1d4,2,12,8,50,E,1,2d6,C,B,11,8,D,O,PetrifyingBreath
+"Dragon, Black",1d4,2,9,7,60,H,2,2d6,C,B,12,7,D,O,"Flight (24), Detection (15), Fear (2), AcidBreath"
+Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,N,B,12,8,D,S1,Confusion
+"Golem, Flesh",1,9,9,12,-,-,1,2d6,N,B,13,12,D,S1,"MagicToHit (1), MagicImmunity"
+"Dragon, Green",1d4,2,9,8,60,H,2,2d6,N,B,14,8,D,O,"Flight (24), Detection (15), Fear (2), PoisonBreath"
+"Dragon, Blue",1d4,2,9,9,60,H,2,2d6,N,B,15,9,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
+Mind Flayer,1d4,5,12,8+3,50,F,4,0,N,B,16,8.9,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
+Roper,1d3,0,3,10,90,D,1,3d6,C,B,16,10,D,SR2,"MagicResistance (80), SappingStrands, VoltImmunity, ColdResistance, FireVulnerability"
+Balrog,1d6,2,6,10,25,F,2,2d6,C,B,17,10,D,O,"Flight (15), MagicResistance (75), Immolation"
+"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,Multiheads
+Basilisk,1d6,4,6,6+1,40,F,1,1d6,N,B,20,6.3,D,O,"PetrifyingGaze, Petrification"
+"Dragon, Red",1d4,2,9,10,60,H,2,2d6,C,B,20,10,D,O,"Flight (24), Detection (15), Fear (2), FireBreath"
+Dragon Turtle,1d4,2,3,12,60,H,2,2d6,C,B,24,12,U,O,"Swimming (9), Detection (15), Fear (2), SteamBreath"
+Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,25,15,D,O,"Swallowing, Poison, Fearlessness"
+"Dragon, Gold",1d4,2,9,11,60,H,2,2d6,L,B,35,11,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
+"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,50,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
+Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
+"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,150,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
+Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
+Elf,3d10x10,5,12,1+1,25,E,1,1d6,L,F,1,1.3,W,O,"Camouflage, HitBonus (1)"
+Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
+Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (12), Grappling"
+Pixie,1d10x10,6,9,1,25,C,1,1d3,N,F,1,1,W,O,"Flight (18), Invisibility"
+Pegasus,1d12,6,24,2+2,-,-,2,1d6,L,F,2,2.6,W,O,Flight (48)
+Hippogriff,2d8,5,18,3+1,-,-,2,1d6,L,F,3,3.3,W,O,Flight (36)
+Centaur,2d10,5,18,4,5,A,2,1d6,L,F,4,4,W,O,-
+Dryad,1d6,5,12,2,20,D,1,1d3,N,F,5,2,W,O,Charm (2)
+"Roc, Small",1d20,4,6,6,20,I,2,1d6,L,F,5,6,W,O,"Flight (48), Detection"
+Unicorn,1d4,2,24,4,-,-,2,1d6+2,L,F,6,4,W,O,"SaveBonus (6), Detection (24), DimensionDoor (36)"
+Griffon,2d8,3,12,7,10,E,2,1d6+2,N,F,8,7,W,O,Flight (30)
+"Tree, Animated",1d2,2,3,8,-,-,2,2d6,L,F,10,8,W,O,-
+"Roc, Medium",1d20,4,6,12,20,I,2,2d6,L,F,12,12,W,O,"Flight (48), Detection"
+"Roc, Large",1d20,4,6,18,20,I,2,3d6,L,F,24,18,W,O,"Flight (48), Detection"
+Treant,1d4,2,6,8,-,-,2,2d6,L,F,25,8,W,O,SummonTrees
+Kobold,4d10x10,7,6,1/2,50,C,1,1d3,C,H,1,0.6,D,O,LightSensitivity
+Goblin,4d10x10,6,6,1-1,50,C,1,1d3,C,H,1,0.8,D,O,LightSensitivity
+Hobgoblin,2d10x10,5,9,1+1,30,D,1,1d6,C,H,1,1.3,D,O,Bravery (1)
+Orc,3d10x10,6,9,1,50,D,1,1d6,C,H,1,1,D,O,LightSensitivity
+Gnoll,3d10,5,9,2,30,D,1,1d6,C,H,2,2,D,O,Bravery (2)
+Lizard Man,1d4x10,5,6,2+1,40,D,1,1d6,N,H,2,2.3,D,S1,Swimming (12)
+Troglodyte,3d10,5,12,2,15,A,1,1d6,C,H,2,2,D,M1,"Stealth (2), Stench"
+Bugbear,5d4,5,9,3+1,30,B,1,1d6+1,C,H,3,3.3,D,S1,Stealth (1)
+Ogre,3d6,5,9,4+1,30,C,1,1d6+2,C,H,4,4.3,D,O,-
+Troll,2d6,4,12,6+3,50,D,2,1d6,C,H,8,6.9,D,O,Regeneration (3)
+"Giant, Hill",1d8,4,12,8,30,E,1,2d6,C,H,8,8,D,O,RockHurling
+Triton,5d6,6,15,5,25,F,1,2d6,N,H,9,5,U,S1,"MagicResistance (90), Spells"
+"Giant, Stone",1d8,4,12,9,30,E,1,2d6,C,H,9,9,D,O,RockHurling
+"Giant, Frost",1d8,4,12,10+1,30,E,1,2d6+1,C,H,10,10.3,D,O,"RockHurling, ColdImmunity"
+"Giant, Fire",1d8,4,12,11+3,30,E,1,2d6+2,C,H,11,11.9,D,O,"RockHurling, FireImmunity"
+Ettin,1d4,3,12,10,20,C,2,2d6,C,H,12,10,D,M1,Alertness
+"Giant, Cloud",1d8,4,12,12+2,30,E,1,3d6,C,H,12,12.6,D,O,"RockHurling, Detection"
+"Giant, Storm",1d8,4,15,15,30,E,1,3d6+3,N,H,17,15,D,S1,"RockHurling, WeatherControl"
+Ogre Mage,1d6,4,9,5+2,40,E,1,2d6,C,H,18,5.6,D,S1,"Flight (15), Invisibility, Darkness, Polymorphism, Regeneration (1), Spells"
+Titan,1,2,15,20,5,A,1,3d6+3,N,H,50,20,D,"S1, S3","MagicResistance (60), Spells"
+Bandit,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,D,O,-
+Berserker,3d10x10,7,12,1+1,15,A,1,1d6,N,M,1,1.3,D,O,"Fearlessness, HitBonus (2)"
+Brigand,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,Bravery (1)
+Buccaneer,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
+Dervish,3d10x10,6,12,1+1,15,A,1,1d6,L,M,1,1.3,W,O,"Fearlessness, HitBonus (1)"
+Merman,3d10x10,7,3,1+1,40,A,1,1d6,N,M,1,1.3,U,"O, S2","Swimming (15), Grappling, LandWeakness (-1)"
+Nomad,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
+Pirate,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,-
+Caveman,3d10,9,12,2,15,A,1,1d6+1,N,M,2,2,W,O,Cowardice (-1)
+Veteran,1,4,9,1,-,-,1,1d8,N,M,1,1,D,O,NPC
+Warrior,1,4,9,2,-,-,1,1d8,N,M,2,2,D,O,NPC
+Swordsman,1,2,9,3,-,-,1,1d8,N,M,3,3,D,O,NPC
+Hero,1,2,9,4,-,-,1,1d8,N,M,4,4,D,O,NPC
+Swashbuckler,1,2,9,5,-,-,1,1d8,N,M,5,5,D,O,NPC
+Myrmidon,1,2,9,6,-,-,1,1d8,N,M,6,6,D,O,NPC
+Champion,1,2,9,7,-,-,1,1d8,N,M,7,7,D,O,NPC
+Superhero,1,2,9,8,-,-,1,1d8,N,M,8,8,D,O,NPC
+Lord,1,2,9,9,-,-,1,1d8,N,M,9,9,D,O,NPC
+Medium,1,9,12,1,-,-,1,1d4,N,M,2,1,D,O,"NPC, Spells"
+Seer,1,9,12,2,-,-,1,1d4,N,M,4,2,D,O,"NPC, Spells"
+Conjurer,1,9,12,3,-,-,1,1d4,N,M,6,3,D,O,"NPC, Spells"
+Theurgist,1,9,12,4,-,-,1,1d4,N,M,8,4,D,O,"NPC, Spells"
+Thaumaturgist,1,9,12,5,-,-,1,1d4,N,M,10,5,D,O,"NPC, Spells"
+Magician,1,9,12,6,-,-,1,1d4,N,M,12,6,D,O,"NPC, Spells"
+Enchanter,1,9,12,7,-,-,1,1d4,N,M,14,7,D,O,"NPC, Spells"
+Warlock,1,9,12,8,-,-,1,1d4,N,M,16,8,D,O,"NPC, Spells"
+Sorcerer,1,9,12,9,-,-,1,1d4,N,M,18,9,D,O,"NPC, Spells"
+Necromancer,1,9,12,10,-,-,1,1d4,N,M,20,10,D,O,"NPC, Spells"
+Wizard,1,9,12,11,-,-,1,1d4,N,M,24,11,D,O,"NPC, Spells"
+Yellow Mold,1,9,0,1,-,-,1,1d6,N,S,2,1,D,O,"SporeCloud, WoodEating, VoltImmunity, ColdImmunity, ChopImmunity"
+Green Slime,1,9,0,2,-,-,1,0,N,S,3,2,D,O,"FleshEating, WoodEating, MetalEating, VoltImmunity, ChopImmunity"
+Ochre Jelly,1,8,3,5,-,-,1,1d6,N,S,4,5,D,O,"WoodEating, VoltImmunity, ChopImmunity, Splitting"
+Gray Ooze,1,8,1,3,-,-,1,2d6,N,S,5,3,D,O,"MetalEating, FireImmunity, ColdImmunity"
+Gelatinous Cube,1,8,6,4,-,-,1,1d6,N,S,5,4,D,S1,"Paralysis, VoltImmunity, ColdImmunity"
+Black Pudding,1,6,6,10,-,-,1,3d6,N,S,15,10,D,O,"WoodEating, MetalEating, VoltImmunity, ColdImmunity, ChopImmunity, Splitting"
+Skeleton,3d10,7,6,1,-,-,1,1d6,N,U,1,1,D,O,Fearlessness
+Zombie,3d10,8,6,2,-,-,1,1d6,N,U,2,2,D,O,Fearlessness
+Ghoul,2d12,6,9,2,20,B,1,1d6,C,U,3,2,D,O,"Paralysis, Spawn"
+Wight,2d12,5,9,3,60,B,1,1d6,C,U,3,3,D,O,"SilverToHit, EnergyDrain (1), Spawn"
+Wraith,2d8,3,12,4,20,E,1,1d6,C,U,4,4,D,O,"Flight (24), SilverToHit, EnergyDrain (1), Spawn"
+Ghast,1d6,4,15,4,10,G,1,1d6+2,C,U,6,4,D,M1,"Paralysis, Stench"
+Mummy,1d12,3,6,5+1,30,D,1,1d6,C,U,7,5.3,D,O,"MagicToHit (1), DamageReduction, Rotting"
+Spectre,1d8,2,15,6,25,E,1,1d6,C,U,8,6,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
+Vampire,1d4,2,12,8,20,F,1,1d6,C,U,30,8,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
+Lich,1d4,3,6,10,100,A,1,1d6,N,U,45,10,D,S1,"Fear (4), Paralysis, Spells"
+Djinni,1,5,9,7+1,-,-,1,2d6-1,N,X,7,7.3,X,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
+Invisible Stalker,1,3,12,8,-,-,1,1d6+2,N,X,8,8,X,O,"Invisibility, Tracking"
+"Air Elemental, Small",1,2,36,8,-,-,1,1d6,N,X,11,8,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
+Efreeti,1,3,9,10,-,-,1,2d6,C,X,12,10,X,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, WallOfFire"
+"Fire Elemental, Small",1,2,12,8,-,-,1,2d6,N,X,14,8,X,"O, S1",MagicToHit (2)
+"Water Elemental, Small",1,2,6,8,-,-,1,2d6,N,X,14,8,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Earth Elemental, Small",1,2,6,8,-,-,1,3d6,N,X,15,8,X,"O, S1",MagicToHit (2)
+"Air Elemental, Medium",1,2,36,12,-,-,1,1d6,N,X,15,12,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
+"Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,N,X,18,12,X,"O, S1",MagicToHit (2)
+"Water Elemental, Medium",1,2,6,12,-,-,1,2d6,N,X,18,12,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,19,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
+Will-O-Wisp,1,-8,18,9,1,A,1,2d6,N,X,20,9,D,S1,"Light, Invisibility"
+"Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,N,X,21,12,X,"O, S1",MagicToHit (2)
+"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,24,16,X,"O, S1",MagicToHit (2)
+"Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,25,16,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,N,X,30,16,X,"O, S1",MagicToHit (2)

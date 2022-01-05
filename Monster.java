@@ -40,7 +40,7 @@ public class Monster {
 	char treasureType;
 	Attack attack;
 	Alignment alignment;
-	float hitDiceAsFloat;
+	float hitDiceDecimal;
 	int equivalentHitDice;
 	int hitPoints;
 	int maxHitPoints;
@@ -104,10 +104,10 @@ public class Monster {
 		inLairPct = CSVReader.parseInt(s[5]);
 		treasureType = s[6].charAt(0);
 		attack = parseAttackRoutine(s[7], s[8]);
-		type = s[9].charAt(0);
-		alignment = Alignment.getFromChar(s[10].charAt(0));
-		hitDiceAsFloat = parseFloat(s[11]);
-		equivalentHitDice = parseEHD(s[12]);
+		alignment = Alignment.getFromChar(s[9].charAt(0));
+		type = s[10].charAt(0);
+		equivalentHitDice = parseEHD(s[11]);
+		hitDiceDecimal = parseFloat(s[12]);
 		environment = s[13].charAt(0);
 		sourceBook = s[14];
 
@@ -138,7 +138,7 @@ public class Monster {
 		type = src.type;
 		equivalentHitDice = src.equivalentHitDice;
 		sourceBook = src.sourceBook;
-		hitDiceAsFloat = src.hitDiceAsFloat;
+		hitDiceDecimal = src.hitDiceDecimal;
 		killTally = src.killTally;
 		host = src.host;
 		specialList = EnumSet.copyOf(src.specialList);
@@ -172,7 +172,6 @@ public class Monster {
 	public char getType () { return type; }
 	public int getEquivalentHitDice () { return equivalentHitDice; }
 	public char getEnvironment () { return environment; }
-	public float getHitDiceAsFloat () { return hitDiceAsFloat; }
 	public int getKillTally () { return killTally; }
 	public int getTimesMeleed () { return timesMeleed; }
 	public Monster getHost () { return host; }

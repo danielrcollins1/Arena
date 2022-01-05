@@ -284,7 +284,7 @@ public class MonsterMetrics {
 		// Give notice if no monsters reported
 		if (!printedSomeMonster) {
 			System.out.println(displayOnlyRevisions ?
-				"All EHDs in database found valid." :
+				"All EHDs in database verified as valid." :
 				"No measurable monsters found in database.");
 		}
 		System.out.println();
