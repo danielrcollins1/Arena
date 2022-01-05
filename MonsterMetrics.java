@@ -673,7 +673,7 @@ public class MonsterMetrics {
 		// Compute fair numbers
 		int partySize = STANDARD_PARTY_SIZE;
 		int monNumber = (int) Math.round((double) 
-			partySize * ftrLevel / monster.getEHD());
+			ftrLevel * partySize / monster.getEHD());
 		if (monNumber <= 0)
 			return new BattleStats(-1, -1, false);
 
@@ -767,6 +767,8 @@ public class MonsterMetrics {
 		// Choose from adjacent values
 		double lowRatio = ratioMonstersBeatFighters(monster, lowLevel);
 		double highRatio = ratioMonstersBeatFighters(monster, highLevel);
+		System.out.println("Low level " + lowLevel + ", low ratio " + lowRatio);
+		System.out.println("High level " + highLevel + ", high ratio " + highRatio);
 		return isCloserToHalf(lowRatio, highRatio) ? lowLevel : highLevel;
 	} 
 
