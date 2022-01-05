@@ -11,8 +11,8 @@ public class FightManager {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Check if we should call fight at this many turns. */
-	private static final int VIABILITY_CHECK_TURNS = 20;
+	/** Maximum number of turns allowed in a fight. */
+	private static final int MAX_TURNS = 20;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -21,7 +21,7 @@ public class FightManager {
 	/** Report play-by-play action for fights. */
 	private static boolean reportPlayByPlay = false;
 
-	/** Report warnings for corner-case fight situations. */
+	/** Report warnings for unusual fight situations. */
 	private static boolean reportWarnings = false;
 
 	/** Count turns/rounds in current fight. */
@@ -98,10 +98,7 @@ public class FightManager {
 		// Alternate turns
 		while (party1.isLive() && party2.isLive()) {
 			turnCount++;
-			if (turnCount % VIABILITY_CHECK_TURNS == 0) {
-				if (!checkViability())
-					break;			
-			}
+			if (turnCount > MAX_TURNS) break;
 			reportPlayByPlay();
 			partyInit1.takeTurn(partyInit2);
 			partyInit2.takeTurn(partyInit1);
@@ -125,40 +122,32 @@ public class FightManager {
 	*  Decide on the winner of a fight.
 	*/
 	private void callWinner () {
-		if (party1.isLive() && party2.isLive()) {
-			if (reportWarnings) {
-				System.err.println("Fight over with both sides live: " + this);
-				System.err.println(party1.random());
-			}
-			if (party1.isViableAgainst(party2) 
-				&& !party2.isViableAgainst(party1))
-			{
-				winner = party1;
-			}
-			else if (party2.isViableAgainst(party1)
-				&& !party1.isViableAgainst(party2))
-			{
-				winner = party2;
-			}
-			else {
-				if (reportWarnings) {
-					System.err.println("Fight over with sides equally viable: " + this);
-				}
-				winner = getRandomParty();
-			}
+
+		// Check viability
+		boolean viableParty1 = party1.isViableAgainst(party2);
+		boolean viableParty2 = party2.isViableAgainst(party1);
+		
+		// Call the winner
+		if (viableParty1 && !viableParty2) {
+			winner = party1;
 		}
-		else if (!party1.isLive() && !party2.isLive()) {
+		else if (viableParty2 && !viableParty1) {
+			winner = party2;		
+		}
+		else if (viableParty1 && viableParty2) {
 			if (reportWarnings) {
-				System.err.println("Fight over with both sides dead: " + this);
+				System.err.println("Fight over with both sides viable: " + this);
 			}
 			winner = getRandomParty();
 		}
-		else if (party1.isLive()) {
-			winner = party1;
-		}
 		else {
-			winner = party2;		
+			if (reportWarnings) {
+				System.err.println("Fight over with neither side viable: " + this);
+			}
+			winner = getRandomParty();
 		}
+		
+		// Report if desired		
 		if (reportPlayByPlay) {
 			System.out.println("* Winner is: " + winner + "\n");
 		}
@@ -178,14 +167,6 @@ public class FightManager {
 		return turnCount;
 	}
 
-	/**
-	*  Should we let this fight continue?
-	*/
-	private boolean checkViability () {
-		return party1.isViableAgainst(party2)
-			&& party2.isViableAgainst(party1);
-	}
-	
 	/**
 	*  Identify this object as a string.
 	*/
