@@ -16,16 +16,16 @@ Giant Leech,2d6,8,6,2,-,-,1,1d6+1,N,A,2,2,U,"O, S2",BloodDrain (2)
 "Horse, Medium",1,7,18,2+1,-,-,2,1d6,N,A,2,2.3,W,"CM, O, SS",-
 Mule,1,7,12,2+1,-,-,1,1d6,N,A,2,2.3,W,O,-
 Crocodile,3d8,5,9,3,-,-,1,1d6,N,A,2,3,U,"O, M1",Swimming (15)
-Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,N,A,2,3.9,W,"S1, M1",-
-Giant Hog,1d12,7,15,3+3,-,-,1,1d6,N,A,2,3.9,D,M1,-
-Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,N,A,2,3.3,D,"S1, M1",-
 Giant Tick,3d4,4,3,3,-,-,1,1d3,N,A,2,3,D,S1,"BloodDrain (4), Disease"
 Ram,1d6,7,15,3,-,-,1,1d6,N,A,2,3,W,"S1, M2",Charge
+Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,N,A,2,3.3,D,"S1, M1",-
+Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,N,A,2,3.9,W,"S1, M1",-
+Giant Hog,1d12,7,15,3+3,-,-,1,1d6,N,A,2,3.9,D,M1,-
 Giant Toad,2d6,6,3,2,-,-,1,1d6,N,A,3,2,D,"S1, S2","Leaping, Constriction, Poison"
 Huge Spider,1d12,6,18,2+2,50,-,1,1d6,N,A,3,2.6,D,M1,"Poison (-1), Stealth (3), Hopping"
+"Horse, Heavy",1,7,12,3,-,-,2,1d6,N,A,3,3,W,"CM, O, SS",-
 Boar,1d12,7,15,3+3,-,-,1,1d6+1,N,A,3,3.9,W,M1,-
 Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,N,A,3,3.9,D,"S1, M1",BloodDrain (6)
-"Horse, Heavy",1,7,12,3,-,-,2,1d6,N,A,3,3,W,"CM, O, SS",-
 Bull,1d20,6,15,4,-,-,1,1d6+2,N,A,3,4,W,"S1, M1",Charge
 "Giant Ant, Warrior",1d20,3,18,3,10,-,1,1d6,N,A,4,3,D,M1,Poison
 Giant Crab,3d4,2,6,3,-,-,2,1d6+1,N,A,4,3,U,"O, S1, S2",-
@@ -42,8 +42,8 @@ Bear,1d6,5,12,6,-,-,2,1d6,N,A,6,6,W,"S1, M1",Grabbing
 "Giant Snake, Constrictor",1d2,5,9,6+1,-,-,1,1d6+2,N,A,6,6.3,D,M1,Constriction
 Sabre-Tooth Tiger,1d2,6,12,7+2,10,-,2,1d6+1,N,A,7,7.6,W,"S1, M1","Stealth (2), Grabbing"
 Giant Slug,1,8,6,12+2,-,-,1,1d6+1,N,A,8,12.6,D,S1,AcidSpitting
-Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,N,A,9,6.4,D,"S1, M1",Poison
 "Giant Snake, Sea",1d8,5,3,6,-,-,2,2d6,N,A,9,6,U,"O, M1","Swimming (20), Poison, Constriction"
+Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,N,A,9,6.4,D,"S1, M1",Poison
 Minotaur Lizard,1d6,3,9,8,50,E,2,2d6,N,A,10,8,D,S2,-
 "Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,N,A,10,12,W,S2,-
 Giant Squid,2d6,7,3,6,20,A,10,1d6,N,A,11,6,U,"O, S2, M1","Swimming (12), Constriction, Jet, InkCloud"
@@ -59,8 +59,8 @@ Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2
 Shadow,2d10,7,9,2+2,50,F,1,1d3,C,B,3,2.6,D,S1,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity"
 Blink Dog,4d4,5,12,4,30,C,1,1d6,L,B,3,4,D,S1,Blinking
 Doppleganger,3d4,5,9,4,25,E,1,1d6+1,N,B,3,4,D,S1,"Polymorphism, SaveBonus (6)"
-Wereboar,2d10,4,12,4+1,15,C,1,1d6,N,B,3,4.3,D,O,"Lycanthropy, SilverToHit"
 Werewolf,2d10,5,15,4,15,C,1,1d6,N,B,3,4,D,O,"Lycanthropy, SilverToHit"
+Wereboar,2d10,4,12,4+1,15,C,1,1d6,N,B,3,4.3,D,O,"Lycanthropy, SilverToHit"
 Harpy,2d6,7,6,3,20,C,1,1d6,C,B,4,3,D,S1,"Flight (15), AlluringSong, CharmTouch"
 Hell Hound,2d4,4,12,3,25,C,1,1d6,C,B,4,3,D,S1,"FireBreath (3), Stealth (2), Detection"
 Gargoyle,2d10,5,9,4,25,C,2,1d6,C,B,5,4,D,O,"Flight (15), MagicToHit (1)"
@@ -70,8 +70,8 @@ Owl Bear,1d4+1,5,12,5,40,C,2,1d6+1,N,B,6,5,D,S1,Grabbing
 Cockatrice,1d8,6,9,5,35,D,1,1d6,N,B,6,5,D,O,"Flight (9), Petrification"
 Displacer Beast,1d4+1,4,15,6,35,D,2,1d6,C,B,6,6,D,S1,"Displacement, SaveBonus (6)"
 Minotaur,1d8,6,12,6,10,C,2,1d6+2,N,B,6,6,D,O,Fearlessness
-Lammasu,2d4,6,12,6+2,40,A,2,1d6,L,B,7,6.6,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
 Werebear,2d10,2,9,6,15,C,2,1d6,L,B,7,6,D,"O, S1","Lycanthropy, SilverToHit, Grabbing"
+Lammasu,2d4,6,12,6+2,40,A,2,1d6,L,B,7,6.6,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
 Phase Spider,1d6,6,6,5,80,E,1,1d6,N,B,8,5,D,S1,"Phasing, Poison"
 "Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,Multiheads
 Carrion Crawler,1d6,7,12,3+1,60,B,8,0,N,B,9,3.3,D,S1,Paralysis
@@ -100,10 +100,10 @@ Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,25,15,D,O,"Swallowing, Poison, Fearlessnes
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
 "Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,150,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
-Elf,3d10x10,5,12,1+1,25,E,1,1d6,L,F,1,1.3,W,O,"Camouflage, HitBonus (1)"
 Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (12), Grappling"
 Pixie,1d10x10,6,9,1,25,C,1,1d3,N,F,1,1,W,O,"Flight (18), Invisibility"
+Elf,3d10x10,5,12,1+1,25,E,1,1d6,L,F,1,1.3,W,O,"Camouflage, HitBonus (1)"
 Pegasus,1d12,6,24,2+2,-,-,2,1d6,L,F,2,2.6,W,O,Flight (48)
 Hippogriff,2d8,5,18,3+1,-,-,2,1d6,L,F,3,3.3,W,O,Flight (36)
 Centaur,2d10,5,18,4,5,A,2,1d6,L,F,4,4,W,O,-
@@ -117,11 +117,11 @@ Griffon,2d8,3,12,7,10,E,2,1d6+2,N,F,8,7,W,O,Flight (30)
 Treant,1d4,2,6,8,-,-,2,2d6,L,F,25,8,W,O,SummonTrees
 Kobold,4d10x10,7,6,1/2,50,C,1,1d3,C,H,1,0.6,D,O,LightSensitivity
 Goblin,4d10x10,6,6,1-1,50,C,1,1d3,C,H,1,0.8,D,O,LightSensitivity
-Hobgoblin,2d10x10,5,9,1+1,30,D,1,1d6,C,H,1,1.3,D,O,Bravery (1)
 Orc,3d10x10,6,9,1,50,D,1,1d6,C,H,1,1,D,O,LightSensitivity
+Hobgoblin,2d10x10,5,9,1+1,30,D,1,1d6,C,H,1,1.3,D,O,Bravery (1)
 Gnoll,3d10,5,9,2,30,D,1,1d6,C,H,2,2,D,O,Bravery (2)
-Lizard Man,1d4x10,5,6,2+1,40,D,1,1d6,N,H,2,2.3,D,S1,Swimming (12)
 Troglodyte,3d10,5,12,2,15,A,1,1d6,C,H,2,2,D,M1,"Stealth (2), Stench"
+Lizard Man,1d4x10,5,6,2+1,40,D,1,1d6,N,H,2,2.3,D,S1,Swimming (12)
 Bugbear,5d4,5,9,3+1,30,B,1,1d6+1,C,H,3,3.3,D,S1,Stealth (1)
 Ogre,3d6,5,9,4+1,30,C,1,1d6+2,C,H,4,4.3,D,O,-
 Troll,2d6,4,12,6+3,50,D,2,1d6,C,H,8,6.9,D,O,Regeneration (3)
@@ -136,13 +136,13 @@ Ettin,1d4,3,12,10,20,C,2,2d6,C,H,12,10,D,M1,Alertness
 Ogre Mage,1d6,4,9,5+2,40,E,1,2d6,C,H,18,5.6,D,S1,"Flight (15), Invisibility, Darkness, Polymorphism, Regeneration (1), Spells"
 Titan,1,2,15,20,5,A,1,3d6+3,N,H,50,20,D,"S1, S3","MagicResistance (60), Spells"
 Bandit,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,D,O,-
-Berserker,3d10x10,7,12,1+1,15,A,1,1d6,N,M,1,1.3,D,O,"Fearlessness, HitBonus (2)"
 Brigand,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,Bravery (1)
 Buccaneer,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
-Dervish,3d10x10,6,12,1+1,15,A,1,1d6,L,M,1,1.3,W,O,"Fearlessness, HitBonus (1)"
-Merman,3d10x10,7,3,1+1,40,A,1,1d6,N,M,1,1.3,U,"O, S2","Swimming (15), Grappling, LandWeakness (-1)"
 Nomad,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
 Pirate,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,-
+Dervish,3d10x10,6,12,1+1,15,A,1,1d6,L,M,1,1.3,W,O,"Fearlessness, HitBonus (1)"
+Berserker,3d10x10,7,12,1+1,15,A,1,1d6,N,M,1,1.3,D,O,"Fearlessness, HitBonus (2)"
+Merman,3d10x10,7,3,1+1,40,A,1,1d6,N,M,1,1.3,U,"O, S2","Swimming (15), Grappling, LandWeakness (-1)"
 Caveman,3d10,9,12,2,15,A,1,1d6+1,N,M,2,2,W,O,Cowardice (-1)
 Veteran,1,4,9,1,-,-,1,1d8,N,M,1,1,D,O,NPC
 Warrior,1,4,9,2,-,-,1,1d8,N,M,2,2,D,O,NPC
