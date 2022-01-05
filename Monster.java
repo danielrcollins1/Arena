@@ -678,7 +678,8 @@ public class Monster {
 
 				case SappingStrands:
 					if (!isLastAttack && !target.hasCondition(SpecialType.SappingStrands)
-							&& !target.rollSave(SavingThrows.Type.Death)) {
+						&& !target.rollSave(SavingThrows.Type.Death)) 
+					{
 						int strength = target.getAbilityScore(Ability.Str);       
 						target.takeAbilityDamage(Ability.Str, strength/2);
 						target.addCondition(SpecialType.SappingStrands);
@@ -686,7 +687,9 @@ public class Monster {
 					break;
 
 				case Swallowing:
-					if (!isLastAttack && totalRoll >= 25) {
+					if ((attack.getRate() == 1 || !isLastAttack)
+						&& totalRoll >= 25) 
+					{
 						target.addCondition(SpecialType.Swallowing);
 					}
 					break;
