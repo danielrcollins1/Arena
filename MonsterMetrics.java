@@ -767,8 +767,6 @@ public class MonsterMetrics {
 		// Choose from adjacent values
 		double lowRatio = ratioMonstersBeatFighters(monster, lowLevel);
 		double highRatio = ratioMonstersBeatFighters(monster, highLevel);
-		System.out.println("Low level " + lowLevel + ", low ratio " + lowRatio);
-		System.out.println("High level " + highLevel + ", high ratio " + highRatio);
 		return isCloserToHalf(lowRatio, highRatio) ? lowLevel : highLevel;
 	} 
 
