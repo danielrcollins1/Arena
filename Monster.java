@@ -981,7 +981,7 @@ public class Monster {
 		// Magic resistance
 		if (hasSpecial(SpecialType.MagicResistance)) {
 			int basePct = getSpecialParam(SpecialType.MagicResistance);
-			int adjustPct = basePct + (casterLevel - 11) * 5;
+			int adjustPct = basePct - (casterLevel - 11) * 5;
 			if (Dice.rollPct() <= adjustPct)
 				return true;
 		}
