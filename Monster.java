@@ -1044,9 +1044,10 @@ public class Monster {
 	public boolean checkConstriction () {
 		if (hasSpecial(SpecialType.Constriction) && host != null) {
 
-			// Brain Consumption: comparable to 40% to kill/round.
+			// Brain Consumption: OED converts this to 2-in-6
+			// chance per round (80% likely to end in 1-4 rounds)
 			if (hasSpecial(SpecialType.BrainConsumption)) {
-				if (Dice.rollPct() <= 40) {
+				if (Dice.roll(6) <= 2) {
 					host.addCondition(SpecialType.Death);
 					host = null;
 				}   

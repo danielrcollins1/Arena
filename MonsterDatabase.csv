@@ -87,8 +87,8 @@ Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,B,N,8,12,D,S1,Confusion
 "Golem, Flesh",1,9,9,12,-,-,1,2d6,B,N,12,13,D,S1,"MagicToHit (1), MagicImmunity"
 "Dragon, Green",1d4,2,9,8,60,H,2,2d6,B,N,8,14,D,O,"Flight (24), Detection (15), Fear (2), PoisonBreath"
 "Dragon, Blue",1d4,2,9,9,60,H,2,2d6,B,N,9,15,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
+Mind Flayer,1d4,5,12,8+3,50,F,4,0,B,N,8,16,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
 Roper,1d3,0,3,10,90,D,1,3d6,B,C,10,16,D,SR2,"MagicResistance (80), SappingStrands, VoltImmunity, ColdResistance, FireVulnerability"
-Mind Flayer,1d4,5,12,8+3,50,F,4,0,B,N,8,17,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
 Balrog,1d6,2,6,10,25,F,2,2d6,B,C,10,17,D,O,"Flight (15), MagicResistance (75), Immolation"
 "Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,B,N,10,17,D,O,Multiheads
 Basilisk,1d6,4,6,6+1,40,F,1,1d6,B,N,6,20,D,O,"PetrifyingGaze, Petrification"
