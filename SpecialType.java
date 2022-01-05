@@ -85,8 +85,7 @@ public enum SpecialType {
 			case Poison: case Paralysis: case Petrification: 
 			case Swallowing: case SporeCloud: case FleshEating: 
 			case Fear: case MindBlast: case Sleep: case Charm:
-			case Hold: case Webs: case Polymorphism: case Death:
-			case BlownAway:
+			case Hold: case Polymorphism: case Death: case BlownAway:
 				return true;
 		}
 		return false;
