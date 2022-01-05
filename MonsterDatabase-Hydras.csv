@@ -1,9 +1,9 @@
 Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
-"Hydra, 5 Heads",1,5,12,5,25,B,5,1d6,N,B,6,5,D,O,Multiheads
-"Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,Multiheads
-"Hydra, 7 Heads",1,5,12,7,25,B,7,1d6,N,B,10,7,D,O,Multiheads
-"Hydra, 8 Heads",1,5,12,8,25,B,8,1d6,N,B,12,8,D,O,Multiheads
-"Hydra, 9 Heads",1,5,12,9,25,B,9,1d6,N,B,14,9,D,O,Multiheads
-"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,Multiheads
-"Hydra, 11 Heads",1,5,12,11,25,B,11,1d6,N,B,20,11,D,O,Multiheads
-"Hydra, 12 Heads",1,5,12,12,25,B,12,1d6,N,B,22,12,D,O,Multiheads
+"Hydra, 5 Heads",1,5,12,5,25,B,5,1d6,N,B,6,5,D,O,ManyHeads
+"Hydra, 6 Heads",1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,ManyHeads
+"Hydra, 7 Heads",1,5,12,7,25,B,7,1d6,N,B,10,7,D,O,ManyHeads
+"Hydra, 8 Heads",1,5,12,8,25,B,8,1d6,N,B,12,8,D,O,ManyHeads
+"Hydra, 9 Heads",1,5,12,9,25,B,9,1d6,N,B,14,9,D,O,ManyHeads
+"Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
+"Hydra, 11 Heads",1,5,12,11,25,B,11,1d6,N,B,20,11,D,O,ManyHeads
+"Hydra, 12 Heads",1,5,12,12,25,B,12,1d6,N,B,22,12,D,O,ManyHeads

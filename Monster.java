@@ -310,7 +310,7 @@ public class Monster {
 		if (hasSpecial(SpecialType.Dragon)) {
 			maxHitPoints = hitDice.getNum() * getDragonAge();
 		}
-		else if (hasSpecial(SpecialType.Multiheads)) {
+		else if (hasSpecial(SpecialType.ManyHeads)) {
 			maxHitPoints = hitDice.maxRoll();
 		}
 		else {
@@ -427,10 +427,8 @@ public class Monster {
 
 		// Secondary abilities (in block for performance)
 		if (!specialList.isEmpty()) {
-			checkConstriction();
 			checkSlowing(enemies);
-			if (checkGrabbing()) return true;
-			if (checkBloodDrain()) return true;
+			if (checkAttachment()) return true;
 			if (checkManyEyesSalvo(enemies)) return true;
 		}
 		return false;
@@ -682,20 +680,20 @@ public class Monster {
 					castCharm(target, -getSpecialParam(s));
 					break;
 
+				case BloodDrain: 
+					setHost(target);
+					break;
+
 				case Constriction:
 					setHost(target);
 					break;
 
-				case Grabbing:
+				case Rending:
 					if (totalRoll >= 25) {
 						setHost(target);
 					}
 					break;
 
-				case BloodDrain: 
-					setHost(target);
-					break;
-					
 				case FleshEating:
 					target.saveVsCondition(SpecialType.FleshEating, getHD());
 			}
@@ -1008,6 +1006,18 @@ public class Monster {
 	}
 
 	/**
+	* Get our attachment ability (if any).
+	*/
+	private SpecialType getAttachmentAbility () {
+		for (SpecialType s: specialList) {
+			if (s.isAttachmentAbility()) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	/**
 	* Regenerate hit points if appropriate.
 	*/
 	private void checkRegeneration () {
@@ -1018,81 +1028,84 @@ public class Monster {
 	}
 
 	/**
-	* Drain blood from host if appropriate.
-	* @return true if we drained blood
+	* Check if we're attached to some host.
+	* If so, do special violence instead of a normal attack.
+	* @return true if interrupted from making a normal attack
 	*/
-	private boolean checkBloodDrain () {
-		if (hasSpecial(SpecialType.BloodDrain) && host != null) {
-			int maxDamage = getSpecialParam(SpecialType.BloodDrain);
-			int drain = new Dice(1, maxDamage).roll();
-			host.takeDamage(drain);
-			if (host.horsDeCombat()) {
-				host = null;
+	private boolean checkAttachment () {
+		if (host == null) {
+			return false;
+		}
+		else if (host.horsDeCombat()) {
+			host = null;
+			return false;
+		}
+		else {
+			SpecialType type = getAttachmentAbility();
+			switch (type) {
+				case BloodDrain: doBloodDrain(); break;
+				case Constriction: doConstriction(); break;
+				case Rending: doRending(); break;
+				default: 
+					System.err.println("Unknown attachment ability: " + type);
 			}
 			return true;
 		}
-		return false;
 	}
 
 	/**
-	* Constrict host if appropriate.
+	* Drain blood from host.
+	*/
+	private void doBloodDrain () {
+		assert(hasSpecial(SpecialType.BloodDrain) && host != null);
+		int maxDamage = getSpecialParam(SpecialType.BloodDrain);
+		int drain = new Dice(1, maxDamage).roll();
+		host.takeDamage(drain);
+	}
+
+	/**
+	* Constrict host for damage.
 	* This ability is used by serpent/tentacle-type monsters.
 	* Automatic initiation on any hit.
-	* @return Did we constrict?
 	*/
-	private boolean checkConstriction () {
-		if (hasSpecial(SpecialType.Constriction) && host != null) {
+	private void doConstriction () {
+		assert(hasSpecial(SpecialType.Constriction) && host != null);
 
-			// Brain Consumption: OED converts this to 2-in-6
-			// chance per round (80% likely to end in 1-4 rounds)
-			if (hasSpecial(SpecialType.BrainConsumption)) {
-				if (Dice.roll(6) <= 2) {
-					host.addCondition(SpecialType.Death);
-					host = null;
-				}   
-				return true;
-			}
+		// Brain Consumption: OED converts this to 2-in-6
+		// chance per round (80% likely to end in 1-4 rounds)
+		if (hasSpecial(SpecialType.BrainConsumption)) {
+			if (Dice.roll(6) <= 2)
+				host.addCondition(SpecialType.Death);
+		}
 
-			// Default approximation is to automatically 
-			// score half the full attack routine
-			// (in book usually double per-tentacle hit)
+		// Default approximation is to automatically 
+		// score half the full attack routine
+		// (in book usually double per-tentacle hit)
+		else {
 			Attack atk = getAttack();
 			int freeHits = (atk.getRate() + 1) / 2;
 			for (int i = 0; i < freeHits; i++) {
 				int damage = atk.getDamage().roll();
 				host.takeDamage(damage);
 			}
-			if (host.horsDeCombat()) {
-				host = null;   
-			}
-			return true;
 		}
-		return false;
 	}
 
 	/**
-	* Grab host if appropriate.
+	* Rend our host.
 	* This ability is used by animals like bears and cats.
 	* Requires high total hit score to initiate (25+)
 	* (book is nat 18+, converted here for convenience)
-	* @return Did we grab?
 	*/
-	private boolean checkGrabbing () {
-		if (hasSpecial(SpecialType.Grabbing) && host != null) {
+	private void doRending () {
+		assert(hasSpecial(SpecialType.Rending) && host != null);
 
-			// Automatically score full attack
-			Attack atk = getAttack();
-			for (int i = 0; i < atk.getRate(); i++) {
-				int damage = atk.getDamage().roll();
-				host.takeDamage(damage);
-			}
-			if (host.horsDeCombat()) {
-				host = null;
-			}
-			return true;
-			
+		// Automatically score full attack
+		Attack atk = getAttack();
+		for (int i = 0; i < atk.getRate(); i++) {
+			int damage = atk.getDamage().roll();
+			host.takeDamage(damage);
 		}
-		return false;
 	}
 
 	/**
@@ -1424,7 +1437,7 @@ public class Monster {
 	* Set one attack per full hit die.
 	*/
 	private void headCount () {
-		if (hasSpecial(SpecialType.Multiheads)) {
+		if (hasSpecial(SpecialType.ManyHeads)) {
 			int hitDieSides = getHitDice().getSides();
 			int newRate = (getHP() - 1) / hitDieSides + 1;
 			getAttack().setRate(newRate);

@@ -19,8 +19,8 @@ public enum SpecialType {
 	NPC, Poison, Paralysis, Petrification, BloodDrain, EnergyDrain,
 	Constriction, Immolation, Rotting, Swallowing,
 	SilverToHit, MagicToHit, ChopImmunity, DamageReduction,
-	Multiheads, Berserking, HitBonus, Invisibility, Detection, 
-	Grabbing, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
+	ManyHeads, Berserking, HitBonus, Invisibility, Detection, 
+	Rending, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
 	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, FleshEating, 
 	Whirlwind, WallOfFire, ConeOfCold, AcidSpitting, Confusion, 
 	Displacement, Blinking, Phasing, CharmTouch, Dragon, 
@@ -121,6 +121,17 @@ public enum SpecialType {
 	public boolean isSummonsAbility () {
 		switch (this) {
 			case SummonVermin: case SummonTrees:
+				return true;
+		}	
+		return false;
+	}
+
+	/**
+	*  Is this an attachment ability?
+	*/
+	public boolean isAttachmentAbility () {
+		switch (this) {
+			case BloodDrain: case Constriction: case Rending:
 				return true;
 		}	
 		return false;
