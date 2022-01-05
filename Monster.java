@@ -461,7 +461,7 @@ public class Monster {
 	* Make one attack on another creature.
 	*/
 	private void singleAttack (Attack attack, Monster target, boolean last) {
-		if (canAttack(target) && target.isInPhase()) {
+		if (canAttack(target)) {
 			int naturalRoll = Dice.roll(20);
 			int totalRoll = naturalRoll + attack.getBonus() 
 				+ target.getAC() + hitModifier(target);
@@ -502,11 +502,18 @@ public class Monster {
 				return false;
 		}
 
-		// Check chop-immunity (non-energy weapon blows)
+		// Check chop-immunity (standard weapon blows)
 		if (target.hasSpecial(SpecialType.ChopImmunity)) {
 			EnergyType atkEnergy = getAttack().getEnergy();
 			if (atkEnergy == null || target.isImmuneToEnergy(atkEnergy))
 				return false;
+		}
+
+		// Check out-of-phase
+		// Per Dragon #131, Sage Advice, as initiative, i.e., a coin-flip.
+		if (target.hasSpecial(SpecialType.Phasing)) {
+			if (Dice.coinFlip())
+				return false;		
 		}
 
 		return true;
@@ -1433,7 +1440,7 @@ public class Monster {
 	}
 
 	/**
-	* Count current heads for multiheaded types.
+	* Count current heads for many-headed types.
 	* Set one attack per full hit die.
 	*/
 	private void headCount () {
@@ -1955,16 +1962,6 @@ public class Monster {
 		return canAttack(enemy) 
 			|| (hasCastableSpells() 
 				&& !enemy.hasSpecial(SpecialType.MagicImmunity));
-	}
-
-	/**
-	* Is this monster currently in phase and subject to attack?
-	* Per Dragon #131, Sage Advice, this comes down to initiative,
-	* i.e., basically just a coin-flip.
-	*/
-	private boolean isInPhase () {
-		boolean outOfPhase = hasSpecial(SpecialType.Phasing) && Dice.coinFlip();
-		return !outOfPhase;
 	}
 
 	/**
