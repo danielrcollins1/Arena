@@ -85,10 +85,14 @@ public class SpellCasting {
 
 	/** Magic Missile spell effect. */
 	static class MagicMissileCasting extends Casting {
-		static final int MAX_TARGETS = 5;
-		int getMaxTargetNum () { return MAX_TARGETS; }
+
+		// While this spell can technically hit up to 5 targets,
+		// we don't expose that, since it's not disabling,
+		// and we don't want to prioritize this over spells
+		// like hold or charm.
+
 		void cast (int level, Party targets) {
-			int numMissiles = Math.min((level + 1) / 2, MAX_TARGETS);
+			int numMissiles = Math.min((level + 1) / 2, 5);
 			for (int i = 0; i < numMissiles; i++) {
 				Monster target = targets.random();
 				int damage = Dice.roll(6) + 1;

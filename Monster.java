@@ -977,8 +977,8 @@ public class Monster {
 		if (rollSave(saveType)) damage /= 2;
 		takeDamage(damage);
 		if (FightManager.getPlayByPlayReporting()) {
-			System.out.println(this.race + " takes " 
-				+ energy + " damage (" + damage + " points)");
+			System.out.println(this.race + " takes damage from " 
+				+ energy + " (" + damage + " points)");
 		}
 	}
 
