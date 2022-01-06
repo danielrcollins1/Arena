@@ -911,6 +911,9 @@ public class Monster {
 	*/
 	private void addCondition (SpecialType type) {
 		conditionList.add(type);
+		if (FightManager.getPlayByPlayReporting()) {
+			System.out.println(this.race + " takes condition " + type);
+		}
 	}
 
 	/**
@@ -918,6 +921,9 @@ public class Monster {
 	*/
 	private void removeCondition (SpecialType type) {
 		conditionList.remove(type);
+		if (FightManager.getPlayByPlayReporting()) {
+			System.out.println(this.race + " loses condition " + type);
+		}
 	}
 
 	/**
@@ -968,8 +974,12 @@ public class Monster {
 	{
 		if (isImmuneToEnergy(energy)) return;
 		if (checkResistMagic(casterLevel)) return;
-		boolean saved = rollSave(saveType);
-		takeDamage(saved ? damage / 2 : damage);
+		if (rollSave(saveType)) damage /= 2;
+		takeDamage(damage);
+		if (FightManager.getPlayByPlayReporting()) {
+			System.out.println(this.race + " takes " 
+				+ energy + " damage (" + damage + " points)");
+		}
 	}
 
 	/**

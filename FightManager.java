@@ -69,6 +69,13 @@ public class FightManager {
 	}
 
 	/**
+	*  Get play-by-play reporting.
+	*/
+	public static boolean getPlayByPlayReporting () {
+		return reportPlayByPlay; 
+	}
+
+	/**
 	*  Fight a duel between parties.
 	*  @return the winner of the fight
 	*/

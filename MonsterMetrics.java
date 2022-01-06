@@ -699,16 +699,27 @@ public class MonsterMetrics {
 	*/
 	private void printQuickBattleStats () {
 		System.out.println("Monster\tWin Ratio\tAverage Turns");
-		for (Monster m: MonsterDatabase.getInstance()) {
-			if (!m.hasUndefinedEHD()) {
-				int ftrLevel = Math.min(m.getEHD(), MAX_LEVEL);
-				BattleStats stats = getBattleStats(m, ftrLevel);
-				System.out.println(m.getRace() 
-					+ "\t" + stats.winRatio
-					+ "\t" + stats.avgTurns);
+		if (spotlightMonster == null) {
+			for (Monster m: MonsterDatabase.getInstance()) {
+				if (!m.hasUndefinedEHD())
+					printQuickBattleStats(m);
 			}
 		}
+		else {
+			printQuickBattleStats(spotlightMonster);
+		}
 		System.out.println();
+	}
+
+	/**
+	*  Print simple parity battle stats for one monster.
+	*/
+	private void printQuickBattleStats (Monster monster) {
+		int ftrLevel = Math.min(monster.getEHD(), MAX_LEVEL);
+		BattleStats stats = getBattleStats(monster, ftrLevel);
+		System.out.println(monster.getRace() 
+			+ "\t" + stats.winRatio
+			+ "\t" + stats.avgTurns);
 	}
 
 	/**
