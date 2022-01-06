@@ -168,7 +168,7 @@ public class MonsterMetrics {
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
 		System.out.println("\t-n show suggested best number matches at standard party size");		
 		System.out.println("\t-p show EHD-parity win ratios vs. standard-size party");
-		System.out.println("\t-q show only quick win ratio, average turns at EHD = PC level");
+		System.out.println("\t-q show only quick key stats in table form");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
@@ -698,7 +698,7 @@ public class MonsterMetrics {
 	*  Print simple report of parity battle stats.
 	*/
 	private void printQuickBattleStats () {
-		System.out.println("Monster\tWin Ratio\tAverage Turns");
+		System.out.println("Monster\tEHD\tBLM\tWin Ratio\tAvg Turns");
 		if (spotlightMonster == null) {
 			for (Monster m: MonsterDatabase.getInstance()) {
 				if (!m.hasUndefinedEHD())
@@ -715,9 +715,16 @@ public class MonsterMetrics {
 	*  Print simple parity battle stats for one monster.
 	*/
 	private void printQuickBattleStats (Monster monster) {
+
+		// Get stats
 		int ftrLevel = Math.min(monster.getEHD(), MAX_LEVEL);
 		BattleStats stats = getBattleStats(monster, ftrLevel);
-		System.out.println(monster.getRace() 
+		int bestLevelMatch = getBestLevelMatch(monster);
+
+		// Print stats
+		System.out.println(monster.getRace()
+			+ "\t" + monster.getEHD()
+			+ "\t" + bestLevelMatch
 			+ "\t" + stats.winRatio
 			+ "\t" + stats.avgTurns);
 	}
