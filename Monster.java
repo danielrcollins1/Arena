@@ -1112,7 +1112,7 @@ public class Monster {
 		// chance per round (80% likely to end in 1-4 rounds)
 		if (hasSpecial(SpecialType.BrainConsumption)) {
 			if (Dice.roll(6) <= 2)
-				host.addCondition(SpecialType.Death);
+				host.addCondition(SpecialType.BrainConsumption);
 		}
 
 		// Default approximation is to automatically 

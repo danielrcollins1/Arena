@@ -316,7 +316,7 @@ public class SpellCasting {
 	static class DisintegrateCasting extends Casting {
 		void cast (int level, Party targets) {
 			Monster target = targets.random();
-			target.saveVsCondition(SpecialType.Death, level);
+			target.saveVsCondition(SpecialType.Disintegration, level);
 		}
 	}
 

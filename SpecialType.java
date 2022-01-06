@@ -32,7 +32,7 @@ public enum SpecialType {
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
-	AntimagicSphere, BlownAway;
+	AntimagicSphere, BlownAway, Disintegration;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -70,6 +70,7 @@ public enum SpecialType {
 			// Death saves
 			case Poison: case SporeCloud: case Death:
 			case FleshEating: case BlownAway:
+			case Disintegration:
 				return SavingThrows.Type.Death; 
 		}	
 
@@ -86,6 +87,7 @@ public enum SpecialType {
 			case Swallowing: case SporeCloud: case FleshEating: 
 			case Fear: case MindBlast: case Sleep: case Charm:
 			case Hold: case Polymorphism: case Death: case BlownAway:
+			case Disintegration: case BrainConsumption:
 				return true;
 		}
 		return false;
@@ -154,9 +156,10 @@ public enum SpecialType {
 	*
 	*  OD&D is explicit that charm, hold, and sleep don't affect undead.
 	*  For simplicity & utility, we assume that includes any mental attack.
-	*  (1E also expands that to poison, paralysis, cold, and death spell.)
+	*  We also bar death spells, as per 1E PHB. 
+	*  (1E also generally expands it to poison, paralysis, and cold.)
 	*/
 	public boolean isUndeadImmune () {
-		return isMentalAttack();
+		return isMentalAttack() || this == Death;
 	}
 }
