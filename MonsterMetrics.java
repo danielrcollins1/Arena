@@ -106,6 +106,9 @@ public class MonsterMetrics {
 
 	/** Run one sample fight at parity numbers. */
 	boolean doRunSampleFight;
+	
+	/** Flag to make a table of best-number-match values. */
+	boolean makeBNMTable;
 
 	/** Should we wait for a keypress to start (for profiler)? */
 	boolean waitForKeypress;
@@ -174,6 +177,7 @@ public class MonsterMetrics {
 		System.out.println("\t-q show only quick key stats in table form");
 		System.out.println("\t-r display only monsters with revised EHD from database");
 		System.out.println("\t-s run a single sample fight (requires spotlight monster)");
+		System.out.println("\t-t make a table of best-number-match values");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-z fraction of wizards in party "
@@ -222,6 +226,7 @@ public class MonsterMetrics {
 					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
 					case 's': doRunSampleFight = true; break;
+					case 't': makeBNMTable = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'z': wizardFrequency = getParamInt(s); break;
@@ -869,6 +874,35 @@ public class MonsterMetrics {
 	}
 
 	/**
+	*  Print a table of BNM values.
+	*/
+	private void printBNMTable () {
+		System.out.println("Best Numerical Matches by Party Level");
+		if (spotlightMonster == null) {
+			for (Monster m: MonsterDatabase.getInstance()) {
+				if (!m.hasUndefinedEHD())
+					printBNMRow(m);
+			}
+		}
+		else {
+			printBNMRow(spotlightMonster);
+		}
+		System.out.println();
+	}
+
+	/**
+	*  Print one monster in a BNM table.
+	*/
+	private void printBNMRow (Monster monster) {
+		int[] array = getBestNumberArray(monster);
+		System.out.print(monster.getRace());
+		for (int val: array) {
+			System.out.print("\t" + val);
+		}	
+		System.out.println();
+	}
+
+	/**
 	*  Run a sample fight.
 	*  Assumes standard party size, PC level 1 to MAX_LEVEL,
 	*  and monster numbers at parity total EHD.
@@ -876,22 +910,28 @@ public class MonsterMetrics {
 	private void runSampleFight () {
 		assert(spotlightMonster != null);
 		FightManager.setPlayByPlayReporting(true);
+		Monster monster = spotlightMonster;
+
+		// Check valid EHD
+		if (monster.getEHD() <= 0) {
+			System.out.println("Monster EHD too low to compute required number appearing.\n");
+			return;
+		}		
 
 		// Make parties
-		int ftrLevel = Math.min(spotlightMonster.getEHD(), MAX_LEVEL);
+		int ftrLevel = Math.min(monster.getEHD(), MAX_LEVEL);
 		int monNumber = getBalancedMonsterNumbers(
-			spotlightMonster, ftrLevel, STANDARD_PARTY_SIZE);
+			monster, ftrLevel, STANDARD_PARTY_SIZE);
 		if (monNumber <= 0) {
 			System.out.println("Monster EHD too high for any standard human party.\n");
 			return;
 		}
 		Party ftrParty = makeFighterParty(ftrLevel, STANDARD_PARTY_SIZE);
-		Party monParty = new Party(spotlightMonster, monNumber);
+		Party monParty = new Party(monster, monNumber);
 		FightManager manager = new FightManager(ftrParty, monParty);
 		
 		// Report on party composition
-		System.out.println(monParty + " (EHD " 
-			+ spotlightMonster.getEHD() + ")\n");
+		System.out.println(monParty + " (EHD " + monster.getEHD() + ")\n");
 		for (Monster c: ftrParty) {
 			System.out.println(c.shortString());
 		}
@@ -944,6 +984,9 @@ public class MonsterMetrics {
 			metrics.displayUnknownSpecials();
 			if (metrics.doRunSampleFight)
 				metrics.runSampleFight();
+			else if (metrics.makeBNMTable) {
+				metrics.printBNMTable();			
+			}
 			else if (metrics.showQuickBattleStats)
 				metrics.printQuickBattleStats();
 			else		

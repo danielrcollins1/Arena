@@ -156,7 +156,7 @@ public class FightManager {
 		
 		// Report if desired		
 		if (reportPlayByPlay) {
-			System.out.println("* Winner is: " + winner + "\n");
+			System.out.println("* Winner is " + winner + "\n");
 		}
 	}
 
