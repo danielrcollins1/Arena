@@ -1055,12 +1055,12 @@ public class Character extends Monster {
 	*/
 	public String toString () {
 
-		// Standard stat block
+		// Basic stat string
 		String s = name + ", " + race + " " + classString(true);
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
 			+ ", hp " + getHP() + ", Atk " + getAttack();
-
-		// Optional information
+		
+		// Optional stuff
 		if (printAbilities)
 			s = addClause(s, abilityString());
 		if (printPersonality)
@@ -1071,14 +1071,22 @@ public class Character extends Monster {
 			s = addClause(s, "Feats: ", toSentenceCase(featString()));
 		if (printSpells)
 			s = addClause(s, "Spells: ", toSentenceCase(spellString()));
-		
+
 		return s += ".";
 	}	
 
 	/**
+	*  Short String representation of this character.
+	*/
+	public String shortString () {
+		return name + ", " + race + " " 
+			+ classString(true) + ": hp " + getHP();
+	}
+
+	/**
 	*  String representation of all class and levels.
 	*/
-	String classString (boolean slashes) {
+	private String classString (boolean slashes) {
 		String s = "";
 		for (ClassRecord record: classList) {
 			if (slashes && s.length() > 0) s += "/";

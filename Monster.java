@@ -1620,6 +1620,13 @@ public class Monster {
 	}
 
 	/**
+	*  Short String representation of this monster.
+	*/
+	public String shortString () {
+		return getRace() + ": hp " + getHP();
+	}
+
+	/**
 	* Identify special abilities as a string.
 	*/
 	private String specialString() {
@@ -1827,7 +1834,8 @@ public class Monster {
 		List<Monster> enemyShuffle = enemy.randomGroup(enemy.size());
 		for (Monster m: enemyShuffle) {
 			if (m.hasSpells() && !m.hasCondition(SpecialType.AntimagicSphere)) {
-				m.saveVsCondition(SpecialType.AntimagicSphere, getHD());			
+				m.saveVsCondition(SpecialType.AntimagicSphere, getHD());
+				break;
 			}
 		}		
 	}

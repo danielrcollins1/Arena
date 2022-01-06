@@ -104,6 +104,9 @@ public class MonsterMetrics {
 	/** Did we print anything on this run? */
 	boolean printedSomeMonster;
 
+	/** Run one sample fight at parity numbers. */
+	boolean doRunSampleFight;
+
 	/** Should we wait for a keypress to start (for profiler)? */
 	boolean waitForKeypress;
 
@@ -125,8 +128,8 @@ public class MonsterMetrics {
 	*/
 	MonsterMetrics () {
 		Dice.initialize();
+		numberOfFights = 0;
 		spotlightMonster = null;
-		numberOfFights = DEFAULT_FIGHTS_GENERAL;
 		armorType = DEFAULT_ARMOR;
 		pctMagicPerLevel = DEFAULT_MAGIC_PER_LEVEL_PCT;
 		wizardFrequency = DEFAULT_WIZARD_RATIO;
@@ -140,7 +143,7 @@ public class MonsterMetrics {
 	/**
 	*  Print program banner.
 	*/
-	void printBanner () {
+	private void printBanner () {
 		System.out.println("OED Monster Metrics");
 		System.out.println("-------------------");
 	}
@@ -148,7 +151,7 @@ public class MonsterMetrics {
 	/**
 	*  Print usage.
 	*/
-	public void printUsage () {
+	private void printUsage () {
 		System.out.println("Usage: MonsterMetrics [monster] [options]");
 		System.out.println("  By default, measures all monsters in MonsterDatabase file.");
 		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
@@ -170,6 +173,7 @@ public class MonsterMetrics {
 		System.out.println("\t-p show EHD-parity win ratios vs. standard-size party");
 		System.out.println("\t-q show only quick key stats in table form");
 		System.out.println("\t-r display only monsters with revised EHD from database");
+		System.out.println("\t-s run a single sample fight (requires spotlight monster)");
 		System.out.println("\t-u display any unknown special abilities in database");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-z fraction of wizards in party "
@@ -178,9 +182,28 @@ public class MonsterMetrics {
 	}
 
 	/**
+	*  Process arguments, including pre- and post-processing
+	*/
+	private void processArgs (String[] args) {
+		parseArgs(args);
+
+		// Set number of fights if not done yet
+		if (numberOfFights <= 0) {
+			numberOfFights = (spotlightMonster == null) ? 
+				DEFAULT_FIGHTS_GENERAL : DEFAULT_FIGHTS_SPOTLIGHT;
+		}			
+		
+		// Check that sample fight run has specified monster
+		if (doRunSampleFight && (spotlightMonster == null)) {
+			System.err.println("Sample fight run requires spotlight monster specified.");
+			exitAfterArgs = true;
+		}
+	}
+
+	/**
 	*  Parse arguments.
 	*/
-	public void parseArgs (String[] args) {
+	private void parseArgs (String[] args) {
 		for (String s: args) {
 			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
@@ -198,6 +221,7 @@ public class MonsterMetrics {
 					case 'p': showParityWinRatios = true; break;
 					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
+					case 's': doRunSampleFight = true; break;
 					case 'u': displayUnknownSpecials = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'z': wizardFrequency = getParamInt(s); break;
@@ -211,7 +235,6 @@ public class MonsterMetrics {
 						System.err.println("Monster not found in database.");
 						exitAfterArgs = true;     
 					}
-					numberOfFights = DEFAULT_FIGHTS_SPOTLIGHT;
 				}
 			}
 		}
@@ -220,7 +243,7 @@ public class MonsterMetrics {
 	/**
 	*  Get integer following equals sign in command parameter.
 	*/
-	int getParamInt (String s) {
+	private int getParamInt (String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			try {
 				return Integer.parseInt(s.substring(3));
@@ -236,7 +259,7 @@ public class MonsterMetrics {
 	/**
 	*  Get string following equals sign in command parameter.
 	*/
-	String getParamString (String s) {
+	private String getParamString (String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			return s.substring(3);		
 		}	
@@ -247,7 +270,7 @@ public class MonsterMetrics {
 	/**
 	*  Get armor type from command parameter.
 	*/
-	Armor.Type getArmorType (String s) {
+	private Armor.Type getArmorType (String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch (s.charAt(3)) {
 				case 'l': return Armor.Type.Leather;
@@ -260,9 +283,9 @@ public class MonsterMetrics {
 	}
 
 	/**
-	*  Report monster metrics as selected.
+	*  Report monster metrics as commanded.
 	*/
-	public void reportMonsters () {
+	private void reportMonsters () {
 		if (spotlightMonster == null)
 			reportAllMonsters();  
 		else
@@ -272,7 +295,7 @@ public class MonsterMetrics {
 	/**
 	*  Report number of fighters at each level to match all monsters.
 	*/
-	void reportAllMonsters () {
+	private void reportAllMonsters () {
 
 		// Analyze each monster
 		for (Monster m: MonsterDatabase.getInstance()) {
@@ -293,7 +316,7 @@ public class MonsterMetrics {
 	/**
 	*  Report equated fighters and estimated EHD for one monster.
 	*/
-	void reportOneMonster (Monster monster) {
+	private void reportOneMonster (Monster monster) {
 
 		// Compute EHD values
 		double[] eqFighters = getEquatedFighters(monster);
@@ -334,7 +357,7 @@ public class MonsterMetrics {
 	/**
 	*  Any special printing done per monster?
 	*/
-	boolean anySpecialPrinting () {
+	private boolean anySpecialPrinting () {
 		return displayEquatedFighters	|| displayEquatedFightersHD 
 			|| graphEquatedFightersHD || showParityWinRatios
 			|| showBestLevelMatch || showBestNumberMatch;
@@ -361,7 +384,7 @@ public class MonsterMetrics {
 	*
 	*  E.g.: Zombie, Caveman, Gnoll, Bugbear, Ogre, Hill Giant.
 	*/
-	boolean isEHDClose (double oldEHD, double newEHD) {
+	private boolean isEHDClose (double oldEHD, double newEHD) {
 		final double ERRBAR_MIN = 2/3.;
 		final double ERRBAR_COEFF = 0.7;
 		double errBar = ERRBAR_COEFF * Math.sqrt(oldEHD);
@@ -372,7 +395,7 @@ public class MonsterMetrics {
 	/**
 	*  Get equated fighters per level for a monster.
 	*/
-	double[] getEquatedFighters (Monster monster) {
+	private double[] getEquatedFighters (Monster monster) {
 		double[] array = new double[MAX_LEVEL];
 		for (int level = 1; level <= MAX_LEVEL; level++) {
 			int match = matchMonsterToFighters(monster, level);
@@ -384,7 +407,7 @@ public class MonsterMetrics {
 	/**
 	*  Get equated fighter hit dice for a monster.
 	*/
-	double[] getEquatedFightersHD (double[] equatedFighters) {
+	private double[] getEquatedFightersHD (double[] equatedFighters) {
 		double[] array = new double[MAX_LEVEL];
 		for (int level = 1; level <= MAX_LEVEL; level++) {
 			array[level - 1] = level * equatedFighters[level - 1];
@@ -395,7 +418,7 @@ public class MonsterMetrics {
 	/**
 	*  Create string from a double array, to given precision.
 	*/
-	String toString(double[] array, int precision) {
+	private String toString(double[] array, int precision) {
 		String s = "[";
 		for (int i = 0; i < array.length; i++) {
 			s += roundDbl(array[i], precision);
@@ -410,7 +433,7 @@ public class MonsterMetrics {
 	/**
 	*  Round a double to an indicated precision.
 	*/
-	double roundDbl (double val, int precision) {
+	private double roundDbl (double val, int precision) {
 		double div = Math.pow(10, precision);
 		return Math.round(val * div) / div;
 	}
@@ -418,7 +441,7 @@ public class MonsterMetrics {
 	/**
 	*  Get the maximum of a double array.
 	*/
-	double getDblArrayMax (double[] array) {
+	private double getDblArrayMax (double[] array) {
 		double max = Double.MIN_VALUE;
 		for (double val: array) {
 			if (val > max)
@@ -430,7 +453,7 @@ public class MonsterMetrics {
 	/**
 	*  Get the minimum of a double array.
 	*/
-	double getDblArrayMin (double[] array) {
+	private double getDblArrayMin (double[] array) {
 		double min = Double.MAX_VALUE;
 		for (double val: array) {
 			if (val < min)
@@ -442,7 +465,7 @@ public class MonsterMetrics {
 	/**
 	*  Get the mean of a double array.
 	*/
-	double getDblArrayMean (double[] array) {
+	private double getDblArrayMean (double[] array) {
 		double sum = 0.0;
 		for (double val: array) {
 			sum += val;
@@ -453,7 +476,7 @@ public class MonsterMetrics {
 	/**
 	*  Get the harmonic mean of a double array.
 	*/
-	double getDblArrayHarmonicMean (double[] array) {
+	private double getDblArrayHarmonicMean (double[] array) {
 		double sum = 0.0;
 		for (double val: array) {
 			sum += 1/val;
@@ -464,7 +487,7 @@ public class MonsterMetrics {
 	/**
 	*  Print a graph of a double array.
 	*/
-	void graphDblArray (double[] array) {
+	private void graphDblArray (double[] array) {
 		System.out.println();
 		double maxVal = getDblArrayMax(array);
 		long maxStepY = Math.round(maxVal / GRAPH_Y_INTERVAL);
@@ -496,7 +519,7 @@ public class MonsterMetrics {
 	*  @return If positive, one monster to many fighters; 
 	*     if negative, one fighter to many monsters. 
 	*/
-	int matchMonsterToFighters (Monster monster, int fighterLevel) {
+	private int matchMonsterToFighters (Monster monster, int fighterLevel) {
 
 		// Consider one monster to many fighters
 		int numFighters = matchFight(
@@ -516,7 +539,7 @@ public class MonsterMetrics {
 	*  Search for a matched fight based on some parameter.
 	*  @param winRatioFunc Must be increasing in parameter.
 	*/
-	int matchFight (Function<Integer, Double> winRatioFunc) {
+	private int matchFight (Function<Integer, Double> winRatioFunc) {
 		int low = 0;
 		int high = MAX_ENEMIES;
 
@@ -540,7 +563,7 @@ public class MonsterMetrics {
 	*  Is the first number closer to one half than the second number?
 	*  @return true if val1 is at least as close to 0.5 as val2
 	*/
-	boolean isCloserToHalf (double val1, double val2) {
+	private boolean isCloserToHalf (double val1, double val2) {
 		double diffVal1 = Math.abs(0.5 - val1);
 		double diffVal2 = Math.abs(0.5 - val2);  
 		return diffVal1 <= diffVal2;	
@@ -550,7 +573,7 @@ public class MonsterMetrics {
 	*  Find the probability that these monsters beat these fighters.
 	*  @param invert If true, returns chance of fighters beating monsters.
 	*/
-	double ratioMonstersBeatFighters (
+	private double ratioMonstersBeatFighters (
 		Monster monsterType, int monsterNumber, 
 		int fighterLevel, int fighterNumber, 
 		boolean invert) 
@@ -585,7 +608,7 @@ public class MonsterMetrics {
 	/**
 	*  Create a specified party of fighters.
 	*/
-	Party makeFighterParty (int level, int number) {
+	private Party makeFighterParty (int level, int number) {
 		Party party = new Party();
 		for (int i = 0; i < number; i++) {
 			Character character;
@@ -602,7 +625,7 @@ public class MonsterMetrics {
 	/**
 	*  Compute the winRatio at end of fight sequence.
 	*/
-	double computeWinRatio (int wins, int fights, boolean invert) {
+	private double computeWinRatio (int wins, int fights, boolean invert) {
 		double winRatio = (double) wins / fights;
 		return invert ? 1 - winRatio : winRatio;
 	}
@@ -613,7 +636,7 @@ public class MonsterMetrics {
 	*  magic swords to hit monsters as required.
 	*  (So: Do not use standard Character equip or magic.)
 	*/
-	Character newFighter (int level) {
+	private Character newFighter (int level) {
 		Character f = new Character("Human", "Fighter", level, null); 
 		f.setArmor(Armor.makeType(armorType));
 		f.setShield(Armor.makeType(Armor.Type.Shield));
@@ -626,7 +649,7 @@ public class MonsterMetrics {
 	/**
 	*  Create a sword for a new fighter.
 	*/
-	Weapon newSword (int level) {
+	private Weapon newSword (int level) {
 		int bonus = 0;
 		for (int i = 0; i < level; i++) {
 			if (Dice.rollPct() <= pctMagicPerLevel) {
@@ -641,7 +664,7 @@ public class MonsterMetrics {
 	*  Equipment is kept to fixed baseline.
 	*  (So: Do not use standard Character equip or magic.)
 	*/
-	Character newWizard (int level) {
+	private Character newWizard (int level) {
 		Character f = new Character("Human", "Wizard", level, null); 
 		f.addEquipment(Weapon.silverDagger());
 		f.addEquipment(Weapon.torch());
@@ -651,7 +674,7 @@ public class MonsterMetrics {
 	/**
 	*  Display unknown special abilities if desired.
 	*/
-	public void displayUnknownSpecials () {
+	private  void displayUnknownSpecials () {
 		if (displayUnknownSpecials) {
 			MonsterDatabase db = MonsterDatabase.getInstance();
 			SpecialUnknownList list = SpecialUnknownList.getInstance();
@@ -671,9 +694,8 @@ public class MonsterMetrics {
 			return new BattleStats(-1, -1, false);
 
 		// Compute fair numbers
-		int partySize = STANDARD_PARTY_SIZE;
-		int monNumber = (int) Math.round((double) 
-			ftrLevel * partySize / monster.getEHD());
+		int monNumber = getBalancedMonsterNumbers(
+			monster, ftrLevel, STANDARD_PARTY_SIZE);
 		if (monNumber <= 0)
 			return new BattleStats(-1, -1, false);
 
@@ -681,7 +703,7 @@ public class MonsterMetrics {
 		long monWins = 0;
 		long sumTurns = 0;
 		for (int fight = 0; fight < numberOfFights; fight++) {
-			Party ftrParty = makeFighterParty(ftrLevel, partySize);
+			Party ftrParty = makeFighterParty(ftrLevel, STANDARD_PARTY_SIZE);
 			Party monParty = new Party(monster, monNumber);
 			FightManager manager = new FightManager(ftrParty, monParty);
 			if (manager.fight() == monParty) monWins++;
@@ -692,6 +714,18 @@ public class MonsterMetrics {
 		double winRatio = (double) monWins / numberOfFights;
 		double avgTurns = (double) sumTurns / numberOfFights;
 		return new BattleStats(winRatio, avgTurns, true);
+	}
+
+	/**
+	*  Compute fair monster numbers by EHD.
+	*  Assumes fixed party size and level.
+	*  @return fair number of monsters (possibly 0)
+	*/
+	private int getBalancedMonsterNumbers (Monster monster, 
+		int ftrLevel, int partySize) 
+	{
+		return (int) Math.round((double) 
+			ftrLevel * partySize / monster.getEHD());
 	}
 
 	/**
@@ -745,7 +779,7 @@ public class MonsterMetrics {
 	/**
 	*  Get monster win ratio for same-size parties.
 	*/
-	double ratioMonstersBeatFighters(Monster monster, int ftrLevel) {
+	private double ratioMonstersBeatFighters(Monster monster, int ftrLevel) {
 		return ratioMonstersBeatFighters(monster, STANDARD_PARTY_SIZE, 
 			ftrLevel, STANDARD_PARTY_SIZE, false);	
 	}
@@ -757,7 +791,7 @@ public class MonsterMetrics {
 	*  (i.e., closest to 50% chance to win against each other)
 	*  @return level at which monsters & PCs are closest to 50% win ratio
 	*/
-	int getBestLevelMatch (Monster monster) {
+	private int getBestLevelMatch (Monster monster) {
 		int lowLevel = 1;
 		int highLevel = monster.getHD();
 
@@ -791,7 +825,7 @@ public class MonsterMetrics {
 	/**
 	*  Get monster win ratio for variable number of monsters.
 	*/
-	double ratioMonstersBeatFighters(Monster monster, int monNumber, int ftrLevel) {
+	private double ratioMonstersBeatFighters(Monster monster, int monNumber, int ftrLevel) {
 		return ratioMonstersBeatFighters(monster, monNumber, 
 			ftrLevel, STANDARD_PARTY_SIZE, false);	
 	}
@@ -803,7 +837,7 @@ public class MonsterMetrics {
 	*  (i.e., closest to 50% chance to win against each other)
 	*  @return level at which monsters & PCs are closest to 50% win ratio
 	*/
-	int getBestNumberMatch (Monster monster, int ftrLevel) {
+	private int getBestNumberMatch (Monster monster, int ftrLevel) {
 		int lowNumber = 0;
 		int highNumber = MAX_MON_NUMBER;
 
@@ -826,7 +860,7 @@ public class MonsterMetrics {
 	/**
 	*  Construct an array of best number matches per level.
 	*/
-	int[] getBestNumberArray (Monster monster) {
+	private int[] getBestNumberArray (Monster monster) {
 		int array[] = new int[MAX_LEVEL];
 		for (int level = 1; level <= MAX_LEVEL; level++) {
 			array[level - 1] = getBestNumberMatch(monster, level);
@@ -835,16 +869,51 @@ public class MonsterMetrics {
 	}
 
 	/**
+	*  Run a sample fight.
+	*  Assumes standard party size, PC level 1 to MAX_LEVEL,
+	*  and monster numbers at parity total EHD.
+	*/
+	private void runSampleFight () {
+		assert(spotlightMonster != null);
+		FightManager.setPlayByPlayReporting(true);
+
+		// Make parties
+		int ftrLevel = Math.min(spotlightMonster.getEHD(), MAX_LEVEL);
+		int monNumber = getBalancedMonsterNumbers(
+			spotlightMonster, ftrLevel, STANDARD_PARTY_SIZE);
+		if (monNumber <= 0) {
+			System.out.println("Monster EHD too high for any standard human party.\n");
+			return;
+		}
+		Party ftrParty = makeFighterParty(ftrLevel, STANDARD_PARTY_SIZE);
+		Party monParty = new Party(spotlightMonster, monNumber);
+		FightManager manager = new FightManager(ftrParty, monParty);
+		
+		// Report on party composition
+		System.out.println(monParty + " (EHD " 
+			+ spotlightMonster.getEHD() + ")\n");
+		for (Monster c: ftrParty) {
+			System.out.println(c.shortString());
+		}
+		System.out.println();
+
+		// Run the fight
+		manager.fight();
+		System.out.println("Turns elapsed: " + manager.getTurnCount());
+		System.out.println();
+	}
+
+	/**
 	*  Start the process timer.
 	*/
-	void startClock () {
+	private void startClock () {
 		timeStart = System.currentTimeMillis();
 	}
 
 	/**
 	*  Stop the process timer & report.
 	*/
-	void stopClock () {
+	private void stopClock () {
 		timeStop = System.currentTimeMillis();
 		if (spotlightMonster == null) {
 			long secDiff = (timeStop - timeStart) / 1000;
@@ -861,7 +930,7 @@ public class MonsterMetrics {
 	public static void main (String[] args) {
 		MonsterMetrics metrics = new MonsterMetrics();
 		metrics.printBanner();
-		metrics.parseArgs(args);
+		metrics.processArgs(args);
 		if (metrics.exitAfterArgs) {
 			metrics.printUsage();
 		}
@@ -873,7 +942,9 @@ public class MonsterMetrics {
 			}
 			metrics.startClock();
 			metrics.displayUnknownSpecials();
-			if (metrics.showQuickBattleStats)
+			if (metrics.doRunSampleFight)
+				metrics.runSampleFight();
+			else if (metrics.showQuickBattleStats)
 				metrics.printQuickBattleStats();
 			else		
 				metrics.reportMonsters();
