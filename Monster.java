@@ -1376,10 +1376,14 @@ public class Monster {
 
 				case SummonVermin: 
 					party.addMonsters("Wolf", new Dice(3, 6).roll()); 
+					if (FightManager.getPlayByPlayReporting())
+						System.out.println(this.race + " summons Wolves");
 					break;
 
 				case SummonTrees:
 					party.addMonsters("Tree, Animated", 2);
+					if (FightManager.getPlayByPlayReporting())
+						System.out.println(this.race + " summons Trees");
 					break;
 
 				default:

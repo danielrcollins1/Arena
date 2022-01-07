@@ -74,6 +74,9 @@ public class MonsterMetrics {
 	/** Fraction of party who are wizards. */
 	int wizardFrequency;
 
+	/** PC level for sample fight run. */
+	int sampleFightLevel;
+
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
 
@@ -131,8 +134,6 @@ public class MonsterMetrics {
 	*/
 	MonsterMetrics () {
 		Dice.initialize();
-		numberOfFights = 0;
-		spotlightMonster = null;
 		armorType = DEFAULT_ARMOR;
 		pctMagicPerLevel = DEFAULT_MAGIC_PER_LEVEL_PCT;
 		wizardFrequency = DEFAULT_WIZARD_RATIO;
@@ -179,6 +180,7 @@ public class MonsterMetrics {
 		System.out.println("\t-s run a single sample fight (requires spotlight monster)");
 		System.out.println("\t-t make a table of best-number-match values");
 		System.out.println("\t-u display any unknown special abilities in database");
+		System.out.println("\t-v specify PC level for sample fight run");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-z fraction of wizards in party "
 			+ "(default =" + DEFAULT_WIZARD_RATIO + ")");
@@ -228,6 +230,7 @@ public class MonsterMetrics {
 					case 's': doRunSampleFight = true; break;
 					case 't': makeBNMTable = true; break;
 					case 'u': displayUnknownSpecials = true; break;
+					case 'v': sampleFightLevel = getParamInt(s); break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'z': wizardFrequency = getParamInt(s); break;
 					default: exitAfterArgs = true; break;
@@ -919,11 +922,12 @@ public class MonsterMetrics {
 		}		
 
 		// Make parties
-		int ftrLevel = Math.min(monster.getEHD(), MAX_LEVEL);
+		int ftrLevel = (sampleFightLevel != 0) ? 
+			sampleFightLevel : Math.min(monster.getEHD(), MAX_LEVEL);
 		int monNumber = getBalancedMonsterNumbers(
 			monster, ftrLevel, STANDARD_PARTY_SIZE);
 		if (monNumber <= 0) {
-			System.out.println("Monster EHD too high for any standard human party.\n");
+			System.out.println("Monster EHD too high for expected human party.\n");
 			return;
 		}
 		Party ftrParty = makeFighterParty(ftrLevel, STANDARD_PARTY_SIZE);
