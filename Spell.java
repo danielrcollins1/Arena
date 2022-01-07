@@ -273,7 +273,7 @@ public class Spell {
 	*/
 	public boolean isPersonEffectOnly () {
 		assert(casting != null);
-		return casting.isPersonEffectOnly();
+		return casting.isPersonEffect();
 	}
 
 	/**

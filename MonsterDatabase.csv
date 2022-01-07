@@ -98,7 +98,7 @@ Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,30,15,D,O,"Swallowing, Poison, Fearlessnes
 "Dragon, Gold",1d4,2,9,11,60,H,2,2d6,L,B,35,11,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
 "Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,45,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
-"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,150,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
+"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,145,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (12), Grappling"

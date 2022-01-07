@@ -19,24 +19,104 @@ public class SpellCasting {
 	/** Casting abstract base class. */
 	public static abstract class Casting {
 
-		// Fields
-		Spell spellInfo = null;
+		/* Fields */
+		Spell spellInfo;
+		int maxTargetNum; 
+		int maxTargetHD;
+		EnergyType energy;
+		SpecialType condition;
+		boolean isPersonOnly;
 
-		// Methods
+		/** Constructor (all fields) */
+		Casting (int maxTargetNum, int maxTargetHD, 
+			EnergyType energy, SpecialType condition, boolean isPerson) 
+		{
+			this.maxTargetNum = maxTargetNum;
+			this.maxTargetHD = maxTargetHD;
+			this.energy = energy;
+			this.condition = condition;
+			this.isPersonOnly = isPerson;		
+		}
+
+		/** Constructor (energy-specific) */
+		Casting (EnergyType energy) {
+			this(NUM_BY_AREA, INF, energy, null, false);
+		}
+
+		/** Constructor (condition-specific, non-person) */
+		Casting (int maxTargetNum, int maxTargetHD, SpecialType condition) {
+			this(maxTargetNum, maxTargetHD, null, condition, false);	
+		}
+
+		/** Set the linked spell object. */
+		void setSpellInfo (Spell s) { spellInfo = s; }
+
+		/** Get short name of this spell casting. */
 		String getName () {
 			String sName = getClass().getSimpleName();
 			return sName.substring(0, sName.indexOf("Casting"));
 		}
-		void setSpellInfo (Spell s) { spellInfo = s; }
-		int getMaxTargetNum () { return spellInfo.getMaxTargetsInArea(); }
-		int getMaxTargetHD () { return Integer.MAX_VALUE; }
-		boolean isPersonEffectOnly () { return false; }
+		
+		/** Get the effective maximum targets we can hit. */
+		int getMaxTargetNum () { 
+			assert(spellInfo != null);
+			return maxTargetNum != NUM_BY_AREA ?
+				maxTargetNum : spellInfo.getMaxTargetsInArea();
+		}
+		
+		/* Miscellaneous accessors */
+		int getMaxTargetHD () { return maxTargetHD; }
+		boolean isPersonEffect () { return isPersonOnly; }
+		EnergyType getEnergy () { return energy; }
+		SpecialType getCondition () { return condition; }
+
+		/** Cast energy attack on a target monster. */
+		void castEnergy (Monster target, int level, int damage) {
+			assert(energy != null);
+			target.saveVsEnergy(energy, damage, SavingThrows.Type.Spells, level);
+		};
+		
+		/** Cast conditional attack on a target monster. */
+		void castCondition (Monster target, int level, int saveMod) {
+			assert(condition != null);
+			if ((target.getHD() <= maxTargetHD)
+				&& (!isPersonOnly || target.isPerson()))
+			{
+				target.saveVsCondition(condition, level, saveMod);
+			}
+		};
+
+		/** Cast energy on random targets as per area. */
+		void castEnergyOnArea (Party targets, int level, int damage) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			for (Monster target: hitTargets) {
+				castEnergy(target, level, damage);			
+			}
+		}
+		
+		/** Cast condition on random targets as per area. */
+		void castConditionOnArea (Party targets, int level, int saveMod) {
+			int numHit = spellInfo.getMaxTargetsInArea();
+			List<Monster> hitTargets = targets.randomGroup(numHit);
+			for (Monster target: hitTargets) {
+				castCondition(target, level, saveMod);
+			}
+		}
+
+		/** Cast the spell at a target party. */
 		abstract void cast (int level, Party targets);
 	}
 
 	//--------------------------------------------------------------------------
-	//  Fields
+	//  Constants
 	//--------------------------------------------------------------------------
+
+	/** Infinity integer. */
+	private static final int INF = Integer.MAX_VALUE;
+	
+	/** Code to compute num affected by area. */
+	private static final int NUM_BY_AREA = -1;
 
 	/** List of available castings. */
 	private static final Casting castingFormula [] = {
@@ -72,251 +152,286 @@ public class SpellCasting {
 	//  Spell-specific Casting subclasses
 	//--------------------------------------------------------------------------
 
-	/** Charm Person spell effect. */
+	/** 
+	*  Charm Person spell effect. 
+	*/
 	static class CharmPersonCasting extends Casting {
-		boolean isPersonEffectOnly () { return true; }
+		CharmPersonCasting () {
+			super(1, INF, null, SpecialType.Charm, true);
+		}
 		void cast (int level, Party targets) {
-			Monster target = targets.random();
-			if (target.isPerson()) {
-				target.saveVsCondition(SpecialType.Charm, level);
-			}
+			castCondition(targets.random(), level, 0);
 		}
 	}
 
-	/** Magic Missile spell effect. */
+	/** 
+	*  Magic Missile spell effect. 
+	*
+	*  While this spell can technically hit up to 5 targets,
+	*  we don't expose that, since it's level-dependent, 
+	*  not disabling, and we don't want to prioritize this 
+	*  spell over others like hold or charm.
+	*/
 	static class MagicMissileCasting extends Casting {
-
-		// While this spell can technically hit up to 5 targets,
-		// we don't expose that, since it's not disabling,
-		// and we don't want to prioritize this over spells
-		// like hold or charm.
-
+		MagicMissileCasting () {
+			super(EnergyType.Other);
+		}
 		void cast (int level, Party targets) {
 			int numMissiles = Math.min((level + 1) / 2, 5);
 			for (int i = 0; i < numMissiles; i++) {
 				Monster target = targets.random();
 				int damage = Dice.roll(6) + 1;
-				target.saveVsEnergy(EnergyType.Other, damage, 
-					SavingThrows.Type.Spells, level);
+				castEnergy(target, level, damage);
 			}		
 		}
 	}
 
-	/** Sleep spell effect. */
+	/** 
+	*  Sleep spell effect. 
+	*/
 	static class SleepCasting extends Casting {
-		static final int MAX_HD = 4;
-		int getMaxTargetHD () { return MAX_HD; }
+		SleepCasting () {
+			super(NUM_BY_AREA, 4, SpecialType.Sleep);
+		}
 		void cast (int level, Party targets) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int effectHD = new Dice(2, 6).roll();
 			for (Monster target: hitTargets) {
-				if (target.getHD() <= MAX_HD && target.getHD() <= effectHD) {
+				if (target.getHD() <= maxTargetHD && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					target.saveVsCondition(SpecialType.Sleep, level);
+					castCondition(target, level, 0);
 				}
 			}	
 		}
 	}
 
-	/** Darkness spell effect. */
+	/** 
+	*  Darkness spell effect. 
+	*
+	*  Treat as targeted blindness for simplicity
+	*/
 	static class DarknessCasting extends Casting {
+		DarknessCasting () {
+			super(1, INF, SpecialType.Blindness);
+		}
 		void cast (int level, Party targets) {
-
-			// Treat as targeted blindness for simplicity
-			Monster target = targets.random();
-				target.saveVsCondition(SpecialType.Blindness, level);
+			castCondition(targets.random(), level, 0);
 		}
 	}
 	
-	/** Web spell effect. */
+	/** 
+	*  Web spell effect. 
+	*/
 	static class WebCasting extends Casting {
+		WebCasting () {
+			super(NUM_BY_AREA, INF, SpecialType.Webs);
+		}
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit); 
-			for (Monster target: hitTargets) {
-				target.saveVsCondition(SpecialType.Webs, level);
-			}	
+			castConditionOnArea(targets, level, 0);
 		}
 	}
 	
-	/** Fireball spell effect. */
+	/** 
+	*  Fireball spell effect. 
+	*/
 	static class FireballCasting extends Casting {
+		FireballCasting () {
+			super(EnergyType.Fire);
+		}
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
-			for (Monster target: hitTargets) {
-				target.saveVsEnergy(EnergyType.Fire, damage, 
-					SavingThrows.Type.Spells, level);
-			}	
+			castEnergyOnArea(targets, level, damage);
 		}
 	}
 
-	/** Lightning Bolt spell effect. */
+	/** 
+	*  Lightning Bolt spell effect. 
+	*/
 	static class LightningBoltCasting extends Casting {
+		LightningBoltCasting () {
+			super(EnergyType.Volt);
+		}
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
-			for (Monster target: hitTargets) {
-				target.saveVsEnergy(EnergyType.Volt, damage, 
-					SavingThrows.Type.Spells, level);
-			}	
+			castEnergyOnArea(targets, level, damage);
 		}
 	}
 
-	/** Hold Person spell effect. */
+	/** 
+	*  Hold Person spell effect. 
+	*
+	*  For utility, assume we can target up to 4 creatures in melee.
+	*  Contrast with S&S specifier of 3" dia. area effect.
+	*/
 	static class HoldPersonCasting extends Casting {
-		static final int MAX_TARGETS = 4;
-		int getMaxTargetNum () { return MAX_TARGETS; }
+		HoldPersonCasting () {
+			super(4, INF, null, SpecialType.Hold, true);
+		}	
 		void cast (int level, Party targets) {
-
-			// For utility, assume we can target up to 4 creatures in melee.
-			// Contrast with S&S specifier of 3" dia. area effect.
-			List<Monster> hitTargets = targets.randomGroup(MAX_TARGETS);
-			int saveMod = hitTargets.size() == 1 ? -2 : 0;
+			List<Monster> hitTargets = targets.randomGroup(maxTargetNum);
+			int saveMod = (hitTargets.size() == 1) ? -2 : 0;
 			for (Monster target: hitTargets) {
-				if (target.isPerson()) {
-					target.saveVsCondition(SpecialType.Hold, level);
-				}	
+				castCondition(target, level, saveMod);
 			}
 		}
 	}
 
-	/** Suggestion spell effect. */
+	/** 
+	*  Suggestion spell effect. 
+	*
+	*  Treat like a charm spell (order to leave, etc.)
+	*/
 	static class SuggestionCasting extends Casting {
+		SuggestionCasting () {
+			super(1, INF, SpecialType.Charm);
+		}
 		void cast (int level, Party targets) {
-
-			// Treat like a charm spell (order to leave, etc.)
-			Monster target = targets.random();
-			target.saveVsCondition(SpecialType.Charm, level);
+			castCondition(targets.random(), level, 0);
 		}
 	}
 
-	/** Confusion spell effect. */
+	/** 
+	*  Confusion spell effect. 
+	*
+	*  S&S gives an area for this spell, which we use
+	*/
 	static class ConfusionCasting extends Casting {
+		ConfusionCasting () {
+			super(NUM_BY_AREA, INF, SpecialType.Confusion);
+		}
 		void cast (int level, Party targets) {
-
-			// S&S gives an area for this spell, which we use
 			int maxHit = spellInfo.getMaxTargetsInArea();
 			int numEffect = new Dice(2, 6).roll();
 			if (level > 8) numEffect += (level - 8);
 			int numHit = Math.min(maxHit, numEffect);
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
-				target.saveVsCondition(SpecialType.Confusion, level);
+				castCondition(target, level, 0);
 			}	
 		}
 	}
 
-	/** Fear spell effect. */
+	/** 
+	*  Fear spell effect. 
+	*
+	*  S&S give a circular area for this spell, which we use
+	*/
 	static class FearCasting extends Casting {
+		FearCasting () {
+			super(NUM_BY_AREA, INF, SpecialType.Fear);
+		}
 		void cast (int level, Party targets) {
-
-			// S&S give a circular area for this spell, which we use
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
-			for (Monster target: hitTargets) {
-				target.saveVsCondition(SpecialType.Fear, level);
-			}	
+			castConditionOnArea(targets, level, 0);
 		}
 	}
 
-	/** Ice Storm spell effect. */
+	/** 
+	*  Ice Storm spell effect. 
+	*/
 	static class IceStormCasting extends Casting {
+		IceStormCasting () {
+			super(EnergyType.Cold);		
+		}
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int damage = new Dice(8, 6).roll();
-			for (Monster target: hitTargets) {
-
-				// For simplicity, assume this is all cold damage
-				target.saveVsEnergy(EnergyType.Cold, damage, 
-					SavingThrows.Type.Spells, level);
-			}	
+			castEnergyOnArea(targets, level, damage);
 		}
 	}
 
-	/** Charm Monster spell effect. */
+	/** 
+	*  Charm Monster spell effect. 
+	*	
+	*  OD&D Vol-1 gives an option for one creature or many of low level.
+	*  The former implies targeted use, the latter area-effect
+	*  (but our setup here can't handle both).
+	*  S&S sets an area of "1 monster" only;
+	*  we follow that for balance & simplicity.
+	*/
 	static class CharmMonsterCasting extends Casting {
+		CharmMonsterCasting () {
+			super(1, INF, SpecialType.Charm);
+		}
 		void cast (int level, Party targets) {
-
-			// OD&D Vol-1 gives an option for one creature or many of low level.
-			// The former implies targeted use, the latter area-effect
-			// (but our setup here can't handle both).
-			// S&S sets an area of "1 monster" only;
-			// we follow that for balance & simplicity.
-			Monster target = targets.random();
-			target.saveVsCondition(SpecialType.Charm, level);
+			castCondition(targets.random(), level, 0);
 		}
 	}
 
-	/** Polymorph Other spell effect. */
+	/** 
+	*  Polymorph Other spell effect. 
+	*/
 	static class PolymorphOtherCasting extends Casting {
+		PolymorphOtherCasting () {
+			super(1, INF, SpecialType.Polymorphism);
+		}
 		void cast (int level, Party targets) {
-			Monster target = targets.random();
-			target.saveVsCondition(SpecialType.Polymorphism, level);
+			castCondition(targets.random(), level, 0);
 		}
 	}
 
-	/** Cloudkill spell effect. */
+	/** 
+	*  Cloudkill spell effect. 
+	*/
 	static class CloudkillCasting extends Casting {
-		static final int MAX_HD = 6;
-		int getMaxTargetHD () { return MAX_HD; }
+		CloudkillCasting () {
+			super(NUM_BY_AREA, 6, SpecialType.Death);
+		}
 		void cast (int level, Party targets) {
-			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
-			for (Monster target: hitTargets) {
-				if (target.getHD() <= MAX_HD) {
-					target.saveVsCondition(SpecialType.Death, level);
-				}			
-			}
+			castConditionOnArea(targets, level, 0);
 		}
 	}
 
-	/** Hold Monster spell effect. */
+	/** 
+	*  Hold Monster spell effect. 
+	*
+	*  For utility, assume we can target up to 4 creatures in melee.
+	*  Contrast with S&S specifier of 3" dia. area effect.
+	*/
 	static class HoldMonsterCasting extends Casting {
-		static final int MAX_TARGETS = 4;
-		int getMaxTargetNum () { return MAX_TARGETS; }
+		HoldMonsterCasting () {
+			super(4, INF, SpecialType.Hold);
+		}
 		void cast (int level, Party targets) {
-
-			// For utility, assume we can target up to 4 creatures in melee.
-			// Contrast with S&S specifier of 3" dia. area effect.
-			List<Monster> hitTargets = targets.randomGroup(MAX_TARGETS);
+			List<Monster> hitTargets = targets.randomGroup(maxTargetNum);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
-				target.saveVsCondition(SpecialType.Hold, level);
+				castCondition(target, level, 0);
 			}
 		}
 	}
 
-	/** Death Spell effect. */
+	/** 
+	*  Death Spell effect. 
+	*/
 	static class DeathSpellCasting extends Casting {
-		static final int MAX_HD = 8;
-		int getMaxTargetHD () { return MAX_HD; }
-		int getMaxTargetNum () { return 120; }
+		DeathSpellCasting () {
+			super(120, 8, SpecialType.Death);
+		}
 		void cast (int level, Party targets) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			int numDice = Math.min(level, 20);
 			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				if (target.getHD() <= MAX_HD && target.getHD() <= effectHD) {
+				if (target.getHD() <= maxTargetHD && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					target.saveVsCondition(SpecialType.Death, level);
+					castCondition(target, level, 0);
 				}			
 			}
 		}
 	}
 
-	/** Disintegrate spell effect. */
+	/** 
+	*  Disintegrate spell effect. 
+	*/
 	static class DisintegrateCasting extends Casting {
+		DisintegrateCasting () {
+			super(1, INF, SpecialType.Disintegration);
+		}
 		void cast (int level, Party targets) {
-			Monster target = targets.random();
-			target.saveVsCondition(SpecialType.Disintegration, level);
+			castCondition(targets.random(), level, 0);
 		}
 	}
 
