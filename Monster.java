@@ -1433,50 +1433,6 @@ public class Monster {
 	}
 
 	/**
-	* Try to cast an attack spell at enemy group.
-	* @param enemies possible targets of attack spell.
-	* @param area true if we want area-effect spell.
-	* @return true if we cast a spell.
-	*/
-	private boolean tryCastAttackSpell (Party enemies, boolean area) {
-		if (hasSpells() 
-			&& !hasCondition(SpecialType.AntimagicSphere)) 
-		{
-			Spell spell = getBestAttackSpell(enemies, area);
-			if (spell != null) {
-				spell.cast(getLevel(), enemies);
-				wipeSpellFromMemory(spell);
-				return true;
-			} 
-		}
-		return false;	
-	}	
-
-	/**
-	* Check casting an attack spell before melee.
-	* Look for area-effects first; then if none, try targeted.
-	* @return true if we cast a spell.
-	*/
-	private boolean checkCastSpellPreMelee (Party enemies) {
-		if (hasSpells()) {
-			if (tryCastAttackSpell(enemies, true))
-				return true;
-			else if (tryCastAttackSpell(enemies, false))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	* Check casting an attack spell in melee.
-	* Only targeted spells are allowed (not area-effects).
-	* @return true if we cast a spell.
-	*/
-	private boolean checkCastSpellInMelee (Party enemies) {
-		return tryCastAttackSpell(enemies, false);
-	}
-
-	/**
 	* Count current heads for many-headed types.
 	* Set one attack per full hit die.
 	*/
@@ -1740,6 +1696,21 @@ public class Monster {
 	}
 
 	/**
+	*  Can this monster be affected by the given spell?
+	*/
+	private boolean isSpellThreat (Spell spell) {
+		assert(spell.isCastable());	
+		if (isImmuneToMagic()) return false;
+		if (getHD() > spell.getMaxTargetHD()) return false;
+		if (spell.getEnergy() != null 
+			&& isImmuneToEnergy(spell.getEnergy())) return false;
+		if (spell.getCondition() != null 
+			&& isImmuneToCondition(spell.getCondition())) return false;
+		if (spell.isPersonEffect() && !isPerson()) return false;
+		return true;			
+	}
+
+	/**
 	*  Get the best castable attack spell.
 	*  Search for viable spell that affects the most targets.
 	*  @param area true if area-effect spell desired.
@@ -1753,12 +1724,8 @@ public class Monster {
 
 			// Is this spell viable in our current situation?
 			if (spell.isCastable()
-				&& spell.isAreaEffect() == areaEffect
-				&& !(sampleFoe.isImmuneToMagic())
-				&& !(sampleFoe.getHD() > spell.getMaxTargetHD())
-				&& !(spell.getEnergy() != null && sampleFoe.isImmuneToEnergy(spell.getEnergy())
-				&& !(spell.getCondition() != null && sampleFoe.isImmuneToCondition(spell.getCondition())
-				&& !(spell.isPersonEffect() && !sampleFoe.isPerson()))))
+				&& (spell.isAreaEffect() == areaEffect)
+				&& sampleFoe.isSpellThreat(spell))
 			{
 				if (bestSpell == null) {
 					bestSpell = spell;
@@ -1783,6 +1750,53 @@ public class Monster {
 			}
 		}
 		return bestSpell;		
+	}
+
+	/**
+	* Try to cast an attack spell at enemy group.
+	* @param enemies possible targets of attack spell.
+	* @param area true if we want area-effect spell.
+	* @return true if we cast a spell.
+	*/
+	private boolean tryCastAttackSpell (Party enemies, boolean area) {
+		if (hasSpells() 
+			&& !hasCondition(SpecialType.AntimagicSphere)) 
+		{
+			Spell spell = getBestAttackSpell(enemies, area);
+			if (spell != null) {
+				if (FightManager.getPlayByPlayReporting()) {
+					System.out.println(this.race + " casts " + spell);
+				}
+				spell.cast(getLevel(), enemies);
+				wipeSpellFromMemory(spell);
+				return true;
+			} 
+		}
+		return false;	
+	}	
+
+	/**
+	* Check casting an attack spell before melee.
+	* Look for area-effects first; then if none, try targeted.
+	* @return true if we cast a spell.
+	*/
+	private boolean checkCastSpellPreMelee (Party enemies) {
+		if (hasSpells()) {
+			if (tryCastAttackSpell(enemies, true))
+				return true;
+			else if (tryCastAttackSpell(enemies, false))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	* Check casting an attack spell in melee.
+	* Only targeted spells are allowed (not area-effects).
+	* @return true if we cast a spell.
+	*/
+	private boolean checkCastSpellInMelee (Party enemies) {
+		return tryCastAttackSpell(enemies, false);
 	}
 
 	/**
