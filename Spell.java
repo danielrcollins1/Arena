@@ -269,9 +269,25 @@ public class Spell {
 	}
 		
 	/**
+	*  Expose casting energy effect.
+	*/
+	public EnergyType getEnergy () {
+		assert(casting != null);
+		return casting.getEnergy();
+	}
+		
+	/**
+	*  Expose casting condition effect.
+	*/
+	public SpecialType getCondition () {
+		assert(casting != null);
+		return casting.getCondition();
+	}
+		
+	/**
 	*  Expose casting person-only.
 	*/
-	public boolean isPersonEffectOnly () {
+	public boolean isPersonEffect () {
 		assert(casting != null);
 		return casting.isPersonEffect();
 	}

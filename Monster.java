@@ -946,6 +946,14 @@ public class Monster {
 	}
 
 	/**
+	* Check if we are immune to a given condition.
+	*/
+	private boolean isImmuneToCondition (SpecialType condition) {
+		return ((condition.isUndeadImmune() && hasUndeadImmunity())
+			|| (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)));
+	}
+
+	/**
 	* Take a given condition unless we resist (no modifier).
 	*/
 	public void saveVsCondition (SpecialType condition, int casterLevel) {
@@ -956,9 +964,9 @@ public class Monster {
 	* Take a given condition unless we resist.
 	*/
 	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
+		if (isImmuneToMagic()) return;
 		if (checkResistMagic(casterLevel)) return;
-		if (condition.isUndeadImmune() && hasUndeadImmunity()) return;
-		if (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)) return;
+		if (isImmuneToCondition(condition)) return;
 		if (condition.isMentalAttack()) {
 			saveMod += Ability.getBonus(getAbilityScore(Ability.Wis));
 		}
@@ -972,8 +980,9 @@ public class Monster {
 	public void saveVsEnergy (EnergyType energy, int damage, 
 		SavingThrows.Type saveType, int casterLevel) 
 	{
-		if (isImmuneToEnergy(energy)) return;
+		if (isImmuneToMagic()) return;
 		if (checkResistMagic(casterLevel)) return;
+		if (isImmuneToEnergy(energy)) return;
 		if (rollSave(saveType)) damage /= 2;
 		takeDamage(damage);
 		if (FightManager.getPlayByPlayReporting()) {
@@ -983,27 +992,25 @@ public class Monster {
 	}
 
 	/**
+	* Check if we are immune to all magic.
+	*/
+	private boolean isImmuneToMagic() {
+		return (hasSpecial(SpecialType.MagicImmunity)
+				|| hasCondition(SpecialType.AntimagicSphere));
+	}
+
+	/**
 	* Check if we specially resist a magic spell.
 	* @return true if we resist or have immunity to a spell.
 	*/
 	private boolean checkResistMagic (int casterLevel) {
-
-		// Magic immunity
-		if (hasSpecial(SpecialType.MagicImmunity)
-				|| hasCondition(SpecialType.AntimagicSphere))
-			return true;
-		
-
-		// Magic resistance
 		if (hasSpecial(SpecialType.MagicResistance)) {
 			int basePct = getSpecialParam(SpecialType.MagicResistance);
 			int adjustPct = basePct - (casterLevel - 11) * 5;
 			if (Dice.rollPct() <= adjustPct)
 				return true;
 		}
-			
-		// No resistance
-		return false;	
+		return false;
 	}
 
 	/**
@@ -1747,8 +1754,11 @@ public class Monster {
 			// Is this spell viable in our current situation?
 			if (spell.isCastable()
 				&& spell.isAreaEffect() == areaEffect
-				&& sampleFoe.getHD() <= spell.getMaxTargetHD()
-				&& (sampleFoe.isPerson() || !spell.isPersonEffectOnly()))
+				&& !(sampleFoe.isImmuneToMagic())
+				&& !(sampleFoe.getHD() > spell.getMaxTargetHD())
+				&& !(spell.getEnergy() != null && sampleFoe.isImmuneToEnergy(spell.getEnergy())
+				&& !(spell.getCondition() != null && sampleFoe.isImmuneToCondition(spell.getCondition())
+				&& !(spell.isPersonEffect() && !sampleFoe.isPerson()))))
 			{
 				if (bestSpell == null) {
 					bestSpell = spell;
