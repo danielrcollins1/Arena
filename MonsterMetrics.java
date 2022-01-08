@@ -1,5 +1,6 @@
-import java.util.function.Function;
-import java.util.Arrays;
+import java.util.*;
+import java.util.regex.*;
+import java.util.function.*;
 
 /******************************************************************************
 *  Application to measure monster power levels.
@@ -75,7 +76,10 @@ public class MonsterMetrics {
 	int wizardFrequency;
 
 	/** PC level for sample fight run. */
-	int sampleFightLevel;
+	int commandPartyLevel;
+	
+	/** Monster number for single matchup. */
+	int commandMonsterNumber;
 
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
@@ -107,8 +111,11 @@ public class MonsterMetrics {
 	/** Did we print anything on this run? */
 	boolean printedSomeMonster;
 
-	/** Run one sample fight at parity numbers. */
-	boolean doRunSampleFight;
+	/** Show one sample fight at parity numbers. */
+	boolean doShowSampleFight;
+
+	/** Assess matchup at specified party level & monster number. */
+	boolean doAssessSingleMatchup;
 	
 	/** Flag to make a table of best-number-match values. */
 	boolean makeBNMTable;
@@ -169,6 +176,7 @@ public class MonsterMetrics {
 		System.out.println("\t-f number of fights per point in search space " 
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
 		System.out.println("\t-g graph power per level for each monster");
+		System.out.println("\t-h assess matchup given monster number, party level (-h:#:#)");
 		System.out.println("\t-k wait for keypress to start processing");		
 		System.out.println("\t-l show suggested best level match at standard party size");		
 		System.out.println("\t-m chance for magic weapon bonus per level " 
@@ -177,10 +185,9 @@ public class MonsterMetrics {
 		System.out.println("\t-p show EHD-parity win ratios vs. standard-size party");
 		System.out.println("\t-q show only quick key stats in table form");
 		System.out.println("\t-r display only monsters with revised EHD from database");
-		System.out.println("\t-s run a single sample fight (requires spotlight monster)");
+		System.out.println("\t-s show a single sample fight (optional party level, -s:#)");
 		System.out.println("\t-t make a table of best-number-match values");
 		System.out.println("\t-u display any unknown special abilities in database");
-		System.out.println("\t-v specify PC level for sample fight run");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-z fraction of wizards in party "
 			+ "(default =" + DEFAULT_WIZARD_RATIO + ")");
@@ -200,8 +207,14 @@ public class MonsterMetrics {
 		}			
 		
 		// Check that sample fight run has specified monster
-		if (doRunSampleFight && (spotlightMonster == null)) {
+		if (doShowSampleFight && (spotlightMonster == null)) {
 			System.err.println("Sample fight run requires spotlight monster specified.");
+			exitAfterArgs = true;
+		}
+		
+		// Check that single matchup option has specified monster
+		if (doAssessSingleMatchup && (spotlightMonster == null)) {
+			System.err.println("Matchup assessment requires spotlight monster specified.");
 			exitAfterArgs = true;
 		}
 	}
@@ -220,6 +233,7 @@ public class MonsterMetrics {
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
+					case 'h': parseSingleMatchupOption(s); break;
 					case 'k': waitForKeypress = true; break;
 					case 'l': showBestLevelMatch = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
@@ -227,10 +241,9 @@ public class MonsterMetrics {
 					case 'p': showParityWinRatios = true; break;
 					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
-					case 's': doRunSampleFight = true; break;
+					case 's': parseSampleFightOption(s); break;
 					case 't': makeBNMTable = true; break;
 					case 'u': displayUnknownSpecials = true; break;
-					case 'v': sampleFightLevel = getParamInt(s); break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'z': wizardFrequency = getParamInt(s); break;
 					default: exitAfterArgs = true; break;
@@ -288,6 +301,44 @@ public class MonsterMetrics {
 		}
 		exitAfterArgs = true;
 		return null;
+	}
+
+	/**
+	*  Parse option for a sample fight.
+	*/
+	private void parseSampleFightOption (String s) {
+		doShowSampleFight = true;
+		Pattern p = Pattern.compile("(:\\d+)?");
+		Matcher m = p.matcher(s.substring(2));
+		if (m.matches()) {
+			if (m.group(1) != null) {
+				commandPartyLevel = Integer.parseInt(
+					m.group(1).substring(1));
+			}
+		}
+		else {
+			System.err.println("Could not parse sample-fight command.");
+			exitAfterArgs = true;
+		}
+	}
+
+	/**
+	*  Parse option for a single matchup.
+	*/
+	private void parseSingleMatchupOption(String s) {
+		doAssessSingleMatchup = true;
+		Pattern p = Pattern.compile("(:\\d+)(:\\d+)");
+		Matcher m = p.matcher(s.substring(2));
+		if (m.matches()) {
+			commandMonsterNumber = Integer.parseInt(
+					m.group(1).substring(1));
+			commandPartyLevel = Integer.parseInt(
+					m.group(2).substring(1));
+		}
+		else {
+			System.err.println("Could not parse single-matchup command.");
+			exitAfterArgs = true;
+		}
 	}
 
 	/**
@@ -910,7 +961,7 @@ public class MonsterMetrics {
 	*  Assumes standard party size, PC level 1 to MAX_LEVEL,
 	*  and monster numbers at parity total EHD.
 	*/
-	private void runSampleFight () {
+	private void showSampleFight () {
 		assert(spotlightMonster != null);
 		FightManager.setPlayByPlayReporting(true);
 		Monster monster = spotlightMonster;
@@ -922,8 +973,8 @@ public class MonsterMetrics {
 		}		
 
 		// Set up parties to fight
-		int ftrLevel = (sampleFightLevel != 0) ? 
-			sampleFightLevel : Math.min(monster.getEHD(), MAX_LEVEL);
+		int ftrLevel = (commandPartyLevel != 0) ? 
+			commandPartyLevel : Math.min(monster.getEHD(), MAX_LEVEL);
 		int monNumber = getBalancedMonsterNumbers(
 			monster, ftrLevel, STANDARD_PARTY_SIZE);
 		if (monNumber <= 0) 
@@ -943,6 +994,28 @@ public class MonsterMetrics {
 		manager.fight();
 		System.out.println("Turns elapsed: " + manager.getTurnCount());
 		System.out.println();
+	}
+
+	/**
+	*  Assess a single specified matchup.
+	*/
+	private void assessSingleMatchup () {
+		assert(spotlightMonster != null);
+		Monster monster = spotlightMonster;
+
+		// Report situation
+		System.out.println("Monster party: " 
+			+ commandMonsterNumber + " " + monster.getRace()
+			+ (commandMonsterNumber == 1 ? "" : "s")
+			+ " (EHD " + monster.getEHD() + ")");
+		System.out.println("Character party: "
+			+ STANDARD_PARTY_SIZE + " of level " + commandPartyLevel);
+
+		// Do the assessment		
+		double winRatio = ratioMonstersBeatFighters (
+			spotlightMonster, commandMonsterNumber, commandPartyLevel);
+		double percent = winRatio * 100;			
+		System.out.println("Monster win ratio: " + percent + "%\n");
 	}
 
 	/**
@@ -984,11 +1057,12 @@ public class MonsterMetrics {
 			}
 			metrics.startClock();
 			metrics.displayUnknownSpecials();
-			if (metrics.doRunSampleFight)
-				metrics.runSampleFight();
-			else if (metrics.makeBNMTable) {
+			if (metrics.doShowSampleFight)
+				metrics.showSampleFight();
+			else if (metrics.doAssessSingleMatchup)
+				metrics.assessSingleMatchup();	
+			else if (metrics.makeBNMTable)
 				metrics.printBNMTable();			
-			}
 			else if (metrics.showQuickBattleStats)
 				metrics.printQuickBattleStats();
 			else		
