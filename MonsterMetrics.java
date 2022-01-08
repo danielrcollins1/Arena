@@ -917,19 +917,17 @@ public class MonsterMetrics {
 
 		// Check valid EHD
 		if (monster.getEHD() <= 0) {
-			System.out.println("Monster EHD too low to compute required number appearing.\n");
+			System.out.println("Cannot compute number appearing for EHD 0 monster.\n");
 			return;
 		}		
 
-		// Make parties
+		// Set up parties to fight
 		int ftrLevel = (sampleFightLevel != 0) ? 
 			sampleFightLevel : Math.min(monster.getEHD(), MAX_LEVEL);
 		int monNumber = getBalancedMonsterNumbers(
 			monster, ftrLevel, STANDARD_PARTY_SIZE);
-		if (monNumber <= 0) {
-			System.out.println("Monster EHD too high for expected human party.\n");
-			return;
-		}
+		if (monNumber <= 0) 
+			monNumber = 1;
 		Party ftrParty = makeFighterParty(ftrLevel, STANDARD_PARTY_SIZE);
 		Party monParty = new Party(monster, monNumber);
 		FightManager manager = new FightManager(ftrParty, monParty);

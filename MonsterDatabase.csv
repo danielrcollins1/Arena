@@ -53,7 +53,7 @@ Mastodon,1d12,6,15,12,-,-,3,2d6,N,A,16,12,W,"S1, M1",-
 Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,N,A,18,20,W,"O, S1, M1",-
 "Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,N,A,25,15,U,"O, S1, S2","Swimming (15), Swallowing"
 "Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,N,A,40,30,U,"O, S1, S2","Swimming (15), Swallowing"
-"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,50,45,U,"O, S1, S2","Swimming (15), Swallowing"
+"Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,60,45,U,"O, S1, S2","Swimming (15), Swallowing"
 Homunculus,1,7,6,2,-,-,1,1d3,N,B,1,2,S,S1,"Flight (18), Telepathy"
 Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"
 Shadow,2d10,7,9,2+2,50,F,1,1d3,C,B,3,2.6,D,S1,"MagicToHit (1), StrengthDrain, Spawn, UndeadImmunity"
@@ -96,9 +96,9 @@ Basilisk,1d6,4,6,6+1,40,F,1,1d6,N,B,20,6.3,D,O,"PetrifyingGaze, Petrification"
 Dragon Turtle,1d4,2,3,12,60,H,2,2d6,C,B,25,12,U,O,"Swimming (9), Detection (15), Fear (2), SteamBreath"
 Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,30,15,D,O,"Swallowing, Poison, Fearlessness"
 "Dragon, Gold",1d4,2,9,11,60,H,2,2d6,L,B,35,11,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
-"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,45,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
+"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,50,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
-"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,145,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
+"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,200,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (12), Grappling"
@@ -178,7 +178,7 @@ Wraith,2d8,3,12,4,20,E,1,1d6,C,U,4,4,D,O,"Flight (24), SilverToHit, EnergyDrain 
 Ghast,1d6,4,15,4,10,G,1,1d6+2,C,U,6,4,D,M1,"Paralysis, Stench"
 Mummy,1d12,3,6,5+1,30,D,1,1d6,C,U,6,5.3,D,O,"MagicToHit (1), DamageReduction, Rotting"
 Spectre,1d8,2,15,6,25,E,1,1d6,C,U,8,6,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
-Vampire,1d4,2,12,8,20,F,1,1d6,C,U,30,8,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
+Vampire,1d4,2,12,8,20,F,1,1d6,C,U,25,8,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
 Lich,1d4,3,6,10,100,A,1,1d6,N,U,40,10,D,S1,"Fear (4), Paralysis, Spells"
 Djinni,1,5,9,7+1,-,-,1,2d6-1,N,X,7,7.3,X,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,N,X,8,8,X,O,"Invisibility, Tracking"
@@ -190,9 +190,9 @@ Efreeti,1,3,9,10,-,-,1,2d6,C,X,12,10,X,O,"Flight (24), Creation, Illusion, Invis
 "Air Elemental, Medium",1,2,36,12,-,-,1,1d6,N,X,16,12,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
 "Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,N,X,19,12,X,"O, S1",MagicToHit (2)
 "Water Elemental, Medium",1,2,6,12,-,-,1,2d6,N,X,19,12,X,"O, S1","Swimming (18), MagicToHit (2)"
-"Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,19,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
 Will-O-Wisp,1,-8,18,9,1,A,1,2d6,N,X,20,9,D,S1,"Light, Invisibility"
+"Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,23,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
 "Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,N,X,24,12,X,"O, S1",MagicToHit (2)
-"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,28,16,X,"O, S1",MagicToHit (2)
-"Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,28,16,X,"O, S1","Swimming (18), MagicToHit (2)"
-"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,N,X,32,16,X,"O, S1",MagicToHit (2)
+"Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,33,16,X,"O, S1",MagicToHit (2)
+"Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,33,16,X,"O, S1","Swimming (18), MagicToHit (2)"
+"Earth Elemental, Large",1,2,6,16,-,-,1,3d6,N,X,40,16,X,"O, S1",MagicToHit (2)

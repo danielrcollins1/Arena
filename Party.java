@@ -350,26 +350,12 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	* Does this party have any way to win against that party?
+	* Get ratio of original party still alive.
 	*/
-	public boolean isViableAgainst (Party enemy) {
-		if (!isLive()) return false;
-		for (Monster foe: enemy) {
-			if (!isViableAgainst(foe))
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	* Does this party have any way to win against that monster?
-	*/
-	public boolean isViableAgainst (Monster mon) {
-		for (Monster friend: this) {
-			if (friend.isViableAgainst(mon))
-				return true;		
-		}
-		return false;
+	public double getRatioLive () {
+		assert(!(members.isEmpty() && fallen.isEmpty()));
+		int total = members.size() + fallen.size();
+		return (double) members.size() / total;
 	}
 
 	/**

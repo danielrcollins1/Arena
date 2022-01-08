@@ -1,3 +1,5 @@
+import java.util.*;
+
 /******************************************************************************
 *  Manages one RPG fight (one encounter). 
 *
@@ -21,9 +23,6 @@ public class FightManager {
 	/** Report play-by-play action for fights. */
 	private static boolean reportPlayByPlay = false;
 
-	/** Report warnings for unusual fight situations. */
-	private static boolean reportWarnings = false;
-
 	/** Count turns/rounds in current fight. */
 	private int turnCount;
 
@@ -32,9 +31,6 @@ public class FightManager {
 	
 	/** Second party in this fight. */
 	private Party party2;
-
-	/** Winner of the fight. */
-	private Party winner;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
@@ -46,8 +42,6 @@ public class FightManager {
 	FightManager (Party party1, Party party2) {
 		this.party1 = party1;
 		this.party2 = party2;
-		turnCount = 0;
-		winner = null;
 	}
 	
 	/**
@@ -64,8 +58,8 @@ public class FightManager {
 	/**
 	*  Set play-by-play reporting.
 	*/
-	public static void setPlayByPlayReporting (boolean b) {
-		reportPlayByPlay = b; 
+	public static void setPlayByPlayReporting (boolean report) {
+		reportPlayByPlay = report; 
 	}
 
 	/**
@@ -73,6 +67,15 @@ public class FightManager {
 	*/
 	public static boolean getPlayByPlayReporting () {
 		return reportPlayByPlay; 
+	}
+
+	/**
+	*  Report play-by-play status. 
+	*/
+	private void reportPlayByPlay () {
+		if (reportPlayByPlay) {
+			System.out.println(this);
+		}
 	}
 
 	/**
@@ -84,89 +87,69 @@ public class FightManager {
 		// Prepare for battle
 		party1.prepBattle(party2);
 		party2.prepBattle(party1);
-
-		// Roll for initiative
-		Party partyInit1, partyInit2;
-		if (Dice.coinFlip()) {
-			partyInit1 = party1; 
-			partyInit2 = party2;
-		} 
-		else {
-			partyInit1 = party2;
-			partyInit2 = party1;
-		}
+		List<Party> order = getInitiativeOrder();
 
 		// Make special attacks on entry
 		turnCount = 0;
 		reportPlayByPlay();
-		partyInit1.makeSpecialAttacks(partyInit2);
-		partyInit2.makeSpecialAttacks(partyInit1);
+		order.get(0).makeSpecialAttacks(order.get(1));
+		order.get(1).makeSpecialAttacks(order.get(0));
 
 		// Alternate turns
-		while (party1.isLive() && party2.isLive()) {
+		while ((turnCount < MAX_TURNS)
+			&& party1.isLive() && party2.isLive()) 
+		{
 			turnCount++;
-			if (turnCount > MAX_TURNS) break;
 			reportPlayByPlay();
-			partyInit1.takeTurn(partyInit2);
-			partyInit2.takeTurn(partyInit1);
+			order.get(0).takeTurn(order.get(1));
+			order.get(1).takeTurn(order.get(0));
 		}
 
-		// Call winner for viable side
-		callWinner();
+		// Call the winner
+		Party winner = callWinner();
+		if (reportPlayByPlay) {
+			System.out.println("* Winner is " + winner + "\n");
+		}
 		return winner;		
 	}
 
 	/**
-	*  Report play-by-play. 
+	*  Get parties in initiative order.
 	*/
-	private void reportPlayByPlay () {
-		if (reportPlayByPlay) {
-			System.out.println(this);
+	private List<Party> getInitiativeOrder () {
+		List<Party> order = new ArrayList<Party>(2);
+		if (Dice.coinFlip()) {
+			order.add(party1);
+			order.add(party2);
 		}
+		else {
+			order.add(party2);
+			order.add(party1);
+		}
+		return order;
 	}
 
 	/**
 	*  Decide on the winner of a fight.
 	*/
-	private void callWinner () {
+	private Party callWinner () {
 
-		// Check viability
-		boolean viableParty1 = party1.isViableAgainst(party2);
-		boolean viableParty2 = party2.isViableAgainst(party1);
+		// Get ratio alive
+		double ratioLive1 = party1.getRatioLive();
+		double ratioLive2 = party2.getRatioLive();
 		
 		// Call the winner
-		if (viableParty1 && !viableParty2) {
-			winner = party1;
+		if (ratioLive1 > ratioLive2) {
+			return party1;
 		}
-		else if (viableParty2 && !viableParty1) {
-			winner = party2;		
-		}
-		else if (viableParty1 && viableParty2) {
-			if (reportWarnings) {
-				System.err.println("Fight over with both sides viable: " + this);
-			}
-			winner = getRandomParty();
+		else if (ratioLive2 > ratioLive1) {
+			return party2;
 		}
 		else {
-			if (reportWarnings) {
-				System.err.println("Fight over with neither side viable: " + this);
-			}
-			winner = getRandomParty();
-		}
-		
-		// Report if desired		
-		if (reportPlayByPlay) {
-			System.out.println("* Winner is " + winner + "\n");
+			return Dice.coinFlip() ? party1 : party2;		
 		}
 	}
 
-	/**
-	*  Get a random party in this fight.
-	*/
-	private Party getRandomParty () {
-		return Dice.coinFlip() ? party1 : party2;
-	}
-	
 	/**
 	*  Get current turn count.
 	*/

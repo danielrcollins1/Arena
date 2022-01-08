@@ -2022,15 +2022,6 @@ public class Monster {
 	}
 
 	/**
-	* Does this monster have any way of harming that enemy?
-	*/
-	public boolean isViableAgainst (Monster enemy) {
-		return canAttack(enemy) 
-			|| (hasCastableSpells() 
-				&& !enemy.hasSpecial(SpecialType.MagicImmunity));
-	}
-
-	/**
 	* Main test method.
 	*/
 	public static void main (String[] args) {
