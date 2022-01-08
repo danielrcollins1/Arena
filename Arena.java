@@ -452,8 +452,11 @@ public class Arena {
 	*  (Recommended for wilderness encounters only.)
 	*/
 	int treasureValueByMonster (Party party) {
-		return party.getFallen(0).getTreasureValue() 
-			* party.sizeFallen();
+		if (party.sizeFallen() == 0)
+			return 0;
+		else
+			return party.sizeFallen() 
+				* party.getFallen(0).getTreasureValue();
 	}
 
 	/**
@@ -461,11 +464,14 @@ public class Arena {
 	*  (Officially valid for underworld only.)
 	*/
 	int treasureValueByDungeon (Party party, int level) {
-		if (level < 1) { // mock arena prize by leader level
-			level = Math.max(party.getFallen(0).getLevel(), 1);
+		if (party.sizeFallen() == 0)
+			return 0;
+		else {
+			if (level < 1) // mock arena prize by leader level
+				level = Math.max(party.getFallen(0).getLevel(), 1);
+			return DungeonTreasureTable.getInstance()
+				.randomValueByLevel(level);
 		}
-		return DungeonTreasureTable.getInstance()
-			.randomValueByLevel(level);
 	} 
 
 	/**
