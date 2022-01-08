@@ -688,10 +688,10 @@ public class Arena {
 	}
 
 	/**
-	*  Prints top fighters in list.
+	*  Get the top fighters in list.
 	*/
-	public void printTopFighters (int number) {
-		fighterList.printTopMembers(number);	
+	public List<Monster> getTopFighters (int number) {
+		return fighterList.getTopMembers(number);
 	}
 
 	/**

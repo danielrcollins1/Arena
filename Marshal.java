@@ -1,3 +1,5 @@
+import java.util.List;
+
 /******************************************************************************
 *  Marshals given types of men, including leaders.
 *
@@ -182,7 +184,11 @@ public class Marshal {
 	*  Report on leader-types.
 	*/
 	void reportLeaders () {
-		arena.printTopFighters(NUM_LEADERS_TO_PRINT);
+		List<Monster> list = arena.getTopFighters(NUM_LEADERS_TO_PRINT);
+		for (Monster leader: list) {
+			System.out.println(leader);		
+		}
+		System.out.println();
 	}
 
 	/**

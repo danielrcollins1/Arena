@@ -288,14 +288,16 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Print top number of members of party. 
+	*  Get a list of the top party members.
 	*/
-	public void printTopMembers (int number) {
+	public List<Monster> getTopMembers (int number) {
 		sortMembersDown();
-		for (int i = 0; i < number && i < members.size(); i++) {
-			System.out.println(members.get(i));				
+		number = Math.min(number, members.size());
+		List<Monster> list = new ArrayList<Monster>(number);
+		for (int i = 0; i < number; i++) {
+			list.add(members.get(i));				
 		}
-		System.out.println();
+		return list;
 	}	
 
 	/**
