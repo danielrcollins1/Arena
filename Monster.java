@@ -15,9 +15,6 @@ public class Monster {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Sentinel value for undefined EHD. */
-	public static final int UNDEFINED_EHD = -1;
-
 	/** Sides on standard hit dice. */
 	private static final int BASE_HIT_DIE = 6;
 
@@ -26,6 +23,12 @@ public class Monster {
 	* As per 1E DMG p. 69 (assumes same-size attackers)
 	*/
 	private static final int MAX_MELEERS = 6;
+
+	/** Sentinel value for undefined EHD. */
+	public static final int UNDEFINED_EHD = -1;
+
+	/** Can we fight while swallowed in another monster? */
+	private static final boolean FIGHT_SWALLOWED = true;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -443,6 +446,7 @@ public class Monster {
 	private boolean checkHandicaps (Party friends) {
 		if (checkWebbing()) return true;
 		if (checkConfusion(friends)) return true;
+		if (checkSwallowed()) return true;
 		return false;
 	}
 
@@ -595,6 +599,11 @@ public class Monster {
 			modifier -= 4;
 		}
 
+		// Swallowed
+		if (hasCondition(SpecialType.Swallowing)) {
+			modifier -= 4;
+		}
+
 		// Target displacement
 		if (target.hasSpecial(SpecialType.Displacement)) {
 			modifier -= 2;
@@ -691,6 +700,7 @@ public class Monster {
 						&& totalRoll >= 25) 
 					{
 						target.addCondition(SpecialType.Swallowing);
+						target.setHost(this);
 					}
 					break;
 
@@ -1426,6 +1436,35 @@ public class Monster {
 			if (breakOut) removeCondition(SpecialType.Webs);
 			return true;
 		}
+		return false;
+	}
+
+	/**
+	* Check if we are swallowed in another creature.
+	* @return true if we cannot fight
+	*/
+	private boolean checkSwallowed() {
+		if (hasCondition(SpecialType.Swallowing)) {
+		
+			// Check if host is dead and we escape
+			assert(host != null);
+			if (host.horsDeCombat()) {
+				removeCondition(SpecialType.Swallowing);
+				host = null;
+				return false;
+			}
+
+			// Take 1d6 damage per round
+			// This simulates dead-in-6-turns rule (Vol-2, p. 15)
+			// scaled to 6th-level PCs
+			takeDamage(Dice.roll(6));
+			
+			// If we are allowed to fight,
+			// take one attack against our host here
+			if (FIGHT_SWALLOWED)
+				singleAttack(getAttack(), host, true);
+			return true;
+		}	
 		return false;
 	}
 

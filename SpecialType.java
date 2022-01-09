@@ -84,7 +84,7 @@ public enum SpecialType {
 	public boolean isDisabling () {
 		switch (this) {
 			case Poison: case Paralysis: case Petrification: 
-			case Swallowing: case SporeCloud: case FleshEating: 
+			case SporeCloud: case FleshEating: 
 			case Fear: case MindBlast: case Sleep: case Charm:
 			case Hold: case Polymorphism: case Death: case BlownAway:
 			case Disintegration: case BrainConsumption:
