@@ -1195,9 +1195,15 @@ public class Monster {
 						EnergyType.Cold, SavingThrows.Type.Breath);
 					break;
 
-				case VoltBreath: // Dragon only
-					numVictims = getBreathVictims(enemy, 5);
-					castEnergyArea(enemy, numVictims, maxHitPoints, 
+				case VoltBreath:
+					switch (param) {
+						case 0: damage = maxHitPoints; // Dragon
+							maxVictims = 5; break;
+						default: damage = new Dice(param, 6).roll();
+							maxVictims = 6; break;
+					}
+					numVictims = getBreathVictims(enemy, maxVictims);
+					castEnergyArea(enemy, numVictims, damage, 
 						EnergyType.Volt, SavingThrows.Type.Breath);
 					break;
 
@@ -1205,10 +1211,8 @@ public class Monster {
 					switch (param) {
 						case 0: damage = maxHitPoints; // Dragon
 							maxVictims = 3; break;
-						case 2: damage = new Dice(2, 6).roll(); // Beetle
+						default: damage = new Dice(param, 6).roll();
 							maxVictims = 1; break;
-						default: damage = 0; maxVictims = 0;
-							System.err.println("Unknown acid breath.");
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
 					castEnergyArea(enemy, numVictims, damage, 

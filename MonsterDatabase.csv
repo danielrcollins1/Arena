@@ -12,12 +12,14 @@ Large Spider,2d10,8,6,1+1,75,-,1,1d3,N,A,2,1.3,D,"S1, M1",Poison (-2)
 "Giant Ant, Worker",2d10,3,18,2,10,-,1,1d6,N,A,2,2,D,M1,-
 Giant Frog,4d10,7,3,2,-,-,1,1d6,N,A,2,2,D,S2,"Leaping, Constriction"
 Giant Leech,2d6,8,6,2,-,-,1,1d6+1,N,A,2,2,U,"O, S2",BloodDrain (2)
+Giant Eel,2d8,7,0,1+4,-,-,1,1d6+2,N,A,2,2.1,U,S2,"Swimming (12), VoltBreath (2)"
 "Horse, Draft",1,7,12,2+1,-,-,1,1d6,N,A,2,2.3,W,O,-
 "Horse, Medium",1,7,18,2+1,-,-,2,1d6,N,A,2,2.3,W,"CM, O, SS",-
 Mule,1,7,12,2+1,-,-,1,1d6,N,A,2,2.3,W,O,-
 Crocodile,3d8,5,9,3,-,-,1,1d6,N,A,2,3,U,"O, M1",Swimming (15)
 Giant Tick,3d4,4,3,3,-,-,1,1d3,N,A,2,3,D,S1,"BloodDrain (4), Disease"
 Ram,1d6,7,15,3,-,-,1,1d6,N,A,2,3,W,"S1, M2",Charge
+Giant Lamprey,2d8,6,0,3,-,-,1,1d3,N,A,2,3,U,S2,"Swimming (9), BloodDrain (3)"
 Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,N,A,2,3.3,D,"S1, M1",-
 Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,N,A,2,3.9,W,"S1, M1",-
 Giant Hog,1d12,7,15,3+3,-,-,1,1d6,N,A,2,3.9,D,M1,-
@@ -47,12 +49,14 @@ Giant Scorpion,1d4,3,15,5+5,50,D,3,1d6,N,A,9,6.4,D,"S1, M1",Poison
 Minotaur Lizard,1d6,3,9,8,50,E,2,2d6,N,A,10,8,D,S2,-
 "Giant Beetle, Rhinoceros",1d6,2,6,12,-,-,1,1d6+2,N,A,10,12,W,S2,-
 Giant Squid,2d6,7,3,6,20,A,10,1d6,N,A,11,6,U,"O, S2, M1","Swimming (12), Constriction, Jet, InkCloud"
+Giant Shark,2d6,5,0,10,-,-,1,2d6+2,N,A,11,10,U,S2,"Swimming (24), Swallowing"
 Giant Fish,1,6,0,15,-,-,1,2d6,N,A,11,15,U,"O, M2","Swimming (15), Whirlpool"
 Fire Lizard,1d4,2,9,12,60,E,2,2d6,N,A,13,12,D,S2,"FireBreath (2), FireImmunity"
 Mastodon,1d12,6,15,12,-,-,3,2d6,N,A,16,12,W,"S1, M1",-
 Tyranosaurus Rex,1d2,5,15,20,-,-,1,4d6,N,A,18,20,W,"O, S1, M1",-
 "Sea Monster, Small",1d4,4,3,15,-,-,1,3d6,N,A,20,15,U,"O, S1, S2","Swimming (15), Swallowing"
 "Sea Monster, Medium",1d4,4,3,30,-,-,1,4d6,N,A,33,30,U,"O, S1, S2","Swimming (15), Swallowing"
+Whale,1d8,5,0,40,-,-,1,6d6,N,A,40,40,U,S2,"Swimming (18), Swallowing"
 "Sea Monster, Large",1d4,4,3,45,-,-,1,5d6,N,A,50,45,U,"O, S1, S2","Swimming (15), Swallowing"
 Homunculus,1,7,6,2,-,-,1,1d3,N,B,1,2,S,S1,"Flight (18), Telepathy"
 Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"
