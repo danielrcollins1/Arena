@@ -24,10 +24,10 @@ public class Monster {
 	*/
 	private static final int MAX_MELEERS = 6;
 
-	/** Sentinel value for undefined EHD. */
+	/** Sentinel value for undefined EHD in database. */
 	public static final int UNDEFINED_EHD = -1;
 
-	/** Can we fight while swallowed in another monster? */
+	/** Is fighting while swallowed in another monster allowed? */
 	private static final boolean FIGHT_SWALLOWED = true;
 
 	//--------------------------------------------------------------------------
@@ -709,7 +709,7 @@ public class Monster {
 					break;
 
 				case CharmTouch:
-					castCharm(target, -getSpecialParam(s));
+					castCondition(target, SpecialType.Charm, -getSpecialParam(s));
 					break;
 
 				case BloodDrain: 
@@ -727,7 +727,7 @@ public class Monster {
 					break;
 
 				case FleshEating:
-					target.saveVsCondition(SpecialType.FleshEating, getHD());
+					castCondition(target, SpecialType.FleshEating);
 			}
 		}
 
@@ -767,7 +767,7 @@ public class Monster {
 			int maxLevel = getSpecialParam(SpecialType.Fear);
 			for (Monster m: enemy) {
 				if (m.getHD() <= maxLevel)
-					m.saveVsCondition(SpecialType.Fear, getHD());
+					castCondition(m, SpecialType.Fear);
 			}			
 		}
 
@@ -837,7 +837,7 @@ public class Monster {
 					List<Monster> victims = enemy.randomGroup(numVictims);
 					for (Monster m: victims) {
 						if (m.getHD() <= 1)
-							m.saveVsCondition(SpecialType.BlownAway, getHD());
+							castCondition(m, SpecialType.BlownAway);
 					}
 					return;
 
@@ -877,11 +877,12 @@ public class Monster {
 					return;
 
 				case Charm:
-					castCharm(enemy.random(), -getSpecialParam(s));
+					target = enemy.random();
+					castCondition(target, SpecialType.Charm, -getSpecialParam(s));
 					return;
 					
 				case ManyEyeFunctions:
-					manyEyesSalvo(enemy);
+					doManyEyesSalvo(enemy);
 					return;
 			}     
 		}
@@ -985,6 +986,30 @@ public class Monster {
 	}
 
 	/**
+	* Try to force a condition on one enemy monster.
+	*/
+	private void castCondition (Monster target, SpecialType condition, int saveMod) {
+		target.saveVsCondition(condition, getHD(), saveMod);
+	}
+
+	/**
+	* Try to force a condition on one enemy monster (no save modifier).
+	*/
+	private void castCondition (Monster target, SpecialType condition) {
+		castCondition(target, condition, 0);
+	}
+
+	/**
+	* Try to force a condition on multiple enemy party numbers.
+	*/
+	private void castConditionArea (Party enemy, int number, SpecialType condition) {
+		List<Monster> victims = enemy.randomGroup(number);
+		for (Monster target: victims) {
+			castCondition(target, condition);
+		}
+	}
+
+	/**
 	* Take energy damage; save for half. 
 	*/
 	public void saveVsEnergy (EnergyType energy, int damage, 
@@ -998,6 +1023,39 @@ public class Monster {
 		if (FightManager.getPlayByPlayReporting()) {
 			System.out.println(this.race + " takes damage from " 
 				+ energy + " (" + damage + " points)");
+		}
+	}
+
+	/**
+	* Is this monster immune to this energy type?
+	*/
+	private boolean isImmuneToEnergy (EnergyType energy) {
+		switch (energy) {
+			case Fire: return hasSpecial(SpecialType.FireImmunity);
+			case Cold: return hasSpecial(SpecialType.ColdImmunity);
+			case Acid: return hasSpecial(SpecialType.AcidImmunity);
+			case Volt: return hasSpecial(SpecialType.VoltImmunity);
+			default: return false;
+		}
+	} 
+
+	/**
+	* Try to force energy damage to one enemy monster.
+	*/
+	private void castEnergy (Monster target, int damage, 
+			EnergyType energy, SavingThrows.Type saveType) 
+	{
+		target.saveVsEnergy(energy, damage, saveType, getHD());			
+	}
+
+	/**
+	* Try to force energy damage to multiple enemy party numbers.
+	*/
+	private void castEnergyArea (Party enemy, int number, int damage, 
+			EnergyType energy, SavingThrows.Type saveType) {
+		List<Monster> targets = enemy.randomGroup(number);
+		for (Monster m: targets) {
+			castEnergy(m, damage, energy, saveType);
 		}
 	}
 
@@ -1072,16 +1130,6 @@ public class Monster {
 	}
 
 	/**
-	* Regenerate hit points if appropriate.
-	*/
-	private void checkRegeneration () {
-		if (hasSpecial(SpecialType.Regeneration)) {
-			hitPoints += getSpecialParam(SpecialType.Regeneration);
-			boundHitPoints();
-		}
-	}
-
-	/**
 	* Check if we're attached to some host.
 	* If so, do special violence instead of a normal attack.
 	* @return true if interrupted from making a normal attack
@@ -1096,12 +1144,14 @@ public class Monster {
 		}
 		else {
 			SpecialType type = getAttachmentAbility();
-			switch (type) {
-				case BloodDrain: doBloodDrain(); break;
-				case Constriction: doConstriction(); break;
-				case Rending: doRending(); break;
-				default: 
-					System.err.println("Unknown attachment ability: " + type);
+			if (type != null) {
+				switch (type) {
+					case BloodDrain: doBloodDrain(); break;
+					case Constriction: doConstriction(); break;
+					case Rending: doRending(); break;
+					default: 
+						System.err.println("Unknown attachment ability: " + type);
+				}
 			}
 			return true;
 		}
@@ -1163,6 +1213,16 @@ public class Monster {
 	}
 
 	/**
+	* Regenerate hit points if appropriate.
+	*/
+	private void checkRegeneration () {
+		if (hasSpecial(SpecialType.Regeneration)) {
+			hitPoints += getSpecialParam(SpecialType.Regeneration);
+			boundHitPoints();
+		}
+	}
+
+	/**
 	* Check for a breath weapon attack.
 	*  Estimates max number hit for given area.
 	* @return Did we make a breath attack?
@@ -1175,6 +1235,7 @@ public class Monster {
 			switch (breathType) {
 
 				case FireBreath: case SteamBreath:
+				
 					// As a data simplifying assumption, 
 					// we assume damage dice = length of cone.
 					switch (param) {
@@ -1271,97 +1332,25 @@ public class Monster {
 	}
 
 	/**
-	* Apply energy damage to multiple enemy party numbers.
-	*/
-	private void castEnergyArea (Party enemy, int number, int damage, 
-			EnergyType energy, SavingThrows.Type saveType) {
-		List<Monster> targets = enemy.randomGroup(number);
-		for (Monster m: targets) {
-			castEnergy(m, damage, energy, saveType);
-		}
-	}
-
-	/**
-	* Apply energy damage to one enemy monster.
-	*/
-	private void castEnergy (Monster target, int damage, 
-			EnergyType energy, SavingThrows.Type saveType) 
-	{
-		target.saveVsEnergy(energy, damage, saveType, getHD());			
-	}
-
-	/**
-	* Is this monster immune to this energy type?
-	*/
-	private boolean isImmuneToEnergy (EnergyType energy) {
-		switch (energy) {
-			case Fire: return hasSpecial(SpecialType.FireImmunity);
-			case Cold: return hasSpecial(SpecialType.ColdImmunity);
-			case Acid: return hasSpecial(SpecialType.AcidImmunity);
-			case Volt: return hasSpecial(SpecialType.VoltImmunity);
-			default: return false;
-		}
-	} 
-
-	/**
-	* Force a condition on multiple enemy party numbers.
-	*/
-	private void castConditionArea (Party enemy, int number, SpecialType condition) {
-		List<Monster> targets = enemy.randomGroup(number);
-		for (Monster m: targets) {
-			castCondition(m, condition);
-		}
-	}
-
-	/**
-	* Force a condition on one enemy monster (no save modifier).
-	*/
-	private void castCondition (Monster target, SpecialType condition) {
-		castCondition(target, condition, 0);
-	}
-
-	/**
-	* Force a condition on one enemy monster.
-	*/
-	private void castCondition (Monster target, SpecialType condition, int saveMod) {
-		target.saveVsCondition(condition, saveMod);
-	}
-
-	/**
-	* Cast a charm on one enemy monster.
-	*/
-	private void castCharm (Monster target, int saveMod) {
-		if (target.hasFeat(Feat.IronWill)) saveMod += 4;
-		if (!target.rollSave(SavingThrows.Type.Spells, saveMod)) {
-			target.addCondition(SpecialType.Charm);
-		}
-	}
-
-	/**
 	* Apply mind blast to enemy party numbers.
-	*  
 	*  Saving throws simplified; assume at long range.
-	*  Any result other than Confusion/Enrage takes
-	*    condition MindBlast (thus, hors de combat). 
 	*/
 	private void mindBlastArea (Party enemy, int number) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
 			int intel = m.getAbilityScore(Ability.Int);
-			if (intel > 0) {
-				if (Dice.roll(20) + intel < 20) {
-					assert(intel >= 0);
-					switch (intel) {
-						case 0: case 1: 
-						case 2: case 3: case 4: m.addCondition(SpecialType.Death); break;
-						case 5: case 6: case 7: m.addCondition(SpecialType.Coma); break;
-						case 8: case 9: case 10: m.addCondition(SpecialType.Sleep); break;
-						case 11: case 12: m.addCondition(SpecialType.Stun); break;
-						case 13: case 14: m.addCondition(SpecialType.Confusion); break;
-						case 15: case 16: m.addCondition(SpecialType.Berserking); break;
-						case 17: m.addCondition(SpecialType.Feeblemind); break;
-						default: m.addCondition(SpecialType.Insanity); break;
-					}
+			assert(intel >= 0);
+			if (Dice.roll(20) + intel < 20) {
+				switch (intel) {
+					case 0: case 1: 
+					case 2: case 3: case 4: m.addCondition(SpecialType.Death); break;
+					case 5: case 6: case 7: m.addCondition(SpecialType.Coma); break;
+					case 8: case 9: case 10: m.addCondition(SpecialType.Sleep); break;
+					case 11: case 12: m.addCondition(SpecialType.Stun); break;
+					case 13: case 14: m.addCondition(SpecialType.Confusion); break;
+					case 15: case 16: m.addCondition(SpecialType.Berserking); break;
+					case 17: m.addCondition(SpecialType.Feeblemind); break;
+					default: m.addCondition(SpecialType.Insanity); break;
 				}
 			}  
 		}
@@ -1372,8 +1361,7 @@ public class Monster {
 	*/
 	private void checkSlowing (Party enemy) {
 		if (hasSpecial(SpecialType.Slowing)) {
-			Monster target = enemy.random();
-			target.saveVsCondition(SpecialType.Slowing, getHD());
+			castCondition(enemy.random(), SpecialType.Slowing);
 		}
 	}
 
@@ -1502,13 +1490,6 @@ public class Monster {
 			hitDice.setNum(HD - 1);
 		}
 		boundHitPoints();
-	}
-
-	/**
-	* Roll a saving throw vs. spells with no modifier.
-	*/
-	private boolean rollSaveSpells () {
-		return rollSave(SavingThrows.Type.Spells, 0);
 	}
 
 	/**
@@ -1865,18 +1846,18 @@ public class Monster {
 		if (hasSpecial(SpecialType.ManyEyeFunctions)
 			&& !enemy.allHaveCondition(SpecialType.AntimagicSphere))
 		{
-			manyEyesSalvo(enemy);
+			doManyEyesSalvo(enemy);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	* Beholder many-eyes attacks.
+	* Beholder executes its many-eyes attacks.
 	*
 	* References available castable spells.
 	*/
-	private void manyEyesSalvo (Party enemy) {
+	private void doManyEyesSalvo (Party enemy) {
 		final String eyeFunctionNames[] = {
 			"Charm Person", "Charm Monster", "Sleep", "Disintegrate", "Fear"};
 
@@ -1902,7 +1883,7 @@ public class Monster {
 		List<Monster> enemyShuffle = enemy.randomGroup(enemy.size());
 		for (Monster m: enemyShuffle) {
 			if (m.hasSpells() && !m.hasCondition(SpecialType.AntimagicSphere)) {
-				m.saveVsCondition(SpecialType.AntimagicSphere, getHD());
+				castCondition(m, SpecialType.AntimagicSphere);
 				break;
 			}
 		}		
@@ -1993,15 +1974,11 @@ public class Monster {
 	}
 
 	/**
-	* Eat one piece of target equipment, if available.
+	* Can this monster eat some kind of equipment?
 	*/
-	private void eatEquipment (Monster target) {
-		if (canEatEquipment(target.getShield()))
-			target.saveVsEquipmentLoss(target.getShield());
-		else if (canEatEquipment(target.getArmor()))
-			target.saveVsEquipmentLoss(target.getArmor());
-		else if (canEatEquipment(target.getWeapon()))
-			target.saveVsEquipmentLoss(target.getWeapon());
+	private boolean canEatEquipment () {
+		return hasSpecial(SpecialType.WoodEating)
+			|| hasSpecial(SpecialType.MetalEating);	
 	}
 
 	/**
@@ -2023,11 +2000,15 @@ public class Monster {
 	}
 
 	/**
-	* Can this monster eat some kind of equipment?
+	* Eat one piece of target equipment, if available.
 	*/
-	private boolean canEatEquipment () {
-		return hasSpecial(SpecialType.WoodEating)
-			|| hasSpecial(SpecialType.MetalEating);	
+	private void eatEquipment (Monster target) {
+		if (canEatEquipment(target.getShield()))
+			target.saveVsEquipmentLoss(target.getShield());
+		else if (canEatEquipment(target.getArmor()))
+			target.saveVsEquipmentLoss(target.getArmor());
+		else if (canEatEquipment(target.getWeapon()))
+			target.saveVsEquipmentLoss(target.getWeapon());
 	}
 
 	/**
@@ -2040,16 +2021,6 @@ public class Monster {
 	}
 
 	/**
-	* Is this equipment a flaming weapon?
-	*/
-	private boolean isFlamingWeapon (Equipment equip) {
-		return equip != null
-			&& equip instanceof Weapon
-			&& ((Weapon) equip).getEnergy() != null
-			&& ((Weapon) equip).getEnergy() == EnergyType.Fire;
-	}
-
-	/**
 	* Check if we need to draw a new weapon mid-fight.
 	* @return true if we drew a new weapon
 	*/
@@ -2059,6 +2030,16 @@ public class Monster {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	* Is this equipment a flaming weapon?
+	*/
+	private boolean isFlamingWeapon (Equipment equip) {
+		return equip != null
+			&& equip instanceof Weapon
+			&& ((Weapon) equip).getEnergy() != null
+			&& ((Weapon) equip).getEnergy() == EnergyType.Fire;
 	}
 
 	/**
