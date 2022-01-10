@@ -1350,20 +1350,17 @@ public class Monster {
 			int intel = m.getAbilityScore(Ability.Int);
 			if (intel > 0) {
 				if (Dice.roll(20) + intel < 20) {
-					if (intel < 5) {
-						m.addCondition(SpecialType.Death);
-					}
-					else if (intel < 13) {
-						m.addCondition(SpecialType.MindBlast);
-					}
-					else if (intel < 15) {
-						m.addCondition(SpecialType.Confusion);
-					}
-					else if (intel < 17) {
-						m.addCondition(SpecialType.Berserking);
-					}
-					else {
-						m.addCondition(SpecialType.MindBlast);
+					assert(intel >= 0);
+					switch (intel) {
+						case 0: case 1: 
+						case 2: case 3: case 4: m.addCondition(SpecialType.Death); break;
+						case 5: case 6: case 7: m.addCondition(SpecialType.Coma); break;
+						case 8: case 9: case 10: m.addCondition(SpecialType.Sleep); break;
+						case 11: case 12: m.addCondition(SpecialType.Stun); break;
+						case 13: case 14: m.addCondition(SpecialType.Confusion); break;
+						case 15: case 16: m.addCondition(SpecialType.Berserking); break;
+						case 17: m.addCondition(SpecialType.Feeblemind); break;
+						default: m.addCondition(SpecialType.Insanity); break;
 					}
 				}
 			}  

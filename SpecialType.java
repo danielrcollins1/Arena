@@ -32,7 +32,8 @@ public enum SpecialType {
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
-	AntimagicSphere, BlownAway, Disintegration;
+	AntimagicSphere, BlownAway, Disintegration, Coma, Stun, 
+	Feeblemind, Insanity;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -84,10 +85,10 @@ public enum SpecialType {
 	public boolean isDisabling () {
 		switch (this) {
 			case Poison: case Paralysis: case Petrification: 
-			case SporeCloud: case FleshEating: 
-			case Fear: case MindBlast: case Sleep: case Charm:
-			case Hold: case Polymorphism: case Death: case BlownAway:
-			case Disintegration: case BrainConsumption:
+			case SporeCloud: case FleshEating: case Fear:  case Sleep: 
+			case Charm: case Hold: case Polymorphism: case Death: 
+			case BlownAway: case Disintegration: case BrainConsumption:
+			case Coma: case Stun: case Feeblemind: case Insanity:
 				return true;
 		}
 		return false;
