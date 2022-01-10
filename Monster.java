@@ -772,6 +772,7 @@ public class Monster {
 
 				case Charm:
 				case Confusion:
+				case Hypnosis:
 					throwCondition(enemy.random(), s, -getSpecialParam(s));
 					return;
 
@@ -1081,6 +1082,7 @@ public class Monster {
 	*/
 	private boolean isImmuneToMagic() {
 		return (hasSpecial(SpecialType.MagicImmunity)
+				|| hasSpecial(SpecialType.SpellReflection)
 				|| hasCondition(SpecialType.AntimagicSphere));
 	}
 

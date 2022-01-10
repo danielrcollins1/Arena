@@ -33,7 +33,7 @@ public enum SpecialType {
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
 	AntimagicSphere, BlownAway, Disintegration, Coma, Stun, 
-	Feeblemind, Insanity;
+	Feeblemind, Insanity, Hypnosis, SpellReflection;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -60,7 +60,7 @@ public enum SpecialType {
 			// Spells saves
 			case Charm: case Sleep: case Confusion:
 			case Blindness: case Fear: case Polymorphism:
-			case AntimagicSphere:
+			case AntimagicSphere: case Hypnosis:
 				return SavingThrows.Type.Spells; 
 				
 			// Breath saves
@@ -94,6 +94,7 @@ public enum SpecialType {
 			case Charm: case Hold: case Polymorphism: case Death: 
 			case BlownAway: case Disintegration: case BrainConsumption:
 			case Coma: case Stun: case Feeblemind: case Insanity:
+			case Hypnosis:
 				return true;
 		}
 		return false;
@@ -117,7 +118,7 @@ public enum SpecialType {
 	*/
 	public boolean isGazeWeapon () {
 		switch (this) {
-			case PetrifyingGaze: case Confusion: 
+			case PetrifyingGaze: case Confusion: case Hypnosis:
 				return true;
 		}	
 		return false;
@@ -152,6 +153,7 @@ public enum SpecialType {
 		switch (this) {
 			case Charm: case Hold: case Sleep:
 			case Fear: case Confusion: case MindBlast:
+			case Hypnosis:
 				return true;
 		}	
 		return false;
