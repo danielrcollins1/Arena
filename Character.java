@@ -810,7 +810,6 @@ public class Character extends Monster {
 	*/
 	protected boolean rollSave (SavingThrows.Type type, int modifier) {
 		ClassRecord bestClass = bestClassForSave(type);
-		modifier += getFixedSaveModifiers(type);
 		if (ringWorn != null)
 			modifier += ringWorn.getMagicBonus();
 		return SavingThrows.getInstance().rollSave(

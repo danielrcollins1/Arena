@@ -537,6 +537,7 @@ public class Monster {
 
 	/**
 	* Find what level of magic-to-hit we can strike.
+	* This is overridden in a subclass.
 	*/
 	protected int getMagicHitLevel () {
 		int magicHitLevel = 0;
@@ -554,7 +555,7 @@ public class Monster {
 	* Return hit modifier against a target.
 	* @return Modifier to hit.
 	*/
-	protected int hitModifier (Monster target) {
+	private int hitModifier (Monster target) {
 		int modifier = 0;
 
 		// General hit bonus
@@ -651,47 +652,38 @@ public class Monster {
 		for (SpecialType s: specialList) {
 			switch (s) {
 
-				case Poison:
-					if (isLastAttack) {
-						castCondition(target, SpecialType.Poison, -getSpecialParam(s));
-					}
-					break;
-
 				case Paralysis:
-					castCondition(target, SpecialType.Paralysis);
+				case Petrification:
+				case Rotting: 
+				case FleshEating:
+					throwCondition(target, s);
 					break;
 
-				case Petrification:
-					castCondition(target, SpecialType.Petrification);
+				case Poison:
+					if (isLastAttack)
+						throwCondition(target, s, -getSpecialParam(s));
+					break;
+
+				case CharmTouch:
+					throwCondition(target, SpecialType.Charm, -getSpecialParam(s));
 					break;
 
 				case EnergyDrain:
-					if (!target.rollSave(SavingThrows.Type.Death)) {
-						for (int j = 0; j < getSpecialParam(s); j++) {
-							target.loseLevel();
-						}
-					}
+					throwLevelDrain(target, getSpecialParam(s));
 					break;
 
-				case Rotting: 
-					target.addCondition(SpecialType.Rotting);
+				case StrengthDrain:
+					target.takeAbilityDamage(Ability.Str, 1);
 					break;
 
-				case Immolation: 
-					if (isLastAttack && new Dice(2, 6).roll() >= 7) {
-						int damage = new Dice(3, 6).roll();
-						castEnergy(target, damage, EnergyType.Fire, 
-							SavingThrows.Type.Breath);
-					}
+				case BloodDrain: 
+				case Constriction:
+					setHost(target);
 					break;
 
-				case SappingStrands:
-					if (!isLastAttack && !target.hasCondition(SpecialType.SappingStrands)
-						&& !target.rollSave(SavingThrows.Type.Death)) 
-					{
-						int strength = target.getAbilityScore(Ability.Str);       
-						target.takeAbilityDamage(Ability.Str, strength/2);
-						target.addCondition(SpecialType.SappingStrands);
+				case Rending:
+					if (totalRoll >= 25) {
+						setHost(target);
 					}
 					break;
 
@@ -703,31 +695,24 @@ public class Monster {
 						target.setHost(this);
 					}
 					break;
-
-				case StrengthDrain:
-					target.takeAbilityDamage(Ability.Str, 1);
-					break;
-
-				case CharmTouch:
-					castCondition(target, SpecialType.Charm, -getSpecialParam(s));
-					break;
-
-				case BloodDrain: 
-					setHost(target);
-					break;
-
-				case Constriction:
-					setHost(target);
-					break;
-
-				case Rending:
-					if (totalRoll >= 25) {
-						setHost(target);
+					
+				case Immolation: 
+					if (isLastAttack && new Dice(2, 6).roll() >= 7) {
+						int damage = new Dice(3, 6).roll();
+						throwEnergy(target, damage, EnergyType.Fire, 
+							SavingThrows.Type.Breath);
 					}
 					break;
-
-				case FleshEating:
-					castCondition(target, SpecialType.FleshEating);
+					
+				case SappingStrands:
+					if (!isLastAttack && !target.hasCondition(s)) {
+						throwCondition(target, s);
+						if (target.hasCondition(s)) {
+							int strength = target.getAbilityScore(Ability.Str);       
+							target.takeAbilityDamage(Ability.Str, strength/2);
+						}
+					}
+					break;
 			}
 		}
 
@@ -740,14 +725,14 @@ public class Monster {
 		if (target.canEatEquipment()) {
 			Weapon weapon = getWeapon();
 			if (target.canEatEquipment(weapon)) {
-				saveVsEquipmentLoss(weapon);			
+				catchEquipmentLoss(weapon);			
 			}
 		}
 
 		// Check target throwing off spores on hit
 		if (target.hasSpecial(SpecialType.SporeCloud)) {
 			if (Dice.coinFlip()) {
-				target.castCondition(this, SpecialType.SporeCloud);
+				target.throwCondition(this, SpecialType.SporeCloud);
 			}  
 		}
 	}
@@ -767,7 +752,7 @@ public class Monster {
 			int maxLevel = getSpecialParam(SpecialType.Fear);
 			for (Monster m: enemy) {
 				if (m.getHD() <= maxLevel)
-					castCondition(m, SpecialType.Fear);
+					throwCondition(m, SpecialType.Fear);
 			}			
 		}
 
@@ -785,6 +770,17 @@ public class Monster {
 		for (SpecialType s: specialList) {
 			switch (s) {
 
+				case Charm:
+				case Confusion:
+					throwCondition(enemy.random(), s, -getSpecialParam(s));
+					return;
+
+				case PetrifyingGaze:
+					for (Monster targetPetrify: enemy) {
+						throwCondition(targetPetrify, SpecialType.Petrification);
+					}
+					return;
+
 				case RockHurling: 
 					target = enemy.random();
 					attack = new Attack("Rock", 1, getHD(), new Dice(2, 6));
@@ -799,16 +795,10 @@ public class Monster {
 					}
 					return;
 
-				case PetrifyingGaze:
-					for (Monster targetPetrify: enemy) {
-						castCondition(targetPetrify, SpecialType.Petrification);
-					}
-					return;
-
 				case WallOfFire:
 					Dice fireDamage = new Dice(1, 6); 
 					for (Monster targetFire: enemy) {
-						castEnergy(targetFire, fireDamage.roll(), 
+						throwEnergy(targetFire, fireDamage.roll(), 
 							EnergyType.Fire, SavingThrows.Type.Spells);
 					}
 					return;
@@ -816,7 +806,7 @@ public class Monster {
 				case ConeOfCold:
 					int damage = new Dice(8, 6).roll();
 					int maxVictims = getMaxVictimsInCone(6);
-					castEnergyArea(enemy, maxVictims, damage, 
+					throwEnergyArea(enemy, maxVictims, damage, 
 						EnergyType.Cold, SavingThrows.Type.Spells);
 					return;
 
@@ -837,15 +827,8 @@ public class Monster {
 					List<Monster> victims = enemy.randomGroup(numVictims);
 					for (Monster m: victims) {
 						if (m.getHD() <= 1)
-							castCondition(m, SpecialType.BlownAway);
+							throwCondition(m, SpecialType.BlownAway);
 					}
-					return;
-
-				case Confusion:
-					target = enemy.random();
-					modifier = -getSpecialParam(s);
-					if (target.hasFeat(Feat.IronWill)) modifier += 4;
-					castCondition(target, SpecialType.Confusion, modifier);
 					return;
 
 				case MindBlast: 
@@ -862,25 +845,17 @@ public class Monster {
 					return;
 
 				case Stench:
-					for (Monster targetStench: enemy) {
+					for (Monster smeller: enemy) {
+						if (!smeller.hasCondition(SpecialType.ResistStench)) {
+							throwCondition(smeller, SpecialType.Stench);
 
-						// Each enemy only needs to make one save vs. stinky monster party
-						if (!targetStench.hasCondition(SpecialType.ResistStench)) {
-							if (!targetStench.rollSave(SavingThrows.Type.Breath)) {
-								targetStench.addCondition(SpecialType.Stench);
-							}
-							else {
-								targetStench.addCondition(SpecialType.ResistStench);
-							}
+							// Each enemy only needs to make this save one time vs. stenchy party
+							if (!smeller.hasCondition(SpecialType.Stench))
+								smeller.addCondition(SpecialType.ResistStench);
 						}
 					}
 					return;
 
-				case Charm:
-					target = enemy.random();
-					castCondition(target, SpecialType.Charm, -getSpecialParam(s));
-					return;
-					
 				case ManyEyeFunctions:
 					doManyEyesSalvo(enemy);
 					return;
@@ -965,60 +940,74 @@ public class Monster {
 	}
 
 	/**
-	* Take a given condition unless we resist (no modifier).
-	*/
-	public void saveVsCondition (SpecialType condition, int casterLevel) {
-		saveVsCondition(condition, casterLevel, 0);
-	}
-
-	/**
 	* Take a given condition unless we resist.
 	*/
-	public void saveVsCondition (SpecialType condition, int casterLevel, int saveMod) {
+	public void catchCondition (SpecialType condition, int casterLevel, int saveMod) {
+
+		// Check immunities
 		if (isImmuneToMagic()) return;
-		if (checkResistMagic(casterLevel)) return;
 		if (isImmuneToCondition(condition)) return;
-		if (condition.isMentalAttack()) {
-			saveMod += Ability.getBonus(getAbilityScore(Ability.Wis));
-		}
-		if (rollSave(condition.getSaveType(), saveMod)) return;
+		if (checkResistMagic(casterLevel)) return;
+
+		// Roll a saving throw
+		saveMod += getSaveModsConstant();
+		saveMod += getSaveModsVsCondition(condition);
+		if (rollSave(condition.getSaveType(), saveMod))
+			return;
+
+		// Apply the condition
 		addCondition(condition);
 	}
 
 	/**
 	* Try to force a condition on one enemy monster.
 	*/
-	private void castCondition (Monster target, SpecialType condition, int saveMod) {
-		target.saveVsCondition(condition, getHD(), saveMod);
+	private void throwCondition (Monster target, SpecialType condition, int saveMod) {
+		target.catchCondition(condition, getHD(), saveMod);
 	}
 
 	/**
 	* Try to force a condition on one enemy monster (no save modifier).
 	*/
-	private void castCondition (Monster target, SpecialType condition) {
-		castCondition(target, condition, 0);
+	private void throwCondition (Monster target, SpecialType condition) {
+		throwCondition(target, condition, 0);
 	}
 
 	/**
 	* Try to force a condition on multiple enemy party numbers.
 	*/
-	private void castConditionArea (Party enemy, int number, SpecialType condition) {
+	private void throwConditionArea (Party enemy, int number, SpecialType condition) {
 		List<Monster> victims = enemy.randomGroup(number);
 		for (Monster target: victims) {
-			castCondition(target, condition);
+			throwCondition(target, condition);
 		}
 	}
 
 	/**
 	* Take energy damage; save for half. 
 	*/
-	public void saveVsEnergy (EnergyType energy, int damage, 
+	public void catchEnergy (EnergyType energy, int damage, 
 		SavingThrows.Type saveType, int casterLevel) 
 	{
+		// Check immunities
 		if (isImmuneToMagic()) return;
-		if (checkResistMagic(casterLevel)) return;
 		if (isImmuneToEnergy(energy)) return;
-		if (rollSave(saveType)) damage /= 2;
+		if (checkResistMagic(casterLevel)) return;
+
+		// Roll a saving throw
+		int saveMod = getSaveModsConstant();
+		saveMod += getSaveModsVsEnergy(energy);
+		if (rollSave(saveType, saveMod))
+			damage /= 2;
+
+		// Apply the damage
+		takeEnergyDamage(energy, damage);
+	}
+
+	/**
+	* Take a given amount of energy damage.
+	*/
+	private void takeEnergyDamage (EnergyType energy, int damage) {
 		takeDamage(damage);
 		if (FightManager.getPlayByPlayReporting()) {
 			System.out.println(this.race + " takes damage from " 
@@ -1042,21 +1031,49 @@ public class Monster {
 	/**
 	* Try to force energy damage to one enemy monster.
 	*/
-	private void castEnergy (Monster target, int damage, 
+	private void throwEnergy (Monster target, int damage, 
 			EnergyType energy, SavingThrows.Type saveType) 
 	{
-		target.saveVsEnergy(energy, damage, saveType, getHD());			
+		target.catchEnergy(energy, damage, saveType, getHD());			
 	}
 
 	/**
 	* Try to force energy damage to multiple enemy party numbers.
 	*/
-	private void castEnergyArea (Party enemy, int number, int damage, 
+	private void throwEnergyArea (Party enemy, int number, int damage, 
 			EnergyType energy, SavingThrows.Type saveType) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
-			castEnergy(m, damage, energy, saveType);
+			throwEnergy(m, damage, energy, saveType);
 		}
+	}
+
+	/**
+	* Take level energy drain unless we resist.
+	*/
+	private void catchLevelDrain (int levelLoss, int casterLevel) {
+		SpecialType ability = SpecialType.EnergyDrain;
+
+		// Check immunities
+		if (isImmuneToMagic()) return;
+		if (checkResistMagic(casterLevel)) return;
+
+		// Roll a saving throw
+		int saveMod = getSaveModsConstant();
+		saveMod += getSaveModsVsCondition(ability);
+		if (rollSave(ability.getSaveType(), saveMod))
+			return;
+
+		// Apply the drain
+		for (int i = 0; i < levelLoss; i++)
+			loseLevel();
+	}
+	
+	/**
+	* Try to force level energy drain to one enemy monster.
+	*/
+	private void throwLevelDrain (Monster target, int levelLoss) {
+		target.catchLevelDrain(levelLoss, getHD());
 	}
 
 	/**
@@ -1245,14 +1262,14 @@ public class Monster {
 							maxVictims = getMaxVictimsInCone(param); break;
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
-					castEnergyArea(enemy, numVictims, damage, 
+					throwEnergyArea(enemy, numVictims, damage, 
 						EnergyType.Fire, SavingThrows.Type.Breath);
 					break;
 
 				case ColdBreath: // Dragon only
 					maxVictims = getMaxVictimsInCone(8);
 					numVictims = getBreathVictims(enemy, maxVictims);
-					castEnergyArea(enemy, numVictims, maxHitPoints, 
+					throwEnergyArea(enemy, numVictims, maxHitPoints, 
 						EnergyType.Cold, SavingThrows.Type.Breath);
 					break;
 
@@ -1264,7 +1281,7 @@ public class Monster {
 							maxVictims = 6; break;
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
-					castEnergyArea(enemy, numVictims, damage, 
+					throwEnergyArea(enemy, numVictims, damage, 
 						EnergyType.Volt, SavingThrows.Type.Breath);
 					break;
 
@@ -1276,25 +1293,25 @@ public class Monster {
 							maxVictims = 1; break;
 					}
 					numVictims = getBreathVictims(enemy, maxVictims);
-					castEnergyArea(enemy, numVictims, damage, 
+					throwEnergyArea(enemy, numVictims, damage, 
 						EnergyType.Acid, SavingThrows.Type.Breath);
 					break;
 
 				case PetrifyingBreath: // Gorgon only
 					maxVictims = getMaxVictimsInCone(6);
 					numVictims = getBreathVictims(enemy, maxVictims);
-					castConditionArea(enemy, numVictims, SpecialType.Petrification);
+					throwConditionArea(enemy, numVictims, SpecialType.Petrification);
 					break;
 
 				case PoisonBreath: 
 					if (param == 0) { // Dragon
 						maxVictims = 10;
 						numVictims = getBreathVictims(enemy, maxVictims);
-						castEnergyArea(enemy, numVictims, maxHitPoints, 
+						throwEnergyArea(enemy, numVictims, maxHitPoints, 
 							EnergyType.Poison, SavingThrows.Type.Breath);
 					}
 					else { // Iron Golem
-						castConditionArea(enemy, 1, SpecialType.Poison);
+						throwConditionArea(enemy, 1, SpecialType.Poison);
 					}
 					break;
 
@@ -1361,7 +1378,7 @@ public class Monster {
 	*/
 	private void checkSlowing (Party enemy) {
 		if (hasSpecial(SpecialType.Slowing)) {
-			castCondition(enemy.random(), SpecialType.Slowing);
+			throwCondition(enemy.random(), SpecialType.Slowing);
 		}
 	}
 
@@ -1478,6 +1495,7 @@ public class Monster {
 
 	/**
 	* Lose a level (e.g., energy drain).
+	* This is overridden in a subclass.
 	*/
 	protected void loseLevel () {
 		int HD = getHitDiceNum();
@@ -1501,9 +1519,9 @@ public class Monster {
 
 	/**
 	* Roll a saving throw with modifier.
+	* This is overridden in a subclass.
 	*/
 	protected boolean rollSave (SavingThrows.Type type, int modifier) {
-		modifier += getFixedSaveModifiers(type);
 		return SavingThrows.getInstance().rollSave(
 			type, "Fighter", getHD(), modifier);
 	}
@@ -1511,10 +1529,10 @@ public class Monster {
 	/**
 	* Add up fixed save modifiers for this monster.
 	*/
-	protected int getFixedSaveModifiers (SavingThrows.Type type) {
+	private int getSaveModsConstant () {
 		int modifier = 0;
 
-		// Save bonus special ability
+		// Save bonus ability
 		if (hasSpecial(SpecialType.SaveBonus)) {
 			modifier += getSpecialParam(SpecialType.SaveBonus);
 		}
@@ -1524,23 +1542,49 @@ public class Monster {
 			modifier += 2;  
 		}
 
-		// Great Fortitude feat vs. death saves 
-		if (type == SavingThrows.Type.Death && 
-				hasFeat(Feat.GreatFortitude)) {
-			modifier += 4;  
-		}
-
-		// Berserker bonus (Feat)
-		if (hasFeat(Feat.Berserking)) {
-			modifier += 4;
-		}
-
 		// Protection from evil
 		if (hasSpecial(SpecialType.ProtectionFromEvil)) {
 			modifier += 1;
 		}
 
+		// Berserker feat bonus
+		if (hasFeat(Feat.Berserking)) {
+			modifier += 4;
+		}
+
 		return modifier;
+	}
+
+	/**
+	* Add up save modifiers vs. a given condition for this monster.
+	*/
+	private int getSaveModsVsCondition (SpecialType condition) {
+		int modifier = 0;
+
+		// Great Fortitude feat vs. death saves 
+		if (hasFeat(Feat.GreatFortitude)
+			&& condition.getSaveType() == SavingThrows.Type.Death)
+		{
+			modifier += 4;  
+		}
+		
+		// Iron Will feat vs. mental attacks
+		if (hasFeat(Feat.IronWill)
+			&& condition.isMentalAttack())
+		{
+			modifier += 4;  
+		}
+
+		return modifier;	
+	}
+	
+	/**
+	* Add up save modifiers vs. a given energy for this monster.
+	*/
+	private int getSaveModsVsEnergy (EnergyType energy) {
+
+		// None at this time
+		return 0;	
 	}
 
 	/**
@@ -1883,7 +1927,7 @@ public class Monster {
 		List<Monster> enemyShuffle = enemy.randomGroup(enemy.size());
 		for (Monster m: enemyShuffle) {
 			if (m.hasSpells() && !m.hasCondition(SpecialType.AntimagicSphere)) {
-				castCondition(m, SpecialType.AntimagicSphere);
+				throwCondition(m, SpecialType.AntimagicSphere);
 				break;
 			}
 		}		
@@ -2004,17 +2048,17 @@ public class Monster {
 	*/
 	private void eatEquipment (Monster target) {
 		if (canEatEquipment(target.getShield()))
-			target.saveVsEquipmentLoss(target.getShield());
+			target.catchEquipmentLoss(target.getShield());
 		else if (canEatEquipment(target.getArmor()))
-			target.saveVsEquipmentLoss(target.getArmor());
+			target.catchEquipmentLoss(target.getArmor());
 		else if (canEatEquipment(target.getWeapon()))
-			target.saveVsEquipmentLoss(target.getWeapon());
+			target.catchEquipmentLoss(target.getWeapon());
 	}
 
 	/**
 	* A piece of this creature's equipment must save or be lost.
 	*/
-	private void saveVsEquipmentLoss (Equipment equip) {
+	private void catchEquipmentLoss (Equipment equip) {
 		if (!equip.rollSave()) {
 			loseEquipment(equip);
 		}	

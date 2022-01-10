@@ -73,7 +73,7 @@ public class SpellCasting {
 		/** Cast energy attack on a target monster. */
 		void castEnergy (Monster target, int level, int damage) {
 			assert(energy != null);
-			target.saveVsEnergy(energy, damage, SavingThrows.Type.Spells, level);
+			target.catchEnergy(energy, damage, SavingThrows.Type.Spells, level);
 		};
 		
 		/** Cast conditional attack on a target monster. */
@@ -82,7 +82,7 @@ public class SpellCasting {
 			if ((target.getHD() <= maxTargetHD)
 				&& (!isPersonOnly || target.isPerson()))
 			{
-				target.saveVsCondition(condition, level, saveMod);
+				target.catchCondition(condition, level, saveMod);
 			}
 		};
 

@@ -62,16 +62,21 @@ public enum SpecialType {
 			case Blindness: case Fear: case Polymorphism:
 			case AntimagicSphere:
 				return SavingThrows.Type.Spells; 
+				
+			// Breath saves
+			case Stench: case Rotting:
+				return SavingThrows.Type.Breath;
 
 			// Stone saves
 			case Paralysis: case Petrification: 
 			case Hold: case Webs: case Slowing:
+			case SappingStrands:
 				return SavingThrows.Type.Stone;
 
 			// Death saves
 			case Poison: case SporeCloud: case Death:
 			case FleshEating: case BlownAway:
-			case Disintegration:
+			case Disintegration: case EnergyDrain:
 				return SavingThrows.Type.Death; 
 		}	
 
