@@ -27,7 +27,7 @@ ARENA -- Simulates a population of fighters, battling for
 experience and treasure over some amount of time (broadly inspired by 
 Roman arena-style events). Combat can be man vs. man or man vs.
 monster, including simulated excursions against dungeon random 
-encounters; individual combats can by one-on-one or in groups. Statistics
+encounters; individual combats can be one-on-one or in groups. Statistics
 at the end show level-based demographics of the overall surviving population,
 percent of experience from treasure, and number and ratio of deaths
 caused by each type of monster in the database. 
