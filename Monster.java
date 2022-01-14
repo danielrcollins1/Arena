@@ -776,6 +776,12 @@ public class Monster {
 					throwCondition(enemy.random(), s, -getSpecialParam(s));
 					return;
 
+				case CharmPerTen:
+					if (Dice.roll(10) == 1) {
+						throwCondition(enemy.random(), SpecialType.Charm);
+					}
+					return;
+
 				case PetrifyingGaze:
 					for (Monster targetPetrify: enemy) {
 						throwCondition(targetPetrify, SpecialType.Petrification);

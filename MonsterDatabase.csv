@@ -115,10 +115,10 @@ Masher,1d4,6,0,20,25,D,2,1d6+2,N,B,28,20,U,"S2, M1","Swimming (15), Swallowing, 
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
 "Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,200,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
-Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
-Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (12), Grappling"
-Pixie,1d10x10,6,9,1,25,C,1,1d3,N,F,1,1,W,O,"Flight (18), Invisibility"
 "Elf, Aquatic",3d10x10,5,0,1,30,E,1,1d6,L,F,1,1,U,"S2, M1","Swimming (12), Camouflage, HitBonus (1)"
+Gnome,4d10x10,5,6,1,60,C,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
+Nixie,1d10x10,7,12,1,100,B,1,1d3,N,F,1,1,U,O,"Swimming (9), CharmPerTen, Grappling"
+Pixie,1d10x10,6,9,1,25,C,1,1d3,N,F,1,1,W,O,"Flight (18), Invisibility"
 Elf,3d10x10,5,12,1+1,25,E,1,1d6,L,F,1,1.3,W,O,"Camouflage, HitBonus (1)"
 Pegasus,1d12,6,24,2+2,-,-,2,1d6,L,F,2,2.6,W,O,Flight (48)
 Hippogriff,2d8,5,18,3+1,-,-,2,1d6,L,F,3,3.3,W,O,Flight (36)

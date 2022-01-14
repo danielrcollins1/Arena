@@ -33,7 +33,7 @@ public enum SpecialType {
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
 	AntimagicSphere, BlownAway, Disintegration, Coma, Stun, 
-	Feeblemind, Insanity, Hypnosis, SpellReflection;
+	Feeblemind, Insanity, Hypnosis, SpellReflection, CharmPerTen;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
