@@ -134,9 +134,11 @@ public class Character extends Monster {
 	public Character (String race, String classn, int level, String align) {
 		super(race, BASE_ARMOR_CLASS, BASE_MOVEMENT, BASE_HD, null);
 
+		assert(race != null);
+		assert(classn != null);
 		assert(level >= 0); 
 		age = BASE_AGE;
-		name = NameGenerator.getInstance().getRandom();
+		name = NameGenerator.getInstance().getRandom(race);
 		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
 		abilityScores = new EnumMap<Ability, Integer>(Ability.class);
 		rollAbilityScores(classType, level);
