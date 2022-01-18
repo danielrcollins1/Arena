@@ -64,13 +64,15 @@ public class Armor extends Equipment {
 	*  Create a new armor of a given type.
 	*/
 	static public Armor makeType (Type type) {
-		switch (type) {
-			case Shield: return new Armor(type, Material.Wood, 1, 1, 0);
-			case Leather: return new Armor(type, Material.Leather, 2, 1, 0);
-			case Chain: return new Armor(type, Material.Steel, 4, 2, 0);
-			case Plate: return new Armor(type, Material.Steel, 6, 4, 0);
-		}	
-		System.err.println("Armor type has unknown value: " + type);
+		if (type != null) {
+			switch (type) {
+				case Shield: return new Armor(type, Material.Wood, 1, 1, 0);
+				case Leather: return new Armor(type, Material.Leather, 2, 1, 0);
+				case Chain: return new Armor(type, Material.Steel, 4, 2, 0);
+				case Plate: return new Armor(type, Material.Steel, 6, 4, 0);
+			}	
+			System.err.println("Armor type has unknown value: " + type);
+		}
 		return null;
 	}
 }

@@ -168,7 +168,7 @@ public class MonsterMetrics {
 		System.out.println("  Skips any monsters marked as having undefinable EHD (?)");
 		System.out.println("  If monster is named, measures that monster at increased fidelity.");
 		System.out.println("  Options include:");
-		System.out.println("\t-a armor worn by fighters (=l, c, or p; "
+		System.out.println("\t-a armor worn by fighters (=n, l, c, p; "
 			+ "default " + DEFAULT_ARMOR + ")");
 		System.out.println("\t-b set filename for an alternate monster database");
 		System.out.println("\t-d display equated fighter hit dice per level");
@@ -294,6 +294,7 @@ public class MonsterMetrics {
 	private Armor.Type getArmorType (String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch (s.charAt(3)) {
+				case 'n': return null; 
 				case 'l': return Armor.Type.Leather;
 				case 'c': return Armor.Type.Chain;
 				case 'p': return Armor.Type.Plate;
