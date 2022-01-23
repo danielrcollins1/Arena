@@ -12,8 +12,8 @@ s#i0
 s#k0
 s#j0
 s#l0
-!134;u
-a0	b68	c255	f%\011Athena.jar	g%\011Athena.zip	hManifest-Version\0111.0\011Class-Path\011pdfbox-app.jar\011Main-Class\011Athena	iAthena!26;a
+!744;u
+a1	b68	c0	e%\\011Athena.jar\011%\\011Class-Fighter.csv\011%\\011Class-Thief.csv\011%\\011Class-Wizard.csv\011%\\011ClassIndex.csv\011%\\011DungeonTreasure.csv\011%\\011EHDToTable.csv\011%\\011MenTypes.csv\011%\\011MonsterDatabase-Dragons.csv\011%\\011MonsterDatabase-Hydras.csv\011%\\011MonsterDatabase.csv\011%\\011MonsterLevelMatrix.csv\011%\\011MonsterTreasure.csv\011%\\011Names.csv\011%\\011OED-CharacterSheet.pdf\011%\\011pdfbox-app.jar\011%\\011PersonalityTraits.csv\011%\\011SavingThrows.csv\011%\\011SpellsDaily.csv\011%\\011SpellsIndex.csv\011%\\011TestAthenaJar.bat\011%\\011Wands.csv\011%\\011XPAwardTable.csv	f%\011Athena.jar	g%\011Athena.zip	hManifest-Version\0111.0\011Class-Path\011pdfbox-app.jar\011Main-Class\011Athena	iAthena!26;a
 a%\011Athena_doc%s	b	c1	d0!1014;g
 %\011MonsterTreasureTable.java
 %\011Weapon.java
