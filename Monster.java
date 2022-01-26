@@ -1,6 +1,5 @@
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.regex.*;
 
 /******************************************************************************
 * Monster (hostile or benign creature).
@@ -55,6 +54,7 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
+	String specialsString;
 	Set<SpecialType> specialList;
 	Set<SpecialType> conditionList;
 	AbstractMap<SpecialType, Integer> specialValues;
@@ -116,12 +116,13 @@ public class Monster {
 		hitDiceDecimal = parseFloat(s[12]);
 		environment = s[13].charAt(0);
 		sourceBook = s[14];
+		specialsString = s[15];
 
 		// Special abilities & conditions
 		specialList = EnumSet.noneOf(SpecialType.class);
 		conditionList = EnumSet.noneOf(SpecialType.class);
 		specialValues = new EnumMap<SpecialType, Integer>(SpecialType.class);
-		setSpecialAbilities(s[15]);
+		setSpecialAbilities();
 
 		// Other fields
 		spellMemory = null;
@@ -147,6 +148,7 @@ public class Monster {
 		hitDiceDecimal = src.hitDiceDecimal;
 		killTally = src.killTally;
 		host = src.host;
+		specialsString = src.specialsString;
 		specialList = EnumSet.copyOf(src.specialList);
 		conditionList = EnumSet.copyOf(src.conditionList);
 		specialValues = new EnumMap<SpecialType, Integer>(src.specialValues);
@@ -234,6 +236,24 @@ public class Monster {
 	}
 
 	/**
+	* Make short hit dice descriptor from record.
+	*/
+	private String getHDString () {
+		assert(hitDice.getSides() == BASE_HIT_DIE);
+		assert(hitDice.getMul() <= 1);
+		String s = "" + hitDice.getNum();
+		int mul = hitDice.getMul();
+		if (mul < 0) {
+			s += "/" + (-mul);
+		}
+		int add = hitDice.getAdd();
+		if (add != 0) {
+			s += (add > 0) ? "+" + add : add;
+		}
+		return s;	
+	}
+
+	/**
 	* Parse attack routine from rate and damage.
 	*/
 	private Attack parseAttackRoutine (String atkRate, String damageDesc) {
@@ -245,9 +265,9 @@ public class Monster {
 	/**
 	* Parse special ability list from descriptor string.
 	*/
-	private void setSpecialAbilities (String s) {
-		if (s.length() > 1) {
-			String parts[] = s.split(", ");
+	private void setSpecialAbilities () {
+		if (specialsString.length() > 1) {
+			String parts[] = specialsString.split(", ");
 			for (String part: parts) {
 				SpecialAbility ability = 
 					SpecialAbility.createFromString(part);
@@ -1644,18 +1664,17 @@ public class Monster {
 	}
 
 	/**
-	* Identify this object as a string.
+	* Identify this monster as a stat-block string.
 	*/
 	public String toString() {
 		return getRace() 
-			+ ": AC "   + getAC() 
+			+ ": AC " + getAC() 
 			+ ", MV " + getMV() 
-			+ ", HD "   + getHD() 
-			+ (getHD() == getEHD() ? "" : "; EHD " + EHDString())
-			+ ", hp " + getHP() 
+			+ ", HD " + getHDString() 
+			+ ", EHD " + getEHDString()
 			+ ", Atk " + getAttack().getRate() 
 			+ ", Dam " + getAttack().getDamage()
-			+ (specialList.isEmpty() ? "" : "; SA " + specialString())
+			+ (specialsString.length() > 1 ? ", SA " + specialsString : "")
 			+ ".";
 	}
 
@@ -1667,33 +1686,23 @@ public class Monster {
 	}
 
 	/**
-	* Identify special abilities as a string.
-	*/
-	private String specialString() {
-		String s = specialList.toString();
-		return s.substring(1, s.length()-1);
-	}
-
-	/**
 	* Identify EHD as a string.
 	*/
-	private String EHDString() {
+	private String getEHDString() {
 		int EHD = getEHD();
-		return (EHD == UNDEFINED_EHD ? "?" : String.valueOf(EHD));
+		return (EHD == UNDEFINED_EHD) ? "?" : String.valueOf(EHD);
 	}
 
 	/**
 	* Parse a floating-point string safely.
 	*/
 	private float parseFloat (String s) {
-		float f;
 		try {
-			f = Float.parseFloat(s);							
+			return Float.parseFloat(s);							
 		}	
 		catch (Exception e) {
-			f = 0.0f;
+			return 0.0f;
 		}
-		return f;
 	}
 
 	/**
@@ -1716,8 +1725,9 @@ public class Monster {
 	*/
 	private void rollDragonAge () {
 		assert(hasSpecial(SpecialType.Dragon));
-		if (dragonAge < 1) 
+		if (dragonAge < 1) {
 			dragonAge = Dice.roll(BASE_HIT_DIE);
+		}
 	}
 
 	/**
@@ -2048,7 +2058,7 @@ public class Monster {
 				&& equip.getMaterial() == Equipment.Material.Wood)
 			return true;
 		else
-			return false;	
+			return false;
 	}
 
 	/**

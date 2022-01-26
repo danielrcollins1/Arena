@@ -92,14 +92,19 @@ public class MonsterDatabase implements Iterable<Monster> {
 
 	/**
 	*  Main test method.
+	*
+	*  Prints stat blocks for all monsters in database.
+	*  Takes alternate database file from command line.
 	*/
 	public static void main (String[] args) {
-		Dice.initialize();		
-		MonsterDatabase db = MonsterDatabase.getInstance();
+		Dice.initialize();
+		if (args.length > 0) {
+			setDatabaseFilename(args[0]);
+		}
+		MonsterDatabase db = getInstance();
 		for (Monster m: db) {
 			System.out.println(m);
 		}
 		System.out.println();
 	}
 }
-
