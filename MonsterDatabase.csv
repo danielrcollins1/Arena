@@ -1,6 +1,6 @@
 Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
 Rat,1d100,7,15,1/6,-,-,1,1,N,A,0,0.3,D,M2,-
-Giant Centipede,2d12,9,15,1/3,-,-,1,0,N,A,1,0.4,D,M1,Poison (-4)
+Giant Centipede,2d12,9,15,1/3,-,-,1,0,N,A,1,0.4,D,M1,Poison (4)
 Giant Rat,5d10,7,12,1/2,10,C,1,1d3,N,A,1,0.6,D,"S1, M1",Disease
 Jackal,1d6,8,12,1/2,-,-,1,1d3,N,A,1,0.6,W,"S1, M1",-
 "Giant Beetle, Fire",3d4,4,9,1-1,-,-,1,1d6,N,A,1,0.8,D,S2,Light
@@ -10,7 +10,7 @@ Wolf,2d10,7,18,2,10,-,1,1d6,N,A,1,2,W,"S1, SS, M1",-
 Giant Sea Horse,1d20,7,0,2,-,-,1,1d6,N,A,1,2,U,"S2, M1",Swimming (12)
 "Giant Beetle, Bombardier",3d4,4,9,1,-,-,1,1d6+1,N,A,2,1,W,S2,AcidBreath (2)
 Weed Eel,1d10x10,8,0,1,100,E,1,1d3,N,A,2,1,U,"S2, M1","Swimming (3), Stealth (3), Poison"
-Large Spider,2d10,8,6,1+1,75,-,1,1d3,N,A,2,1.3,D,"S1, M1",Poison (-2)
+Large Spider,2d10,8,6,1+1,75,-,1,1d3,N,A,2,1.3,D,"S1, M1",Poison (2)
 "Giant Ant, Worker",2d10,3,18,2,10,-,1,1d6,N,A,2,2,D,M1,-
 Giant Frog,4d10,7,3,2,-,-,1,1d6,N,A,2,2,D,S2,"Leaping, Constriction"
 Giant Leech,2d6,8,6,2,-,-,1,1d6+1,N,A,2,2,U,"O, S2",BloodDrain (2)
@@ -27,7 +27,7 @@ Giant Lizard,2d6,5,15,3+1,-,-,1,1d6,N,A,2,3.3,D,"S1, M1",-
 Dire Wolf,3d4,6,18,3+3,10,-,1,1d6,N,A,2,3.9,W,"S1, M1",-
 Giant Hog,1d12,7,15,3+3,-,-,1,1d6,N,A,2,3.9,D,M1,-
 Giant Toad,2d6,6,3,2,-,-,1,1d6,N,A,3,2,D,"S1, S2","Leaping, Constriction, Poison"
-Huge Spider,1d12,6,18,2+2,50,-,1,1d6,N,A,3,2.6,D,M1,"Poison (-1), Stealth (3), Hopping"
+Huge Spider,1d12,6,18,2+2,50,-,1,1d6,N,A,3,2.6,D,M1,"Poison (1), Stealth (3), Hopping"
 "Horse, Heavy",1,7,12,3,-,-,2,1d6,N,A,3,3,W,"CM, O, SS",-
 Boar,1d12,7,15,3+3,-,-,1,1d6+1,N,A,3,3.9,W,M1,-
 Giant Weasel,1d8,6,15,3+3,15,-,1,1d6,N,A,3,3.9,D,"S1, M1",BloodDrain (6)
@@ -91,7 +91,7 @@ Carrion Crawler,1d6,7,12,3+1,60,B,8,0,N,B,9,3.3,D,S1,Paralysis
 Manticore,1d4,4,12,6+1,25,D,3,1d6,C,B,9,6.3,D,O,"Flight (18), TailSpikes"
 Wyvern,1d6,3,9,7,60,E,1,1d6+2,N,B,9,7,D,O,"Flight (24), Poison"
 Salamander,1d4+1,5,9,7+3,65,F,2,2d6,C,B,9,7.9,D,S1,"Heat, Constriction, FireImmunity"
-Morkoth,1,3,0,8,100,H,1,1d6,C,B,10,8,U,"S2, M1","Charm (4), SpellReflection"
+Morkoth,1,3,0,8,100,H,1,1d6,C,B,10,8,U,"S2, M1","Charm (-4), SpellReflection"
 Chimera,1d4,4,12,9,50,F,3,1d6,N,B,10,9,D,O,"Flight (18), FireBreath (3)"
 Medusa,1d4,8,9,4,75,F,2,1d6,C,B,11,4,D,O,"PetrifyingGaze, Poison"
 "Dragon, White",1d4,2,9,6,60,H,2,2d6,C,B,11,6,D,O,"Flight (24), Detection (15), Fear (2), ColdBreath"
@@ -123,7 +123,7 @@ Elf,3d10x10,5,12,1+1,25,E,1,1d6,L,F,1,1.3,W,O,"Camouflage, HitBonus (1)"
 Pegasus,1d12,6,24,2+2,-,-,2,1d6,L,F,2,2.6,W,O,Flight (48)
 Hippogriff,2d8,5,18,3+1,-,-,2,1d6,L,F,3,3.3,W,O,Flight (36)
 Centaur,2d10,5,18,4,5,A,2,1d6,L,F,4,4,W,O,-
-Dryad,1d6,5,12,2,20,D,1,1d3,N,F,5,2,W,O,Charm (2)
+Dryad,1d6,5,12,2,20,D,1,1d3,N,F,5,2,W,O,Charm (-2)
 "Roc, Small",1d20,4,6,6,20,I,2,1d6,L,F,5,6,W,O,"Flight (48), Detection"
 Unicorn,1d4,2,24,4,-,-,2,1d6+2,L,F,6,4,W,O,"SaveBonus (6), Detection (24), DimensionDoor (36)"
 Griffon,2d8,3,12,7,10,E,2,1d6+2,N,F,8,7,W,O,Flight (30)
@@ -160,8 +160,8 @@ Nomad,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
 Pirate,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,-
 Dervish,3d10x10,6,12,1+1,15,A,1,1d6,L,M,1,1.3,W,O,"Fearlessness, HitBonus (1)"
 Berserker,3d10x10,7,12,1+1,15,A,1,1d6,N,M,1,1.3,D,O,"Fearlessness, HitBonus (2)"
-Merman,3d10x10,7,3,1+1,40,A,1,1d6,N,M,1,1.3,U,"O, S2","Swimming (15), Grappling, LandWeakness (-1)"
-Caveman,3d10,9,12,2,15,A,1,1d6+1,N,M,2,2,W,O,Cowardice (-1)
+Merman,3d10x10,7,3,1+1,40,A,1,1d6,N,M,1,1.3,U,"O, S2","Swimming (15), Grappling, LandWeakness"
+Caveman,3d10,9,12,2,15,A,1,1d6+1,N,M,2,2,W,O,Cowardice
 Veteran,1,4,9,1,-,-,1,1d8,N,M,1,1,D,O,NPC
 Warrior,1,4,9,2,-,-,1,1d8,N,M,2,2,D,O,NPC
 Swordsman,1,2,9,3,-,-,1,1d8,N,M,3,3,D,O,NPC
@@ -196,7 +196,7 @@ Wraith,2d8,3,12,4,20,E,1,1d6,C,U,4,4,D,O,"Flight (24), SilverToHit, EnergyDrain 
 Ghast,1d6,4,15,4,10,G,1,1d6+2,C,U,6,4,D,M1,"Paralysis, Stench"
 Mummy,1d12,3,6,5+1,30,D,1,1d6,C,U,6,5.3,D,O,"MagicToHit (1), DamageReduction, Rotting"
 Spectre,1d8,2,15,6,25,E,1,1d6,C,U,8,6,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
-Vampire,1d4,2,12,8,20,F,1,1d6,C,U,25,8,D,"O, S1","Flight (12), MagicToHit (1), Charm (2), EnergyDrain (2), Regeneration (3), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
+Vampire,1d4,2,12,8,20,F,1,1d6,C,U,25,8,D,"O, S1","Flight (12), MagicToHit (1), Regeneration (3), EnergyDrain (2), Charm (-2), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
 Lich,1d4,3,6,10,100,A,1,1d6,N,U,40,10,D,S1,"Fear (4), Paralysis, Spells"
 Djinni,1,5,9,7+1,-,-,1,2d6-1,N,X,7,7.3,X,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,N,X,8,8,X,O,"Invisibility, Tracking"

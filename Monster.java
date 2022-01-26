@@ -681,11 +681,11 @@ public class Monster {
 
 				case Poison:
 					if (isLastAttack)
-						throwCondition(target, s, -getSpecialParam(s));
+						throwCondition(target, s, getSpecialParam(s));
 					break;
 
 				case CharmTouch:
-					throwCondition(target, SpecialType.Charm, -getSpecialParam(s));
+					throwCondition(target, SpecialType.Charm, getSpecialParam(s));
 					break;
 
 				case EnergyDrain:
@@ -793,7 +793,7 @@ public class Monster {
 				case Charm:
 				case Confusion:
 				case Hypnosis:
-					throwCondition(enemy.random(), s, -getSpecialParam(s));
+					throwCondition(enemy.random(), s, getSpecialParam(s));
 					return;
 
 				case CharmPerTen:
