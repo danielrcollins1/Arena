@@ -128,7 +128,7 @@ Dryad,1d6,5,12,2,20,D,1,1d3,N,F,5,2,W,O,Charm (-2)
 Unicorn,1d4,2,24,4,-,-,2,1d6+2,L,F,6,4,W,O,"SaveBonus (6), Detection (24), DimensionDoor (36)"
 Griffon,2d8,3,12,7,10,E,2,1d6+2,N,F,8,7,W,O,Flight (30)
 "Tree, Animated",1d2,2,3,8,-,-,2,2d6,L,F,10,8,W,O,-
-"Roc, Medium",1d20,4,6,12,20,I,2,2d6,L,F,12,12,W,O,"Flight (48), Detection"
+"Roc, Medium",1d20,4,6,12,20,I,2,2d6,L,F,14,12,W,O,"Flight (48), Detection"
 "Roc, Large",1d20,4,6,18,20,I,2,3d6,L,F,24,18,W,O,"Flight (48), Detection"
 Treant,1d4,2,6,8,-,-,2,2d6,L,F,25,8,W,O,SummonTrees
 Kobold,4d10x10,7,6,1/2,50,C,1,1d3,C,H,1,0.6,D,O,LightSensitivity
@@ -197,7 +197,7 @@ Ghast,1d6,4,15,4,10,G,1,1d6+2,C,U,6,4,D,M1,"Paralysis, Stench"
 Mummy,1d12,3,6,5+1,30,D,1,1d6,C,U,6,5.3,D,O,"MagicToHit (1), DamageReduction, Rotting"
 Spectre,1d8,2,15,6,25,E,1,1d6,C,U,8,6,D,O,"Flight (30), MagicToHit (1), EnergyDrain (2), Spawn"
 Vampire,1d4,2,12,8,20,F,1,1d6,C,U,25,8,D,"O, S1","Flight (12), MagicToHit (1), Regeneration (3), EnergyDrain (2), Charm (-2), Spawn, SummonVermin, GasForm, Polymorphism, Undying"
-Lich,1d4,3,6,10,100,A,1,1d6,N,U,40,10,D,S1,"Fear (4), Paralysis, Spells"
+Lich,1d4,3,6,10,100,A,1,1d6,N,U,40,10,D,S1,"Fear (4), Paralysis, Spells (18)"
 Djinni,1,5,9,7+1,-,-,1,2d6-1,N,X,7,7.3,X,O,"Flight (24), Creation, Illusion, Invisibility, GasForm, Whirlwind (1)"
 Invisible Stalker,1,3,12,8,-,-,1,1d6+2,N,X,8,8,X,O,"Invisibility, Tracking"
 "Air Elemental, Small",1,2,36,8,-,-,1,1d6,N,X,10,8,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
@@ -209,7 +209,7 @@ Efreeti,1,3,9,10,-,-,1,2d6,C,X,14,10,X,O,"Flight (24), Creation, Illusion, Invis
 Will-O-Wisp,1,-8,18,9,1,A,1,2d6,N,X,20,9,D,S1,"Light, Invisibility"
 "Fire Elemental, Medium",1,2,12,12,-,-,1,2d6,N,X,20,12,X,"O, S1",MagicToHit (2)
 "Water Elemental, Medium",1,2,6,12,-,-,1,2d6,N,X,20,12,X,"O, S1","Swimming (18), MagicToHit (2)"
-"Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,21,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
+"Air Elemental, Large",1,2,36,16,-,-,1,1d6,N,X,22,16,X,"O, S1","Flight (36), Whirlwind (3), MagicToHit (2)"
 "Earth Elemental, Medium",1,2,6,12,-,-,1,3d6,N,X,26,12,X,"O, S1",MagicToHit (2)
 "Fire Elemental, Large",1,2,12,16,-,-,1,2d6,N,X,33,16,X,"O, S1",MagicToHit (2)
 "Water Elemental, Large",1,2,6,16,-,-,1,2d6,N,X,33,16,X,"O, S1","Swimming (18), MagicToHit (2)"

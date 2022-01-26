@@ -1973,6 +1973,14 @@ public class Monster {
 		assert(hasSpecial(SpecialType.Spells));
 		spellMemory = new SpellMemory();
 
+		// Wizard class equivalances
+		// - Level shown in ability parameter.
+		// - Note that spell effect level will be by monster HD.
+		int wizLevel = getSpecialParam(SpecialType.Spells);
+		if (wizLevel > 0) {
+			spellMemory.addSpellsForWizard(wizLevel);
+		}
+
 		// Gold Dragon
 		// - Gain one level of spell per age category.
 		// - As per AD&D idiom, gain two such spells per level.
@@ -2007,14 +2015,6 @@ public class Monster {
 			}
 		}
 			
-		// Lich
-		// - Assume the "typical" 18th level of wizardry.
-		// - Note levels for spell effects just use the hit dice.
-		if (race.equals("Lich")) {
-			final int wizLevel = 18;
-			spellMemory.addSpellsForWizard(wizLevel);
-		}
-
 		// Ogre Mage
 		// - Spells are fixed per book description.
 		if (race.equals("Ogre Mage")) {
