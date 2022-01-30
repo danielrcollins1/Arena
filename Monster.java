@@ -503,7 +503,7 @@ public class Monster {
 				+ target.getAC() + hitModifier(target);
 			if (totalRoll >= 20 || naturalRoll == 20) {
 				int damage = attack.rollDamage();
-				damage = checkDamageReduction(target, damage);
+				damage = checkChopResistance(target, damage);
 				target.takeDamage(damage);
 				checkSpecialOnHit(target, totalRoll, last);
 			}
@@ -650,13 +650,13 @@ public class Monster {
 	}
 
 	/**
-	* Check for damage reduction on target.
+	* Check for chop resistance on target.
 	* @return Adjusted damage.
 	*/
-	private int checkDamageReduction (Monster target, int damage) {
+	private int checkChopResistance (Monster target, int damage) {
 
 		// Damage reduction ability
-		if (target.hasSpecial(SpecialType.DamageReduction)) {
+		if (target.hasSpecial(SpecialType.ChopResistance)) {
 			damage /= 2;
 		}
 
@@ -676,6 +676,7 @@ public class Monster {
 				case Petrification:
 				case Rotting: 
 				case FleshEating:
+				case Stunning:
 					throwCondition(target, s);
 					break;
 
@@ -702,6 +703,7 @@ public class Monster {
 					break;
 
 				case Rending:
+				case Smothering:
 					if (totalRoll >= 25) {
 						setHost(target);
 					}
@@ -773,10 +775,11 @@ public class Monster {
 			for (Monster m: enemy) {
 				if (m.getHD() <= maxLevel)
 					throwCondition(m, SpecialType.Fear);
-			}			
+			}
 		}
 
 		// Check for handicap conditions
+		// (if this monster was hit previously in specials round)
 		if (checkHandicaps(friends)) {
 			return;
 		}
@@ -805,6 +808,12 @@ public class Monster {
 				case PetrifyingGaze:
 					for (Monster targetPetrify: enemy) {
 						throwCondition(targetPetrify, SpecialType.Petrification);
+					}
+					return;
+
+				case DeathGaze:
+					for (Monster targetDeath: enemy) {
+						throwCondition(targetDeath, SpecialType.Death);
 					}
 					return;
 
@@ -837,10 +846,17 @@ public class Monster {
 						EnergyType.Cold, SavingThrows.Type.Spells);
 					return;
 
-				case AcidSpitting:
+				case AcidSpit:
 					target = enemy.random();
 					attack = new Attack("Acid Spit", 1, getHD(), new Dice(2, 6));
 					singleAttack(attack, target, false);
+					return;
+
+				case PoisonSpit:
+				
+					// Assumes automatic hit
+					target = enemy.random();
+					throwCondition(target, SpecialType.Poison);
 					return;
 
 				case Whirlwind:
@@ -1021,10 +1037,19 @@ public class Monster {
 		if (isImmuneToEnergy(energy)) return;
 		if (checkResistMagic(casterLevel)) return;
 
+		// Check vulnerability
+		if (isVulnerableToEnergy(energy))
+			damage += damage / 2;
+
 		// Roll a saving throw
 		int saveMod = getSaveModsConstant();
 		saveMod += getSaveModsVsEnergy(energy);
-		if (rollSave(saveType, saveMod))
+		boolean saved = rollSave(saveType, saveMod);
+
+		// Apply results of save
+		if (saved && isResistantToEnergy(energy))
+			return;
+		else if (saved || isResistantToEnergy(energy))
 			damage /= 2;
 
 		// Apply the damage
@@ -1054,6 +1079,32 @@ public class Monster {
 			default: return false;
 		}
 	} 
+
+	/**
+	* Is this monster resistant to this energy type?
+	*/
+	private boolean isResistantToEnergy (EnergyType energy) {
+		switch (energy) {
+			case Fire: return hasSpecial(SpecialType.FireResistance);
+			case Cold: return hasSpecial(SpecialType.ColdResistance);
+			case Acid: return hasSpecial(SpecialType.AcidResistance);
+			case Volt: return hasSpecial(SpecialType.VoltResistance);
+			default: return false;
+		}
+	}
+
+	/**
+	* Is this monster extra-vulnerable to this energy type?
+	*/
+	private boolean isVulnerableToEnergy (EnergyType energy) {
+		switch (energy) {
+			case Fire: return hasSpecial(SpecialType.FireVulnerability);
+			case Cold: return hasSpecial(SpecialType.ColdVulnerability);
+			case Acid: return hasSpecial(SpecialType.AcidVulnerability);
+			case Volt: return hasSpecial(SpecialType.VoltVulnerability);
+			default: return false;
+		}
+	}
 
 	/**
 	* Try to force energy damage to one enemy monster.
@@ -1194,6 +1245,7 @@ public class Monster {
 					case BloodDrain: doBloodDrain(); break;
 					case Constriction: doConstriction(); break;
 					case Rending: doRending(); break;
+					case Smothering: doSmothering(); break;
 					default: 
 						System.err.println("Unknown attachment ability: " + type);
 				}
@@ -1254,6 +1306,20 @@ public class Monster {
 		for (int i = 0; i < atk.getRate(); i++) {
 			int damage = atk.getDamage().roll();
 			host.takeDamage(damage);
+		}
+	}
+
+	/**
+	* Smother our host.
+	* This ability is used by Shambling Mounds and Lurkers Above.
+	* Requires high total hit score to initiate (25+)
+	* Then, damage and auto-death in a few rounds.
+	*/
+	private void doSmothering () {
+		assert(hasSpecial(SpecialType.Smothering) && host != null);
+		host.takeDamage(Dice.roll(6));
+		if (Dice.roll(4) == 1) {
+			host.addCondition(SpecialType.Death);
 		}
 	}
 
@@ -1416,24 +1482,42 @@ public class Monster {
 	public void summonMinions (Party party) {
 		SpecialType summonsType = getSummonsAbility();
 		if (summonsType != null) {
-			switch (summonsType) {
+			MonsterDatabase mdb = MonsterDatabase.getInstance();
+			Monster minionType = null;
+			int minionNum = 0;
 
+			// Determine the monsters summoned
+			switch (summonsType) {
 				case SummonVermin: 
-					party.addMonsters("Wolf", new Dice(3, 6).roll()); 
-					if (FightManager.getPlayByPlayReporting())
-						System.out.println(this.race + " summons Wolves");
+					minionType = mdb.getByRace("Wolf");
+					minionNum = new Dice(3, 6).roll();
 					break;
 
 				case SummonTrees:
-					party.addMonsters("Tree, Animated", 2);
-					if (FightManager.getPlayByPlayReporting())
-						System.out.println(this.race + " summons Trees");
+					minionType = mdb.getByRace("Tree, Animated");
+					minionNum = 2;
+					break;
+					
+				case Shrieking:
+					if (Dice.coinFlip()) {
+						minionType = mdb.getRandom();
+						minionNum = 1;
+					}				
 					break;
 
 				default:
 					System.err.println("Summons type not found: " 
 						+ summonsType);
 			}  
+			
+			// Add the summoned types to party
+			if (minionType != null) {
+				party.addMonsters(minionType, minionNum);
+				if (FightManager.getPlayByPlayReporting()) {
+					System.out.println(getRace() + " summons " + minionType.getRace()
+						+ (minionNum > 1 ? "s (" + minionNum + ")" : ""));
+				}			
+			}
 		}
 	}
 
@@ -1506,7 +1590,10 @@ public class Monster {
 	* Attach ourselves to some creature (e.g., blood drain).
 	*/
 	private void setHost (Monster host) {
-		this.host = host; 
+		this.host = host;
+		if (FightManager.getPlayByPlayReporting()) {
+			System.out.println(getRace() + " is attached to " + host.getRace());		
+		}
 	}
 
 	/**
@@ -2023,9 +2110,11 @@ public class Monster {
 			spellMemory.addByName("Ice Storm");
 		}
 		
-		// Lammasu
-		// - Spells are clerical, which we ignore here (post-melee recovery)
-		if (race.equals("Lammasu")) {
+		// Cleric class equivalences
+		// - We ignore these types here (post-melee recovery)
+		if (race.equals("Lammasu") 
+			|| race.equals("Guardian Naga")) 
+		{
 			return;		
 		}		
 

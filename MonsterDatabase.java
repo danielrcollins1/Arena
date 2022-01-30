@@ -58,14 +58,14 @@ public class MonsterDatabase implements Iterable<Monster> {
 				instance = new MonsterDatabase();
 			}
 			catch (IOException e) {
-				System.out.println("Failed to read the MonsterDatabase file.");
+				System.err.println("Failed to read monster database file.");
 			}
 		}
 		return instance;
 	}
 
 	/**
-	*	Return iterator for the iterable interface.
+	*	Implement the iterable interface.
 	*/
 	public Iterator<Monster> iterator() {        
 		return monsterList.iterator();
@@ -75,12 +75,21 @@ public class MonsterDatabase implements Iterable<Monster> {
 	*  Get a monster by matching its race.
 	*/
 	public Monster getByRace (String race) {
-		for (Monster m: this) {
+		for (Monster m: monsterList) {
 			if (m.getRace().equalsIgnoreCase(race)) {
 				return m;
 			}
 		}
+		System.err.println("Failed to find monster in database: " + race);
 		return null;
+	}
+
+	/**
+	*  Get a random monster from the database.
+	*/
+	public Monster getRandom () {
+		int index = Dice.roll(monsterList.size()) - 1;
+		return monsterList.get(index);
 	}
 
 	/**

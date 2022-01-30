@@ -18,11 +18,11 @@ public enum SpecialType {
 
 	NPC, Poison, Paralysis, Petrification, BloodDrain, EnergyDrain,
 	Constriction, Immolation, Rotting, Swallowing,
-	SilverToHit, MagicToHit, ChopImmunity, DamageReduction,
+	SilverToHit, MagicToHit, ChopImmunity, ChopResistance,
 	ManyHeads, Berserking, HitBonus, Invisibility, Detection, 
 	Rending, SporeCloud, RockHurling, TailSpikes, Charm, Fear,
 	SaveBonus, DodgeGiants, Regeneration, StrengthDrain, FleshEating, 
-	Whirlwind, WallOfFire, ConeOfCold, AcidSpitting, Confusion, 
+	Whirlwind, WallOfFire, ConeOfCold, AcidSpit, Confusion, 
 	Displacement, Blinking, Phasing, CharmTouch, Dragon, 
 	FireBreath, ColdBreath, VoltBreath, AcidBreath, PoisonBreath, 
 	PetrifyingBreath, PetrifyingGaze, SummonVermin, SummonTrees,
@@ -33,7 +33,11 @@ public enum SpecialType {
 	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
 	AntimagicSphere, BlownAway, Disintegration, Coma, Stun, 
-	Feeblemind, Insanity, Hypnosis, SpellReflection, CharmPerTen;
+	Feeblemind, Insanity, Hypnosis, SpellReflection, CharmPerTen,
+	FireResistance, ColdResistance, AcidResistance, VoltResistance,
+	FireVulnerability, ColdVulnerability, AcidVulnerability, 
+	VoltVulnerability, PoisonSpit, DeathGaze, Smothering, Stunning,
+	Shrieking;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -70,7 +74,7 @@ public enum SpecialType {
 			// Stone saves
 			case Paralysis: case Petrification: 
 			case Hold: case Webs: case Slowing:
-			case SappingStrands:
+			case SappingStrands: case Stunning:
 				return SavingThrows.Type.Stone;
 
 			// Death saves
@@ -94,7 +98,7 @@ public enum SpecialType {
 			case Charm: case Hold: case Polymorphism: case Death: 
 			case BlownAway: case Disintegration: case BrainConsumption:
 			case Coma: case Stun: case Feeblemind: case Insanity:
-			case Hypnosis:
+			case Hypnosis: case Stunning:
 				return true;
 		}
 		return false;
@@ -129,7 +133,7 @@ public enum SpecialType {
 	*/
 	public boolean isSummonsAbility () {
 		switch (this) {
-			case SummonVermin: case SummonTrees:
+			case SummonVermin: case SummonTrees: case Shrieking:
 				return true;
 		}	
 		return false;
@@ -141,6 +145,7 @@ public enum SpecialType {
 	public boolean isAttachmentAbility () {
 		switch (this) {
 			case BloodDrain: case Constriction: case Rending:
+			case Smothering:
 				return true;
 		}	
 		return false;

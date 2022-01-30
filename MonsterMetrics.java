@@ -260,7 +260,6 @@ public class MonsterMetrics {
 				if (spotlightMonster == null) {
 					spotlightMonster = MonsterDatabase.getInstance().getByRace(s);
 					if (spotlightMonster == null) {
-						System.err.println("Monster not found in database.");
 						exitAfterArgs = true;     
 					}
 				}
