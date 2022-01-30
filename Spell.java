@@ -21,6 +21,7 @@ public class Spell {
 	//  Inner class
 	//--------------------------------------------------------------------------
 
+	/** Area of effect descriptor. */
 	private static class AreaOfEffect {
 		public int size;
 		public Shape shape;

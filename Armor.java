@@ -11,6 +11,7 @@ public class Armor extends Equipment {
 	//  Enumeration
 	//--------------------------------------------------------------------------
 
+	/** Class of armor. */
 	public enum Type {Shield, Leather, Chain, Plate};
 
 	//--------------------------------------------------------------------------
