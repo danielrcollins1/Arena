@@ -126,6 +126,9 @@ public class MonsterMetrics {
 	/** Should we wait for a keypress to start (for profiler)? */
 	boolean waitForKeypress;
 
+	/** Should we only print stat blocks for monsters? */
+	boolean doPrintStatBlocks;
+
 	/** Flag to escape after parsing arguments. */
 	boolean exitAfterArgs;
 
@@ -175,6 +178,7 @@ public class MonsterMetrics {
 		System.out.println("\t-a armor worn by fighters (=n, l, c, p; "
 			+ "default " + DEFAULT_ARMOR + ")");
 		System.out.println("\t-b set filename for an alternate monster database");
+		System.out.println("\t-c print stat blocks only for active monsters");
 		System.out.println("\t-d display equated fighter hit dice per level");
 		System.out.println("\t-e display equated fighters per level");
 		System.out.println("\t-f number of fights per point in search space " 
@@ -186,6 +190,7 @@ public class MonsterMetrics {
 		System.out.println("\t-m chance for magic weapon bonus per level " 
 			+ "(default =" + DEFAULT_MAGIC_PER_LEVEL_PCT + ")");
 		System.out.println("\t-n show suggested best number matches for various levels");
+		System.out.println("\t-o pick random type from database for highlight monster");
 		System.out.println("\t-p show EHD-parity win ratios vs. expected-size party");
 		System.out.println("\t-q show only quick key stats in table form");
 		System.out.println("\t-r display only monsters with revised EHD from database");
@@ -235,6 +240,7 @@ public class MonsterMetrics {
 					case 'a': armorType = getArmorType(s); break;
 					case 'b': MonsterDatabase.setDatabaseFilename(
 									getParamString(s)); break;
+					case 'c': doPrintStatBlocks = true; break;
 					case 'd': displayEquatedFightersHD = true; break;
 					case 'e': displayEquatedFighters = true; break;
 					case 'f': numberOfFights = getParamInt(s); break;
@@ -244,6 +250,8 @@ public class MonsterMetrics {
 					case 'l': showBestLevelMatch = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
 					case 'n': showBestNumberMatch = true; break;
+					case 'o': spotlightMonster = MonsterDatabase.getInstance()
+									.getRandom(); break;
 					case 'p': showParityWinRatios = true; break;
 					case 'q': showQuickBattleStats = true; break;
 					case 'r': displayOnlyRevisions = true; break;
@@ -975,9 +983,10 @@ public class MonsterMetrics {
 
 		// Check valid EHD
 		if (monster.getEHD() <= 0) {
-			System.out.println("Cannot compute number appearing for EHD 0 monster.\n");
+			System.out.println("Cannot compute number appearing for "
+				+ "EHD 0 monster: " + monster.getRace() + "\n");
 			return;
-		}		
+		}
 
 		// Set up parties to fight
 		int ftrLevel = (commandPartyLevel != 0) ? 
@@ -1026,6 +1035,21 @@ public class MonsterMetrics {
 	}
 
 	/**
+	*  Print stat blocks.
+	*/
+	private void printStatBlocks () {
+		if (spotlightMonster != null) {
+			System.out.println(spotlightMonster);
+		}	
+		else {
+			for (Monster monster: MonsterDatabase.getInstance()) {
+				System.out.println(monster);
+			}
+			System.out.println();
+		}
+	}
+
+	/**
 	*  Start the process timer.
 	*/
 	private void startClock () {
@@ -1064,7 +1088,9 @@ public class MonsterMetrics {
 			}
 			metrics.startClock();
 			metrics.displayUnknownSpecials();
-			if (metrics.doShowSampleFight)
+			if (metrics.doPrintStatBlocks)
+				metrics.printStatBlocks();
+			else if (metrics.doShowSampleFight)
 				metrics.showSampleFight();
 			else if (metrics.doAssessSingleMatchup)
 				metrics.assessSingleMatchup();	

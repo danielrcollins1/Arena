@@ -305,7 +305,8 @@ public class Party implements Iterable<Monster> {
 			// Assuming party is all one race
 			String s = members.get(0).getRace();
 			if (size() > 1) {
-				s += "s (" + size() + ")";
+				s += s.endsWith("s") ? "es" : "s";
+				s += " (" + size() + ")";
 			}
 			if (size() < 6) {
 				s += ": hp " + getHitPointList();
