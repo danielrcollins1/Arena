@@ -136,7 +136,7 @@ public class Weapon extends Equipment {
 	*/
 	static public Weapon torch () {
 		return new Weapon("Torch", Material.Wood, ONE_THIRD, 0,
-			new Dice(3), EnergyType.Fire, 1);
+			new Dice(4), EnergyType.Fire, 1);
 	}
 
 	/**
