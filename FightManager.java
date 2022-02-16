@@ -32,6 +32,12 @@ public class FightManager {
 	/** Second party in this fight. */
 	private Party party2;
 
+	/** Parties ordered by initiative. */
+	List<Party> initOrder;
+
+	/** Winner of this fight. */
+	private Party winner;
+
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -42,6 +48,7 @@ public class FightManager {
 	FightManager (Party party1, Party party2) {
 		this.party1 = party1;
 		this.party2 = party2;
+		setInitiativeOrder();
 	}
 	
 	/**
@@ -87,13 +94,12 @@ public class FightManager {
 		// Prepare for battle
 		party1.prepBattle(party2);
 		party2.prepBattle(party1);
-		List<Party> order = getInitiativeOrder();
 
 		// Make special attacks on entry
 		turnCount = 0;
 		reportPlayByPlay();
-		order.get(0).makeSpecialAttacks(order.get(1));
-		order.get(1).makeSpecialAttacks(order.get(0));
+		initOrder.get(0).makeSpecialAttacks(initOrder.get(1));
+		initOrder.get(1).makeSpecialAttacks(initOrder.get(0));
 
 		// Alternate turns
 		while ((turnCount < MAX_TURNS)
@@ -101,38 +107,34 @@ public class FightManager {
 		{
 			turnCount++;
 			reportPlayByPlay();
-			order.get(0).takeTurn(order.get(1));
-			order.get(1).takeTurn(order.get(0));
+			initOrder.get(0).takeTurn(initOrder.get(1));
+			initOrder.get(1).takeTurn(initOrder.get(0));
 		}
 
 		// Call the winner
-		Party winner = callWinner();
-		if (reportPlayByPlay) {
-			System.out.println("* Winner is " + winner + "\n");
-		}
+		callWinner();
 		return winner;		
 	}
 
 	/**
-	*  Get parties in initiative order.
+	*  Set the initiative order.
 	*/
-	private List<Party> getInitiativeOrder () {
-		List<Party> order = new ArrayList<Party>(2);
+	private void setInitiativeOrder () {
+		initOrder = new ArrayList<Party>(2);
 		if (Dice.coinFlip()) {
-			order.add(party1);
-			order.add(party2);
+			initOrder.add(party1);
+			initOrder.add(party2);
 		}
 		else {
-			order.add(party2);
-			order.add(party1);
+			initOrder.add(party2);
+			initOrder.add(party1);
 		}
-		return order;
 	}
 
 	/**
 	*  Decide on the winner of a fight.
 	*/
-	private Party callWinner () {
+	private void callWinner () {
 
 		// Get ratio alive
 		double ratioLive1 = party1.getRatioLive();
@@ -140,13 +142,18 @@ public class FightManager {
 		
 		// Call the winner
 		if (ratioLive1 > ratioLive2) {
-			return party1;
+			winner = party1;
 		}
 		else if (ratioLive2 > ratioLive1) {
-			return party2;
+			winner = party2;
 		}
 		else {
-			return Dice.coinFlip() ? party1 : party2;		
+			winner = Dice.coinFlip() ? party1 : party2;		
+		}
+		
+		// Report if desired
+		if (reportPlayByPlay) {
+			System.out.println("* Winner is " + winner + "\n");
 		}
 	}
 
@@ -155,6 +162,20 @@ public class FightManager {
 	*/
 	public int getTurnCount () {
 		return turnCount;
+	}
+
+	/**
+	*  Get the winner.
+	*/
+	public Party getWinner() {
+		return winner;
+	}
+
+	/**
+	*  Check if winner was first-mover?
+	*/
+	public boolean winnerWonInit () {
+		return winner == initOrder.get(0);
 	}
 
 	/**
