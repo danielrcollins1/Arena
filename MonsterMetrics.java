@@ -84,6 +84,9 @@ public class MonsterMetrics {
 	/** Monster number for single matchup. */
 	int commandMonsterNumber;
 
+	/** Frequency that winner is first-mover. */
+	double freqWinnerWonInit;
+
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
 
@@ -655,7 +658,7 @@ public class MonsterMetrics {
 		assert (monsterType != null); 
 		if (fighterLevel < 0) return 1.0;
 
-		int wins = 0;
+		int wins = 0, countWinnerWonInit = 0;
 		for (int fight = 1; fight <= numberOfFights; fight++)   {
 
 			// Fight & track if monster wins
@@ -665,6 +668,14 @@ public class MonsterMetrics {
 			if (manager.fight() == monParty) {
 				wins++;
 			}			
+
+			// Update frequency that winner won initiative
+			if (doAssessSingleMatchup) {
+				if (manager.winnerWonInit()) {
+					countWinnerWonInit++;			
+				}
+				freqWinnerWonInit = (double) countWinnerWonInit / fight;
+			}
 			
 			// Shortcut a lopsided matchup.
 			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
@@ -1032,6 +1043,10 @@ public class MonsterMetrics {
 			spotlightMonster, commandMonsterNumber, commandPartyLevel);
 		double percent = winRatio * 100;			
 		System.out.println("Monster win ratio: " + percent + "%\n");
+
+		// Show frequency that winner won initiative
+		double pctWonByInit = freqWinnerWonInit * 100;
+		System.out.println("Winner won initiative: " + pctWonByInit + "%\n");
 	}
 
 	/**
