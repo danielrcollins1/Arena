@@ -447,7 +447,7 @@ public class Monster {
 		checkRegeneration();
 		if (checkHandicaps(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
-		if (checkCastSpellInMelee(enemies)) return true;
+		if (checkCastSpellInMelee(friends, enemies)) return true;
 		if (checkDrawNewWeapon(enemies)) return true;
 
 		// Secondary abilities (in block for performance)
@@ -785,7 +785,7 @@ public class Monster {
 		}
 
 		// Check for offensive spell-casting
-		if (checkCastSpellPreMelee(enemy)) {
+		if (checkCastSpellPreMelee(friends, enemy)) {
 			return;
 		}
 
@@ -1932,7 +1932,9 @@ public class Monster {
 	* @param area true if we want area-effect spell.
 	* @return true if we cast a spell.
 	*/
-	private boolean tryCastAttackSpell (Party enemies, boolean area) {
+	private boolean tryCastAttackSpell (
+		Party friends, Party enemies, boolean area) 
+	{
 		if (hasSpells() 
 			&& !hasCondition(SpecialType.AntimagicSphere)) 
 		{
@@ -1941,7 +1943,7 @@ public class Monster {
 				if (FightManager.getPlayByPlayReporting()) {
 					System.out.println(this.race + " casts " + spell);
 				}
-				spell.cast(getLevel(), enemies);
+				spell.cast(this, friends, enemies);
 				wipeSpellFromMemory(spell);
 				return true;
 			} 
@@ -1954,11 +1956,11 @@ public class Monster {
 	* Look for area-effects first; then if none, try targeted.
 	* @return true if we cast a spell.
 	*/
-	private boolean checkCastSpellPreMelee (Party enemies) {
+	private boolean checkCastSpellPreMelee (Party friends, Party enemies) {
 		if (hasSpells()) {
-			if (tryCastAttackSpell(enemies, true))
+			if (tryCastAttackSpell(friends, enemies, true))
 				return true;
-			else if (tryCastAttackSpell(enemies, false))
+			else if (tryCastAttackSpell(friends, enemies, false))
 				return true;
 		}
 		return false;
@@ -1969,8 +1971,8 @@ public class Monster {
 	* Only targeted spells are allowed (not area-effects).
 	* @return true if we cast a spell.
 	*/
-	private boolean checkCastSpellInMelee (Party enemies) {
-		return tryCastAttackSpell(enemies, false);
+	private boolean checkCastSpellInMelee (Party friends, Party enemies) {
+		return tryCastAttackSpell(friends, enemies, false);
 	}
 
 	/**
@@ -2025,7 +2027,7 @@ public class Monster {
 		numZaps = Math.min(numZaps, eyeFuncs.size());
 		Collections.shuffle(eyeFuncs);
 		for (int i = 0; i < numZaps; i++) {
-			eyeFuncs.get(i).cast(getHD(), enemy);
+			eyeFuncs.get(i).cast(this, null, enemy);
 		}
 		
 		// Cast the central antimagic ray at a spellcaster.

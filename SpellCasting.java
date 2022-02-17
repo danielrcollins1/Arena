@@ -105,7 +105,7 @@ public class SpellCasting {
 		}
 
 		/** Cast the spell at a target party. */
-		abstract void cast (int level, Party targets);
+		abstract void cast (Monster caster, Party friends, Party enemies);
 	}
 
 	//--------------------------------------------------------------------------
@@ -159,8 +159,8 @@ public class SpellCasting {
 		CharmPersonCasting () {
 			super(1, INF, null, SpecialType.Charm, true);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
@@ -176,10 +176,11 @@ public class SpellCasting {
 		MagicMissileCasting () {
 			super(EnergyType.Other);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {
+			int level = caster.getLevel();
 			int numMissiles = Math.min((level + 1) / 2, 5);
 			for (int i = 0; i < numMissiles; i++) {
-				Monster target = targets.random();
+				Monster target = enemies.random();
 				int damage = Dice.roll(6) + 1;
 				castEnergy(target, level, damage);
 			}		
@@ -193,14 +194,14 @@ public class SpellCasting {
 		SleepCasting () {
 			super(NUM_BY_AREA, 4, SpecialType.Sleep);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
 			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
+			List<Monster> hitTargets = enemies.randomGroup(numHit);
 			int effectHD = new Dice(2, 6).roll();
 			for (Monster target: hitTargets) {
 				if (target.getHD() <= maxTargetHD && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					castCondition(target, level, 0);
+					castCondition(target, caster.getLevel(), 0);
 				}
 			}	
 		}
@@ -215,8 +216,8 @@ public class SpellCasting {
 		DarknessCasting () {
 			super(1, INF, SpecialType.Blindness);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 	
@@ -227,8 +228,8 @@ public class SpellCasting {
 		WebCasting () {
 			super(NUM_BY_AREA, INF, SpecialType.Webs);
 		}
-		void cast (int level, Party targets) {
-			castConditionOnArea(targets, level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 	
@@ -239,10 +240,11 @@ public class SpellCasting {
 		FireballCasting () {
 			super(EnergyType.Fire);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
+			int level = caster.getLevel();
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
-			castEnergyOnArea(targets, level, damage);
+			castEnergyOnArea(enemies, level, damage);
 		}
 	}
 
@@ -253,10 +255,11 @@ public class SpellCasting {
 		LightningBoltCasting () {
 			super(EnergyType.Volt);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
+			int level = caster.getLevel();
 			int numDice = Math.min(level, 10);
 			int damage = new Dice(numDice, 6).roll();
-			castEnergyOnArea(targets, level, damage);
+			castEnergyOnArea(enemies, level, damage);
 		}
 	}
 
@@ -270,11 +273,11 @@ public class SpellCasting {
 		HoldPersonCasting () {
 			super(4, INF, null, SpecialType.Hold, true);
 		}	
-		void cast (int level, Party targets) {
-			List<Monster> hitTargets = targets.randomGroup(maxTargetNum);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			List<Monster> hitTargets = enemies.randomGroup(maxTargetNum);
 			int saveMod = (hitTargets.size() == 1) ? -2 : 0;
 			for (Monster target: hitTargets) {
-				castCondition(target, level, saveMod);
+				castCondition(target, caster.getLevel(), saveMod);
 			}
 		}
 	}
@@ -288,8 +291,8 @@ public class SpellCasting {
 		SuggestionCasting () {
 			super(1, INF, SpecialType.Charm);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
@@ -302,12 +305,13 @@ public class SpellCasting {
 		ConfusionCasting () {
 			super(NUM_BY_AREA, INF, SpecialType.Confusion);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
+			int level = caster.getLevel();
 			int maxHit = spellInfo.getMaxTargetsInArea();
 			int numEffect = new Dice(2, 6).roll();
 			if (level > 8) numEffect += (level - 8);
 			int numHit = Math.min(maxHit, numEffect);
-			List<Monster> hitTargets = targets.randomGroup(numHit);
+			List<Monster> hitTargets = enemies.randomGroup(numHit);
 			for (Monster target: hitTargets) {
 				castCondition(target, level, 0);
 			}	
@@ -323,8 +327,8 @@ public class SpellCasting {
 		FearCasting () {
 			super(NUM_BY_AREA, INF, SpecialType.Fear);
 		}
-		void cast (int level, Party targets) {
-			castConditionOnArea(targets, level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 
@@ -335,9 +339,9 @@ public class SpellCasting {
 		IceStormCasting () {
 			super(EnergyType.Cold);		
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
 			int damage = new Dice(8, 6).roll();
-			castEnergyOnArea(targets, level, damage);
+			castEnergyOnArea(enemies, caster.getLevel(), damage);
 		}
 	}
 
@@ -354,8 +358,8 @@ public class SpellCasting {
 		CharmMonsterCasting () {
 			super(1, INF, SpecialType.Charm);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
@@ -366,8 +370,8 @@ public class SpellCasting {
 		PolymorphOtherCasting () {
 			super(1, INF, SpecialType.Polymorphism);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
@@ -378,8 +382,8 @@ public class SpellCasting {
 		CloudkillCasting () {
 			super(NUM_BY_AREA, 6, SpecialType.Death);
 		}
-		void cast (int level, Party targets) {
-			castConditionOnArea(targets, level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 
@@ -393,11 +397,11 @@ public class SpellCasting {
 		HoldMonsterCasting () {
 			super(4, INF, SpecialType.Hold);
 		}
-		void cast (int level, Party targets) {
-			List<Monster> hitTargets = targets.randomGroup(maxTargetNum);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			List<Monster> hitTargets = enemies.randomGroup(maxTargetNum);
 			int saveMod = hitTargets.size() == 1 ? -2 : 0;
 			for (Monster target: hitTargets) {
-				castCondition(target, level, 0);
+				castCondition(target, caster.getLevel(), 0);
 			}
 		}
 	}
@@ -409,9 +413,10 @@ public class SpellCasting {
 		DeathSpellCasting () {
 			super(120, 8, SpecialType.Death);
 		}
-		void cast (int level, Party targets) {
+		void cast (Monster caster, Party friends, Party enemies) {		
+			int level = caster.getLevel();
 			int numHit = spellInfo.getMaxTargetsInArea();
-			List<Monster> hitTargets = targets.randomGroup(numHit);
+			List<Monster> hitTargets = enemies.randomGroup(numHit);
 			int numDice = Math.min(level, 20);
 			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
@@ -430,8 +435,8 @@ public class SpellCasting {
 		DisintegrateCasting () {
 			super(1, INF, SpecialType.Disintegration);
 		}
-		void cast (int level, Party targets) {
-			castCondition(targets.random(), level, 0);
+		void cast (Monster caster, Party friends, Party enemies) {		
+			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
@@ -453,7 +458,7 @@ public class SpellCasting {
 		// Cast a spell
 		Casting casting = new MagicMissileCasting();
 		System.out.println("Casting " + casting.getName());
-		casting.cast(12, party);
+		casting.cast(monster, party, party);
 		party.bringOutYourDead();
 		System.out.println(party);
 	}

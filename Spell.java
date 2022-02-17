@@ -294,11 +294,11 @@ public class Spell {
 	}
 
 	/**
-	*  Cast this spell in-game at a given party.
+	*  Cast this spell to help against enemy party.
 	*/
-	public void cast (int casterLevel, Party enemies) {
+	public void cast (Monster caster, Party friends, Party enemies) {
 		assert(casting != null);
-		casting.cast(casterLevel, enemies);
+		casting.cast(caster, friends, enemies);
 	}
 
 	/**
