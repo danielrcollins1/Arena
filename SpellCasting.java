@@ -26,8 +26,9 @@ public class SpellCasting {
 		EnergyType energy;
 		SpecialType condition;
 		boolean isPersonOnly;
+		boolean isIndirect;
 
-		/** Constructor (all fields) */
+		/** Constructor (basic) */
 		Casting (int maxTargetNum, int maxTargetHD, 
 			EnergyType energy, SpecialType condition, boolean isPerson) 
 		{
@@ -67,6 +68,7 @@ public class SpellCasting {
 		/* Miscellaneous accessors */
 		int getMaxTargetHD () { return maxTargetHD; }
 		boolean isPersonEffect () { return isPersonOnly; }
+		boolean isIndirect () { return isIndirect; }
 		EnergyType getEnergy () { return energy; }
 		SpecialType getCondition () { return condition; }
 
@@ -125,7 +127,9 @@ public class SpellCasting {
 		new HoldPersonCasting(), new LightningBoltCasting(), new SuggestionCasting(), 
 		new CharmMonsterCasting(), new ConfusionCasting(), new FearCasting(),
 		new IceStormCasting(), new PolymorphOtherCasting(), new CloudkillCasting(),
-		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting()
+		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting(),
+		new ConjureElementalCasting()
+		
 	};
 
 	//--------------------------------------------------------------------------
@@ -403,6 +407,22 @@ public class SpellCasting {
 			for (Monster target: hitTargets) {
 				castCondition(target, caster.getLevel(), 0);
 			}
+		}
+	}
+
+	/** 
+	*  Conjure Elemental effect. 
+	*/
+	static class ConjureElementalCasting extends Casting {
+		ConjureElementalCasting () {
+
+			// First parameter estimates number of 
+			// enemies we'll attack with elemental
+			super(0, INF, null, null, false);		
+			isIndirect = true;
+		}
+		void cast (Monster caster, Party friends, Party enemies) {
+			caster.conjureElemental(friends);
 		}
 	}
 

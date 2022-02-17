@@ -294,6 +294,14 @@ public class Spell {
 	}
 
 	/**
+	*  Expose casting indirect effect.
+	*/
+	public boolean isIndirect () {
+		assert(casting != null);
+		return casting.isIndirect();
+	}
+
+	/**
 	*  Cast this spell to help against enemy party.
 	*/
 	public void cast (Monster caster, Party friends, Party enemies) {

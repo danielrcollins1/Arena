@@ -54,6 +54,8 @@ public class Monster {
 	int killTally;
 	int timesMeleed;
 	Monster host;
+	Monster master;
+	Monster puppet;
 	String specialsString;
 	Set<SpecialType> specialList;
 	Set<SpecialType> conditionList;
@@ -352,6 +354,7 @@ public class Monster {
 	private void takeDamage (int damage) {
 		hitPoints -= damage;
 		boundHitPoints();
+		loseConcentration();
 		headCount();
 	}
 
@@ -423,6 +426,7 @@ public class Monster {
 	* Take our turn against an enemy party.
 	*/
 	public void takeTurn (Party friends, Party enemies) {
+		if (!enemies.isLive()) return;
 		if (checkSpecialsInMelee(friends, enemies)) return;
 		boolean isSweeping = useSweepAttacks(enemies);
 		int attackRate = getAttackRate(isSweeping);
@@ -445,17 +449,17 @@ public class Monster {
 
 		// Primary abilities & conditions
 		checkRegeneration();
+		if (checkControl(enemies)) return true;
+		if (checkConcentration()) return true;
 		if (checkHandicaps(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
 		if (checkCastSpellInMelee(friends, enemies)) return true;
 		if (checkDrawNewWeapon(enemies)) return true;
 
-		// Secondary abilities (in block for performance)
-		if (!specialList.isEmpty()) {
-			checkSlowing(enemies);
-			if (checkAttachment()) return true;
-			if (checkManyEyesSalvo(enemies)) return true;
-		}
+		// Secondary abilities
+		checkSlowing(enemies);
+		if (checkAttachment()) return true;
+		if (checkManyEyesSalvo(enemies)) return true;
 		return false;
 	}
 
@@ -978,8 +982,16 @@ public class Monster {
 	* Check if we are immune to a given condition.
 	*/
 	private boolean isImmuneToCondition (SpecialType condition) {
-		return ((condition.isUndeadImmune() && hasUndeadImmunity())
-			|| (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)));
+		if (condition == null) {
+			return false;
+		}
+		if (condition.isUndeadImmune() && hasUndeadImmunity()) {
+			return true;
+		}
+		if (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -1071,6 +1083,9 @@ public class Monster {
 	* Is this monster immune to this energy type?
 	*/
 	private boolean isImmuneToEnergy (EnergyType energy) {
+		if (energy == null) {
+			return false;
+		}
 		switch (energy) {
 			case Fire: return hasSpecial(SpecialType.FireImmunity);
 			case Cold: return hasSpecial(SpecialType.ColdImmunity);
@@ -1522,6 +1537,21 @@ public class Monster {
 	}
 
 	/**
+	* Conjure an Elemental under our control.
+	*/
+	public void conjureElemental (Party party) {
+
+		// Conjuring
+		MonsterDatabase mdb = MonsterDatabase.getInstance();
+		Monster type = mdb.getByRace("Earth Elemental, Large");
+		Monster elemental = type.spawn();
+		elemental.addCondition(SpecialType.Conjuration);
+		elemental.master = this;
+		this.puppet = elemental;
+		party.queueIncoming(elemental);
+	}
+
+	/**
 	* Check if we are confused on our turn to attack.
 	*/
 	private boolean checkConfusion (Party party) {
@@ -1874,13 +1904,11 @@ public class Monster {
 	*/
 	private boolean isSpellThreat (Spell spell) {
 		assert(spell.isCastable());	
-		if (isImmuneToMagic()) return false;
+		if (isImmuneToMagic() && !spell.isIndirect()) return false;
 		if (getHD() > spell.getMaxTargetHD()) return false;
-		if (spell.getEnergy() != null 
-			&& isImmuneToEnergy(spell.getEnergy())) return false;
-		if (spell.getCondition() != null 
-			&& isImmuneToCondition(spell.getCondition())) return false;
-		if (spell.isPersonEffect() && !isPerson()) return false;
+		if (isImmuneToEnergy(spell.getEnergy())) return false;
+		if (isImmuneToCondition(spell.getCondition())) return false;
+		if (!isPerson() && spell.isPersonEffect()) return false;
 		return true;			
 	}
 
@@ -1894,6 +1922,8 @@ public class Monster {
 		assert(hasSpells());
 		Spell bestSpell = null;
 		Monster sampleFoe = enemies.random();
+		
+		// Loop over spells in memory
 		for (Spell spell: getSpellMemory()) {
 
 			// Is this spell viable in our current situation?
@@ -2191,8 +2221,55 @@ public class Monster {
 	private boolean isFlamingWeapon (Equipment equip) {
 		return equip != null
 			&& equip instanceof Weapon
-			&& ((Weapon) equip).getEnergy() != null
 			&& ((Weapon) equip).getEnergy() == EnergyType.Fire;
+	}
+
+	/**
+	* Check if concentration spell costs our turn.
+	* @return true if we lose our turn
+	*/
+	private boolean checkConcentration () {
+		if (puppet != null) {
+			return true;
+		}	
+		return false;
+	}
+
+	/**
+	* Lose concentration when taking damage.
+	*/
+	private void loseConcentration () {
+		if (puppet != null) {
+			puppet = null;
+		}	
+	}
+
+	/**
+	* Check if our puppetry control has lapsed.
+	* @return true if we lose our turn
+	*/
+	private boolean checkControl (Party enemies) {
+
+		// Check on puppet we control
+		if (puppet != null) {
+			if (puppet.horsDeCombat() || puppet.master != this) {
+				puppet = null;
+			}
+		}	
+	
+		// Check on master that controls us
+		if (master != null) {
+			if (master.horsDeCombat() || master.puppet != this) {
+				master = null;
+				enemies.queueIncoming(this);
+				if (FightManager.getPlayByPlayReporting()) {
+					System.out.println(getRace() + " switches sides");
+				}			
+				return true;
+			}
+		}
+	
+		return false;	
 	}
 
 	/**

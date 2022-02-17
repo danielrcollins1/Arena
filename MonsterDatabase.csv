@@ -104,10 +104,10 @@ Guardian Naga,1,5,15,11,60,H,1,1d6,L,B,11,11,D,"SR3, M1","Poison, PoisonSpit, Co
 "Dragon, Black",1d4,2,9,7,60,H,2,2d6,C,B,12,7,D,O,"Flight (24), Detection (15), Fear (2), AcidBreath"
 Umber Hulk,1d4,2,6,8,50,E,2,1d6+1,N,B,12,8,D,S1,Confusion
 Trapper,1,3,3,12,70,G,2,1d6+2,N,B,12,12,D,"SR5, M1","Camouflage, Regeneration (1), FireResistance, ColdResistance, Constriction"
-"Golem, Flesh",1,9,9,12,-,-,1,2d6,N,B,13,12,D,S1,"MagicToHit (1), MagicImmunity"
 Catoblepas,1d3,7,6,6+2,-,-,1,1d6,N,B,14,6.6,W,"SR7, M1","DeathGaze, Stunning"
 "Dragon, Green",1d4,2,9,8,60,H,2,2d6,N,B,14,8,D,O,"Flight (24), Detection (15), Fear (2), PoisonBreath"
 Water Naga,1,5,15,7,60,H,1,1d4,N,B,15,7,U,"SR3, M1","Poison, Spells (5)"
+"Golem, Flesh",1,9,9,12,-,-,1,2d6,N,B,15,12,D,S1,"MagicToHit (1), MagicImmunity"
 "Dragon, Blue",1d4,2,9,9,60,H,2,2d6,N,B,15,9,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
 Mind Flayer,1d4,5,12,8+3,50,F,4,0,N,B,16,8.9,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
 "Hydra, 10 Heads",1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
@@ -121,10 +121,10 @@ Purple Worm,1d4,6,6,15,25,D,2,2d6,N,B,22,15,D,O,"Swallowing, Poison, Fearlessnes
 Dragon Turtle,1d4,2,3,12,60,H,2,2d6,C,B,25,12,U,O,"Swimming (9), Detection (15), Fear (2), SteamBreath"
 Masher,1d4,6,0,20,25,D,2,1d6+2,N,B,28,20,U,"S2, M1","Swimming (15), Swallowing, Poison"
 "Dragon, Gold",1d4,2,9,11,60,H,2,2d6,L,B,35,11,D,O,"Flight (24), Detection (15), Fear (2), FireBreath, PoisonBreath, Spells"
-"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,50,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
+"Golem, Stone",1,5,6,18,-,-,1,3d6,N,B,55,18,D,S1,"MagicToHit (2), MagicImmunity, Slowing"
 Beholder,1,0,3,12,90,I,1,1d6,N,B,60,12,D,S1,"Flight (3), ManyEyeFunctions"
-Rakshasa,1d4+1,-4,12,7,20,F,2,1d6,C,B,65,7,D,"SR5, M1","MindReading, Illusion, Spells (6), MagicImmunity, MagicToHit, ChopResistance"
-"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,200,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
+Rakshasa,1d4+1,-4,12,7,20,F,2,1d6,C,B,75,7,D,"SR5, M1","MindReading, Illusion, Spells (6), MagicImmunity, MagicToHit, ChopResistance"
+"Golem, Iron",1,2,3,24,-,-,1,4d6,N,B,140,24,D,S1,"MagicToHit (3), MagicImmunity, PoisonBreath (1)"
 Leprechaun,1,8,15,1/2,10,F,1,1d3,N,F,1,0.6,W,"SR3, M1","Invisibility, Illusion, Ventriloquism, PolymorphObjects, KeenEars"
 Dwarf,4d10x10,4,6,1,50,G,1,1d6,L,F,1,1,W,O,"SaveBonus (4), DodgeGiants"
 "Elf, Aquatic",3d10x10,5,0,1,30,E,1,1d6,L,F,1,1,U,"S2, M1","Swimming (12), Camouflage, HitBonus (1)"
@@ -164,7 +164,7 @@ Ettin,1d4,3,12,10,20,C,2,2d6,C,H,12,10,D,M1,Alertness
 "Giant, Cloud",1d8,4,12,12+2,30,E,1,3d6,C,H,12,12.6,D,O,"RockHurling, Detection"
 "Giant, Storm",1d8,4,15,15,30,E,1,3d6+3,N,H,17,15,D,S1,"RockHurling, WeatherControl"
 Ogre Mage,1d6,4,9,5+2,40,E,1,2d6,C,H,18,5.6,D,S1,"Flight (15), Invisibility, Darkness, Polymorphism, Regeneration (1), Spells"
-Titan,1,2,15,20,5,A,1,3d6+3,N,H,55,20,D,"S1, S3","MagicResistance (60), Spells"
+Titan,1,2,15,20,5,A,1,3d6+3,N,H,50,20,D,"S1, S3","MagicResistance (60), Spells"
 Bandit,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,D,O,-
 Brigand,3d10x10,6,12,1,15,A,1,1d6,C,M,1,1,W,O,Bravery (1)
 Nomad,3d10x10,6,12,1,15,A,1,1d6,N,M,1,1,W,O,-
