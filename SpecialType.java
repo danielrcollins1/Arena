@@ -64,7 +64,8 @@ public enum SpecialType {
 			// Spells saves
 			case Charm: case Sleep: case Confusion:
 			case Blindness: case Fear: case Polymorphism:
-			case AntimagicSphere: case Hypnosis:
+			case AntimagicSphere: case Hypnosis: 
+			case Feeblemind:
 				return SavingThrows.Type.Spells; 
 				
 			// Breath saves

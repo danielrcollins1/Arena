@@ -110,8 +110,7 @@ public class SpellCasting {
 		new CharmMonsterCasting(), new ConfusionCasting(), new FearCasting(),
 		new IceStormCasting(), new PolymorphOtherCasting(), new CloudkillCasting(),
 		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting(),
-		new ConjureElementalCasting()
-		
+		new ConjureElementalCasting(), new FeeblemindCasting()
 	};
 
 	//--------------------------------------------------------------------------
@@ -430,6 +429,28 @@ public class SpellCasting {
 		}
 		void cast (Monster caster, Party friends, Party enemies) {
 			caster.conjureElemental(friends);
+		}
+	}
+
+	/** 
+	*  Feeblemind effect. 
+	*/
+	static class FeeblemindCasting extends Casting {
+		FeeblemindCasting () {
+			condition = SpecialType.Feeblemind;
+			maxTargetNum = 1;
+		}
+		boolean isThreatTo (Monster m) {
+			return super.isThreatTo(m) && m.hasSpells();
+		}
+		void cast (Monster caster, Party friends, Party enemies) {
+			List<Monster> targets = enemies.randomGroup(enemies.size());
+			for (Monster target: targets) {
+				if (isThreatTo(target)) {
+					castCondition(target, caster.getLevel(), -4);
+					break;
+				}
+			}
 		}
 	}
 
