@@ -983,7 +983,7 @@ public class Monster {
 	/**
 	* Check if we are immune to a given condition.
 	*/
-	private boolean isImmuneToCondition (SpecialType condition) {
+	public boolean isImmuneToCondition (SpecialType condition) {
 		if (condition == null) {
 			return false;
 		}
@@ -1084,7 +1084,7 @@ public class Monster {
 	/**
 	* Is this monster immune to this energy type?
 	*/
-	private boolean isImmuneToEnergy (EnergyType energy) {
+	public boolean isImmuneToEnergy (EnergyType energy) {
 		if (energy == null) {
 			return false;
 		}
@@ -1174,7 +1174,7 @@ public class Monster {
 	/**
 	* Check if we are immune to all magic.
 	*/
-	private boolean isImmuneToMagic() {
+	public boolean isImmuneToMagic() {
 		return (hasSpecial(SpecialType.MagicImmunity)
 				|| hasSpecial(SpecialType.SpellReflection)
 				|| hasCondition(SpecialType.AntimagicSphere));
@@ -1903,19 +1903,6 @@ public class Monster {
 	}
 
 	/**
-	*  Can this monster be affected by the given spell?
-	*/
-	private boolean isSpellThreat (Spell spell) {
-		assert(spell.isCastable());	
-		if (isImmuneToMagic() && !spell.isIndirect()) return false;
-		if (getHD() > spell.getMaxTargetHD()) return false;
-		if (isImmuneToEnergy(spell.getEnergy())) return false;
-		if (isImmuneToCondition(spell.getCondition())) return false;
-		if (!isPerson() && spell.isPersonEffect()) return false;
-		return true;			
-	}
-
-	/**
 	*  Get the best castable attack spell.
 	*  Search for viable spell that affects the most targets.
 	*  @param area true if area-effect spell desired.
@@ -1931,8 +1918,8 @@ public class Monster {
 
 			// Is this spell viable in our current situation?
 			if (spell.isCastable()
-				&& (spell.isAreaEffect() == areaEffect)
-				&& sampleFoe.isSpellThreat(spell))
+				&& spell.isThreatTo(sampleFoe)
+				&& spell.isAreaEffect() == areaEffect)
 			{
 				if (bestSpell == null) {
 					bestSpell = spell;

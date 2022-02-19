@@ -262,43 +262,11 @@ public class Spell {
 	}
 
 	/**
-	*  Expose casting max target HD.
+	*  Expose is-threat to monster check.
 	*/
-	public int getMaxTargetHD () { 
+	public boolean isThreatTo (Monster monster) {
 		assert(casting != null);
-		return casting.getMaxTargetHD();
-	}
-		
-	/**
-	*  Expose casting energy effect.
-	*/
-	public EnergyType getEnergy () {
-		assert(casting != null);
-		return casting.getEnergy();
-	}
-		
-	/**
-	*  Expose casting condition effect.
-	*/
-	public SpecialType getCondition () {
-		assert(casting != null);
-		return casting.getCondition();
-	}
-		
-	/**
-	*  Expose casting person-only.
-	*/
-	public boolean isPersonEffect () {
-		assert(casting != null);
-		return casting.isPersonEffect();
-	}
-
-	/**
-	*  Expose casting indirect effect.
-	*/
-	public boolean isIndirect () {
-		assert(casting != null);
-		return casting.isIndirect();
+		return casting.isThreatTo(monster);	
 	}
 
 	/**
