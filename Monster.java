@@ -285,7 +285,9 @@ public class Monster {
 	* Add some special qualifiers based on name or type.
 	*/
 	private void addImpliedSpecials() {
-		if (getRace().startsWith("Dragon")) {
+		if (getRace().endsWith("Dragon")
+			|| getRace().endsWith("Dragon Turtle")
+		) {
 			addSpecial(SpecialType.Dragon);
 			dragonAge = parseDragonAge();
 		}
@@ -1509,7 +1511,7 @@ public class Monster {
 					break;
 
 				case SummonTrees:
-					minionType = mdb.getByRace("Tree, Animated");
+					minionType = mdb.getByRace("Animated Tree");
 					minionNum = 2;
 					break;
 					
@@ -1541,14 +1543,23 @@ public class Monster {
 	*/
 	public void conjureElemental (Party party) {
 
-		// Conjuring
-		MonsterDatabase mdb = MonsterDatabase.getInstance();
-		Monster type = mdb.getByRace("Earth Elemental, Large");
-		Monster elemental = type.spawn();
-		elemental.addCondition(SpecialType.Conjuration);
-		elemental.master = this;
-		this.puppet = elemental;
-		party.queueIncoming(elemental);
+		// Temp. commented out until we can think of fix
+		// for absence in alternate database problem.
+
+// 		// Get type from database
+// 		MonsterDatabase mdb = MonsterDatabase.getInstance();
+// 		Monster type = mdb.getByRace("Large Earth Elemental");
+// 		if (type == null) {
+// 			System.err.println("Conjured elemental not in database.");
+// 			return;
+// 		}
+// 		
+// 		// Conjure it		
+// 		Monster elemental = type.spawn();
+// 		elemental.addCondition(SpecialType.Conjuration);
+// 		elemental.master = this;
+// 		this.puppet = elemental;
+// 		party.queueIncoming(elemental);
 	}
 
 	/**
@@ -1831,7 +1842,7 @@ public class Monster {
 		final String ageDesc[] = {"Very Young", "Young", 
 			"Sub-Adult", "Adult", "Old", "Very Old"};
 		for (int age = 1; age <= ageDesc.length; age++) {
-			if (race.endsWith(", " + ageDesc[age - 1]))
+			if (race.startsWith(ageDesc[age - 1]))
 				return age;
 		}
 		return 0;
@@ -2103,7 +2114,7 @@ public class Monster {
 		// Gold Dragon
 		// - Gain one level of spell per age category.
 		// - As per AD&D idiom, gain two such spells per level.
-		if (race.startsWith("Dragon, Gold")) {
+		if (race.endsWith("Gold Dragon")) {
 			int age = getDragonAge();
 			for (int level = 1; level <= age; level++) {
 				for (int num = 0; num < 2; num++)
