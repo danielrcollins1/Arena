@@ -1543,23 +1543,15 @@ public class Monster {
 	*/
 	public void conjureElemental (Party party) {
 
-		// Temp. commented out until we can think of fix
-		// for absence in alternate database problem.
-
-// 		// Get type from database
-// 		MonsterDatabase mdb = MonsterDatabase.getInstance();
-// 		Monster type = mdb.getByRace("Large Earth Elemental");
-// 		if (type == null) {
-// 			System.err.println("Conjured elemental not in database.");
-// 			return;
-// 		}
-// 		
-// 		// Conjure it		
-// 		Monster elemental = type.spawn();
-// 		elemental.addCondition(SpecialType.Conjuration);
-// 		elemental.master = this;
-// 		this.puppet = elemental;
-// 		party.queueIncoming(elemental);
+		// Elemental stats are hard-coded in case of tests
+		// against alternate monster databases which lack it
+		String elemDesc = "Large Earth Elemental,1,2,6,16"
+			+ ",-,-,1,3d6,N,X,36,16,X,O,MagicToHit (2)";
+		Monster elemental = new Monster(elemDesc.split(","));
+		elemental.addCondition(SpecialType.Conjuration);
+		elemental.master = this;
+		this.puppet = elemental;
+		party.queueIncoming(elemental);
 	}
 
 	/**
