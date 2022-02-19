@@ -110,7 +110,7 @@ public class SpellCasting {
 		new CharmMonsterCasting(), new ConfusionCasting(), new FearCasting(),
 		new IceStormCasting(), new PolymorphOtherCasting(), new CloudkillCasting(),
 		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting(),
-		new ConjureElementalCasting(), new FeeblemindCasting()
+		new ConjureElementalCasting(), new FeeblemindCasting(), new DispelMagicCasting()
 	};
 
 	//--------------------------------------------------------------------------
@@ -296,6 +296,30 @@ public class SpellCasting {
 		}
 		void cast (Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
+		}
+	}
+
+	/** 
+	*  Dispel Magic effect. 
+	*
+	*  Used to remove enemy conjured elementals.
+	*/
+	static class DispelMagicCasting extends Casting {
+		DispelMagicCasting () {
+			maxTargetNum = 1;
+		}
+		boolean isThreatTo (Monster m) {
+			return super.isThreatTo(m) 
+				&& m.hasCondition(SpecialType.Conjuration);
+		}
+		void cast (Monster caster, Party friends, Party enemies) {
+			List<Monster> targets = enemies.randomGroup(enemies.size());
+			for (Monster target: targets) {
+				if (isThreatTo(target)) {
+					target.catchDispel(enemies);
+					break;
+				}
+			}
 		}
 	}
 

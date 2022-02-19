@@ -22,6 +22,9 @@ public class Party implements Iterable<Monster> {
 	/** List of incoming members. */
 	List<Monster> incoming;
 
+	/** List of outgoing members. */
+	List<Monster> outgoing;
+
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
@@ -33,6 +36,7 @@ public class Party implements Iterable<Monster> {
 		members = new ArrayList<Monster>();
 		fallen = new ArrayList<Monster>();
 		incoming = new ArrayList<Monster>();
+		outgoing = new ArrayList<Monster>();
 	}
 
 	/**
@@ -192,7 +196,6 @@ public class Party implements Iterable<Monster> {
 	*/
 	public void takeTurn (Party enemy) {
 		if (enemy.isLive()) {
-			addAllIncoming(enemy);
 			enemy.clearTimesMeleed();
 			for (Monster m: this) {
 				m.takeTurn(this, enemy);
@@ -366,12 +369,20 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	* Add all incoming monsters to primary list.
+	* Add new monster to our outgoing list.
 	*/
-	private void addAllIncoming (Party enemy) {
+	public void queueOutgoing (Monster m) {
+		outgoing.add(m);	
+	}
+
+	/**
+	* Handle all incoming & outgoing monsters.
+	*/
+	public void handleMemberChanges () {
 		this.members.addAll(incoming);
-		enemy.members.removeAll(incoming);
+		this.members.removeAll(outgoing);
 		incoming.clear();
+		outgoing.clear();
 	}
 
 	/**

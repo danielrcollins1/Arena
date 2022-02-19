@@ -451,7 +451,7 @@ public class Monster {
 
 		// Primary abilities & conditions
 		checkRegeneration();
-		if (checkControl(enemies)) return true;
+		if (checkControl(friends, enemies)) return true;
 		if (checkConcentration()) return true;
 		if (checkHandicaps(friends)) return true;
 		if (checkBreathWeapon(enemies)) return true;
@@ -1555,6 +1555,21 @@ public class Monster {
 	}
 
 	/**
+	* Catch a dispel magic effect.
+	*/
+	public void catchDispel (Party party) {
+
+		// For brevity, assume this works 
+		// automatically vs. conjured creatures.
+		if (hasCondition(SpecialType.Conjuration)) {
+			party.queueOutgoing(this);	
+			if (FightManager.getPlayByPlayReporting()) {
+				System.out.println(getRace() + " is dispelled");
+			}			
+		}
+	}
+
+	/**
 	* Check if we are confused on our turn to attack.
 	*/
 	private boolean checkConfusion (Party party) {
@@ -2238,7 +2253,7 @@ public class Monster {
 	* Check if our puppetry control has lapsed.
 	* @return true if we lose our turn
 	*/
-	private boolean checkControl (Party enemies) {
+	private boolean checkControl (Party friends, Party enemies) {
 
 		// Check on puppet we control
 		if (puppet != null) {
@@ -2251,9 +2266,10 @@ public class Monster {
 		if (master != null) {
 			if (master.horsDeCombat() || master.puppet != this) {
 				master = null;
+				friends.queueOutgoing(this);
 				enemies.queueIncoming(this);
 				if (FightManager.getPlayByPlayReporting()) {
-					System.out.println(getRace() + " switches sides");
+					System.out.println(getRace() + " goes out of control");
 				}			
 				return true;
 			}

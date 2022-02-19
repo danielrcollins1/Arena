@@ -100,6 +100,7 @@ public class FightManager {
 		reportPlayByPlay();
 		initOrder.get(0).makeSpecialAttacks(initOrder.get(1));
 		initOrder.get(1).makeSpecialAttacks(initOrder.get(0));
+		handleMemberChanges();
 
 		// Alternate turns
 		while ((turnCount < MAX_TURNS)
@@ -109,6 +110,7 @@ public class FightManager {
 			reportPlayByPlay();
 			initOrder.get(0).takeTurn(initOrder.get(1));
 			initOrder.get(1).takeTurn(initOrder.get(0));
+			handleMemberChanges();
 		}
 
 		// Call the winner
@@ -129,6 +131,15 @@ public class FightManager {
 			initOrder.add(party2);
 			initOrder.add(party1);
 		}
+	}
+
+	/**
+	*  Handle membership changes for both sides
+	*  (e.g., new creatures conjured or dispelled)
+	*/
+	private void handleMemberChanges () {
+		party1.handleMemberChanges();
+		party2.handleMemberChanges();
 	}
 
 	/**
