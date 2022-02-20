@@ -89,7 +89,7 @@ Werebear,2d10,2,9,6,15,C,2,1d6,L,B,7,6,D,"O, S1","Lycanthropy, SilverToHit, Rend
 Lammasu,2d4,6,12,6+2,40,A,2,1d6,L,B,7,6.6,D,S1,"Flight (24), Invisibility, DimensionDoor, Spells, ProtectionFromEvil"
 Phase Spider,1d6,6,6,5,80,E,1,1d6,N,B,8,5,D,S1,"Phasing, Poison"
 Slithering Tracker,1,5,12,5,15,C,1,0,N,B,8,5,D,"SR5, M1","Invisibility, Paralysis, Tracking"
-Hydra of 6 Heads,1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,ManyHeads
+Six-Headed Hydra,1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,ManyHeads
 Carrion Crawler,1d6,7,12,3+1,60,B,8,0,N,B,9,3.3,D,S1,Paralysis
 Manticore,1d4,4,12,6+1,25,D,3,1d6,C,B,9,6.3,D,O,"Flight (18), TailSpikes"
 Wyvern,1d6,3,9,7,60,E,1,1d6+2,N,B,9,7,D,O,"Flight (24), Poison"
@@ -110,7 +110,7 @@ Water Naga,1,5,15,7,60,H,1,1d4,N,B,15,7,U,"SR3, M1","Poison, Spells (5)"
 Flesh Golem,1,9,9,12,-,-,1,2d6,N,B,15,12,D,S1,"MagicToHit (1), MagicImmunity"
 Blue Dragon,1d4,2,9,9,60,H,2,2d6,N,B,15,9,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
 Mind Flayer,1d4,5,12,8+3,50,F,4,0,N,B,16,8.9,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
-Hydra of 10 Heads,1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
+Ten-Headed Hydra,1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
 Shambling Mound,1d3,0,6,8,25,I,2,1d6+2,N,B,18,8,W,"SR3, M1","Smothering, FireImmunity, VoltImmunity, ColdResistance, ChopResistance"
 Balrog,1d6,2,6,10,25,F,2,2d6,C,B,18,10,D,O,"Flight (15), MagicResistance (75), Immolation"
 Roper,1d3,0,3,10,90,D,1,3d6,C,B,18,10,D,SR2,"MagicResistance (80), SappingStrands, VoltImmunity, ColdResistance, FireVulnerability"

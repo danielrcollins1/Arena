@@ -1,9 +1,9 @@
 Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
-Hydra of 5 Heads,1,5,12,5,25,B,5,1d6,N,B,6,5,D,O,ManyHeads
-Hydra of 6 Heads,1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,ManyHeads
-Hydra of 7 Heads,1,5,12,7,25,B,7,1d6,N,B,10,7,D,O,ManyHeads
-Hydra of 8 Heads,1,5,12,8,25,B,8,1d6,N,B,12,8,D,O,ManyHeads
-Hydra of 9 Heads,1,5,12,9,25,B,9,1d6,N,B,14,9,D,O,ManyHeads
-Hydra of 10 Heads,1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
-Hydra of 11 Heads,1,5,12,11,25,B,11,1d6,N,B,20,11,D,O,ManyHeads
-Hydra of 12 Heads,1,5,12,12,25,B,12,1d6,N,B,22,12,D,O,ManyHeads
+Five-Headed Hydra,1,5,12,5,25,B,5,1d6,N,B,6,5,D,O,ManyHeads
+Six-Headed Hydra,1,5,12,6,25,B,6,1d6,N,B,8,6,D,O,ManyHeads
+Seven-Headed Hydra,1,5,12,7,25,B,7,1d6,N,B,10,7,D,O,ManyHeads
+Eight-Headed Hydra,1,5,12,8,25,B,8,1d6,N,B,12,8,D,O,ManyHeads
+Nine-Headed Hydra,1,5,12,9,25,B,9,1d6,N,B,14,9,D,O,ManyHeads
+Ten-Headed Hydra,1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
+Eleven-Headed Hydra,1,5,12,11,25,B,11,1d6,N,B,20,11,D,O,ManyHeads
+Twelve-Headed Hydra,1,5,12,12,25,B,12,1d6,N,B,22,12,D,O,ManyHeads
