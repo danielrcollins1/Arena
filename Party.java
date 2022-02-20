@@ -310,12 +310,10 @@ public class Party implements Iterable<Monster> {
 			return "Dead party";
 		}
 		else {
+
 			// Assuming party is all one race
-			String s = members.get(0).getRace();
-			if (size() > 1) {
-				s += s.endsWith("s") ? "es" : "s";
-				s += " (" + size() + ")";
-			}
+			Monster lead = members.get(0);
+			String s = lead.getNameWithNum(size());
 			if (size() < 6) {
 				s += ": hp " + getHitPointList();
 			}

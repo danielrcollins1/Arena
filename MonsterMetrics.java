@@ -1032,9 +1032,8 @@ public class MonsterMetrics {
 
 		// Report situation
 		System.out.println("Monster party: " 
-			+ commandMonsterNumber + " " + monster.getRace()
-			+ (commandMonsterNumber == 1 ? "" : "s")
-			+ " (EHD " + monster.getEHD() + ")");
+			+ monster.getNameWithNum(commandMonsterNumber)
+			+ " of EHD " + monster.getEHD());
 		System.out.println("Character party: "
 			+ expectedPartySize + " of level " + commandPartyLevel);
 

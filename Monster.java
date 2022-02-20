@@ -1534,8 +1534,8 @@ public class Monster {
 			if (minionType != null) {
 				party.addMonsters(minionType, minionNum);
 				if (FightManager.getPlayByPlayReporting()) {
-					System.out.println(getRace() + " summons " + minionType.getRace()
-						+ (minionNum > 1 ? "s (" + minionNum + ")" : ""));
+					System.out.println(getRace() + " summons "
+						+ minionType.getNameWithNum(minionNum));
 				}			
 			}
 		}
@@ -1817,10 +1817,48 @@ public class Monster {
 	}
 
 	/**
-	*  Short String representation of this monster.
+	* Short String representation of this monster.
 	*/
 	public String shortString () {
 		return getRace() + ": hp " + getHP();
+	}
+
+	/**
+	* Get plural form for this monster's racial type.
+	*/
+	private String getRacePlural () {
+		if (race.endsWith("Human"))
+			return race + "s";
+		if (race.endsWith("Man") || race.endsWith("man") )
+			return exchangeEnd(race, 2, "en");
+		if (race.endsWith("us"))
+			return exchangeEnd(race, 2, "i");
+		if (race.endsWith("y"))
+			return exchangeEnd(race, 1, "ies");
+		if (race.endsWith("f"))
+			return exchangeEnd(race, 1, "ves");
+		if (race.endsWith("ch") || race.endsWith("sh") 
+				|| race.endsWith("x") || race.endsWith("o")
+				|| race.endsWith("s"))
+			return race + "es";
+		return race + "s";
+	}
+
+	/**
+	* Cut end of string and replace with another.
+	*/
+	private String exchangeEnd(String s, int toCut, String newEnd) {
+		return s.substring(0, s.length() - toCut) + newEnd;	
+	}
+
+	/**
+	* Get singular or plural name with number tag.
+	*/
+	public String getNameWithNum (int number) {
+		if (number == 1)
+			return getRace();
+		else
+			return getRacePlural() + " (" + number + ")";
 	}
 
 	/**
