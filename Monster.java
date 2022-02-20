@@ -663,7 +663,10 @@ public class Monster {
 
 		// Damage reduction ability
 		if (target.hasSpecial(SpecialType.ChopResistance)) {
-			damage /= 2;
+			int param = target.getSpecialParam(SpecialType.ChopResistance);
+			if (param == 0 || getMagicHitLevel() < param) {
+				damage /= 2;
+			}	
 		}
 
 		return damage;
@@ -2109,11 +2112,7 @@ public class Monster {
 		// - Gain one level of spell per age category.
 		// - As per AD&D idiom, gain two such spells per level.
 		if (race.endsWith("Gold Dragon")) {
-			int age = getDragonAge();
-			for (int level = 1; level <= age; level++) {
-				for (int num = 0; num < 2; num++)
-					spellMemory.addRandom(level);
-			}
+			addTwoSpellsPerLevel(getDragonAge());
 		}
 
 		// Titan
@@ -2121,22 +2120,20 @@ public class Monster {
 		// - Inspired by AD&D rule, roll for levels available.
 		// - Ignore cleric spells (post-melee recovery)
 		if (race.equals("Titan")) {
-			int maxLevel = Dice.roll(3) + 3;
-			for (int level = 1; level <= maxLevel; level++) {
-				for (int num = 0; num < 2; num++)
-					spellMemory.addRandom(level);
-			}
+			addTwoSpellsPerLevel(Dice.roll(3) + 3);
 		}
 
 		// Triton
 		// - Handle different HD classes.
 		// - Estimate 2 spells per level available.
 		if (race.equals("Triton")) {
-			int maxLevel = getHD() - 3;
-			for (int level = 1; level <= maxLevel; level++) {
-				for (int num = 0; num < 2; num++)
-					spellMemory.addRandom(level);
-			}
+			addTwoSpellsPerLevel(getHD() - 3);
+		}
+
+		// Rakshasa
+		// - As idiom above, assume 2 spells per level.
+		if (race.equals("Rakshasa")) {
+			addTwoSpellsPerLevel(3);
 		}
 			
 		// Ogre Mage
@@ -2148,7 +2145,7 @@ public class Monster {
 		}
 		
 		// Cleric class equivalences
-		// - We ignore these types here (post-melee recovery)
+		// - We ignore these types here (post-melee recovery only)
 		if (race.equals("Lammasu") 
 			|| race.equals("Guardian Naga")) 
 		{
@@ -2159,6 +2156,29 @@ public class Monster {
 		if (spellMemory.isBlank()) {
 			System.err.println("Unknown monster with spells: " + race);
 		}
+	}
+
+	/**
+	* Add a fixed number of spells per level.
+	*
+	* The book idiom for early spell-casting monsters is to say,
+	* "use spells up to Nth level", and if detailed, indicate this
+	* means 2 spells per level (see Sup-I Titan, 1E MM Gold Dragon). 
+	* We apply this standard by default.
+	*/
+	private void addFixedSpellsPerLevel (int maxLevel, int numPerLevel) {
+		assert(hasSpells());
+		for (int level = 1; level <= maxLevel; level++) {
+			for (int num = 0; num < numPerLevel; num++)
+				spellMemory.addRandom(level);
+		}
+	}
+
+	/**
+	* Add the default two spells per level for monsters.
+	*/
+	private void addTwoSpellsPerLevel (int maxLevel) {
+		addFixedSpellsPerLevel(maxLevel, 2);	
 	}
 
 	/**
