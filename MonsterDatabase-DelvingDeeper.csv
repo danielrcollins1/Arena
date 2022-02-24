@@ -3,8 +3,8 @@ Androids,1d8,9,12,2,15,A,1,1d6,Any,B,4,2,D,DD,Spells (2)
 "Ants, giant",2d6,3,18,2,10,C,1,1d6,N,A,2,2,D,DD,Burrow (3)
 Apes,1d8,6,12,4+1,-,-,1,1d6+1,N,A,3,4.3,D,DD,Climb (12)
 Basilisks,1d6,4,6,6+1,40,F,1,1d6,"C, N",B,20,6.3,D,DD,"PetrifyingGaze, Petrification"
-Bats,10d8,8,3/12,1/2,15,-,,,N,,,,,DD,
-"Bats, giant",1d8,7,3/15,4,15,C,,,N,,,,,DD,
+Bats,10d8,8,3,1/2,15,-,0,0,N,,,,,DD,Flight (12)
+"Bats, giant",1d8,7,3,4,15,C,1,1d6,N,,,,,DD,Flight (15)
 Bears,1d6,6,12,5+5,-,-,,,N,,,,,DD,
 "Beetles, giant",1d12,3,9/6,2-7,-,-,,,N,,,,,DD,
 Black pudding,1,7,3,10,-,-,,,N,,,,,DD,
