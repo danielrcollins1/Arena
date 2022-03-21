@@ -65,7 +65,7 @@ Giant Manta Ray,1d4,5,0,12,-,-,2,1d6,N,A,20,12,U,"S2, M1","Swimming (12), Stealt
 Medium Sea Monster,1d4,4,3,30,-,-,1,4d6,N,A,33,30,U,"O, S1, S2","Swimming (15), Swallowing"
 Whale,1d8,5,0,40,-,-,1,6d6,N,A,40,40,U,S2,"Swimming (18), Swallowing"
 Large Sea Monster,1d4,4,3,45,-,-,1,5d6,N,A,45,45,U,"O, S1, S2","Swimming (15), Swallowing"
-Piercer,2d6,3,1,1,-,-,1,1d6,N,B,1,1,D,"SR3, M1",Camouflage
+Piercer,2d6,3,1,2,-,-,0,2d6,N,B,1,2,D,"SR3, M1","Camouflage, DropAttack"
 Homunculus,1,7,6,2,-,-,1,1d3,N,B,1,2,X,S1,"Flight (18), Telepathy"
 Ixitxachitl,3d6x10,5,0,2-1,75,F,1,2d6,C,B,2,1.7,U,"S2, M1",Swimming (9)
 Wererat,8d4,7,12,3,35,C,1,1d6,C,B,2,3,D,S1,"Lycanthropy, SilverToHit, Stealth (2)"

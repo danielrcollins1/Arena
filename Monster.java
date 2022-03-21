@@ -756,7 +756,7 @@ public class Monster {
 		if (target.canEatEquipment()) {
 			Weapon weapon = getWeapon();
 			if (target.canEatEquipment(weapon)) {
-				catchEquipmentLoss(weapon);			
+				catchEquipmentLoss(weapon);
 			}
 		}
 
@@ -911,6 +911,14 @@ public class Monster {
 				case ManyEyeFunctions:
 					doManyEyesSalvo(enemy);
 					return;
+					
+				case DropAttack:
+					Dice dropDamage = getAttack().getDamage();
+					if (dropDamage != null) {
+						target = enemy.random();
+						attack = new Attack("Drop", 1, getHD(), dropDamage);
+						singleAttack(attack, target, false);
+					}
 			}     
 		}
 	}
