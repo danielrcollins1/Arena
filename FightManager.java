@@ -103,7 +103,7 @@ public class FightManager {
 		handleMemberChanges();
 
 		// Alternate turns
-		while ((turnCount < MAX_TURNS)
+		while (turnCount < MAX_TURNS
 			&& party1.isLive() && party2.isLive()) 
 		{
 			turnCount++;
@@ -115,21 +115,16 @@ public class FightManager {
 
 		// Call the winner
 		callWinner();
-		return winner;		
+		return winner;
 	}
 
 	/**
 	*  Set the initiative order.
 	*/
 	private void setInitiativeOrder () {
-		initOrder = new ArrayList<Party>(2);
+		initOrder = new ArrayList<Party>(List.of(party1, party2));
 		if (Dice.coinFlip()) {
-			initOrder.add(party1);
-			initOrder.add(party2);
-		}
-		else {
-			initOrder.add(party2);
-			initOrder.add(party1);
+			Collections.reverse(initOrder);
 		}
 	}
 
