@@ -182,9 +182,9 @@ public class Character extends Monster {
 	public String getName () { return name; }
 
 	// Implement null Monster equipment methods
-	public Armor getArmor () { return armorWorn; }
-	public Armor getShield () { return shieldHeld; }
-	public Weapon getWeapon () { return weaponInHand; }
+	@Override public Armor getArmor () { return armorWorn; }
+	@Override public Armor getShield () { return shieldHeld; }
+	@Override public Weapon getWeapon () { return weaponInHand; }
 
 	// Access equipment carried
 	public int getEquipmentCount () { return equipList.size(); }
@@ -288,6 +288,7 @@ public class Character extends Monster {
 	/*
 	*  Take damage to an ability score.
 	*/
+	@Override
 	protected void takeAbilityDamage (Ability a, int damage) {
 		int val = abilityScoreDamage.get(a).intValue();
 		val += damage;
@@ -298,6 +299,7 @@ public class Character extends Monster {
 	/*
 	*  Clear any ability score damage.
 	*/
+	@Override
 	public void zeroAbilityDamage () {
 		for (Ability a: Ability.values())
 			abilityScoreDamage.put(a, 0);
@@ -331,6 +333,7 @@ public class Character extends Monster {
 	*  Are any of our ability scores zero?
 	*  Because then we are dead.
 	*/
+	@Override
 	protected boolean hasNullAbilityScore () {
 
 		// This is a critical-path function.
@@ -569,6 +572,7 @@ public class Character extends Monster {
 	/**
 	*  Draw best weapon against a given monster.
 	*/
+	@Override
 	public void drawBestWeapon (Monster monster) {
 		drawWeapon(null);
 		int maxDamage = -1;
@@ -588,6 +592,7 @@ public class Character extends Monster {
 	/**
 	*  Lose a given piece of equipment.
 	*/
+	@Override
 	protected void loseEquipment (Equipment equip) {
 		assert(equip != null);
 		equipList.remove(equip);
@@ -623,6 +628,7 @@ public class Character extends Monster {
 	/**
 	*  Add XP to the first character class.
 	*/
+	@Override
 	public void addXP (int xp) {
 		addXP(xp, 0);	
 	}
@@ -654,8 +660,8 @@ public class Character extends Monster {
 
 	/**
 	*  Lose a level (e.g., energy drain).
-	*  Overrides method in Monster.
 	*/
+	@Override 
 	protected void loseLevel () {
 		int damage = maxHitPoints - hitPoints;
 		getTopClass().loseLevel();
@@ -728,6 +734,7 @@ public class Character extends Monster {
 	/**
 	*  Make rolls to boost magic items for one level.
 	*/
+	@Override
 	public void boostMagicItemsOneLevel () {
 		if (weaponInHand == null) {
 			drawBestWeapon(null);
@@ -854,6 +861,7 @@ public class Character extends Monster {
 	/**
 	*  Does this character have a given feat?
 	*/
+	@Override
 	protected boolean hasFeat (Feat feat) {
 		for (ClassRecord rec: classList) {
 			if (rec.hasFeat(feat))
@@ -893,8 +901,8 @@ public class Character extends Monster {
 
 	/**
 	*  Get this character's recorded sweep rate.
-	*  Redefines dummy method in Monster class.
 	*/
+	@Override
 	protected int getSweepRate () {
 		return sweepRate;
 	}
@@ -1028,10 +1036,10 @@ public class Character extends Monster {
 
 	/**
 	*  Get the character's spell memory, if any.
-	*  Overrides method in Monster.
 	*  Warning: This assumes a character has at most one spellcasting class.
 	*  If multiple spell classes supported, this system needs reworking.
 	*/
+	@Override
 	public SpellMemory getSpellMemory () {
 		for (ClassRecord _class: classList) {
 			if (_class.getSpellMemory() != null)
