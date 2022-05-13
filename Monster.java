@@ -202,7 +202,6 @@ public class Monster {
 	public Armor getShield () { return null; }
 	public Weapon getWeapon () { return null; }
 	public void drawBestWeapon (Monster m) {}
-	public void sheatheWeapon () {}
 	public void boostMagicItemsOneLevel () {}
 	public void zeroAbilityDamage () {} 
 	public void addXP (int xp) {}
