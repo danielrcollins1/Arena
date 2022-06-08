@@ -84,9 +84,6 @@ public class MonsterMetrics {
 	/** Monster number for single matchup. */
 	int commandMonsterNumber;
 
-	/** Frequency that winner is first-mover. */
-	double freqWinnerWonInit;
-
 	/** Flag to display unknown special abilities. */
 	boolean displayUnknownSpecials;
 
@@ -658,7 +655,7 @@ public class MonsterMetrics {
 		assert (monsterType != null);
 		assert (monsterNumber > 0 || fighterNumber > 0);
 
-		// Check degenerate cases		
+		// Check degenerate cases
 		if (monsterNumber <= 0)
 			return invertIfNeeded(0, invert);
 		if (fighterNumber <= 0)
@@ -666,9 +663,10 @@ public class MonsterMetrics {
 		if (fighterLevel < 0) 
 			return invertIfNeeded(1, invert);
 
-		// Initialize counters
-		int wins = 0, countWinnerWonInit = 0;
-		for (int fight = 1; fight <= numberOfFights; fight++) {
+		// Run many fights
+		int fight = 0, wins = 0;
+		while (fight < numberOfFights) {
+			fight++;
 
 			// Fight & track if monster wins
 			Party ftrParty = makeFighterParty(fighterLevel, fighterNumber);
@@ -678,26 +676,34 @@ public class MonsterMetrics {
 				wins++;
 			}			
 
-			// Update frequency that winner won initiative
-			if (doAssessSingleMatchup) {
-				if (manager.winnerWonInit()) {
-					countWinnerWonInit++;			
-				}
-				freqWinnerWonInit = (double) countWinnerWonInit / fight;
-			}
-			
-			// Shortcut a lopsided matchup.
-			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
-			// See Weiss Introductory Statistics:
-			// Procedure 12.2, handicap enemy 10 fights.
-			int numFight = fight + 10;
-			double propWins = (double) wins / numFight;
-			double z = (2 * propWins - 1) * Math.sqrt(numFight);
-			if (z >= 2.0)
- 				return computeWinRatio(wins, fight, invert);
+			// Shortcut for a lopsided matchup.
+			if (testLopsidedMatch(fight, wins)
+					|| testLopsidedMatch(fight, fight - wins))
+				break;				
 		}
 
-		return computeWinRatio(wins, numberOfFights, invert);
+		// Compute win ratio
+		return invertIfNeeded((double) wins / fight, invert);
+	}
+
+	/**
+	*  Invert a win ratio if needed.
+	*/
+	private double invertIfNeeded (double ratio, boolean invert) {
+		return invert ? 1 - ratio : ratio;	
+	}
+
+	/**
+	*  Test to shortcut a lopsided matchup.
+	*  Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
+	*  See Weiss Introductory Statistics:
+	*  Procedure 12.2, handicap enemy 10 fights.
+	*/
+	private boolean testLopsidedMatch (int fight, int wins) {
+		int numFight = fight + 10;
+		double propWins = (double) wins / numFight;
+		double z = (2 * propWins - 1) * Math.sqrt(numFight);
+		return z > 2.0;
 	}
 
 	/**
@@ -715,21 +721,6 @@ public class MonsterMetrics {
 			party.add(character);
 		}
 		return party;
-	}
-
-	/**
-	*  Compute the winRatio at end of fight sequence.
-	*/
-	private double computeWinRatio (int wins, int fights, boolean invert) {
-		double winRatio = (double) wins / fights;
-		return invertIfNeeded(winRatio, invert);
-	}
-
-	/**
-	*  Invert a win ratio if needed.
-	*/
-	private double invertIfNeeded (double ratio, boolean invert) {
-		return invert ? 1 - ratio : ratio;	
 	}
 
 	/**
@@ -1059,10 +1050,6 @@ public class MonsterMetrics {
 			spotlightMonster, commandMonsterNumber, commandPartyLevel);
 		double percent = winRatio * 100;			
 		System.out.println("Monster win ratio: " + percent + "%\n");
-
-		// Show frequency that winner won initiative
-		double pctWonByInit = freqWinnerWonInit * 100;
-		System.out.println("Winner won initiative: " + pctWonByInit + "%\n");
 	}
 
 	/**
