@@ -655,11 +655,20 @@ public class MonsterMetrics {
 		int fighterLevel, int fighterNumber, 
 		boolean invert) 
 	{
-		assert (monsterType != null); 
-		if (fighterLevel < 0) return 1.0;
+		assert (monsterType != null);
+		assert (monsterNumber > 0 || fighterNumber > 0);
 
+		// Check degenerate cases		
+		if (monsterNumber <= 0)
+			return invertIfNeeded(0, invert);
+		if (fighterNumber <= 0)
+			return invertIfNeeded(1, invert);
+		if (fighterLevel < 0) 
+			return invertIfNeeded(1, invert);
+
+		// Initialize counters
 		int wins = 0, countWinnerWonInit = 0;
-		for (int fight = 1; fight <= numberOfFights; fight++)   {
+		for (int fight = 1; fight <= numberOfFights; fight++) {
 
 			// Fight & track if monster wins
 			Party ftrParty = makeFighterParty(fighterLevel, fighterNumber);
@@ -713,7 +722,14 @@ public class MonsterMetrics {
 	*/
 	private double computeWinRatio (int wins, int fights, boolean invert) {
 		double winRatio = (double) wins / fights;
-		return invert ? 1 - winRatio : winRatio;
+		return invertIfNeeded(winRatio, invert);
+	}
+
+	/**
+	*  Invert a win ratio if needed.
+	*/
+	private double invertIfNeeded (double ratio, boolean invert) {
+		return invert ? 1 - ratio : ratio;	
 	}
 
 	/**
