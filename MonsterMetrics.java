@@ -681,8 +681,9 @@ public class MonsterMetrics {
 			// Tell if ratio over 0.5 at 2-sigma (97.7%) confidence
 			// See Weiss Introductory Statistics:
 			// Procedure 12.2, handicap enemy 10 fights.
-			double z = Math.sqrt(fight + 10) 
-				* ((double) 2 * wins/(fight + 10) - 1);
+			int numFight = fight + 10;
+			double propWins = (double) wins / numFight;
+			double z = (2 * propWins - 1) * Math.sqrt(numFight);
 			if (z >= 2.0)
  				return computeWinRatio(wins, fight, invert);
 		}
