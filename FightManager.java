@@ -122,7 +122,9 @@ public class FightManager {
 	*  Set the initiative order.
 	*/
 	private void setInitiativeOrder () {
-		initOrder = new ArrayList<Party>(List.of(party1, party2));
+		initOrder = new ArrayList<Party>();
+		initOrder.add(party1);
+		initOrder.add(party2);
 		if (Dice.coinFlip()) {
 			Collections.reverse(initOrder);
 		}
