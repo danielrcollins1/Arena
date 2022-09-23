@@ -1,4 +1,4 @@
-!1661;s
+!1607;s
 J
 SAU0JGRASP_MAIN_BOUNDS=%<CONTROL_SHELL_BOUNDS>\012PATH+=%<JGRASP_PATHS>%;\012PATH=+%;%<JGRASP_C_PATHS>\012CYGWIN=nodosfilewarning\012GCC_COLORS=\012-Run\012ADD_EXE_PATH==Y\012
 SCU0JGRASP_MAIN_BOUNDS=%<CONTROL_SHELL_BOUNDS>\012PATH+=%<JGRASP_PATHS>%;\012PATH=+%;%<JGRASP_C_PATHS>\012CYGWIN=nodosfilewarning\012GCC_COLORS=\012-Run\012ADD_EXE_PATH==Y\012
@@ -11,11 +11,11 @@ SOU0JGRASP_MAIN_BOUNDS=%<CONTROL_SHELL_BOUNDS>\012PATH+=%<JGRASP_PATHS>%;\012PAT
 SyU0JGRASP_MAIN_BOUNDS=%<CONTROL_SHELL_BOUNDS>\012PATH+=%<PYTHON_PATH>%;\012PATH+=%<JGRASP_PATHS>%;\012CYGWIN=nodosfilewarning\012GCC_COLORS=
 SPU0
 s#i0
-s#k0D:\\Prog\\Java\\Arena\\pdfbox-app-2.0.19.jar\000
-s#j0D:\\Prog\\Java\\Arena\\pdfbox-app-2.0.19.jar
+s#k0.\\pdfbox-app.jar\000
+s#j0.\\pdfbox-app.jar
 s#l0
 !148;u
-a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!455;g
+a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!476;g
 %\011NameGenerator.java
 %\011Weapon.java
 %\011CharacterPDF.java
@@ -36,10 +36,11 @@ a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	
 %\011Spell.java
 %\011Character.java
 %\011SpellsDaily.java
+%\011EnergyType.java
 %\011CSVReader.java
 %\011SpecialType.java
 %\011Ability.java
-!455;f
+!476;f
 %\011NameGenerator.java
 %\011Weapon.java
 %\011CharacterPDF.java
@@ -60,6 +61,7 @@ a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	
 %\011Spell.java
 %\011Character.java
 %\011SpellsDaily.java
+%\011EnergyType.java
 %\011CSVReader.java
 %\011SpecialType.java
 %\011Ability.java
