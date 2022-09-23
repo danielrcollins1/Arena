@@ -1,0 +1,2 @@
+# GPJ files need LF line endings
+*.gpj text eol=lf
