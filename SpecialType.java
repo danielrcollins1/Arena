@@ -159,7 +159,7 @@ public enum SpecialType {
 		switch (this) {
 			case Charm: case Hold: case Sleep:
 			case Fear: case Confusion: case MindBlast:
-			case Hypnosis:
+			case Hypnosis: case Feeblemind:
 				return true;
 		}	
 		return false;

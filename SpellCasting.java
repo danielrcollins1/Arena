@@ -239,7 +239,7 @@ public class SpellCasting {
 		}
 		void cast (Monster caster, Party friends, Party enemies) {		
 			int level = caster.getLevel();
-			int numDice = Math.min(level, 10);
+			int numDice = Math.min(level, 12);
 			int damage = new Dice(numDice, 6).roll();
 			castEnergyOnArea(enemies, level, damage);
 		}
@@ -255,7 +255,7 @@ public class SpellCasting {
 		}
 		void cast (Monster caster, Party friends, Party enemies) {		
 			int level = caster.getLevel();
-			int numDice = Math.min(level, 10);
+			int numDice = Math.min(level, 12);
 			int damage = new Dice(numDice, 6).roll();
 			castEnergyOnArea(enemies, level, damage);
 		}
@@ -264,23 +264,21 @@ public class SpellCasting {
 	/** 
 	*  Hold Person spell effect. 
 	*
-	*  For utility, assume we can target up to 4 creatures in melee.
-	*  Contrast with S&S specifier of 3" dia. area effect.
+	*  While OED gives this an optional area-of-effect use-case
+	*  (following S&S), testing shows that in our overall context,
+	*  it's more valuable to reserve this for individual-only use
+	*  during the melee portion of a fight.
 	*/
 	static class HoldPersonCasting extends Casting {
 		HoldPersonCasting () {
 			condition = SpecialType.Hold;
-			maxTargetNum = 4;
+			maxTargetNum = 1;
 		}	
 		boolean isThreatTo (Monster m) {
 			return super.isThreatTo(m) && m.isPerson();
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
-			List<Monster> hitTargets = enemies.randomGroup(maxTargetNum);
-			int saveMod = (hitTargets.size() == 1) ? -2 : 0;
-			for (Monster target: hitTargets) {
-				castCondition(target, caster.getLevel(), saveMod);
-			}
+		void cast (Monster caster, Party friends, Party enemies) {
+			castCondition(enemies.random(), caster.getLevel(), -2);
 		}
 	}
 
@@ -326,23 +324,28 @@ public class SpellCasting {
 	/** 
 	*  Confusion spell effect. 
 	*
-	*  S&S gives an area for this spell, which we use
+	*  S&S gives an area for this spell, adjusted in OED.
 	*/
 	static class ConfusionCasting extends Casting {
 		ConfusionCasting () {
 			condition = SpecialType.Confusion;
 			maxTargetNum = NUM_BY_AREA;
 		}
+		boolean isThreatTo (Monster m) {
+			return super.isThreatTo(m) && m.getHD() <= 6;
+		}
 		void cast (Monster caster, Party friends, Party enemies) {		
 			int level = caster.getLevel();
-			int maxHit = spellInfo.getMaxTargetsInArea();
-			int numEffect = new Dice(2, 6).roll();
-			if (level > 8) numEffect += (level - 8);
-			int numHit = Math.min(maxHit, numEffect);
+			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
+			int numDice = Math.min(level, 15);
+			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				castCondition(target, level, 0);
-			}	
+				if (isThreatTo(target) && target.getHD() <= effectHD) {
+					effectHD -= target.getHD();
+					castCondition(target, level, 0);
+				}			
+			}
 		}
 	}
 
@@ -378,11 +381,9 @@ public class SpellCasting {
 	/** 
 	*  Charm Monster spell effect. 
 	*	
-	*  OD&D Vol-1 gives an option for one creature or many of low level.
-	*  The former implies targeted use, the latter area-effect
-	*  (but our setup here can't handle both).
-	*  S&S sets an area of "1 monster" only;
-	*  we follow that for balance & simplicity.
+	*  See comments above re: Hold Person.
+	*  We reserve this spell for individual-targeting in melee
+	*  (and ignore the option for an area-based effect). 
 	*/
 	static class CharmMonsterCasting extends Casting {
 		CharmMonsterCasting () {
@@ -426,20 +427,15 @@ public class SpellCasting {
 	/** 
 	*  Hold Monster spell effect. 
 	*
-	*  For utility, assume we can target up to 4 creatures in melee.
-	*  Contrast with S&S specifier of 3" dia. area effect.
+	*  See comment above for Hold Person.
 	*/
 	static class HoldMonsterCasting extends Casting {
 		HoldMonsterCasting () {
 			condition = SpecialType.Hold;
-			maxTargetNum = 4;
+			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
-			List<Monster> hitTargets = enemies.randomGroup(maxTargetNum);
-			int saveMod = hitTargets.size() == 1 ? -2 : 0;
-			for (Monster target: hitTargets) {
-				castCondition(target, caster.getLevel(), 0);
-			}
+		void cast (Monster caster, Party friends, Party enemies) {
+			castCondition(enemies.random(), caster.getLevel(), -2);
 		}
 	}
 
