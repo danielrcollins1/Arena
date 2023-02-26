@@ -8,19 +8,19 @@ Protection from Evil,1,0,6,-,D
 Read Languages,1,0,12,-,M
 Read Magic,1,0,6,-,M
 Shield,1,0,6,-,D
-Sleep,1,24,12,ball-2,A
+Sleep,1,12,12,ball-2,A
 Continual Light,2,12,1 week,ball-12,M
 Darkness,2,12,0,-,A
 Detect Evil,2,6,12,-,M
 Detect Invisibility,2,12,12,-,M
-Invisibility,2,24,1 week,-,D
+Invisibility,2,6,1 week,-,D
 Knock,2,6,0,-,M
 Levitate,2,0,12,-,D
 Locate Object,2,24,3,-,M
 Magic Mouth,2,0,1 week,-,M
 Mirror Image,2,0,6,-,D
 Phantasmal Force,2,24,6,-,A
-Pyrotechnics,2,24,6,ball-6,A
+Pyrotechnics,2,12,6,ball-6,A
 Read Minds,2,6,6,-,M
 Strength,2,0,1 day,-,M
 Web,2,6,12,ball-2,A
@@ -33,7 +33,7 @@ Fly,3,0,12,-,D
 Haste,3,24,3,ball-6,D
 Hold Person,3,12,6,-,A
 Infravision,3,0,1 day,-,M
-Invisibility Sphere,3,24,1 week,ball-2,D
+Invisibility Sphere,3,6,1 week,ball-2,D
 Lightning Bolt,3,24,0,line-6,A
 Protection from Missiles,3,0,12,-,D
 Protective Sphere,3,0,12,ball-2,D
