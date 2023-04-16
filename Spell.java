@@ -15,7 +15,7 @@ public class Spell {
 	public enum Mode {Attack, Defense, Miscellany};
 
 	/** Area shapes. */
-	public enum Shape {None, Ball, Disk, Line, Wall};
+	public enum Shape {None, Ball, Square, Line, Wall};
 
 	//--------------------------------------------------------------------------
 	//  Inner class
@@ -143,7 +143,7 @@ public class Spell {
 	*/
 	private static Shape parseShape (String s) {
 		if (s.equals("ball")) return Shape.Ball;
-		else if (s.equals("disk")) return Shape.Disk;
+		else if (s.equals("square")) return Shape.Square;
 		else if (s.equals("line")) return Shape.Line;
 		else if (s.equals("wall")) return Shape.Wall;
 		else {
@@ -224,8 +224,10 @@ public class Spell {
 				return 1;
 			case Line: case Wall: 
 				return area.size;
-			case Ball: case Disk:
+			case Ball:
 				return (int) (Math.PI * area.size * area.size);
+			case Square:
+				return area.size * area.size;
 			default:
 				System.err.println("Error: Unhandled spell shape.");
 				return 0;			

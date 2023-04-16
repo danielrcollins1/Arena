@@ -331,19 +331,13 @@ public class SpellCasting {
 			condition = SpecialType.Confusion;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		boolean isThreatTo (Monster m) {
-			return super.isThreatTo(m) && m.getHD() <= 6;
-		}
-		void cast (Monster caster, Party friends, Party enemies) {		
-			int level = caster.getLevel();
-			int numHit = spellInfo.getMaxTargetsInArea();
+		void cast (Monster caster, Party friends, Party enemies) {
+			int numHit = Math.min(new Dice(2, 6).roll(),
+				spellInfo.getMaxTargetsInArea());
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
-			int numDice = Math.min(level, 15);
-			int effectHD = new Dice(numDice, 6).roll();
 			for (Monster target: hitTargets) {
-				if (isThreatTo(target) && target.getHD() <= effectHD) {
-					effectHD -= target.getHD();
-					castCondition(target, level, 0);
+				if (isThreatTo(target)) {
+					castCondition(target, caster.getLevel(), 0);
 				}			
 			}
 		}
@@ -402,6 +396,9 @@ public class SpellCasting {
 		PolymorphOtherCasting () {
 			condition = SpecialType.Polymorphism;
 			maxTargetNum = 1;
+		}
+		boolean isThreatTo (Monster m) {
+			return super.isThreatTo(m) && m.isLivingType();
 		}
 		void cast (Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
@@ -480,21 +477,19 @@ public class SpellCasting {
 	static class DeathSpellCasting extends Casting {
 		DeathSpellCasting () {
 			condition = SpecialType.Death;
-			maxTargetNum = 120;
+			maxTargetNum = 36;
 		}
 		boolean isThreatTo (Monster m) {
 			return super.isThreatTo(m) && m.getHD() <= 8;
 		}
 		void cast (Monster caster, Party friends, Party enemies) {		
-			int level = caster.getLevel();
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
-			int numDice = Math.min(level, 20);
-			int effectHD = new Dice(numDice, 6).roll();
+			int effectHD = new Dice(10, 6).roll();
 			for (Monster target: hitTargets) {
 				if (isThreatTo(target) && target.getHD() <= effectHD) {
 					effectHD -= target.getHD();
-					castCondition(target, level, 0);
+					castCondition(target, caster.getLevel(), 0);
 				}			
 			}
 		}

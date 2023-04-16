@@ -290,10 +290,34 @@ public class Monster {
 			addSpecial(SpecialType.Dragon);
 			dragonAge = parseDragonAge();
 		}
-		if (getRace().startsWith("Golem"))
+		if (getRace().endsWith("Golem"))
 			addSpecial(SpecialType.Golem);
 		if (getType() == 'U')
 			addSpecial(SpecialType.Undead);
+		if (getType() == 'S')
+			addSpecial(SpecialType.Slime);
+	}
+
+	/**
+	* Is this monster a sentient type (have an effective mind)?
+	*/
+	public boolean isSentientType() {
+		boolean nonSentient =
+			hasSpecial(SpecialType.Golem)
+			|| hasSpecial(SpecialType.Undead)
+			|| hasSpecial(SpecialType.Slime)
+			|| hasSpecial(SpecialType.BlankMind);
+		return !nonSentient;
+	}
+
+	/**
+	* Is this monster a living type?
+	*/
+	public boolean isLivingType() {
+		boolean nonLiving =
+			hasSpecial(SpecialType.Golem)
+			|| hasSpecial(SpecialType.Undead);
+		return !nonLiving;
 	}
 
 	/**
@@ -997,8 +1021,11 @@ public class Monster {
 		if (condition == null) {
 			return false;
 		}
-		if (condition.isUndeadImmune() && hasUndeadImmunity()) {
+		if (condition.isMentalAttack() && !isSentientType()) {
 			return true;
+		}
+		if (condition == SpecialType.Death && !isLivingType()) {
+			return true;		
 		}
 		if (condition == SpecialType.Fear && hasSpecial(SpecialType.Fearlessness)) {
 			return true;
@@ -2121,14 +2148,6 @@ public class Monster {
 				break;
 			}
 		}		
-	}
-
-	/**
-	* Does this creature have undead-style immunities?
-	*/
-	private boolean hasUndeadImmunity () {
-		return hasSpecial(SpecialType.Undead)
-			|| hasSpecial(SpecialType.UndeadImmunity);
 	}
 
 	/**

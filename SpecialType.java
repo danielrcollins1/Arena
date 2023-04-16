@@ -30,14 +30,14 @@ public enum SpecialType {
 	FireImmunity, ColdImmunity, AcidImmunity, VoltImmunity, 
 	SteamBreath, Stench, ResistStench, Webs, WebMove, Sleep, 
 	Hold, Blindness, Polymorphism, Undead, Golem, Death, Spells,
-	ManyEyeFunctions, MagicResistance, MagicImmunity, UndeadImmunity,
+	ManyEyeFunctions, MagicResistance, MagicImmunity, BlankMind,
 	Fearlessness, ProtectionFromEvil, WoodEating, MetalEating,
 	AntimagicSphere, BlownAway, Disintegration, Coma, Stun, 
 	Feeblemind, Insanity, Hypnosis, SpellReflection, CharmPerTen,
 	FireResistance, ColdResistance, AcidResistance, VoltResistance,
 	FireVulnerability, ColdVulnerability, AcidVulnerability, 
 	VoltVulnerability, PoisonSpit, DeathGaze, Smothering, Stunning,
-	Shrieking, Conjuration, DropAttack;
+	Shrieking, Conjuration, DropAttack, Slime;
 	
 	//--------------------------------------------------------------------------
 	//  Methods
@@ -163,17 +163,5 @@ public enum SpecialType {
 				return true;
 		}	
 		return false;
-	}
-	
-	/**
-	*  Is the undead class immune to this?
-	*
-	*  OD&D is explicit that charm, hold, and sleep don't affect undead.
-	*  For simplicity & utility, we assume that includes any mental attack.
-	*  We also bar death spells, as per 1E PHB. 
-	*  (1E also generally expands it to poison, paralysis, and cold.)
-	*/
-	public boolean isUndeadImmune () {
-		return isMentalAttack() || this == Death;
 	}
 }
