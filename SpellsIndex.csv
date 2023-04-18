@@ -2,14 +2,14 @@ Spell,Level,Range,Duration,Area,Mode
 Charm Person,1,12,1 day,-,A
 Detect Magic,1,6,3,-,M
 Hold Portal,1,3,6,-,D
-Light,1,12,12,-,M
+Light,1,12,12,ball-3,M
 Magic Missile,1,12,0,-,A
 Protection from Evil,1,0,6,-,D
 Read Languages,1,0,12,-,M
 Read Magic,1,0,6,-,M
 Shield,1,0,6,-,D
 Sleep,1,12,12,ball-2,A
-Continual Light,2,12,1 week,-,M
+Continual Light,2,12,1 week,ball-6,M
 Darkness,2,12,0,-,A
 Detect Evil,2,6,12,-,M
 Detect Invisibility,2,12,12,-,M
