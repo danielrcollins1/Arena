@@ -1,5 +1,0 @@
-Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
-Young Purple Worm,1d4,6,6,8,25,D,2,1d6,N,B,7,8,D,O,"Poison (4), Fearlessness"
-Young Sea Monster,1d4,4,3,8,-,-,1,2d6,N,A,6,8,U,"O, S1, S2",Swimming (15)
-Young Chimera,1d4,4,12,8,50,F,3,1d6,N,B,7,8,D,O,"Flight (18), FireBreath (2)"
-Young Balrog,1d6,2,6,8,25,F,2,1d6+1,C,B,12,8,D,O,"Flight (15), MagicResistance (75), Immolation"
