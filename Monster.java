@@ -278,6 +278,7 @@ public class Monster {
 			}     
 		}
 		addImpliedSpecials();
+		checkPostSpecialMods();
 	}
 
 	/**
@@ -318,6 +319,19 @@ public class Monster {
 			hasSpecial(SpecialType.Golem)
 			|| hasSpecial(SpecialType.Undead);
 		return !nonLiving;
+	}
+
+	/**
+	* Check for a special modifiers after parsing special abilities.
+	*/
+	private void checkPostSpecialMods() {
+
+		// Joint types halve attack bonus by hit dice
+		if (hasSpecial(SpecialType.JointType)) {
+			if (attack != null) {
+				attack.setBonus(hitDice.getNum() / 2);
+			}
+		}	
 	}
 
 	/**
@@ -1752,6 +1766,11 @@ public class Monster {
 			modifier += 4;
 		}
 
+		// Joint type halves list hit dice
+		if (hasSpecial(SpecialType.JointType)) {
+			modifier -= getHitDiceNum() / 2;		
+		}
+
 		return modifier;
 	}
 
@@ -1875,6 +1894,11 @@ public class Monster {
 				|| race.endsWith("x") || race.endsWith("o")
 				|| race.endsWith("s"))
 			return race + "es";
+		if (race.contains(",")) {
+			int pos = race.indexOf(',');
+			return race.substring(0, pos) + "s" 
+				+ race.substring(pos, race.length());					
+		}
 		return race + "s";
 	}
 
