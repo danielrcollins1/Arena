@@ -37,7 +37,7 @@ public enum SpecialType {
 	FireResistance, ColdResistance, AcidResistance, VoltResistance,
 	FireVulnerability, ColdVulnerability, AcidVulnerability, 
 	VoltVulnerability, PoisonSpit, DeathGaze, Smothering, Stunning,
-	Shrieking, Conjuration, DropAttack, Slime, JointType;
+	Shrieking, Conjuration, DropAttack, Slime, JointType, SetAttackBonus;
 	
 	//--------------------------------------------------------------------------
 	//  Methods

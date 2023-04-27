@@ -331,7 +331,14 @@ public class Monster {
 			if (attack != null) {
 				attack.setBonus(hitDice.getNum() / 2);
 			}
-		}	
+		}
+		
+		// Some NPC types may entirely override attack bonus by hit dice
+		if (hasSpecial(SpecialType.SetAttackBonus)) {
+			if (attack != null) {
+				attack.setBonus(getSpecialParam(SpecialType.SetAttackBonus));
+			}
+		}
 	}
 
 	/**
@@ -1894,11 +1901,6 @@ public class Monster {
 				|| race.endsWith("x") || race.endsWith("o")
 				|| race.endsWith("s"))
 			return race + "es";
-		if (race.contains(",")) {
-			int pos = race.indexOf(',');
-			return race.substring(0, pos) + "s" 
-				+ race.substring(pos, race.length());					
-		}
 		return race + "s";
 	}
 
