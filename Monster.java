@@ -36,6 +36,9 @@ public class Monster {
 	/** Should we print EHD values in stat blocks? */
 	private static boolean printEHDs = false;
 
+	/** Should we print hit point values i stat blocks? */
+	private static boolean printHitPoints = false;
+
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -135,7 +138,7 @@ public class Monster {
 
 		// Other fields
 		spellMemory = null;
-		rollHitPoints();
+		setAverageHitPoints();
 	}
 
 	/**
@@ -396,6 +399,27 @@ public class Monster {
 		}
 		else {
 			maxHitPoints = hitDice.roll();
+		}
+		maxHitPoints = Math.max(maxHitPoints, 1);
+		hitPoints = maxHitPoints;
+	}
+
+	/**
+	* Set average hit points from hit dice.
+	*/
+	private void setAverageHitPoints() {
+		if (hasSpecial(SpecialType.Dragon)) {
+			int age = getDragonAge();
+			if (age < 1) {
+				age = 4; // adult default
+			}
+			maxHitPoints = hitDice.getNum() * age;
+		}
+		else if (hasSpecial(SpecialType.ManyHeads)) {
+			maxHitPoints = hitDice.maxRoll();
+		}
+		else {
+			maxHitPoints = hitDice.avgRoll();
 		}
 		maxHitPoints = Math.max(maxHitPoints, 1);
 		hitPoints = maxHitPoints;
@@ -1876,6 +1900,7 @@ public class Monster {
 			+ ": AC " + getAC() 
 			+ ", MV " + getMV() 
 			+ ", HD " + getHDString() 
+			+ (printHitPoints ? " (hp " + getMaxHitPoints() + ")" : "")
 			+ (printEHDs ? ", EHD " + getEHDString() : "")
 			+ ", Atk " + getAttack().getRate() 
 			+ ", Dam " + getAttack().getDamage()
@@ -2400,6 +2425,13 @@ public class Monster {
 	*/
 	public static void setPrintEHDs(boolean b) {
 		printEHDs = b;
+	}
+
+	/**
+	* Set the static field for hit point printing in stat blocks.
+	*/
+	public static void setPrintHitPoints(boolean b) {
+		printHitPoints = b;	
 	}
 
 	/**

@@ -185,6 +185,7 @@ public class MonsterMetrics {
 			+ "(default =" + DEFAULT_FIGHTS_GENERAL + ")");
 		System.out.println("\t-g graph power per level for each monster");
 		System.out.println("\t-h assess matchup given monster number, party level (-h:#:#)");
+		System.out.println("\t-i print average hit points in stat blocks");
 		System.out.println("\t-k wait for keypress to start processing");		
 		System.out.println("\t-l show suggested best level match for expected-size party");
 		System.out.println("\t-m chance for magic weapon bonus per level " 
@@ -247,6 +248,7 @@ public class MonsterMetrics {
 					case 'f': numberOfFights = getParamInt(s); break;
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'h': parseSingleMatchupOption(s); break;
+					case 'i': Monster.setPrintHitPoints(true); break;
 					case 'k': waitForKeypress = true; break;
 					case 'l': showBestLevelMatch = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
