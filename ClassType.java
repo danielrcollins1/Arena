@@ -170,19 +170,75 @@ public class ClassType {
 		if (level < maxTable)
 			return titles[level];
 		else
-			return titles[maxTable - 1];
+			return titles[maxTable - 1] 
+				+ ", " + getOrdinal(level) + " Level";
+	}
+
+	/**
+	*  Get the ordinal form of an integer.
+	*/
+	private String getOrdinal(int n) {
+		String suffix;
+		switch (n % 10) {
+			case 1: suffix = "st"; break;
+			case 2: suffix = "nd"; break;
+			case 3: suffix = "rd"; break;
+			default: suffix = "th"; break;
+		}
+		return n + suffix;
 	}
 
 	/**
 	*  Get the level indicated by a given title.
 	*/
 	public int getLevelFromTitle (String title) {
-		for (int i = 0; i < titles.length; i++) {
-			if (titles[i].equals(title)) {
+		int maxTable = titles.length;
+
+		// Check titles to name level
+		for (int i = 0; i < maxTable; i++) {
+			if (title.equals(titles[i])) {
 				return i;
-			}		
+			}
 		}
+		
+		// Check for appended name level
+		if (title.startsWith(titles[maxTable - 1])
+			&& title.endsWith("Level"))
+		{
+			return parseIntInString(title);
+		}
+
+		// No match found
 		return -1;
+	}
+
+	/**
+	*	Find & parse the integer in a strring
+	*/
+	private int parseIntInString(String s) {
+		int pos = 0, startVal = -1, endVal = -1;
+
+		// Find value start
+		while (pos < s.length()) {
+			if (java.lang.Character.isDigit(s.charAt(pos))) {
+				startVal = pos;
+				break;
+			}
+			pos++;
+		}
+		
+		// Find value end
+		while (pos < s.length()) {
+			if (!java.lang.Character.isDigit(s.charAt(pos))) {
+				endVal = pos;
+				break;
+			}
+			pos++;
+		} 
+	
+		// Parse the integer
+		String valStr = s.substring(startVal, endVal);
+		return Integer.parseInt(valStr);	
 	}
 
 	/**
