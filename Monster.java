@@ -30,6 +30,13 @@ public class Monster {
 	private static final boolean FIGHT_SWALLOWED = true;
 
 	//--------------------------------------------------------------------------
+	//  Static Fields
+	//--------------------------------------------------------------------------
+
+	/** Should we print EHD values in stat blocks? */
+	private static boolean printEHDs = false;
+
+	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
@@ -1869,7 +1876,7 @@ public class Monster {
 			+ ": AC " + getAC() 
 			+ ", MV " + getMV() 
 			+ ", HD " + getHDString() 
-			+ ", EHD " + getEHDString()
+			+ (printEHDs ? ", EHD " + getEHDString() : "")
 			+ ", Atk " + getAttack().getRate() 
 			+ ", Dam " + getAttack().getDamage()
 			+ (specialsString.length() > 1 ? ", SA " + specialsString : "")
@@ -2386,6 +2393,13 @@ public class Monster {
 		}
 	
 		return false;	
+	}
+
+	/**
+	* Set the static field for EHD printing in stat blocks.
+	*/
+	public static void setPrintEHDs(boolean b) {
+		printEHDs = b;
 	}
 
 	/**

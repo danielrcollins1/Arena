@@ -197,6 +197,7 @@ public class MonsterMetrics {
 		System.out.println("\t-s show a single sample fight (optional party level, -s:#)");
 		System.out.println("\t-t make a table of best-number-match values");
 		System.out.println("\t-u display any unknown special abilities in database");
+		System.out.println("\t-v show EHD values in printed stat blocks");
 		System.out.println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		System.out.println("\t-x set expected size of PC party "
 			+ "(default =" + DEFAULT_PARTY_SIZE + ")");
@@ -258,6 +259,7 @@ public class MonsterMetrics {
 					case 's': parseSampleFightOption(s); break;
 					case 't': makeBNMTable = true; break;
 					case 'u': displayUnknownSpecials = true; break;
+					case 'v': Monster.setPrintEHDs(true); break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'x': expectedPartySize = getParamInt(s); break;
 					case 'z': wizardFrequency = getParamInt(s); break;
