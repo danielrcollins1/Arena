@@ -1,9 +1,9 @@
-/******************************************************************************
-*  Weapon on a character.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-01-17
-******************************************************************************/
+/**
+	Weapon on a character.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-01-17
+*/
 
 public class Weapon extends Equipment {
 
@@ -12,29 +12,29 @@ public class Weapon extends Equipment {
 	//--------------------------------------------------------------------------
 
 	/** One-third of a stone weight. */
-	static final float ONE_THIRD = Equipment.ONE_THIRD;
+	private static final float ONE_THIRD = Equipment.ONE_THIRD;
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** Damage basis. */
-	Dice damage;
+	private Dice damage;
 
 	/** Energy type. */
-	EnergyType energy;
+	private EnergyType energy;
 
 	/** Hands used. */
-	int hands;
+	private int hands;
 	
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (all fields).
+		Constructor (all fields).
 	*/
-	Weapon (String name, Material material, float weight, int magic,
+	Weapon(String name, Material material, float weight, int magic,
 		Dice damage, EnergyType energy, int hands)
 	{
 		super(name, material, weight, magic); 
@@ -44,16 +44,16 @@ public class Weapon extends Equipment {
 	}
 
 	/**
-	*  Constructor (name, damage, weight, hands).
+		Constructor (name, damage, weight, hands).
 	*/
-	Weapon (String name, Dice damage, float weight, int hands) {
+	Weapon(String name, Dice damage, float weight, int hands) {
 		this(name, Material.Steel, weight, 0, damage, null, hands);
 	}
 
 	/**
-	*  Constructor (copy)
+		Constructor (copy).
 	*/
-	Weapon (Weapon w) {
+	Weapon(Weapon w) {
 		this(w.name, w.material, w.weight, w.magicBonus,
 			w.damage, w.energy, w.hands);
 	}
@@ -61,14 +61,14 @@ public class Weapon extends Equipment {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-	public Dice getBaseDamage () { return damage; }
-	public EnergyType getEnergy () { return energy; }
-	public int getHandsUsed () { return hands; }
+	public Dice getBaseDamage() { return damage; }
+	public EnergyType getEnergy() { return energy; }
+	public int getHandsUsed() { return hands; }
 	
 	/**
-	*  Make a random primary melee weapon.
+		Make a random primary melee weapon.
 	*/
-	static public Weapon randomPrimary () {
+	public static Weapon randomPrimary() {
 		switch (Dice.roll(8)) {
 			case 1: return new Weapon("Sword", new Dice(8), ONE_THIRD, 1);
 			case 2: return new Weapon("Two-handed sword", new Dice(10), 1, 2);
@@ -81,9 +81,9 @@ public class Weapon extends Equipment {
 	}
 	
 	/**
-	*  Make a random secondary melee weapon.
+		Make a random secondary melee weapon.
 	*/
-	static public Weapon randomSecondary () {
+	public static Weapon randomSecondary() {
 		switch (Dice.roll(6)) {
 			case 1: return new Weapon("Dagger", new Dice(4), 0, 1);
 			case 2: return new Weapon("Spear", new Dice(6), ONE_THIRD, 1);
@@ -95,9 +95,9 @@ public class Weapon extends Equipment {
 	}	
 
 	/**
-	*  Make a random melee weapon for a thief.
+		Make a random melee weapon for a thief.
 	*/
-	static public Weapon randomThieving () {
+	public static Weapon randomThieving() {
 		switch (Dice.roll(6)) {
 			case 1: return new Weapon("Sword", new Dice(8), ONE_THIRD, 1);
 			case 2: return new Weapon("Dagger", new Dice(4), 0, 1);
@@ -109,38 +109,38 @@ public class Weapon extends Equipment {
 	}
 
 	/**
-	*  Make a normal dagger.
+		Make a normal dagger.
 	*/
-	static public Weapon dagger () {
+	public static Weapon dagger() {
 		return new Weapon("Dagger", new Dice(4), 0, 1);
 	}
 	
 	/**
-	*  Make a silver dagger.
+		Make a silver dagger.
 	*/
-	static public Weapon silverDagger () {
+	public static Weapon silverDagger() {
 		return new Weapon("Dagger", Material.Silver, 0, 0, 
 			new Dice(4), null, 1);
 	}
 
 	/**
-	*  Make a possibly-magic sword.
+		Make a possibly-magic sword.
 	*/
-	static public Weapon sword (int bonus) {
+	public static Weapon sword(int bonus) {
 		return new Weapon("Sword", Material.Steel, ONE_THIRD, bonus,
 			new Dice(8), null, 1);
 	}
 
 	/**
-	*  Make a torch.
+	Make a torch.
 	*/
-	static public Weapon torch () {
+	public static Weapon torch() {
 		return new Weapon("Torch", Material.Wood, ONE_THIRD, 0,
 			new Dice(4), EnergyType.Fire, 1);
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
 	public String toString() {
 		String s = getName();
