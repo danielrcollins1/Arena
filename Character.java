@@ -2,9 +2,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
-	One character(player or non-player personae).
+	One character (player or non-player personae).
 
-	@author Daniel R. Collins(dcollins@superdan.net)
+	@author Daniel R. Collins (dcollins@superdan.net)
 	@since 2014-05-20
 */
 
@@ -81,7 +81,7 @@ public class Character extends Monster {
 	/** Secondary personality trait. */
 	private PersonalityTraits.PersonalityTrait secondaryPersonality;
 	
-	/** Rate of sweep attacks(vs. 1 HD targets) */
+	/** Rate of sweep attacks (vs. 1 HD targets) */
 	private int sweepRate;
 
 	/** Percent chance per level for magic items. */
@@ -130,7 +130,7 @@ public class Character extends Monster {
 	//--------------------------------------------------------------------------
 
 	/**
-		Constructor(single class).
+		Constructor (single class).
 	*/
 	public Character(String race, String classn, int level, String align) {
 		super(race, BASE_ARMOR_CLASS, BASE_MOVEMENT, BASE_HD, null);
@@ -156,7 +156,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Constructor(double class).
+		Constructor (double class).
 	*/
 	public Character(String race, String class1, int level1, 
 			String class2, int level2, String align) 
@@ -342,7 +342,7 @@ public class Character extends Monster {
 
 		// This is a critical-path function.
 		// For performance, check only the Strength ability
-		//(c.f. Shadow Strength draining)
+		// (c.f. Shadow Strength draining)
 		// If other ability-drain abilities arise, add here.
 		return getAbilityScore(Ability.Strength) <= 0;
 	}
@@ -476,7 +476,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Returns base attack bonus(max over all classes).
+		Returns base attack bonus (max over all classes).
 	*/
 	private int baseAttackBonus() {
 		int maxBAB = 0;
@@ -640,7 +640,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Returns total XP(sum over all classes).
+		Returns total XP (sum over all classes).
 	*/
 	public int totalXP() {
 		int sum = 0;
@@ -684,7 +684,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Lose a level(e.g., energy drain).
+		Lose a level (e.g., energy drain).
 	*/
 	@Override 
 	protected void loseLevel() {
@@ -696,7 +696,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Find maximum hit points(supremum over all classes).
+		Find maximum hit points (supremum over all classes).
 	*/
 	private int findSupMaxHitPoints() {
 		int supMaxHP = 0;
@@ -1043,7 +1043,7 @@ public class Character extends Monster {
 	}
 
 	/**
-		Convert string to alignment(random if null).
+		Convert string to alignment (random if null).
 	*/
 	Alignment getAlignmentFromString(String s) {
 		Alignment align = Alignment.getFromString(s);
