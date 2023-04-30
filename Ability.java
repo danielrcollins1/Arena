@@ -1,8 +1,8 @@
 /**
 	Ability scores enumeration and methods.
 
-	@author   Daniel R. Collins (dcollins@superdan.net)
-	@since    2014-05-21
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-21
 */
 
 public enum Ability {

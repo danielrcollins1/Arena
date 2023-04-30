@@ -1,9 +1,9 @@
-/******************************************************************************
-*  Armor on a character.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-01-17
-******************************************************************************/
+/**
+	Armor on a character.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-01-17
+*/
 
 public class Armor extends Equipment {
 
@@ -12,26 +12,26 @@ public class Armor extends Equipment {
 	//--------------------------------------------------------------------------
 
 	/** Class of armor. */
-	public enum Type {Shield, Leather, Chain, Plate};
+	public enum Type { Shield, Leather, Chain, Plate };
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** Type of armor. */
-	Type armorType;
+	private Type armorType;
 
 	/** Base armor points added. */
-	int baseArmor;
+	private int baseArmor;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Full constructor
+		Full constructor.
 	*/
-	Armor (Type armorType, Equipment.Material material, 
+	Armor(Type armorType, Equipment.Material material, 
 		int baseArmor, float weight, int magicBonus)
 	{
 		super(armorType.toString(), material, weight, magicBonus);
@@ -40,9 +40,9 @@ public class Armor extends Equipment {
 	}
 
 	/**
-	*  Copy constructor
+		Copy constructor.
 	*/
-	Armor (Armor a) {
+	Armor(Armor a) {
 		this(a.armorType, a.material, a.baseArmor, a.weight, a.magicBonus);
 	}
 
@@ -51,28 +51,28 @@ public class Armor extends Equipment {
 	//--------------------------------------------------------------------------
 
 	// Basic accessors.
-	public Type getArmorType () { return armorType; }
-	public int getBaseArmor () { return baseArmor; }
+	public Type getArmorType() { return armorType; }
+	public int getBaseArmor() { return baseArmor; }
 
 	/**
-	*  Is this armor made of metal?
+		Is this armor made of metal?
 	*/
-	public boolean isMetal () {
+	public boolean isMetal() {
 		return armorType == Type.Chain || armorType == Type.Plate;
 	}
 	
 	/**
-	*  Create a new armor of a given type.
+		Create a new armor of a given type.
 	*/
-	static public Armor makeType (Type type) {
+	public static Armor makeType(Type type) {
 		if (type != null) {
 			switch (type) {
 				case Shield: return new Armor(type, Material.Wood, 1, 1, 0);
 				case Leather: return new Armor(type, Material.Leather, 2, 1, 0);
 				case Chain: return new Armor(type, Material.Steel, 4, 2, 0);
 				case Plate: return new Armor(type, Material.Steel, 6, 4, 0);
+				default: System.err.println("Armor type unknown value: " + type);
 			}	
-			System.err.println("Armor type has unknown value: " + type);
 		}
 		return null;
 	}

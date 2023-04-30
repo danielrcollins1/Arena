@@ -1,9 +1,9 @@
-/******************************************************************************
-*  Alignment enumeration.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-19
-******************************************************************************/
+/**
+	Alignment enumeration.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-19
+*/
 
 public enum Alignment {
 
@@ -18,9 +18,9 @@ public enum Alignment {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Convert a letter to alignment.
+		Convert a letter to alignment.
 	*/
-	public static Alignment getFromChar (char c) {
+	public static Alignment getFromChar(char c) {
 		switch (c) {
 			case 'L': return Lawful;
 			case 'N': return Neutral;
@@ -30,17 +30,17 @@ public enum Alignment {
 	}
 
 	/**
-	*  Convert a string to an alignment.
+		Convert a string to an alignment.
 	*/
-	public static Alignment getFromString (String s) {
-		return (s == null || s.length() == 0) ?
-			null : getFromChar(s.charAt(0));
+	public static Alignment getFromString(String s) {
+		return (s == null || s.length() == 0) 
+			? null : getFromChar(s.charAt(0));
 	}
 
 	/**
-	*  Randomize a normally-distributed alignment. 
+		Randomize a normally-distributed alignment. 
 	*/
-	public static Alignment randomNormal () {
+	public static Alignment randomNormal() {
 		switch (Dice.roll(6)) {
 			case 1: return Lawful;
 			default: return Neutral;
@@ -49,9 +49,9 @@ public enum Alignment {
 	}
 
 	/**
-	*  Randomize a uniformly-distributed alignment. 
+		Randomize a uniformly-distributed alignment. 
 	*/
-	public static Alignment randomUniform () {
+	public static Alignment randomUniform() {
 		switch (Dice.roll(6)) {
 			case 1: case 2: return Lawful;
 			default:        return Neutral;
@@ -60,9 +60,9 @@ public enum Alignment {
 	}
 	
 	/**
-	*  Randomize a Lawful-biased alignment. 
+		Randomize a Lawful-biased alignment. 
 	*/
-	public static Alignment randomLawfulBias () {
+	public static Alignment randomLawfulBias() {
 		switch (Dice.roll(6)) {
 			case 1: case 2: return Neutral;
 			default: return Lawful;		
@@ -70,9 +70,9 @@ public enum Alignment {
 	}
 
 	/**
-	*  Randomize a Chaotic-biased alignment. 
+		Randomize a Chaotic-biased alignment. 
 	*/
-	public static Alignment randomChaoticBias () {
+	public static Alignment randomChaoticBias() {
 		switch (Dice.roll(6)) {
 			case 1: case 2: return Neutral;
 			default: return Chaotic;
@@ -80,15 +80,13 @@ public enum Alignment {
 	}
 	
 	/**
-	*  Randomize an alignment biased toward a given one.
+		Randomize an alignment biased toward a given one.
 	*/
-	public static Alignment randomBias (Alignment align) {
+	public static Alignment randomBias(Alignment align) {
 		switch (align) {
 			case Lawful: return randomLawfulBias();
 			case Chaotic: return randomChaoticBias();		
 			default: return randomNormal();
 		}
 	}
-	
 }
-
