@@ -1,68 +1,78 @@
-/******************************************************************************
-*  One RPG character class type (fighter, thief, wizard, etc.).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-22
-******************************************************************************/
+/**
+	One RPG character class type (fighter, wizard, thief, etc.).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-22
+*/
 
 public class ClassType {
+
+	//--------------------------------------------------------------------------
+	//  Inner enumeration
+	//--------------------------------------------------------------------------
+
+	/** 
+		Base class types .
+		(For possible sublass expansions.)
+	*/
+	public enum BaseClassType { Fighter, Wizard, Thief, Cleric };
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** Name of this class. */
-	String name;
+	private String name;
 
 	/** Abbreviation for this class. */
-	String abbreviation;
+	private String abbreviation;
 
 	/** Prime requisite ability. */
-	Ability primeRequisite;
+	private Ability primeRequisite;
 
 	/** Attack bonus numerator. */
-	int atkBonusNumer;
+	private int atkBonusNumer;
 
 	/** Attack bonus denominator. */
-	int atkBonusDenom;
+	private int atkBonusDenom;
 	
 	/** Hit dice type (sides). */
-	int hitDiceType;
+	private int hitDiceType;
 	
 	/** Hit dice maximum. */
-	int hitDiceMax;
+	private int hitDiceMax;
 	
 	/** Hit points added after max dice. */
-	int advancedHpInc;
+	private int advancedHpInc;
 
 	/** Save as this class. */
-	String saveAsClass;
+	private String saveAsClass;
 
 	/** Does this class use feats? */
-	boolean useFeats;
+	private boolean useFeats;
 
 	/** Does this class use skills? */
-	boolean useSkills;
+	private boolean useSkills;
 
 	/** Does this class use spells? */
-	boolean useSpells;
+	private boolean useSpells;
 
 	/** Array of low-level XP requirements. */
-	int[] xpReqs;
+	private int[] xpReqs;
 	
 	/** Array of level titles. */
-	String[] titles;
+	private String[] titles;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 	
 	/**
-	*  Constructor (from String arrays).
-	*  @param indexData Top-level data about this class.
-	*  @param levelData Level-specific information (title, XP, etc.)
+		Constructor (from String arrays).
+		@param indexData Top-level data about this class.
+		@param levelData Level-specific information (title, XP, etc.)
 	*/
-	public ClassType (String[] indexData, String[][] levelData) {
+	public ClassType(String[] indexData, String[][] levelData) {
 	
 		// Master fields
 		name = indexData[0];
@@ -93,8 +103,8 @@ public class ClassType {
 		titles = new String[arraySize];
 		xpReqs = new int[arraySize];
 		for (int i = 0; i < arraySize; i++) {
-			titles[i] = levelData[i+1][1];
-			xpReqs[i] = CSVReader.parseInt(levelData[i+1][2]);
+			titles[i] = levelData[i + 1][1];
+			xpReqs[i] = CSVReader.parseInt(levelData[i + 1][2]);
 		}
 	}
 
@@ -103,79 +113,87 @@ public class ClassType {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Get the class name.
+		Get the class name.
 	*/
-	public String getName () { 
+	public String getName() { 
 		return name; 
 	}
 
 	/**
-	*  Get the class abbreviation.
+		Get the class abbreviation.
 	*/
-	public String getAbbreviation () { 
+	public String getAbbreviation() { 
 		return abbreviation; 
 	}
 
 	/**
-	*  Get the prime requisite.
+		Get the prime requisite.
 	*/
-	public Ability getPrimeReq () { 
-		return primeRequisite; 
+	public Ability getPrimeReq() { 
+		return primeRequisite;
 	}
 
 	/**
-	*  Get the hit dice type.
+		Get the hit dice type.
 	*/
-	public int getHitDiceType () { 
+	public int getHitDiceType() { 
 		return hitDiceType; 
 	}
 
 	/**
-	*  Compute the attack bonus.
+		Compute the attack bonus.
 	*/
-	public int getAttackBonus (int level) {
+	public int getAttackBonus(int level) {
 		return level * atkBonusNumer / atkBonusDenom;
 	}
 
 	/**
-	*  Returns added hit dice at a given level.
+		Returns added hit dice at a given level.
 	*/
-	public Dice getHitDiceInc (int level) {
-		if (level <= 0)
+	public Dice getHitDiceInc(int level) {
+		if (level <= 0) {
 			return new Dice(1, 6, 0);
-		else if (level <= hitDiceMax)
+		}
+		else if (level <= hitDiceMax) {
 			return new Dice(1, hitDiceType, 0);
-		else
+		}
+		else {
 			return new Dice(0, hitDiceType, advancedHpInc);
+		}
 	}
 
 	/**
-	*  Returns total hit dice at a given level.
+		Returns total hit dice at a given level.
 	*/
-	public Dice getHitDiceTotal (int level) {
-		if (level <= 0)
+	public Dice getHitDiceTotal(int level) {
+		if (level <= 0) {
 			return new Dice(1, 6, 0);
-		else if (level <= hitDiceMax)
+		}
+		else if (level <= hitDiceMax) {
 			return new Dice(level, hitDiceType, 0);
-		else
+		}
+		else {
 			return new Dice(hitDiceMax, hitDiceType, 
 				advancedHpInc * (level - hitDiceMax));
+		}
 	}
 
 	/**
-	*  Get the title for a given level.
+		Get the title for a given level.
 	*/
-	public String getTitleFromLevel (int level) {
+	public String getTitleFromLevel(int level) {
 		int maxTable = titles.length;
-		if (level < maxTable)
+		if (level < maxTable) {
 			return titles[level];
-		else
+		}
+		else {
 			return titles[maxTable - 1] 
 				+ ", " + getOrdinal(level) + " Level";
+		}
 	}
 
 	/**
-	*  Get the ordinal form of an integer.
+		Get the ordinal form of an integer.
 	*/
 	private String getOrdinal(int n) {
 		String suffix;
@@ -189,9 +207,9 @@ public class ClassType {
 	}
 
 	/**
-	*  Get the level indicated by a given title.
+		Get the level indicated by a given title.
 	*/
-	public int getLevelFromTitle (String title) {
+	public int getLevelFromTitle(String title) {
 		int maxTable = titles.length;
 
 		// Check titles to name level
@@ -213,7 +231,7 @@ public class ClassType {
 	}
 
 	/**
-	*	Find & parse the integer in a strring
+		Find & parse the integer in a strring.
 	*/
 	private int parseIntInString(String s) {
 		int pos = 0, startVal = -1, endVal = -1;
@@ -242,9 +260,9 @@ public class ClassType {
 	}
 
 	/**
-	*  Compute the experience required for a level.
+		Compute the experience required for a level.
 	*/
-	public int getXpReq (int level) {
+	public int getXpReq(int level) {
 		if (level < xpReqs.length) {
 			return xpReqs[level];
 		}
@@ -260,58 +278,72 @@ public class ClassType {
 	}
 
 	/**
-	*  Get the experience required for the following level.
+		Get the experience required for the following level.
 	*/
-	public int getXpReqNext (int level) {
+	public int getXpReqNext(int level) {
 		return getXpReq(level + 1);	
 	}
 
 	/**
-	*  Get experience midpoint for a given level.
+		Get experience midpoint for a given level.
 	*/
-	public int getXpMidpoint (int level) {
+	public int getXpMidpoint(int level) {
 		int low = getXpReq(level);
 		int high = getXpReqNext(level);
-		return (low + high)/2;
+		return (low + high) / 2;
 	}
 
 	/**
-	*  Get the name of the class that we save as.
+		Get the name of the class that we save as.
 	*/
-	public String getSaveAsClass () {
+	public String getSaveAsClass() {
 		return saveAsClass;
 	}
 
 	/**
-	*  Get whether we use feats.
+		Get whether we use feats.
 	*/
-	public boolean usesFeats () {
+	public boolean usesFeats() {
 		return useFeats;
 	}
 
 	/**
-	*  Get whether we use skills.
+		Get whether we use skills.
 	*/
-	public boolean usesSkills () {
+	public boolean usesSkills() {
 		return useSkills;
 	}
 
 	/**
-	*  Get whether we use spells.
+		Get whether we use spells.
 	*/
-	public boolean usesSpells () {
+	public boolean usesSpells() {
 		return useSpells;
 	}
 
 	/**
-	*  Get the ability priority list.
+		Get the ability priority list.
 	*/
-	public Ability[] getAbilityPriority () {
+	public Ability[] getAbilityPriority() {
 		return Ability.getPriorityList(primeRequisite);
 	}
 
 	/**
-	*  Identify this object as a string.
+		Get the base class type.
+	*/
+	public BaseClassType getBaseClassType() {
+		switch(primeRequisite) {
+			case Strength: return BaseClassType.Fighter;
+			case Intelligence: return BaseClassType.Wizard;
+			case Dexterity: return BaseClassType.Thief;
+			case Wisdom: return BaseClassType.Cleric;
+			default: System.err.println("Unknown prime requisite.");
+		}
+		return null;
+	}
+
+	/**
+		Identify this object as a string.
 	*/
 	public String toString() {
 		return name + " Class "
@@ -319,4 +351,3 @@ public class ClassType {
 			+ ", Atk " + atkBonusNumer + "/" + atkBonusDenom + ")";
 	}	
 }
-

@@ -192,11 +192,6 @@ public class Character extends Monster {
 	public void addEquipment(Equipment equip) { equipList.add(equip); }
 	public void dropAllEquipment() { equipList.clear(); }
 
-	// Class-detecting methods
-	public boolean isFighter() { return hasPrimeReqClass(Ability.Strength); }
-	public boolean isThief() { return hasPrimeReqClass(Ability.Dexterity); }
-	public boolean isWizard() { return hasPrimeReqClass(Ability.Intelligence); }
-
 	/**
 		Roll random ability scores for single-class character.
 	*/
@@ -362,16 +357,16 @@ public class Character extends Monster {
 	}
 
 	/**
-		Do we have any class with the given prime requisite?
+		Do we have any class of the given base type?
 	*/
-	private boolean hasPrimeReqClass(Ability prime) {
+	private boolean hasBaseClassType(ClassType.BaseClassType type) {
 		for (ClassRecord cr: classList) {
-			if (cr.getClassType().getPrimeReq() == prime) {
+			if (cr.getClassType().getBaseClassType() == type) {
 				return true;
 			}
 		}
 		return false;	
-	}
+	}		
 
 	/**
 		Get highest level class.
@@ -727,10 +722,10 @@ public class Character extends Monster {
 	}
 
 	/**
-		Set basic equipment by top class.
+		Set basic equipment by class.
 	*/
 	public void setBasicEquipment() {
-		if (isFighter()) {
+		if (hasBaseClassType(ClassType.BaseClassType.Fighter)) {
 			switch(getLevel()) {
 				case 0: setArmor(Armor.makeType(Armor.Type.Leather)); break;
 				case 1: setArmor(Armor.makeType(Armor.Type.Chain)); break;
@@ -742,18 +737,21 @@ public class Character extends Monster {
 			}
 			addEquipment(primary);
 			addEquipment(Weapon.randomSecondary());
-			if (isWizard()) {
+			if (hasBaseClassType(ClassType.BaseClassType.Wizard)) {
 				setArmor(Armor.makeType(Armor.Type.Chain));
 				setShield(null);			
 			}
 		}
-		else if (isThief()) {
+		else if (hasBaseClassType(ClassType.BaseClassType.Thief)) {
 			setArmor(Armor.makeType(Armor.Type.Leather));
 			addEquipment(Weapon.randomThieving());
 			addEquipment(Weapon.dagger());
 		}
-		else {
+		else if (hasBaseClassType(ClassType.BaseClassType.Wizard)) {
 			addEquipment(Weapon.dagger());
+		}
+		else {
+			System.err.println("Unhandled base class type.");		
 		}
 	}
 
@@ -1010,21 +1008,22 @@ public class Character extends Monster {
 	private void ageAdjustLevels() {
 		if (age > 40) {
 			for (ClassRecord record: classList) {
-				switch(record.getClassType().getPrimeReq()) {
-					case Strength: 
+				switch(record.getClassType().getBaseClassType()) {
+					case Fighter:
 						if (age % 2 == 0) {
 							record.loseLevel(); 
 						}
 						break;
-					case Dexterity: 
+					case Thief: 
 						if (age % 5 == 0) {
 							record.loseLevel(); 
 						}
 						break;
-					case Intelligence: 
+					case Wizard:
+					case Cleric:
 						break;
 					default: 
-						System.err.println("Unknown prime requisite.");
+						System.err.println("Unknown base class type.");
 				}
 			}
 		}

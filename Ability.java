@@ -6,6 +6,7 @@
 */
 
 public enum Ability {
+
 	Strength, Intelligence, Wisdom, Dexterity, Constitution, Charisma;
 	
 	/** Constant size record. */
