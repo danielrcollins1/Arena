@@ -58,8 +58,9 @@ public class CharacterPDF {
 			for (Ability ability: Ability.values()) {
 				int score = c.getAbilityScore(ability);
 				int bonus = Ability.getBonus(score);
-	 			form.getField(Ability.getFullName(ability)).setValue(score + "");
-				form.getField(ability + "Mod").setValue(Dice.formatBonus(bonus));
+	 			form.getField(ability.name()).setValue(score + "");
+				form.getField(ability.getAbbreviation() + "Mod")
+					.setValue(Dice.formatBonus(bonus));
 			}
 			
 			// Statistics

@@ -63,7 +63,7 @@ public class StatBin {
 		long sum = 0;
 		for (Character c: bin) {
 			sum += c.getHitPoints() 
-				- c.getAbilityBonus(Ability.Con) * c.getLevel();
+				- c.getAbilityBonus(Ability.Constitution) * c.getLevel();
 		}
 		return (double) sum/size();
 	}

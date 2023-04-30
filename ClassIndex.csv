@@ -1,4 +1,4 @@
 Class,Abbreviation,Prime Req,Attack Bonus,Hit Die Type,Max Hit Dice,Added Points,Save As,Special
-Fighter,Ftr,Str,1/1,8,9,3,Fighter,Feats
-Thief,Thf,Dex,2/3,6,10,2,Wizard,Skills
-Wizard,Wiz,Int,1/2,4,11,1,Wizard,Spells
+Fighter,Ftr,Strength,1/1,8,9,3,Fighter,Feats
+Thief,Thf,Dexterity,2/3,6,10,2,Wizard,Skills
+Wizard,Wiz,Intelligence,1/2,4,11,1,Wizard,Spells

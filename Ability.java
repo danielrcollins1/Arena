@@ -1,19 +1,27 @@
-/******************************************************************************
-*  Ability scores enumeration and methods.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-21
-******************************************************************************/
+/**
+	Ability scores enumeration and methods.
+
+	@author   Daniel R. Collins (dcollins@superdan.net)
+	@since    2014-05-21
+*/
 
 public enum Ability {
-	Str, Int, Wis, Dex, Con, Cha;
+	Strength, Intelligence, Wisdom, Dexterity, Constitution, Charisma;
+	
+	/** Constant size record. */
+	private static final int SIZE = Ability.values().length;
+
+	/** Abbreviations for values. */
+	private static final String[] ABBREVIATION = {
+		"Str", "Int", "Wis", "Dex", "Con", "Cha"
+	};
 
 	//--------------------------------------------------------------------------
 	//  Inner Enumeration
 	//--------------------------------------------------------------------------
 
 	/** Available ability bonus rules. */
-	private enum BonusRule {BX, OED};
+	private enum BonusRule { BX, OED };
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -23,22 +31,22 @@ public enum Ability {
 	private static final BonusRule BONUS_RULE = BonusRule.OED;
 
 	/** Prioritized preference for any class based on prime requisite. */
-	private static final Ability[][] abilityPriority = 
-		{{Str, Dex, Con, Int, Wis, Cha}, {Int, Dex, Con, Cha, Wis, Str},
-		 {Wis, Con, Str, Int, Cha, Dex}, {Dex, Str, Con, Int, Cha, Wis},
-		 {Con, Str, Dex, Wis, Cha, Int}, {Cha, Dex, Int, Wis, Con, Str}};
+	private static final Ability[][] ABILITY_PRIORITY = {
+		{Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma},
+		{Intelligence, Dexterity, Constitution, Charisma, Wisdom, Strength},
+		{Wisdom, Constitution, Strength, Intelligence, Charisma, Dexterity},
+		{Dexterity, Strength, Constitution, Intelligence, Charisma, Wisdom},
+		{Constitution, Strength, Dexterity, Wisdom, Charisma, Intelligence},
+		{Charisma, Dexterity, Intelligence, Wisdom, Constitution, Charisma}
+	};
 
-	/** Long-form names for abilities. */
-	private static final String[] fullName =
-		{"Strength", "Intelligence", "Wisdom", "Dexterity", "Constitution", "Charisma"};
-
-	/** Array of B/X style ability bonuses (for performance.) */
-	private static final int[] BonusValueBX =
+	/** Array of B/X style ability bonuses (for performance). */
+	private static final int[] BONUS_VALUE_BX =
 		{-5, -4, -3, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0,
 		1, 1, 1, 2, 2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6};
 	
 	/** Array of OED style ability bonuses (for performance). */
-	private static final int[] BonusValueOED =
+	private static final int[] BONUS_VALUE_OED =
 	 	{-3, -3, -3, -2, -2, -2, -1, -1, -1, 0, 0, 0, 0, 
 		1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5};
 	
@@ -47,68 +55,91 @@ public enum Ability {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Get long-form name for an ability.
+		Get size of this enumeration.
 	*/
-	public static String getFullName (Ability ability) {
-		return fullName[ability.ordinal()];
-	}
-	
-	/**
-	*  Gives the bonus for a given ability score.
-	*/
-	public static int getBonus (int score) {
-		if (BONUS_RULE == BonusRule.OED)
-			return getBonusOED(score);
-		else
-			return getBonusBX(score);
+	public static int getSize() {
+		return SIZE;
 	}
 
 	/**
-	*  BX-style bonus for a given ability score.
+		Get ability abbreviation.
 	*/
-	static int getBonusBX (int score) {
-		assert(score >= 0);
-		if (score < BonusValueBX.length)
-			return BonusValueBX[score];
-		else
+	public String getAbbreviation() {
+		return ABBREVIATION[this.ordinal()];
+	}
+
+	/**
+		Gives the bonus for a given ability score.
+	*/
+	public static int getBonus(int score) {
+		if (BONUS_RULE == BonusRule.OED) {
+			return getBonusOED(score);
+		}
+		else {
+			return getBonusBX(score);
+		}
+	}
+
+	/**
+		BX-style bonus for a given ability score.
+	*/
+	static int getBonusBX(int score) {
+		assert score >= 0;
+		if (score < BONUS_VALUE_BX.length) {
+			return BONUS_VALUE_BX[score];
+		}
+		else {
 			// See Mentzer's Immortals rules for 
 			// further extension of scores up to 100.
 			return 7;
+		}
 	}
 
 	/**
-	*  OED-style bonus for a given ability score.
+		OED-style bonus for a given ability score.
 	*/
-	static int getBonusOED (int score) {
-		assert(score >= 0);
-		if (score < BonusValueOED.length)
-			return BonusValueOED[score];
-		else 
+	static int getBonusOED(int score) {
+		assert score >= 0;
+		if (score < BONUS_VALUE_OED.length) {
+			return BONUS_VALUE_OED[score];
+		}
+		else  {
 			return (score - 11) / 3;
+		}
 	}
 	
 	/**
-	*  Return bonus percent of XP for prime requisite.
+		Return bonus percent of XP for prime requisite.
 	*/
-	public static int bonusPercentXP (int score) {
-		if (score >= 15) return 10;
-		else if (score >= 13) return 5;
-		else if (score >=9) return 0;
-		else if (score >= 7) return -10;
-		else return -20;
+	public static int bonusPercentXP(int score) {
+		if (score >= 15) {
+			return 10;
+		}
+		else if (score >= 13) {
+			return 5;
+		}
+		else if (score >= 9) {
+			return 0;
+		}
+		else if (score >= 7) {
+			return -10;
+		}
+		else {
+			return -20;
+		}
 	}
 	
 	/**
-	*  Get ability priority list based on prime requisite.
+		Get ability priority list based on prime requisite.
 	*/
 	public static Ability[] getPriorityList(Ability primeReq) {
-		return abilityPriority[primeReq.ordinal()];
+		return ABILITY_PRIORITY[primeReq.ordinal()];
 	}
 	
 	/**
-	*  Main test function.
+		Main test function.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		System.out.println("Score\tBonus");
 		System.out.println("-----\t-----");
 		for (int i = 3; i <= 18; i++) {
@@ -117,4 +148,3 @@ public enum Ability {
 		System.out.println();
 	}
 }
-

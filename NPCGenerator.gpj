@@ -15,7 +15,8 @@ s#k0
 s#j0
 s#l0
 !148;u
-a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!476;g
+a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!32;a
+a%\011NPCGenerator_doc%s	b	c1	d0!476;g
 %\011NameGenerator.java
 %\011Weapon.java
 %\011CharacterPDF.java

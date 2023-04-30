@@ -204,9 +204,9 @@ public class ClassRecord {
 			return null;
 		}
 		else {
-			int skillBonus = level + character.getAbilityBonus(Ability.Dex);
-			int hearBonus = 1 + level/4 + character.getAbilityBonus(Ability.Int);
-			int climbBonus = 1 + level/4 + character.getAbilityBonus(Ability.Dex);
+			int skillBonus = level + character.getAbilityBonus(Ability.Dexterity);
+			int hearBonus = 1 + level/4 + character.getAbilityBonus(Ability.Intelligence);
+			int climbBonus = 1 + level/4 + character.getAbilityBonus(Ability.Dexterity);
 			int backstabMult = level/4 + 2;
 			return "Pick, disarm, filch, sneak, hide " + Dice.formatBonus(skillBonus) + "; "
 				+ "hear " + Dice.formatBonus(hearBonus) + ", "
@@ -251,7 +251,7 @@ public class ClassRecord {
 	*/
 	public Dice getHitDice () {
 		Dice dice = new Dice(classType.getHitDiceTotal(level));
-		int conBonus = character.getAbilityBonus(Ability.Con);
+		int conBonus = character.getAbilityBonus(Ability.Constitution);
 		int hpBonus = conBonus * dice.getNum();
 		dice.setAdd(dice.getAdd() + hpBonus);
 		return dice;
@@ -274,7 +274,7 @@ public class ClassRecord {
 	*    we do not accept 1 or 2 hp die-rolls.
 	*/
 	void addNewHitPoints (int newLevel, boolean initBoost) {
-		int hpBonus = character.getAbilityBonus(Ability.Con);
+		int hpBonus = character.getAbilityBonus(Ability.Constitution);
 
 		if (newLevel == 0) {  // Roll d6 for any class
 			Dice newDice = new Dice(1, LEVEL_ZERO_HIT_DIE, hpBonus);
@@ -316,7 +316,7 @@ public class ClassRecord {
 	*/
 	public void handleConChange (int oldCon) {
 		int oldBonus = Ability.getBonus(oldCon);
-		int newBonus = character.getAbilityBonus(Ability.Con);
+		int newBonus = character.getAbilityBonus(Ability.Constitution);
 		int diffBonus = newBonus - oldBonus;
 		int numDice = classType.getHitDiceTotal(level).getNum();
 		hitPoints = Math.max(numDice, hitPoints + diffBonus * numDice);

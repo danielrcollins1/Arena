@@ -193,9 +193,9 @@ public class Character extends Monster {
 	public void dropAllEquipment () { equipList.clear(); }
 
 	// Class-detecting methods
-	public boolean isFighter () { return hasPrimeReqClass(Ability.Str); }
-	public boolean isThief () { return hasPrimeReqClass(Ability.Dex); }
-	public boolean isWizard () { return hasPrimeReqClass(Ability.Int); }
+	public boolean isFighter () { return hasPrimeReqClass(Ability.Strength); }
+	public boolean isThief () { return hasPrimeReqClass(Ability.Dexterity); }
+	public boolean isWizard () { return hasPrimeReqClass(Ability.Intelligence); }
 
 	/**
 	*  Roll random ability scores for single-class character.
@@ -219,9 +219,12 @@ public class Character extends Monster {
 			ClassType type2, int level2) {
 		if (boostInitialAbilities) {
 			Ability[] priorityList;
-			if (type1.getPrimeReq() == Ability.Int || type2.getPrimeReq() == Ability.Int) {
-				priorityList = new Ability[] {Ability.Dex, Ability.Int, 
-					Ability.Str, Ability.Con, Ability.Cha, Ability.Wis};
+			if (type1.getPrimeReq() == Ability.Intelligence 
+				|| type2.getPrimeReq() == Ability.Intelligence) 
+			{
+				priorityList = new Ability[] {
+					Ability.Dexterity, Ability.Intelligence, Ability.Strength,
+					Ability.Constitution, Ability.Charisma, Ability.Wisdom};
 			}		
 			else {
 				priorityList = (level1 >= level2) ?
@@ -277,7 +280,7 @@ public class Character extends Monster {
 	public int getAbilityScore (Ability a) {
 		int score = abilityScores.get(a).intValue();
 		score -= abilityScoreDamage.get(a).intValue();
-		if (a == Ability.Str 
+		if (a == Ability.Strength 
 				&& hasFeat(Feat.ExceptionalStrength)) {
 			score += 3;
 		}
@@ -309,7 +312,7 @@ public class Character extends Monster {
 	*  Adjust all ability scores by indicated modifiers.
 	*/
 	private void adjustAllAbilityScores (int... modifiers) {
-		int oldCon = getAbilityScore(Ability.Con);
+		int oldCon = getAbilityScore(Ability.Constitution);
 		int idx = 0;
 		for (Ability a: Ability.values()) {
 			int val = abilityScores.get(a).intValue();
@@ -340,7 +343,7 @@ public class Character extends Monster {
 		// For performance, check only the Strength ability
 		// (c.f. Shadow Strength draining)
 		// If other ability-drain abilities arise, add here.
-		if (getAbilityScore(Ability.Str) <= 0)
+		if (getAbilityScore(Ability.Strength) <= 0)
 			return true;
 		else
 			return false;
@@ -402,7 +405,7 @@ public class Character extends Monster {
 	*  Get adjusted armor class.
 	*/
 	private int computeArmorClass() { 
-		int AC = BASE_ARMOR_CLASS - getAbilityBonus(Ability.Dex);
+		int AC = BASE_ARMOR_CLASS - getAbilityBonus(Ability.Dexterity);
 		if (armorWorn != null) {
 			AC -= armorWorn.getBaseArmor() + armorWorn.getMagicBonus();
 		}	
@@ -420,7 +423,7 @@ public class Character extends Monster {
 	*/
 	private int computeMoveInches() {
 		float weight = getEncumbrance();
-		int strength = getAbilityScore(Ability.Str);
+		int strength = getAbilityScore(Ability.Strength);
 		if (weight <= strength * 1./3)
 			return 12;
 		else if (weight <= strength * 2./3)
@@ -452,10 +455,10 @@ public class Character extends Monster {
 		else {
 			String name = weaponInHand.getName();
 			int rate = 1;
-			int atkBonus = baseAttackBonus() + getAbilityBonus(Ability.Str) 
+			int atkBonus = baseAttackBonus() + getAbilityBonus(Ability.Strength) 
 				+ weaponInHand.getMagicBonus();
 			Dice damageDice = new Dice(weaponInHand.getBaseDamage());
-			int damageAdd = damageDice.getAdd() + getAbilityBonus(Ability.Str) 
+			int damageAdd = damageDice.getAdd() + getAbilityBonus(Ability.Strength) 
 				+ weaponInHand.getMagicBonus();
 			if (hasFeat(Feat.WeaponSpecialization)) {
 				atkBonus += 2;
@@ -969,9 +972,9 @@ public class Character extends Monster {
 		if (age > 40) {
 			for (ClassRecord record: classList) {
 				switch (record.getClassType().getPrimeReq()) {
-					case Str: if (age % 2 == 0) record.loseLevel(); break;
-					case Dex: if (age % 5 == 0) record.loseLevel(); break;
-					case Int: break;
+					case Strength: if (age % 2 == 0) record.loseLevel(); break;
+					case Dexterity: if (age % 5 == 0) record.loseLevel(); break;
+					case Intelligence: break;
 				}
 			}
 		}
@@ -1111,7 +1114,8 @@ public class Character extends Monster {
 	private String abilityString () {
 		String s = "";
 		for (Ability a: Ability.values()) {
-			s = addItem(s, a.name() + " " + getAbilityScore(a));
+			s = addItem(s, a.getAbbreviation() 
+				+ " " + getAbilityScore(a));
 		}
 		return s;
 	}

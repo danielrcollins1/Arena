@@ -778,7 +778,7 @@ public class Monster {
 					break;
 
 				case StrengthDrain:
-					target.takeAbilityDamage(Ability.Str, 1);
+					target.takeAbilityDamage(Ability.Strength, 1);
 					break;
 
 				case BloodDrain: 
@@ -814,8 +814,8 @@ public class Monster {
 					if (!isLastAttack && !target.hasCondition(s)) {
 						throwCondition(target, s);
 						if (target.hasCondition(s)) {
-							int strength = target.getAbilityScore(Ability.Str);       
-							target.takeAbilityDamage(Ability.Str, strength/2);
+							int strength = target.getAbilityScore(Ability.Strength);       
+							target.takeAbilityDamage(Ability.Strength, strength / 2);
 						}
 					}
 					break;
@@ -1555,7 +1555,7 @@ public class Monster {
 	private void mindBlastArea (Party enemy, int number) {
 		List<Monster> targets = enemy.randomGroup(number);
 		for (Monster m: targets) {
-			int intel = m.getAbilityScore(Ability.Int);
+			int intel = m.getAbilityScore(Ability.Intelligence);
 			assert(intel >= 0);
 			if (Dice.roll(20) + intel < 20) {
 				switch (intel) {
@@ -1686,7 +1686,7 @@ public class Monster {
 		if (hasCondition(SpecialType.Webs)) {
 
 			// Make check vs. strength bonus to break out
-			int strBonus = getAbilityBonus(Ability.Str);
+			int strBonus = getAbilityBonus(Ability.Strength);
 			boolean breakOut = Dice.roll(6) <= strBonus;
 			if (breakOut) removeCondition(SpecialType.Webs);
 			return true;
@@ -2011,9 +2011,9 @@ public class Monster {
 	*/
 	public int getAbilityScore (Ability ability) { 
 		switch (ability) {
-			case Str: case Con: return getHD() / 2 * 3 + 10;
-			case Dex: case Wis: return 10;
-			case Int: case Cha: return 8;
+			case Strength: case Constitution: return getHD() / 2 * 3 + 10;
+			case Dexterity: case Wisdom: return 10;
+			case Intelligence: case Charisma: return 8;
 		}	
 		System.err.println("Unknown ability score type.");
 		return 0;
