@@ -359,7 +359,7 @@ public class Character extends Monster {
 	/**
 		Do we have any class of the given base type?
 	*/
-	private boolean hasBaseClassType(ClassType.BaseClassType type) {
+	private boolean hasBaseClassType(BaseClassType type) {
 		for (ClassRecord cr: classList) {
 			if (cr.getClassType().getBaseClassType() == type) {
 				return true;
@@ -725,7 +725,7 @@ public class Character extends Monster {
 		Set basic equipment by class.
 	*/
 	public void setBasicEquipment() {
-		if (hasBaseClassType(ClassType.BaseClassType.Fighter)) {
+		if (hasBaseClassType(BaseClassType.Fighter)) {
 			switch(getLevel()) {
 				case 0: setArmor(Armor.makeType(Armor.Type.Leather)); break;
 				case 1: setArmor(Armor.makeType(Armor.Type.Chain)); break;
@@ -737,17 +737,17 @@ public class Character extends Monster {
 			}
 			addEquipment(primary);
 			addEquipment(Weapon.randomSecondary());
-			if (hasBaseClassType(ClassType.BaseClassType.Wizard)) {
+			if (hasBaseClassType(BaseClassType.Wizard)) {
 				setArmor(Armor.makeType(Armor.Type.Chain));
 				setShield(null);			
 			}
 		}
-		else if (hasBaseClassType(ClassType.BaseClassType.Thief)) {
+		else if (hasBaseClassType(BaseClassType.Thief)) {
 			setArmor(Armor.makeType(Armor.Type.Leather));
 			addEquipment(Weapon.randomThieving());
 			addEquipment(Weapon.dagger());
 		}
-		else if (hasBaseClassType(ClassType.BaseClassType.Wizard)) {
+		else if (hasBaseClassType(BaseClassType.Wizard)) {
 			addEquipment(Weapon.dagger());
 		}
 		else {

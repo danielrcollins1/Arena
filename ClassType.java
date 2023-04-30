@@ -8,16 +8,6 @@
 public class ClassType {
 
 	//--------------------------------------------------------------------------
-	//  Inner enumeration
-	//--------------------------------------------------------------------------
-
-	/** 
-		Base class types .
-		(For possible sublass expansions.)
-	*/
-	public enum BaseClassType { Fighter, Wizard, Thief, Cleric };
-
-	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
@@ -332,14 +322,7 @@ public class ClassType {
 		Get the base class type.
 	*/
 	public BaseClassType getBaseClassType() {
-		switch(primeRequisite) {
-			case Strength: return BaseClassType.Fighter;
-			case Intelligence: return BaseClassType.Wizard;
-			case Dexterity: return BaseClassType.Thief;
-			case Wisdom: return BaseClassType.Cleric;
-			default: System.err.println("Unknown prime requisite.");
-		}
-		return null;
+		return BaseClassType.getTypeFromPrimeReq(primeRequisite);
 	}
 
 	/**

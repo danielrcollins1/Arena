@@ -1,11 +1,11 @@
 import java.io.IOException;
 
-/******************************************************************************
-*  Index of supported character class types (singleton pattern).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-22
-******************************************************************************/
+/**
+	Index of supported character class types (singleton pattern).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-22
+*/
 
 public class ClassIndex {
 
@@ -14,26 +14,27 @@ public class ClassIndex {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with class information. */
-	final String CLASS_INDEX_FILE = "ClassIndex.csv";
+	private static final String CLASS_INDEX_FILE = "ClassIndex.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static ClassIndex instance = null;
+	private static ClassIndex instance = null;
 	
 	/** Array of ClassInfo records. */
-	ClassType[] classTypeList;
+	private ClassType[] classTypeList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read error
 	*/
-	protected ClassIndex () throws IOException {
+	protected ClassIndex() throws IOException {
 		String[][] index = CSVReader.readFile(CLASS_INDEX_FILE);
 		classTypeList = new ClassType[index.length - 1];
 		for (int i = 1; i < index.length; i++) {
@@ -49,7 +50,7 @@ public class ClassIndex {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static ClassIndex getInstance() {
 		if (instance == null) {
@@ -64,9 +65,9 @@ public class ClassIndex {
 	}
 
 	/**
-	*  Get ClassType for a given class name.
+		Get ClassType for a given class name.
 	*/
-	public ClassType getTypeFromName (String name) {
+	public ClassType getTypeFromName(String name) {
 		for (ClassType type: classTypeList) {
 			if (type.getName().equals(name)) {
 				return type;
@@ -76,9 +77,9 @@ public class ClassIndex {
 	}
 
 	/**
-	*  Get ClassType for a given class title.
+		Get ClassType for a given class title.
 	*/
-	public ClassType getTypeFromTitle (String title) {
+	public ClassType getTypeFromTitle(String title) {
 		for (ClassType type: classTypeList) {
 			if (type.getLevelFromTitle(title) > -1) {
 				return type;			
@@ -88,9 +89,9 @@ public class ClassIndex {
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		ClassIndex cl = ClassIndex.getInstance();
 
 		// Print table for each class
@@ -107,4 +108,3 @@ public class ClassIndex {
 		}
 	}
 }
-

@@ -16,7 +16,8 @@ s#j0
 s#l0
 !311;u
 a0	b68	c255	e%\\011Class-Fighter.csv\011%\\011Class-Thief.csv\011%\\011Class-Wizard.csv\011%\\011ClassIndex.csv\011%\\011GPL.txt\011%\\011MenTypes.csv\011%\\011Names.csv\011%\\011SavingThrows.csv\011%\\011XPTable.csv	f%\011Marshal.jar	g%\011Marshal.zip	hManifest-Version\0111.0\011Main-Class\011Marshal	iMarshal!25;a
-a%\011Marshal_doc	b	c1	d0!596;g
+a%\011Marshal_doc	b	c1	d0!620;g
+%\011BaseClassType.java
 %\011MonsterTreasureTable.java
 %\011Weapon.java
 %\011SavingThrows.java
@@ -46,7 +47,8 @@ a%\011Marshal_doc	b	c1	d0!596;g
 %\011Character.java
 %\011MenTypeList.java
 %\011Ability.java
-!596;f
+!620;f
+%\011BaseClassType.java
 %\011MonsterTreasureTable.java
 %\011Weapon.java
 %\011SavingThrows.java
