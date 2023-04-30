@@ -66,5 +66,7 @@ a%\011NPCGenerator_doc%s	b	c1	d0!476;g
 %\011CSVReader.java
 %\011SpecialType.java
 %\011Ability.java
+!298;t
+jgrCheckstyle0xr	%\011Armor.java	1682826564707:P	%\011ClassType.java	1682833513353:P	%\011Alignment.java	1682825652996:P	%\011Attack.java	1682829038644:P	%\011Character.java	1682833655697:P	%\011EnergyType.java	1682833854401:P	%\011CSVReader.java	1682829115322:P	%\011Ability.java	1682831883202:P	
 !35;m
 RunSelect	APPLICATION:NPCGenerator

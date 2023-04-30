@@ -151,10 +151,10 @@ public class ClassRecord {
 	*  Add a random feat to this character.
 	*/
 	void addFeat () {
-		if (featsKnown.size() < Feat.number) {
+		if (featsKnown.size() < Feat.size()) {
 			Feat newFeat;
 			do {
-				int rand = Dice.roll(Feat.number) - 1;
+				int rand = Dice.roll(Feat.size()) - 1;
 				newFeat = Feat.values()[rand];
 			} while (featsKnown.contains(newFeat));
 			featsKnown.add(newFeat);
