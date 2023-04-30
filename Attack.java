@@ -1,9 +1,9 @@
-/******************************************************************************
-*  Attack routine specification (sword, claw, rock, etc.).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-20
-******************************************************************************/
+/**
+	Attack routine specification (sword, claw, rock, etc.).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-20
+*/
 
 public class Attack {
 
@@ -19,28 +19,28 @@ public class Attack {
 	//--------------------------------------------------------------------------
 
 	/** Name descriptor of this attack form. */
-	String name;
+	private String name;
 	
 	/** Attack bonus added to d20 hit rolls. */
-	int bonus;
+	private int bonus;
 	
 	/** Rate of attacks per round. */
-	int rate;
+	private int rate;
 	
 	/** Damage dice on successful hit. */
-	Dice damage;
+	private Dice damage;
 
 	/** Energy type applicable to this attack. */
-	EnergyType energy;
+	private EnergyType energy;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**	
-	*  Constructor (full fields).
+		Constructor (full fields).
 	*/
-	Attack (String name, int rate, int bonus, Dice damage, EnergyType energy) {
+	Attack(String name, int rate, int bonus, Dice damage, EnergyType energy) {
 		this.name = name;
 		this.rate = rate;
 		this.bonus = bonus;
@@ -49,23 +49,23 @@ public class Attack {
 	}
 
 	/**	
-	*  Constructor (name, rate, bonus, damage).
+		Constructor (name, rate, bonus, damage).
 	*/
-	Attack (String name, int rate, int bonus, Dice damage) {
+	Attack(String name, int rate, int bonus, Dice damage) {
 		this(name, rate, bonus, damage, null);
 	}
 
 	/**	
-	*  Constructor (rate, bonus, damage dice).
+		Constructor (rate, bonus, damage dice).
 	*/
-	Attack (int rate, int bonus, int damDice) {
+	Attack(int rate, int bonus, int damDice) {
 		this(null, rate, bonus, new Dice(damDice, BASE_DIE), null);
 	}
 
 	/**	
-	*  Constructor (bonus, damage dice).
+		Constructor (bonus, damage dice).
 	*/
-	Attack (int bonus, int damDice) {
+	Attack(int bonus, int damDice) {
 		this(null, 1, bonus, new Dice(damDice, BASE_DIE), null);
 	}
 
@@ -77,27 +77,29 @@ public class Attack {
 	public int getRate() { return rate; }
 	public Dice getDamage() { return damage; }
 	public EnergyType getEnergy() { return energy; }
-	public void setBonus (int bonus)  { this.bonus = bonus; }
-	public void setRate (int rate)  { this.rate = rate; }
+	public void setBonus(int bonus)  { this.bonus = bonus; }
+	public void setRate(int rate)  { this.rate = rate; }
 
 	/**
-	*  Roll damage for successful hit.
+		Roll damage for successful hit.
 	*/
-	public int rollDamage () {
+	public int rollDamage() {
 
 		// Some attacks do 0 damage (e.g., carrion crawler)
-		if (damage.getNum() <= 0)
+		if (damage.getNum() <= 0) {
 			return damage.boundRoll(0);
+		}
 
 		// Everything else does minimum 1 point (even w/penalties)
-		else
+		else {
 			return damage.boundRoll(1);
+		}
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
-	public String toString () {
+	public String toString() {
 		return (rate == 1 ? "" : rate + " ")
 			+ (name == null ? "Attack" : name) + " "
 			+ Dice.formatBonus(bonus)
@@ -105,9 +107,9 @@ public class Attack {
 	}
 	
 	/**
-	*  Main test function.
+		Main test function.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Attack atk = new Attack(2, 1);
 		System.out.println(atk);
 		atk = new Attack("Claw", 2, 6, new Dice(1, 6));
