@@ -48,10 +48,10 @@ public class Character extends Monster {
 	String name;
 
 	/** The six ability scores. */
-	AbstractMap<Ability, Integer> abilityScores;
+	int[] abilityScores;
 
 	/** Ability score damage. */
-	AbstractMap<Ability, Integer> abilityScoreDamage;
+	int[] abilityScoreDamage;
 
 	/** List of classes with XP scores. */
 	List<ClassRecord> classList;
@@ -140,9 +140,9 @@ public class Character extends Monster {
 		age = BASE_AGE;
 		name = NameGenerator.getInstance().getRandom(race);
 		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
-		abilityScores = new EnumMap<Ability, Integer>(Ability.class);
+		abilityScores = new int[Ability.size()];
 		rollAbilityScores(classType, level);
-		abilityScoreDamage = new EnumMap<Ability, Integer>(Ability.class);
+		abilityScoreDamage = new int[Ability.size()];
 		zeroAbilityDamage();
 		classList = new ArrayList<ClassRecord>(1);
 		equipList = new ArrayList<Equipment>(4);
@@ -205,8 +205,8 @@ public class Character extends Monster {
 			rollPriorityAbilityScores(type.getAbilityPriority(), level);
 		}
 		else {		
-			for (Ability a: Ability.values()) {
-				abilityScores.put(a, ABILITY_DICE[0].roll());
+			for (int i = 0; i < Ability.size(); i++) {
+				abilityScores[i] = ABILITY_DICE[0].roll();
 			}
 		}
 	}
@@ -240,7 +240,7 @@ public class Character extends Monster {
 	private void rollPriorityAbilityScores(Ability[] priorityList, int level) {
 		int priority = 0;
 		for (Ability a: priorityList) {
-			abilityScores.put(a, getBoostedAbilityDice(level, priority).roll());
+			abilityScores[a.ordinal()] = getBoostedAbilityDice(level, priority).roll();
 			priority++;
 		}
 	}
@@ -278,13 +278,17 @@ public class Character extends Monster {
 	*  Get an ability score.
 	*/
 	public int getAbilityScore (Ability a) {
-		int score = abilityScores.get(a).intValue();
-		score -= abilityScoreDamage.get(a).intValue();
+		int index = a.ordinal();
+		int score = abilityScores[index];
+		score -= abilityScoreDamage[index];
 		if (a == Ability.Strength 
-				&& hasFeat(Feat.ExceptionalStrength)) {
+			&& hasFeat(Feat.ExceptionalStrength)) 
+		{
 			score += 3;
 		}
-		if (score < 0) score = 0;
+		if (score < 0) {
+			score = 0;
+		}
 		return score;
 	}
 
@@ -293,9 +297,7 @@ public class Character extends Monster {
 	*/
 	@Override
 	protected void takeAbilityDamage (Ability a, int damage) {
-		int val = abilityScoreDamage.get(a).intValue();
-		val += damage;
-		abilityScoreDamage.put(a, Integer.valueOf(val));
+		abilityScoreDamage[a.ordinal()] += damage;
 		updateStats();
 	}
 
@@ -304,8 +306,9 @@ public class Character extends Monster {
 	*/
 	@Override
 	public void zeroAbilityDamage () {
-		for (Ability a: Ability.values())
-			abilityScoreDamage.put(a, 0);
+		for (int i = 0; i < Ability.size(); i++) {
+			abilityScoreDamage[i] = 0;
+		}
 	}
 
 	/*
@@ -313,11 +316,8 @@ public class Character extends Monster {
 	*/
 	private void adjustAllAbilityScores (int... modifiers) {
 		int oldCon = getAbilityScore(Ability.Constitution);
-		int idx = 0;
-		for (Ability a: Ability.values()) {
-			int val = abilityScores.get(a).intValue();
-			val += modifiers[idx];
-			abilityScores.put(a, Integer.valueOf(val));
+		for (int i = 0; i < Ability.size(); i++) {
+			abilityScores[i] += modifiers[i];		
 		}
 		handleConChange(oldCon); 
 		updateStats();

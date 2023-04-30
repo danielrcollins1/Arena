@@ -57,7 +57,7 @@ public enum Ability {
 	/**
 		Get size of this enumeration.
 	*/
-	public static int getSize() {
+	public static int size() {
 		return SIZE;
 	}
 
