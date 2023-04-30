@@ -2,7 +2,7 @@ ARENA - Java Package for Simulating Original D&D Combat
 ========================================================
 
 This code package provides routines for simulating combat in
-a tabletop Fantasy Role-Playing Game (FRPG) similar to Original D&D
+a fantasy Tabletop Role-Playing Game (TTRPG) similar to Original D&D
 or closely-related games. Combat is done as per "theater of the mind"
 without tracking exact spatial locations; targets of attacks
 are chosen by random method (as per 1E AD&D DMG). 
