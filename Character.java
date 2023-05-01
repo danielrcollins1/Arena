@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 /**
@@ -15,25 +16,28 @@ public class Character extends Monster {
 	//--------------------------------------------------------------------------
 
 	/** Base age in years. */
-	static final int BASE_AGE = 18;
+	private static final int BASE_AGE = 18;
 
 	/** Base armor class. */
-	static final int BASE_ARMOR_CLASS = 9;
+	private static final int BASE_ARMOR_CLASS = 9;
 
 	/** Base movement. */
-	static final int BASE_MOVEMENT = 12;
+	private static final int BASE_MOVEMENT = 12;
 
 	/** Base hit dice. */
-	static final Dice BASE_HD = new Dice(1, 6);
-
-	/** Base percent per level for magic items. */
-	static final int BASE_MAGIC_PER_LEVEL = 5;
+	private static final Dice BASE_HD = new Dice(1, 6);
 
 	/** Dice for ability scores. */
-	static final Dice[] ABILITY_DICE = new Dice[] 
-		{new Dice(3, 6), new Dice(2, 6, 6), 
-		new Dice(2, 4, 10), new Dice(2, 3, 12)};
+	private static final Dice ABILITY_DICE = new Dice(3, 6);
 
+	/** How many ability boosts we give over level. */
+	private static final int ABILITY_BOOSTS_OVER_LEVEL = 2;
+
+	/** Maximum score to which we can boost an ability. */
+	private static final int MAX_ABILITY_SCORE = 18;
+
+	/** Base percent per level for magic items. */
+	private static final int BASE_MAGIC_PER_LEVEL = 5;
 
 	/** Whether we apply the prime-requisite XP bonus. */
 	static final boolean APPLY_BONUS_XP = false;
@@ -137,11 +141,13 @@ public class Character extends Monster {
 		assert race != null;
 		assert classn != null;
 		assert level >= 0;
-		age = BASE_AGE;
 		name = NameGenerator.getInstance().getRandom(race);
-		ClassType classType = ClassIndex.getInstance().getTypeFromName(classn);
+		ClassType classType = ClassIndex.getTypeFromName(classn);
 		abilityScores = new int[Ability.size()];
-		rollAbilityScores(classType, level);
+		rollBaseAbilities();
+		if (boostInitialAbilities) {
+			boostBaseAbilities(classType, level);		
+		}
 		abilityScoreDamage = new int[Ability.size()];
 		zeroAbilityDamage();
 		classList = new ArrayList<ClassRecord>(1);
@@ -150,6 +156,7 @@ public class Character extends Monster {
 		alignment = getAlignmentFromString(align);
 		primaryPersonality = PersonalityTraits.getInstance().getRandom(alignment);
 		secondaryPersonality = PersonalityTraits.getInstance().getRandom(null);
+		age = BASE_AGE;
 		sweepRate = 0;
 		updateStats();
 		setPerfectHealth();
@@ -157,21 +164,26 @@ public class Character extends Monster {
 
 	/**
 		Constructor (double class).
+		Note that this re-rolls ability scores set in the base constructor.
 	*/
-	public Character(String race, String class1, int level1, 
-			String class2, int level2, String align) 
+	public Character(String race, 
+		String class1, int level1, 
+		String class2, int level2, 
+		String align) 
 	{
-		this(race, class1, level1, align);	
+		this(race, class1, level1, align);
 		assert level2 >= 0;
 		classList.clear();
-		ClassIndex classIndex = ClassIndex.getInstance();
-		ClassType classType1 = classIndex.getTypeFromName(class1);
-		ClassType classType2 = classIndex.getTypeFromName(class2);
-		rollAbilityScoresDblClass(classType1, level1, classType2, level2);
+		ClassType classType1 = ClassIndex.getTypeFromName(class1);
+		ClassType classType2 = ClassIndex.getTypeFromName(class2);
+		rollBaseAbilities();
+		if (boostInitialAbilities) {
+			boostBaseAbilities(classType1, level1, classType2, level2);
+		}
 		classList.add(new ClassRecord(this, classType1, level1));
 		classList.add(new ClassRecord(this, classType2, level2));
 		updateStats();
-		setPerfectHealth();			
+		setPerfectHealth();
 	}
 	
 	//--------------------------------------------------------------------------
@@ -193,81 +205,97 @@ public class Character extends Monster {
 	public void dropAllEquipment() { equipList.clear(); }
 
 	/**
-		Roll random ability scores for single-class character.
+		Roll base random ability scores.
 	*/
-	private void rollAbilityScores(ClassType type, int level) {
-		if (boostInitialAbilities) {
-			rollPriorityAbilityScores(type.getAbilityPriority(), level);
+	private void rollBaseAbilities() {
+		for (int i = 0; i < Ability.size(); i++) {
+			abilityScores[i] = ABILITY_DICE.roll();
 		}
-		else {		
+	}
+
+	/**
+		Boost starting abilities for a single-classed character.
+	*/
+	private void boostBaseAbilities(ClassType type, int level) {
+		boostBaseAbilities(type, level, null, 0);	
+	}
+
+	/**
+		Boost starting ability scores weighted by class and level.
+	*/
+	private void boostBaseAbilities(
+		ClassType type1, int level1, 
+		ClassType type2, int level2)
+	{
+		assert type1 != null;
+		int[] weights = type1.getAbilityPriorityWeights();
+		if (type2 != null) {
+			int[] weights2 = type2.getAbilityPriorityWeights();
 			for (int i = 0; i < Ability.size(); i++) {
-				abilityScores[i] = ABILITY_DICE[0].roll();
+				weights[i] += weights2[i];			
 			}
-		}
+		}		
+		int numToBoost = Math.max(level1, level2) + ABILITY_BOOSTS_OVER_LEVEL;
+		boostAbilitiesByWeights(weights, numToBoost);
 	}
 
 	/**
-		Roll random ability scores for double-class character.
-		(This is ugly b/c it needs to happen before we add class records.)
+		Boost several random ability scores based on weights array.
 	*/
-	private void rollAbilityScoresDblClass(ClassType type1, int level1, 
-			ClassType type2, int level2) {
-		if (boostInitialAbilities) {
-			Ability[] priorityList;
-			if (type1.getPrimeReq() == Ability.Intelligence 
-				|| type2.getPrimeReq() == Ability.Intelligence) 
-			{
-				priorityList = new Ability[] {
-					Ability.Dexterity, Ability.Intelligence, Ability.Strength,
-					Ability.Constitution, Ability.Charisma, Ability.Wisdom};
-			}		
-			else {
-				priorityList = (level1 >= level2) 
-					? type1.getAbilityPriority() : type2.getAbilityPriority();
-			}
-			rollPriorityAbilityScores(priorityList, Math.max(level1, level2));
-		}			
+	private void boostAbilitiesByWeights(int[] weights, int numToBoost) {
+		assert weights.length == Ability.size();
+		int sumWeights = Arrays.stream(weights).sum();
+		for (int i = 0; i < numToBoost; i++) {
+			boostAbilityByWeights(weights, sumWeights);
+		} 
 	}
 
 	/**
-		Roll boosted random ability scores as per given priority.
+		Boost one random ability score based on weights array.
+		If we pick an ability at max, then pick any other random one.
 	*/
-	private void rollPriorityAbilityScores(Ability[] priorityList, int level) {
-		int priority = 0;
-		for (Ability a: priorityList) {
-			abilityScores[a.ordinal()] 
-				= getBoostedAbilityDice(level, priority).roll();
-			priority++;
-		}
-	}
-
-	/**
-		Get ability dice boosted by level and priority.
-		This is as per OED rule observed from Monte Carlo analysis.
-	*/
-	private Dice getBoostedAbilityDice(int level, int priority) {
-		if (level <= 0) {
-			return ABILITY_DICE[0];
+	private void boostAbilityByWeights(int[] weights, int sumWeights) {
+		assert weights.length == Ability.size();	
+		int rollForIdx = Dice.roll(sumWeights);
+		for (int idx = 0; idx < Ability.size(); idx++) {
+			rollForIdx -= weights[idx];
+			if (rollForIdx <= 0) {
+				if (abilityScores[idx] < MAX_ABILITY_SCORE) {
+					abilityScores[idx]++;
+				}	
+				else {
+					boostRandomAbility();
+				}
+				break;
+			}								
 		}	
-		else if (level <= 3) {
-			switch(priority) {
-				case 0: return ABILITY_DICE[1];
-				default: return ABILITY_DICE[0];
-			}
+	}
+
+	/**
+		Boost a uniformly random ability score.
+	*/
+	private void boostRandomAbility() {
+		if (!allAbilitiesAtMax()) {
+			while (true) {
+				int idx = Dice.roll(Ability.size()) - 1;
+				if (abilityScores[idx] < MAX_ABILITY_SCORE) {
+					abilityScores[idx]++;
+					break;
+				}					
+			}	
 		}
-		else if (level <= 7) {
-			switch(priority) {
-				case 0: case 1: return ABILITY_DICE[1];
-				default: return ABILITY_DICE[0];
-			}
-		}
-		else {
-			switch(priority) {
-				case 0: return ABILITY_DICE[2]; 
-				case 1: case 2: case 3: return ABILITY_DICE[1];
-				default: return ABILITY_DICE[0];
-			}
-		}
+	}
+
+	/**
+		Are all of our ability scores at the maximum allowed?
+	*/
+	private boolean allAbilitiesAtMax() {
+		for (int score: abilityScores) {
+			if (score < MAX_ABILITY_SCORE) {
+				return false;
+			}		
+		}	
+		return true;
 	}
 
 	/**
@@ -709,7 +737,7 @@ public class Character extends Monster {
 		Create evil human NPC with equipment from class title.
 	*/
 	public static Character evilNPCFromTitle(String title) {
-		ClassType classType = ClassIndex.getInstance().getTypeFromTitle(title);
+		ClassType classType = ClassIndex.getTypeFromTitle(title);
 		if (classType != null) {
 			String classn = classType.getName();
 			int level = classType.getLevelFromTitle(title);

@@ -312,17 +312,17 @@ public class ClassType {
 	}
 
 	/**
-		Get the ability priority list.
-	*/
-	public Ability[] getAbilityPriority() {
-		return Ability.getPriorityList(primeRequisite);
-	}
-
-	/**
 		Get the base class type.
 	*/
 	public BaseClassType getBaseClassType() {
 		return BaseClassType.getTypeFromPrimeReq(primeRequisite);
+	}
+
+	/**
+		Get the ability priority weights.
+	*/
+   public int[] getAbilityPriorityWeights() {
+		return getBaseClassType().getAbilityPriorityWeights();
 	}
 
 	/**

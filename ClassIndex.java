@@ -58,7 +58,7 @@ public class ClassIndex {
 				instance = new ClassIndex();
 			}
 			catch (IOException e) {
-				System.out.println("Failed to read the Classes file.");
+				System.out.println("Failed to read the Class Index file.");
 			}
 		}
 		return instance;
@@ -67,8 +67,9 @@ public class ClassIndex {
 	/**
 		Get ClassType for a given class name.
 	*/
-	public ClassType getTypeFromName(String name) {
-		for (ClassType type: classTypeList) {
+	public static ClassType getTypeFromName(String name) {
+		ClassIndex index = getInstance();
+		for (ClassType type: index.classTypeList) {
 			if (type.getName().equals(name)) {
 				return type;
 			}		
@@ -79,8 +80,9 @@ public class ClassIndex {
 	/**
 		Get ClassType for a given class title.
 	*/
-	public ClassType getTypeFromTitle(String title) {
-		for (ClassType type: classTypeList) {
+	public static ClassType getTypeFromTitle(String title) {
+		ClassIndex index = getInstance();
+		for (ClassType type: index.classTypeList) {
 			if (type.getLevelFromTitle(title) > -1) {
 				return type;			
 			}

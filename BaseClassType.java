@@ -39,14 +39,10 @@ public enum BaseClassType {
 	*/
    public static BaseClassType getTypeFromPrimeReq(Ability primeReq) {
       switch (primeReq) {
-         case Strength: 
-            return Fighter;
-         case Intelligence: 
-            return Wizard;
-         case Wisdom: 
-            return Cleric;
-         case Dexterity: 
-            return Thief;
+         case Strength: return Fighter;
+         case Intelligence: return Wizard;
+         case Wisdom: return Cleric;
+         case Dexterity: return Thief;
          default: System.err.println("Unhandled prime requisite.");		
       }
       return null;

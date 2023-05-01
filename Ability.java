@@ -31,16 +31,6 @@ public enum Ability {
 	/** Constant switch for bonus formula. */
 	private static final BonusRule BONUS_RULE = BonusRule.OED;
 
-	/** Prioritized preference for any class based on prime requisite. */
-	private static final Ability[][] ABILITY_PRIORITY = {
-		{Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma},
-		{Intelligence, Dexterity, Constitution, Charisma, Wisdom, Strength},
-		{Wisdom, Constitution, Strength, Intelligence, Charisma, Dexterity},
-		{Dexterity, Strength, Constitution, Intelligence, Charisma, Wisdom},
-		{Constitution, Strength, Dexterity, Wisdom, Charisma, Intelligence},
-		{Charisma, Dexterity, Intelligence, Wisdom, Constitution, Charisma}
-	};
-
 	/** Array of B/X style ability bonuses (for performance). */
 	private static final int[] BONUS_VALUE_BX =
 		{-5, -4, -3, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0,
@@ -73,12 +63,12 @@ public enum Ability {
 		Gives the bonus for a given ability score.
 	*/
 	public static int getBonus(int score) {
-		if (BONUS_RULE == BonusRule.OED) {
-			return getBonusOED(score);
+		switch (BONUS_RULE) {
+			case BX: return getBonusBX(score);
+			case OED: return getBonusOED(score);
+			default: System.err.println("Unknown ability bonus rule.");
 		}
-		else {
-			return getBonusBX(score);
-		}
+		return 0;
 	}
 
 	/**
@@ -128,13 +118,6 @@ public enum Ability {
 		else {
 			return -20;
 		}
-	}
-	
-	/**
-		Get ability priority list based on prime requisite.
-	*/
-	public static Ability[] getPriorityList(Ability primeReq) {
-		return ABILITY_PRIORITY[primeReq.ordinal()];
 	}
 	
 	/**
