@@ -3,12 +3,12 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-/******************************************************************************
-*  One type of NPC men encounter.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-02-14
-******************************************************************************/
+/**
+	One type of NPC men encounter (per Vol-2).
+	
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-02-14
+*/
 
 public class MenType {
 
@@ -16,24 +16,37 @@ public class MenType {
 	//  Fields
 	//--------------------------------------------------------------------------
 
-	String category;
-	String HDStr;
-	String alignStr;
-	String composition;
-	String notes;
-	Armor.Type leaderArmor;
-	boolean hasCasters;
+	/** Name of this type. */
+	private String name;
+	
+	/** Hit dice descriptor. */
+	private String hitDiceStr;
+	
+	/** Alignment descriptor. */
+	private String alignStr;
+	
+	/** Unit composition descriptor. */
+	private String composition;
+	
+	/** Miscellaneous notes. */
+	private String notes;
+	
+	/** Armor type for lead fighters. */
+	private Armor.Type leaderArmor;
+	
+	/** Does this type have spellcasters? */	
+	private boolean hasCasters;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (from string array)
+		Constructor (from string array).
 	*/
-	MenType (String[] s) {
-		category = s[0];
-		HDStr = s[1];
+	public MenType(String[] s) {
+		name = s[0];
+		hitDiceStr = s[1];
 		alignStr = s[2];
 		leaderArmor = Armor.Type.valueOf(s[3]);
 		hasCasters = s[4].equals("Yes");
@@ -46,12 +59,24 @@ public class MenType {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Unit component
+		One of the units that make up the composition of forces.
 	*/
 	public class Component {
-		public int number;
-		public String description;
-		public Component (int num, String desc) {
+
+		/** Number of men. */
+		private int number;
+		
+		/** Unit description. */
+		private String description;
+		
+		/** Get the number of men. */
+		public int getNumber() { return number; }
+		
+		/** Get the unit description. */
+		public String getDescription() { return description; }
+
+		/** Constructor. */
+		public Component(int num, String desc) {
 			number = num;
 			description = desc;
 		}
@@ -62,25 +87,24 @@ public class MenType {
 	//--------------------------------------------------------------------------
 
 	// Basic accessors
-	public String getCategory () { return category; }
-	public Armor.Type getLeaderArmor () { return leaderArmor; }
-	public boolean hasCasters () { return hasCasters; }
-	public String getNotes () { return notes; }
-
+	public String getName() { return name; }
+	public Armor.Type getLeaderArmor() { return leaderArmor; }
+	public boolean hasCasters() { return hasCasters; }
+	public String getNotes() { return notes; }
 
 	/**
-	*  Determine alignment from among permitted options.
+		Determine alignment from among permitted options.
 	*/
-	public Alignment getAlignment () {
+	public Alignment getAlignment() {
 		String[] option = alignStr.split("/");
 		int rand = Dice.roll(option.length) - 1;
 		return Alignment.valueOf(option[rand]);
 	}
 
 	/**
-	*  Create separate unit components for this type of men.
+		Create separate unit components for this type of men.
 	*/
-	public Component[] createComponents (int total) {
+	public Component[] createComponents(int total) {
 		int remainder = total;
 		List<Component> components = new ArrayList<Component>();
 		String[] unitType = composition.split("; ");
@@ -89,7 +113,8 @@ public class MenType {
 			int percent, armorClass, moveRate;
 
 			// Parse the component descriptor
-			Pattern p = Pattern.compile("(\\d+)% (.+) \\x28AC (\\d+), MV (\\d+)\\x29");
+			Pattern p = Pattern.compile(
+				"(\\d+)% (.+) \\x28AC (\\d+), MV (\\d+)\\x29");
 			Matcher m = p.matcher(unitType[i]);
 			if (m.matches()) {
 				unitName = m.group(2);
@@ -98,7 +123,7 @@ public class MenType {
 				moveRate = Integer.parseInt(m.group(4));
 			}
 			else {
-				System.err.println("Error: Could not parse men type descriptor: " + unitType[i]);
+				System.err.println("Could not parse men type: " + unitType[i]);
 				continue;
 			}
 
@@ -106,7 +131,7 @@ public class MenType {
 			int unitNum = remainder;
 			if (i < unitType.length - 1) {
 				int baseNum = total * percent / 100;
-				int roundNum = (baseNum + 5)/10 * 10;
+				int roundNum = (baseNum + 5) / 10 * 10;
 				unitNum = Math.min(roundNum, remainder);
 			}
 			remainder -= unitNum;
@@ -116,7 +141,7 @@ public class MenType {
 				String desc = unitName
 					+ ": AC " + armorClass
 					+ ", MV " + moveRate
-					+ ", HD " + HDStr;
+					+ ", HD " + hitDiceStr;
 				components.add(new Component(unitNum, desc));
 			}
 		}		
@@ -124,10 +149,9 @@ public class MenType {
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
-	public String toString () {
-		return category;	
+	public String toString() {
+		return name;	
 	}
 }
-

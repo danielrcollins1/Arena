@@ -3,12 +3,12 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument; 
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 
-/******************************************************************************
-*  Facility for writing PDF character sheets.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2020-04-09
-******************************************************************************/
+/**
+	Facility for writing PDF character sheets.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2020-04-09
+*/
 
 public class CharacterPDF {
 
@@ -33,16 +33,16 @@ public class CharacterPDF {
 	//--------------------------------------------------------------------------
 
 	/** Number of special ability lines used. */
-	int specialLinesUsed;
+	private int specialLinesUsed;
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Write a character to a PDF file. 
+		Write a character to a PDF file.
 	*/
-	public void writePDF (Character c) {
+	public void writePDF(Character c) {
 		try {
 			// Open source file
 			File file = new File(CHAR_SHEET_FILE);
@@ -79,12 +79,17 @@ public class CharacterPDF {
 			c.drawWeapon(null);
 			while (atkNum < NUM_ATTACK_LINES) {
 				c.drawNextWeapon();
-				if (c.getWeapon() == null) break;			
+				if (c.getWeapon() == null) {
+					break;
+				}
 				atkNum++;
 				Attack atk = c.getAttack();
-				form.getField("Weapon" + atkNum).setValue(atk.getName());
-				form.getField("AtkBonus" + atkNum).setValue(Dice.formatBonus(atk.getBonus()));
-				form.getField("Damage" + atkNum).setValue(atk.getDamage().toString());
+				form.getField("Weapon" + atkNum)
+					.setValue(atk.getName());
+				form.getField("AtkBonus" + atkNum)
+					.setValue(Dice.formatBonus(atk.getBonus()));
+				form.getField("Damage" + atkNum)
+					.setValue(atk.getDamage().toString());
 				if (c.getWeapon().getMagicBonus() > 0) {
 					form.getField("AtkNotes" + atkNum).setValue("Magic");
 				}
@@ -93,8 +98,10 @@ public class CharacterPDF {
 			// Equipment
 			for (int i = 0; i < c.getEquipmentCount(); i++) {
 				String numStr = formatLeadZeroes(i + 1, 2);
-				form.getField("Item" + numStr).setValue(c.getEquipment(i).toString());
-				String weightStr = String.format("%.1f", c.getEquipment(i).getWeight());
+				form.getField("Item" + numStr)
+					.setValue(c.getEquipment(i).toString());
+				String weightStr = String
+					.format("%.1f", c.getEquipment(i).getWeight());
 				form.getField("Weight" + numStr).setValue(weightStr);
 			}
 
@@ -112,26 +119,31 @@ public class CharacterPDF {
 	}
 
 	/**
-	*  Format number with lead zeroes.
+		Format number with lead zeroes.
 	*/
-	String formatLeadZeroes (int value, int places) {
+	private String formatLeadZeroes(int value, int places) {
 		String s = String.valueOf(value);
-		while (s.length() < places) s = "0" + s;
+		while (s.length() < places) {
+			s = "0" + s;
+		}
 		return s;	
 	}
 
 	/**
-	*  Get racial ability descriptions.
+		Get racial ability descriptions.
 	*/
-	String getRacialAbilities (String race) {
+	private String getRacialAbilities(String race) {
 		if (race.equals("Dwarf")) {
-			return "Infravision 60', resist magic +4, dodge giants +4, find stone traps +1";
+			return "Infravision 60', resist magic +4, "
+				+ "dodge giants +4, find stone traps +1";
 		}	
 		else if (race.equals("Elf")) {
-			return "Multi-classed, infravision 60', hide in woods (4/6), find wood traps +1";
+			return "Multi-classed, infravision 60', "
+				+ "hide in woods (4/6), find wood traps +1";
 		}
 		else if (race.equals("Halfling")) {
-			return "Hide in woods (4-in-6), resist magic +4, ranged attacks +4";
+			return "Hide in woods (4-in-6), resist magic +4, "
+				+ "ranged attacks +4";
 		}
 		else {
 			return "";
@@ -139,18 +151,25 @@ public class CharacterPDF {
 	}
 
 	/**
-	*  Add a segment to the special ability lines, if nonempty.
+		Add a segment to the special ability lines, if nonempty.
+		@throws IOException if PDF form access fails
 	*/
-	void addSegmentToSpecial (PDAcroForm form, String label, String segment) throws IOException {
+	private void addSegmentToSpecial(
+		PDAcroForm form, String label, String segment) 
+		throws IOException 
+	{
 		if (!segment.isEmpty()) {
-			addStringToSpecial(form, label + Character.toSentenceCase(segment));		
+			addStringToSpecial(form, label + Character.toSentenceCase(segment));
 		}	
 	}
 
 	/**
-	*  Add a string to the special ability lines.
+		Add a string to the special ability lines.
+		@throws IOException if PDF form access fails
 	*/
-	void addStringToSpecial (PDAcroForm form, String s) throws IOException {
+	private void addStringToSpecial(PDAcroForm form, String s) 
+		throws IOException
+	{
 		if (!s.isEmpty()) {
 			String currLine = "";
 			String[] words = s.split(" ");	
@@ -170,9 +189,12 @@ public class CharacterPDF {
 	}
 
 	/**
-	*  Add one pre-formatted lins to the special ability section.
+		Add one pre-formatted lins to the special ability section.
+		@throws IOException if PDF form access fails
 	*/
-	void addLineToSpecial (PDAcroForm form, String s) throws IOException {
+	private void addLineToSpecial(PDAcroForm form, String s) 
+		throws IOException 
+	{
 		if (!s.isEmpty()) {
 			specialLinesUsed++;
 			if (specialLinesUsed <= NUM_SPECIAL_LINES) {
@@ -182,9 +204,9 @@ public class CharacterPDF {
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		CharacterPDF cp = new CharacterPDF();
 		Character.setBoostInitialAbilities(true);
@@ -194,4 +216,3 @@ public class CharacterPDF {
 		cp.writePDF(c);
 	}
 }
-

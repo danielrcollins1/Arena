@@ -1,13 +1,15 @@
-import java.util.*;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
-/******************************************************************************
-*  Memory of spells known by one creature.
-*
-*  We don't allow duplicates, so this uses the Set interface.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2021-12-19
-******************************************************************************/
+/**
+	Memory of spells known by one creature.
+
+	We don't allow duplicates, so this uses the Set interface.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2021-12-19
+*/
 
 public class SpellMemory implements Iterable<Spell> {
 
@@ -16,26 +18,26 @@ public class SpellMemory implements Iterable<Spell> {
 	//--------------------------------------------------------------------------
 
 	/** The set of spells in memory (no duplicates). */
-	Set<Spell> memory;
+	private Set<Spell> memory;
 
 	/** Should we select in-sim castable spells first? */
-	static boolean preferCastableSpells = false;
+	private static boolean preferCastableSpells = false;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor.
+		Constructor.
 	*/
-	public SpellMemory () {
+	public SpellMemory() {
 		memory = new LinkedHashSet<Spell>();
 	}
 
 	/**
-	*  Copy constructor.
+		Copy constructor.
 	*/
-	public SpellMemory (SpellMemory src) {
+	public SpellMemory(SpellMemory src) {
 		memory = new LinkedHashSet<Spell>(src.memory);
 	}
 
@@ -44,69 +46,71 @@ public class SpellMemory implements Iterable<Spell> {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Set static preference for in-sim castable spells.
+		Set static preference for in-sim castable spells.
 	*/
-	public static void setPreferCastableSpells (boolean prefer) {
+	public static void setPreferCastableSpells(boolean prefer) {
 		preferCastableSpells = prefer;	
 	}
 
 	/**
-	*  Add a spell.
+		Add a spell.
 	*/
-	public boolean add (Spell s) {
+	public boolean add(Spell s) {
 		return memory.add(s);
 	}
 
 	/**
-	*  Remove a spell.
+		Remove a spell.
 	*/
-	public boolean remove (Spell s) {
+	public boolean remove(Spell s) {
 		return memory.remove(s);	
 	}
 
 	/**
-	*  Is this spell in our memory?
+		Is this spell in our memory?
 	*/
-	public boolean contains (Spell s) {
+	public boolean contains(Spell s) {
 		return memory.contains(s);
 	}
 	
 	/**
-	*  Is our memory empty?
+		Is our memory empty?
 	*/
-	public boolean isBlank () {
+	public boolean isBlank() {
 		return memory.isEmpty();	
 	}
 
 	/**
-	*  Count spells of a given level.
+		Count spells of a given level.
 	*/
-	public int countAtLevel (int level) {
+	public int countAtLevel(int level) {
 		int count = 0;
 		for (Spell s: memory) {
-			if (s.getLevel() == level)
+			if (s.getLevel() == level) {
 				count++;
+			}
 		}
 		return count;
 	}	
 
 	/**
-	*  Get a random spell of a given level.
+		Get a random spell of a given level.
 	*/
-	private Spell getAtLevel (int level) {
+	private Spell getAtLevel(int level) {
 		for (Spell s: memory) {
-			if (s.getLevel() == level)
+			if (s.getLevel() == level) {
 				return s;
+			}
 		}
 		return null;			
 	}
 
 	/**
-	*  Add a random spell from index at a given level.
-	*  Use rollMode() for weightings.
-	*  @return true if we added a spell.
+		Add a random spell from index at a given level.
+		Use rollMode() for weightings.
+		@return true if we added a spell.
 	*/
-	public boolean addRandom (int level) {
+	public boolean addRandom(int level) {
 		SpellsIndex index = SpellsIndex.getInstance();
 		int startCount = countAtLevel(level);
 		if (startCount < index.getNumAtLevel(level)) {
@@ -130,10 +134,10 @@ public class SpellMemory implements Iterable<Spell> {
 	}
 
 	/**
-	*  Roll random selected spell mode.
-	*  As per analysis of Gygax modules: see blog 2018-12-17.
+		Roll random selected spell mode.
+		As per analysis of Gygax modules: see blog 2018-12-17.
 	*/
-	private Spell.Mode rollMode () {
+	private Spell.Mode rollMode() {
 		switch (Dice.roll(6)) {
 			case 1: return Spell.Mode.Miscellany;
 			case 2: case 3: return Spell.Mode.Defense;
@@ -142,17 +146,19 @@ public class SpellMemory implements Iterable<Spell> {
 	}
 
 	/**
-	*  Add a spell by naming it.
+		Add a spell by naming it.
 	*/
-	public void addByName (String name) {
+	public void addByName(String name) {
 		Spell spell = SpellsIndex.getInstance().findByName(name);
-		if (spell != null) add(spell);
+		if (spell != null) {
+			add(spell);
+		}
 	}
 
 	/**
-	*  Add all spells for a wizard of a given level.
+		Add all spells for a wizard of a given level.
 	*/
-	public void addSpellsForWizard (int level) {
+	public void addSpellsForWizard(int level) {
 		SpellsDaily spellsDaily = SpellsDaily.getInstance();
 		int maxPower = spellsDaily.getMaxSpellLevel();
 		for (int power = 1; power <= maxPower; power++) {
@@ -164,10 +170,10 @@ public class SpellMemory implements Iterable<Spell> {
 	}
 
 	/**
-	*  Lose the top character level load-out of spells.
-	*  Bound memory by next lower level daily spells.
+		Lose the top character level load-out of spells.
+		Bound memory by next lower level daily spells.
 	*/
-	public void loseSpellLevel (int level) {
+	public void loseSpellLevel(int level) {
 		if (level <= 1) {
 			memory.clear();		
 			return;
@@ -186,24 +192,26 @@ public class SpellMemory implements Iterable<Spell> {
 	}
 
 	/**
-	*  Are there any castable spells in this memory?
+		Are there any castable spells in this memory?
 	*/
-	public boolean hasCastableSpells () {
+	public boolean hasCastableSpells() {
 		for (Spell spell: memory) {
-			if (spell.isCastable())
+			if (spell.isCastable()) {
 				return true;
+			}
 		}
 		return false;	
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
-	public String toString () {
+	public String toString() {
 		String s = "";
 		for (Spell spell: memory) {
-			if (s.length() > 0)
+			if (s.length() > 0) {
 				s += ", ";
+			}
 			s += spell.getName();
 		}
 		return s;
@@ -217,9 +225,9 @@ public class SpellMemory implements Iterable<Spell> {
 	}
 
 	/**
-	*  Main test function.
+		Main test function.
 	*/
-	public static void main (String[] args) {	
+	public static void main(String[] args) {	
 		Dice.initialize();
 		SpellMemory mem = new SpellMemory();
 

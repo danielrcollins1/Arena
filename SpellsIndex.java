@@ -1,11 +1,11 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  Index of available spells.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2018-12-05
-******************************************************************************/
+/**
+	Index of available spells.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2018-12-05
+*/
 
 public class SpellsIndex {
 
@@ -14,35 +14,36 @@ public class SpellsIndex {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with spells. */
-	final String SPELLS_FILE = "SpellsIndex.csv";
+	private static final String SPELLS_FILE = "SpellsIndex.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static SpellsIndex instance = null;
+	private static SpellsIndex instance = null;
 
 	/** Table of spell information. */
-	Spell[] spellList;
+	private Spell[] spellList;
 
 	/** Number of spells at each level. */
-	int[] numAtLevel;
+	private int[] numAtLevel;
 
 	/** Number of castable spells at each level. */
-	int[] numAtLevelCastable;
+	private int[] numAtLevelCastable;
 
 	/** Maximum spell level. */
-	int maxLevel;
+	private int maxLevel;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read error
 	*/
-	protected SpellsIndex () throws IOException {
+	protected SpellsIndex() throws IOException {
 		String[][] table = CSVReader.readFile(SPELLS_FILE);
 		spellList = new Spell[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -59,7 +60,7 @@ public class SpellsIndex {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static SpellsIndex getInstance() {
 		if (instance == null) {
@@ -74,78 +75,82 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Link spells to available in-game casting formulae.
+		Link spells to available in-game casting formulae.
 	*/
-	private void linkSpellsToCastings () {
+	private void linkSpellsToCastings() {
 		for (Spell s: spellList) {
 			SpellCasting.linkSpellWithCasting(s);		
 		}
 	}	
 
 	/**
-	*  Get the maximum level.
+		Get the maximum level.
 	*/
-	public int getMaxLevel () {
+	public int getMaxLevel() {
 		return maxLevel;
 	}
 
 	/**
-	*  Set the maximum level.
+		Set the maximum level.
 	*/
-	private void setMaxLevel () {
+	private void setMaxLevel() {
 		int max = -1;
 		for (Spell s: spellList) {
-			if (s.getLevel() > max)
+			if (s.getLevel() > max) {
 				max = s.getLevel();
+			}
 		}
 		maxLevel = max;
 	}
 
 	/**
-	*  Get number at a given level.
+		Get number at a given level.
 	*/
-	public int getNumAtLevel (int level) {
+	public int getNumAtLevel(int level) {
 		return numAtLevel[level - 1];
 	}
 
 	/**
-	*  Count spells at each level.
+		Count spells at each level.
 	*/
-	private void countNumAtLevels () {
+	private void countNumAtLevels() {
 		numAtLevel = new int[maxLevel];
-		for (Spell s: spellList)
-			numAtLevel[s.getLevel() - 1]++;
-	}
-
-	/**
-	*  Get number castable at a given level.
-	*/
-	public int getNumAtLevelCastable (int level) {
-		return numAtLevelCastable[level - 1];
-	}
-
-	/**
-	*  Count spells castable by level.
-	*/
-	private void countNumCastable () {
-		numAtLevelCastable = new int[maxLevel];
 		for (Spell s: spellList) {
-			if (s.isCastable())
-				numAtLevelCastable[s.getLevel() - 1]++;
+			numAtLevel[s.getLevel() - 1]++;
 		}
 	}
 
 	/**
-	*  Get random spell by level.
+		Get number castable at a given level.
 	*/
-	public Spell getRandom (int level) {
+	public int getNumAtLevelCastable(int level) {
+		return numAtLevelCastable[level - 1];
+	}
+
+	/**
+		Count spells castable by level.
+	*/
+	private void countNumCastable() {
+		numAtLevelCastable = new int[maxLevel];
+		for (Spell s: spellList) {
+			if (s.isCastable()) {
+				numAtLevelCastable[s.getLevel() - 1]++;
+			}
+		}
+	}
+
+	/**
+		Get random spell by level.
+	*/
+	public Spell getRandom(int level) {
 		int count = getNumAtLevel(level);
 		if (count > 0) {
 			int roll = Dice.roll(count);
 			for (Spell s: spellList) {
 				if (s.getLevel() == level) {
-					if (--roll == 0)
+					if (--roll == 0) {
 						return s;
+					}
 				}
 			}
 		}
@@ -153,18 +158,19 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Get random castable spell by level.
+		Get random castable spell by level.
 	*/
-	public Spell getRandomCastable (int level) {
+	public Spell getRandomCastable(int level) {
 		int count = getNumAtLevelCastable(level);
 		if (count > 0) {
 			int roll = Dice.roll(count);
 			for (Spell s: spellList) {
 				if (s.getLevel() == level
-						&& s.isCastable()) 
+					&& s.isCastable())
 				{
-					if (--roll == 0)
+					if (--roll == 0) {
 						return s;
+					}
 				}
 			}
 		}
@@ -172,20 +178,21 @@ public class SpellsIndex {
 	}
 
 	/**
-	*  Find a spell by name.
+		Find a spell by name.
 	*/
-	public Spell findByName (String name) {
+	public Spell findByName(String name) {
 		for (Spell s: spellList) {
-			if (s.getName().equals(name))
+			if (s.getName().equals(name)) {
 				return s;
+			}
 		}
 		return null;
 	}
 
 	/**
-	*  Main test function.
+		Main test function.
 	*/
-	public static void main (String[] args) {	
+	public static void main(String[] args) {	
 		Dice.initialize();
 		SpellsIndex index = SpellsIndex.getInstance();
 

@@ -1,14 +1,15 @@
-import java.util.*;
+import java.util.List;
 
-/******************************************************************************
-*  Code to handle casting spells in the combat simulator.
-*
-*  Compare use of Casting classes here to the Strategy pattern.
-*  Some implementations will be rough approximations of the real spell.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2021-12-18
-******************************************************************************/
+/**
+	Code to handle casting spells in the combat simulator.
+
+	Compare use of Casting classes here to the Strategy pattern.
+	Some implementations will be rough approximations of the real spell.
+	Only attack spells are handled currently.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2021-12-18
+*/
 
 public class SpellCasting {
 
@@ -17,52 +18,62 @@ public class SpellCasting {
 	//--------------------------------------------------------------------------
 
 	/** Casting abstract base class. */
-	public static abstract class Casting {
+	public abstract static class Casting {
 
-		/* Fields */
-		Spell spellInfo;
-		int maxTargetNum;
-		boolean indirect;
-		EnergyType energy;
-		SpecialType condition;
+		/** Basic spell information. */
+		protected Spell spellInfo;
+
+		/** Maximum number of targets. */
+		protected int maxTargetNum;
+
+		/** Energy type of this spell. */
+		protected EnergyType energy;
+
+		/** Special condition inflicted by this spell. */
+		protected SpecialType condition;
+
+		/** 
+			Is this an indirect attack spell?
+			(e.g.: Conjure Elemental)
+		*/
+		protected boolean indirect;
 
 		/** Set the linked spell object. */
-		void setSpellInfo (Spell s) { spellInfo = s; }
+		private void setSpellInfo(Spell s) { 
+			spellInfo = s; 
+		}
 
 		/** Get short name of this spell casting. */
-		String getName () {
+		private String getName() {
 			String sName = getClass().getSimpleName();
 			return sName.substring(0, sName.indexOf("Casting"));
 		}
 		
 		/** Get the effective maximum targets we can hit. */
-		int getMaxTargetNum () { 
-			assert(spellInfo != null);
-			return maxTargetNum != NUM_BY_AREA ?
-				maxTargetNum : spellInfo.getMaxTargetsInArea();
+		protected int getMaxTargetNum() { 
+			assert spellInfo != null;
+			return maxTargetNum != NUM_BY_AREA 
+				? maxTargetNum : spellInfo.getMaxTargetsInArea();
 		}
 
 		/** Cast energy at a given monster. */
-		void castEnergy (Monster target, int level, int damage) 
-		{
-			assert(energy != null);
+		protected void castEnergy(Monster target, int level, int damage) {
+			assert energy != null;
 			if (isThreatTo(target)) {
 				target.catchEnergy(energy, damage, SavingThrows.Type.Spells, level);
 			}
 		}
 
 		/** Cast condition at a given monster. */
-		void castCondition (Monster target, int level, int saveMod) 
-		{
-			assert(condition != null);
+		protected void castCondition(Monster target, int level, int saveMod) {
+			assert condition != null;
 			if (isThreatTo(target)) {
 				target.catchCondition(condition, level, saveMod);
 			}
 		}
 		
 		/** Cast energy on random targets as per area. */
-		void castEnergyOnArea (Party targets, int level, int damage) 
-		{
+		protected void castEnergyOnArea(Party targets, int level, int damage) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
@@ -71,25 +82,26 @@ public class SpellCasting {
 		}
 		
 		/** Cast condition on random targets as per area. */
-		void castConditionOnArea (Party targets, int level, int saveMod) 
-		{
+		protected void castConditionOnArea(Party targets, int level, int mod) {
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = targets.randomGroup(numHit);
 			for (Monster target: hitTargets) {
-				castCondition(target, level, saveMod);
+				castCondition(target, level, mod);
 			}
 		}
 
-		/** See if this spell is a threat to a given monster. */
-		boolean isThreatTo (Monster m) {
-			if (!indirect && m.isImmuneToMagic()) return false;
-			if (energy != null && m.isImmuneToEnergy(energy)) return false;
-			if (condition != null && m.isImmuneToCondition(condition)) return false;
+		/** Is this spell a threat to a given monster? */
+		public boolean isThreatTo(Monster m) {
+			if (!indirect && m.isImmuneToMagic()) { return false; }
+			if (energy != null && m.isImmuneToEnergy(energy)) { return false; }
+			if (condition != null && m.isImmuneToCondition(condition)) { 
+				return false; 
+			}
 			return true;
 		}
 
-		/** Cast the spell at a target party. */
-		abstract void cast (Monster caster, Party friends, Party enemies);
+		/** Cast this spell at an enemy party. */
+		public abstract void cast(Monster caster, Party friends, Party enemies);
 	}
 
 	//--------------------------------------------------------------------------
@@ -103,14 +115,18 @@ public class SpellCasting {
 	private static final int NUM_BY_AREA = -1;
 
 	/** List of available castings. */
-	private static final Casting castingFormula [] = {
-		new SleepCasting(), new CharmPersonCasting(), new MagicMissileCasting(),
-		new DarknessCasting(), new WebCasting(), new FireballCasting(), 
-		new HoldPersonCasting(), new LightningBoltCasting(), new SuggestionCasting(), 
-		new CharmMonsterCasting(), new ConfusionCasting(), new FearCasting(),
-		new IceStormCasting(), new PolymorphOtherCasting(), new CloudkillCasting(),
-		new HoldMonsterCasting(), new DeathSpellCasting(), new DisintegrateCasting(),
-		new ConjureElementalCasting(), new FeeblemindCasting(), new DispelMagicCasting()
+	private static final Casting[] CASTING_FORMULA = {
+		new SleepCasting(), new CharmPersonCasting(), 
+		new MagicMissileCasting(), new DarknessCasting(), 
+		new WebCasting(), new FireballCasting(), 
+		new HoldPersonCasting(), new LightningBoltCasting(), 
+		new SuggestionCasting(), new CharmMonsterCasting(), 
+		new ConfusionCasting(), new FearCasting(),
+		new IceStormCasting(), new PolymorphOtherCasting(), 
+		new CloudkillCasting(), new HoldMonsterCasting(), 
+		new DeathSpellCasting(), new DisintegrateCasting(),
+		new ConjureElementalCasting(), new FeeblemindCasting(), 
+		new DispelMagicCasting()
 	};
 
 	//--------------------------------------------------------------------------
@@ -118,12 +134,12 @@ public class SpellCasting {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Try to link a spell with its casting formula.
-	*  @return true if casting was found.
+		Try to link a spell with its casting formula.
+		@return true if casting was found.
 	*/
-	public static boolean linkSpellWithCasting (Spell spell) {
+	public static boolean linkSpellWithCasting(Spell spell) {
 		String shortName = spell.getName().replaceAll(" ", "");
-		for (Casting c: castingFormula) {
+		for (Casting c: CASTING_FORMULA) {
 			if (c.getName().equals(shortName)) {
 				c.setSpellInfo(spell);
 				spell.setCasting(c);
@@ -138,35 +154,45 @@ public class SpellCasting {
 	//--------------------------------------------------------------------------
 
 	/** 
-	*  Charm Person spell effect. 
+		Charm Person spell effect.
 	*/
 	static class CharmPersonCasting extends Casting {
-		CharmPersonCasting () {
+
+		/** Constructor. */
+		private CharmPersonCasting() {
 			condition = SpecialType.Charm;
 			maxTargetNum = 1;
 		}
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.isPerson();
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Magic Missile spell effect. 
-	*
-	*  While this spell can technically hit up to 5 targets,
-	*  we don't expose that, since it's level-dependent, 
-	*  not disabling, and we don't want to prioritize this 
-	*  spell over others like hold or charm.
+		Magic Missile spell effect.
+
+		While this spell can technically hit up to 5 targets,
+		we don't expose that, since it's level-dependent,
+		not disabling, and we don't want to prioritize this
+		spell over others like hold or charm.
 	*/
 	static class MagicMissileCasting extends Casting {
-		MagicMissileCasting () {
+	
+		/** Constructor. */
+		private MagicMissileCasting() {
 			energy = EnergyType.Other;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			int level = caster.getLevel();
 			int numMissiles = Math.min((level + 1) / 2, 5);
 			for (int i = 0; i < numMissiles; i++) {
@@ -178,17 +204,23 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Sleep spell effect. 
+		Sleep spell effect.
 	*/
 	static class SleepCasting extends Casting {
-		SleepCasting () {
+	
+		/** Constructor. */
+		private SleepCasting() {
 			condition = SpecialType.Sleep;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		boolean isThreatTo (Monster m) {
+		
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.getHD() <= 4;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
 			int effectHD = new Dice(2, 6).roll();
@@ -202,42 +234,54 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Darkness spell effect. 
-	*
-	*  Treat as targeted blindness for simplicity
+		Darkness spell effect.
+
+		Treat as targeted blindness for simplicity
 	*/
 	static class DarknessCasting extends Casting {
-		DarknessCasting () {
+	
+		/** Constructor. */
+		private DarknessCasting() {
 			condition = SpecialType.Blindness;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 	
 	/** 
-	*  Web spell effect. 
+		Web spell effect.
 	*/
 	static class WebCasting extends Casting {
-		WebCasting () {
+	
+		/** Constructor. */
+		private WebCasting() {
 			condition = SpecialType.Webs;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 	
 	/** 
-	*  Fireball spell effect. 
+		Fireball spell effect.
 	*/
 	static class FireballCasting extends Casting {
-		FireballCasting () {
+	
+		/** Constructor. */
+		private FireballCasting() {
 			energy = EnergyType.Fire;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			int level = caster.getLevel();
 			int numDice = Math.min(level, 12);
 			int damage = new Dice(numDice, 6).roll();
@@ -246,14 +290,18 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Lightning Bolt spell effect. 
+		Lightning Bolt spell effect.
 	*/
 	static class LightningBoltCasting extends Casting {
-		LightningBoltCasting () {
+	
+		/** Constructor. */
+		private LightningBoltCasting() {
 			energy = EnergyType.Volt;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			int level = caster.getLevel();
 			int numDice = Math.min(level, 12);
 			int damage = new Dice(numDice, 6).roll();
@@ -262,55 +310,71 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Hold Person spell effect. 
-	*
-	*  While OED gives this an optional area-of-effect use-case
-	*  (following S&S), testing shows that in our overall context,
-	*  it's more valuable to reserve this for individual-only use
-	*  during the melee portion of a fight.
+		Hold Person spell effect.
+
+		While OED gives this an optional area-of-effect use-case
+		(following S&S), testing shows that in our overall context,
+		it's more valuable to reserve this for individual-only use
+		during the melee portion of a fight.
 	*/
 	static class HoldPersonCasting extends Casting {
-		HoldPersonCasting () {
+	
+		/** Constructor. */
+		private HoldPersonCasting() {
 			condition = SpecialType.Hold;
 			maxTargetNum = 1;
 		}	
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.isPerson();
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			castCondition(enemies.random(), caster.getLevel(), -2);
 		}
 	}
 
 	/** 
-	*  Suggestion spell effect. 
-	*
-	*  Treat like a charm spell (order to leave, etc.)
+		Suggestion spell effect.
+
+		Treat like a charm spell (order to leave, etc.)
 	*/
 	static class SuggestionCasting extends Casting {
-		SuggestionCasting () {
+	
+		/** Constructor. */
+		private SuggestionCasting() {
 			condition = SpecialType.Charm;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Dispel Magic effect. 
-	*
-	*  Used to remove enemy conjured elementals.
+		Dispel Magic effect.
+
+		Used to remove enemy conjured elementals.
 	*/
 	static class DispelMagicCasting extends Casting {
-		DispelMagicCasting () {
+	
+		/** Constructor. */
+		private DispelMagicCasting() {
 			maxTargetNum = 1;
 		}
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) 
 				&& m.hasCondition(SpecialType.Conjuration);
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			List<Monster> targets = enemies.randomGroup(enemies.size());
 			for (Monster target: targets) {
 				if (isThreatTo(target)) {
@@ -322,16 +386,20 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Confusion spell effect. 
-	*
-	*  S&S gives an area for this spell, adjusted in OED.
+		Confusion spell effect.
+
+		S&S gives an area for this spell, adjusted in OED.
 	*/
 	static class ConfusionCasting extends Casting {
-		ConfusionCasting () {
+	
+		/** Constructor. */
+		private ConfusionCasting() {
 			condition = SpecialType.Confusion;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			int numHit = Math.min(new Dice(2, 6).roll(),
 				spellInfo.getMaxTargetsInArea());
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
@@ -344,123 +412,161 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Fear spell effect. 
-	*
-	*  S&S give a circular area for this spell, which we use
+		Fear spell effect.
+
+		S&S give a circular area for this spell, which we use
 	*/
 	static class FearCasting extends Casting {
-		FearCasting () {
+	
+		/** Constructor. */
+		private FearCasting() {
 			condition = SpecialType.Fear;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Ice Storm spell effect. 
+		Ice Storm spell effect.
 	*/
 	static class IceStormCasting extends Casting {
-		IceStormCasting () {
+	
+		/** Constructor. */
+		private IceStormCasting() {
 			energy = EnergyType.Cold;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			int damage = new Dice(8, 6).roll();
 			castEnergyOnArea(enemies, caster.getLevel(), damage);
 		}
 	}
 
 	/** 
-	*  Charm Monster spell effect. 
+		Charm Monster spell effect.
 	*	
-	*  See comments above re: Hold Person.
-	*  We reserve this spell for individual-targeting in melee
-	*  (and ignore the option for an area-based effect). 
+		See comments above re: Hold Person.
+		We reserve this spell for individual-targeting in melee
+		(and ignore the option for an area-based effect).
 	*/
 	static class CharmMonsterCasting extends Casting {
-		CharmMonsterCasting () {
+	
+		/** Constructor. */
+		private CharmMonsterCasting() {
 			condition = SpecialType.Charm;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Polymorph Other spell effect. 
+		Polymorph Other spell effect.
 	*/
 	static class PolymorphOtherCasting extends Casting {
-		PolymorphOtherCasting () {
+	
+		/** Constructor. */
+		private PolymorphOtherCasting() {
 			condition = SpecialType.Polymorphism;
 			maxTargetNum = 1;
 		}
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.isLivingType();
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Cloudkill spell effect. 
+		Cloudkill spell effect.
 	*/
 	static class CloudkillCasting extends Casting {
-		CloudkillCasting () {
+	
+		/** Constructor. */
+		private CloudkillCasting() {
 			condition = SpecialType.Death;
 			maxTargetNum = NUM_BY_AREA;
 		}
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.getHD() <= 6;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castConditionOnArea(enemies, caster.getLevel(), 0);
 		}
 	}
 
 	/** 
-	*  Hold Monster spell effect. 
-	*
-	*  See comment above for Hold Person.
+		Hold Monster spell effect.
+
+		See comment above for Hold Person.
 	*/
 	static class HoldMonsterCasting extends Casting {
-		HoldMonsterCasting () {
+	
+		/** Constructor. */
+		private HoldMonsterCasting() {
 			condition = SpecialType.Hold;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			castCondition(enemies.random(), caster.getLevel(), -2);
 		}
 	}
 
 	/** 
-	*  Conjure Elemental effect. 
+		Conjure Elemental effect.
 	*/
 	static class ConjureElementalCasting extends Casting {
-		ConjureElementalCasting () {
+	
+		/** Constructor. */
+		private ConjureElementalCasting() {
 			indirect = true;
 			maxTargetNum = 0;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			caster.conjureElemental(friends);
 		}
 	}
 
 	/** 
-	*  Feeblemind effect. 
+		Feeblemind effect.
 	*/
 	static class FeeblemindCasting extends Casting {
-		FeeblemindCasting () {
+	
+		/** Constructor. */
+		private FeeblemindCasting() {
 			condition = SpecialType.Feeblemind;
 			maxTargetNum = 1;
 		}
-		boolean isThreatTo (Monster m) {
+
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.hasSpells();
 		}
-		void cast (Monster caster, Party friends, Party enemies) {
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
 			List<Monster> targets = enemies.randomGroup(enemies.size());
 			for (Monster target: targets) {
 				if (isThreatTo(target)) {
@@ -472,17 +578,23 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Death Spell effect. 
+		Death Spell effect.
 	*/
 	static class DeathSpellCasting extends Casting {
-		DeathSpellCasting () {
+	
+		/** Constructor. */	
+		private DeathSpellCasting() {
 			condition = SpecialType.Death;
 			maxTargetNum = 36;
 		}
-		boolean isThreatTo (Monster m) {
+		
+		@Override
+		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) && m.getHD() <= 8;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			int numHit = spellInfo.getMaxTargetsInArea();
 			List<Monster> hitTargets = enemies.randomGroup(numHit);
 			int effectHD = new Dice(10, 6).roll();
@@ -496,14 +608,18 @@ public class SpellCasting {
 	}
 
 	/** 
-	*  Disintegrate spell effect. 
+		Disintegrate spell effect.
 	*/
 	static class DisintegrateCasting extends Casting {
-		DisintegrateCasting () {
+	
+		/** Constructor. */
+		private DisintegrateCasting() {
 			condition = SpecialType.Disintegration;
 			maxTargetNum = 1;
 		}
-		void cast (Monster caster, Party friends, Party enemies) {		
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {		
 			castCondition(enemies.random(), caster.getLevel(), 0);
 		}
 	}
@@ -513,9 +629,9 @@ public class SpellCasting {
 	//--------------------------------------------------------------------------
 	
 	/**
-	*  Main test function.
+		Main test function.
 	*/
-	public static void main (String[] args) {	
+	public static void main(String[] args) {	
 
 		// Create target party
 		Dice.initialize();

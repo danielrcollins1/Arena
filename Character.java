@@ -374,7 +374,7 @@ public class Character extends Monster {
 		Update derived statistics after any character changes.
 	*/
 	private void updateStats() {
-		attack = computeAttack();
+		primaryAttack = computeAttack();
 		armorClass = computeArmorClass();	
 		moveInches = computeMoveInches();
 		hitDice = getTopClass().getHitDice();
@@ -448,18 +448,10 @@ public class Character extends Monster {
 	private int computeMoveInches() {
 		float weight = getEncumbrance();
 		int strength = getAbilityScore(Ability.Strength);
-		if (weight <= strength * 1. / 3) {
-			return 12;
-		}
-		else if (weight <= strength * 2. / 3) {
-			return 9;
-		}
-		else if (weight <= strength) {
-			return 6;
-		}
-		else {
-			return 0;
-		}
+		if (weight <= strength * 1. / 3) { return 12; }
+		else if (weight <= strength * 2. / 3) { return 9; }
+		else if (weight <= strength) { return 6; }
+		else { return 0; }
 	}
 
 	/**
@@ -630,21 +622,11 @@ public class Character extends Monster {
 	protected void loseEquipment(Equipment equip) {
 		assert equip != null;
 		equipList.remove(equip);
-		if (equip == armorWorn) {
-			armorWorn = null;
-		}
-		if (equip == shieldHeld) {
-			shieldHeld = null;
-		}
-		if (equip == weaponInHand) {
-			weaponInHand = null;
-		}
-		if (equip == ringWorn) {
-			ringWorn = null;
-		}
-		if (equip == wandHeld) {
-			wandHeld = null;
-		}
+		if (equip == armorWorn) { armorWorn = null; }
+		if (equip == shieldHeld) { shieldHeld = null; }
+		if (equip == weaponInHand) { weaponInHand = null; }
+		if (equip == ringWorn) { ringWorn = null; }
+		if (equip == wandHeld) { wandHeld = null; }
 		updateStats();
 	}
 
@@ -653,12 +635,8 @@ public class Character extends Monster {
 	*/
 	private int maxDamageVsMonster(Monster monster) {
 		Attack atk = getAttack();
-		if (atk == null) {
-			return 0;
-		}
-		if (monster != null && !canAttack(monster)) {
-			return 0;
-		}
+		if (atk == null) { return 0; }
+		if (monster != null && !canAttack(monster)) { return 0; }
 		return atk.getDamage().maxRoll();		
 	}
 
@@ -993,24 +971,12 @@ public class Character extends Monster {
 		Caution: Works for Humans only.
 	*/
 	AgeCategory getAgeCategory() {
-		if (age <= 13) {
-			return AgeCategory.Child;
-		}
-		else if (age <= 20) {
-			return AgeCategory.YoungAdult;
-		}
-		else if (age <= 40) {
-			return AgeCategory.Mature;
-		}
-		else if (age <= 60) {
-			return AgeCategory.MiddleAged;
-		}
-		else if (age <= 90) {
-			return AgeCategory.Old;
-		}
-		else {
-			return AgeCategory.Venerable;
-		}
+		if (age <= 13) { return AgeCategory.Child; }
+		else if (age <= 20) { return AgeCategory.YoungAdult; }
+		else if (age <= 40) { return AgeCategory.Mature; }
+		else if (age <= 60) { return AgeCategory.MiddleAged; }
+		else if (age <= 90) { return AgeCategory.Old; }
+		else { return AgeCategory.Venerable; }
 	}
 
 	/**

@@ -1,13 +1,13 @@
 import java.util.Arrays;
 import java.lang.reflect.Method;
 
-/******************************************************************************
-*  Master wrapper around all other applications in the Arena package.
-*  Used as the main class in the runnable standalone jar.
+/**
+	Master wrapper around all other applications in the Arena package.
+	Used as the main class in the runnable standalone jar.
 
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2020-04-23
-******************************************************************************/
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2020-04-23
+*/
 
 public class Athena {
 
@@ -16,36 +16,38 @@ public class Athena {
 	//--------------------------------------------------------------------------
 
 	/** Available applications. */
-	String appNames[] = {"Arena", "Marshal", "MonsterMetrics", "NPCGenerator"};
+	private static final String[] APP_NAMES = {
+		"Arena", "Marshal", "MonsterMetrics", "NPCGenerator"
+	};
 
 	/** Selected application. */
-	String appSelect;
+	private String appSelect;
 
 	/** Modified argument array. */
-	String appArgs[];
+	private String[] appArgs;
 
 	/** Flag to escape after parsing arguments. */
-	boolean exitAfterArgs;
+	private boolean exitAfterArgs;
 
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Print program banner.
+		Print program banner.
 	*/
-	void printBanner () {
+	private void printBanner() {
 		System.out.println("OED Athena Master");
 		System.out.println("-----------------");
 	}
 
 	/**
-	*  Print usage.
+		Print usage.
 	*/
-	void printUsage () {
+	private void printUsage() {
 		System.out.println("Usage: Athena [command] [options]");
 		System.out.println("  where commands include:");
-		for (String app: appNames) {
+		for (String app: APP_NAMES) {
 			System.out.println("\t" + app);
 		}
 		System.out.println("For options in individual programs, run with -?");
@@ -53,15 +55,15 @@ public class Athena {
 	}
 
 	/**
-	*  Parse arguments.
+		Parse arguments.
 	*/
-	public void parseArgs (String[] args) {
+	private void parseArgs(String[] args) {
 		if (args.length == 0) {
 			exitAfterArgs = true;
 		}
 		else {
 			appSelect = args[0];
-			if (!Arrays.asList(appNames).contains(appSelect)) {
+			if (!Arrays.asList(APP_NAMES).contains(appSelect)) {
 				exitAfterArgs = true;
 			}
 			else {
@@ -77,9 +79,9 @@ public class Athena {
 	}
 
 	/**
-	*  Run chosen app with modified arguments.
+		Run chosen app with modified arguments.
 	*/
-	void runApp () {
+	private void runApp() {
 		try {		
 			Class<?> clazz = Class.forName(appSelect);
 			Method method = clazz.getMethod("main", String[].class); 
@@ -91,9 +93,9 @@ public class Athena {
 	}	
 
 	/**
-	*  Main application method.
+		Main application method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Athena athena = new Athena();
 		athena.parseArgs(args);
 		if (athena.exitAfterArgs) {

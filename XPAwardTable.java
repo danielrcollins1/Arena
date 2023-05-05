@@ -1,11 +1,11 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  Experience award table from Sup-I.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2015-12-27
-******************************************************************************/
+/**
+	Experience award table from Sup-I.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2015-12-27
+*/
 
 public class XPAwardTable {
 
@@ -14,24 +14,34 @@ public class XPAwardTable {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with information. */
-	final String XP_AWARD_TABLE_FILE = "XPAwardTable.csv";
+	private static final String XP_AWARD_TABLE_FILE = "XPAwardTable.csv";
 
 	//--------------------------------------------------------------------------
 	//  Inner class
 	//--------------------------------------------------------------------------
 
+	/** One row of the XP table. */
 	private class XPAwardRecord {
-		String HDStr;
-		int baseValue, specialAward;
 
-		XPAwardRecord (String [] s) {
-			HDStr = s[0];
+		/** Hit dice descriptor in table. */
+		private String hitDiceStr;
+		
+		/** Base XP value. */
+		private int baseValue;
+		
+		/** Extra XP award for special abilities. */
+		private int specialAward;
+
+		/** Constructor. */
+		private XPAwardRecord(String [] s) {
+			hitDiceStr = s[0];
 			baseValue = CSVReader.parseInt(s[1]);
 			specialAward = CSVReader.parseInt(s[2]);
 		}
-		
+
+		/** String representation. */		
 		public String toString() {
-			return HDStr + ", " + baseValue + ", " + specialAward;
+			return hitDiceStr + ", " + baseValue + ", " + specialAward;
 		}	
 	}
 
@@ -50,9 +60,10 @@ public class XPAwardTable {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected XPAwardTable () throws IOException {
+	protected XPAwardTable() throws IOException {
 		String[][] table = CSVReader.readFile(XP_AWARD_TABLE_FILE);
 		xpAwardRecordArray = new XPAwardRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -65,7 +76,7 @@ public class XPAwardTable {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static XPAwardTable getInstance() {
 		if (instance == null) {
@@ -80,38 +91,38 @@ public class XPAwardTable {
 	}
 
 	/**
-	*  Get total XP for monster as per Sup-I.
-	*  Monster xpBonuses give special addition each.
+		Get total XP for monster as per Sup-I.
+		Monster xpBonuses give special addition each.
 	*/
-	public int getXPAward (Monster monster) {
+	public int getXPAward(Monster monster) {
 		XPAwardRecord record = getXPAwardRecord(monster.getHitDice());
 		return record.baseValue 
 			+ record.specialAward * getAwardSteps(monster);
 	}
 
 	/**
-	*  Compute Sup-I awards to give by EHD.
+		Compute Sup-I awards to give by EHD.
 	*/
-	private int getAwardSteps (Monster monster) {
-		int EHD = monster.getEquivalentHitDice();
-		if (EHD == Monster.UNDEFINED_EHD) {
+	private int getAwardSteps(Monster monster) {
+		int ehd = monster.getEquivalentHitDice();
+		if (ehd == Monster.UNDEFINED_EHD) {
 			return 0;
 		}
 		else {
-			return EHD / monster.getHitDiceNum() - 1;
+			return ehd / monster.getHitDiceNum() - 1;
 		}
 	}
 
 	/**
-	*  Lookup XP record in table, as per Sup-I. 
+		Lookup XP record in table, as per Sup-I.
 	*/
-	private XPAwardRecord getXPAwardRecord (Dice HD) {
+	private XPAwardRecord getXPAwardRecord(Dice hitDice) {
 
 		// If no dice, convert from fixed hp
-		int num = HD.getNum();
-		int add = HD.getAdd();
-		if (HD.getSides() <= 0) {
-			num = add/3;
+		int num = hitDice.getNum();
+		int add = hitDice.getAdd();
+		if (hitDice.getSides() <= 0) {
+			num = add / 3;
 			add = 0;
 		}
 
@@ -119,52 +130,63 @@ public class XPAwardTable {
 		if (num == 0) {
 			return getRecordByText("1/2");
 		}
-		else if (num == 1 && HD.getMul() < 0) {
+		else if (num == 1 && hitDice.getMul() < 0) {
 			return getRecordByText("1/2");
 		}
 		else if (num == 1 && add == -1) {
 			return getRecordByText("1-1");
 		}
 		else if (num < 9) {
-			String HDStr;
-			if (add <= 0) HDStr = num + "";
-			else if (add == 1) HDStr = num + "+1";
-			else HDStr = (num + 1) + "";
-			return getRecordByText(HDStr);
+			String hitDiceStr;
+			if (add <= 0) {
+				hitDiceStr = num + "";
+			}
+			else if (add == 1) {
+				hitDiceStr = num + "+1";
+			}
+			else {
+				hitDiceStr = (num + 1) + "";
+			}
+			return getRecordByText(hitDiceStr);
 		}
 		else {
-			if (add > 2) num++;
+			if (add > 2) {
+				num++;
+			}
 			return getRecordByNum(num);
 		}
 	}
 
 	/**
-	*  Get record by hit dice text.
+		Get record by hit dice text.
 	*/
-	private XPAwardRecord getRecordByText (String text) {
+	private XPAwardRecord getRecordByText(String text) {
 		for (XPAwardRecord record: xpAwardRecordArray) {
-			if (record.HDStr.equals(text))
-				return record;		
+			if (record.hitDiceStr.equals(text)) {
+				return record;
+			}
 		}			
 		return null;	
 	}
 
 	/**
-	*  Get record by high hit die number.
+		Get record by high hit die number.
 	*/
-	private XPAwardRecord getRecordByNum (int num) {
+	private XPAwardRecord getRecordByNum(int num) {
 		assert (num >= 9);
 		for (int i = xpAwardRecordArray.length - 1; i > 0; i--) {
 			XPAwardRecord record = xpAwardRecordArray[i];
-			if (num >= Integer.parseInt(record.HDStr)) return record;
+			if (num >= Integer.parseInt(record.hitDiceStr)) {
+				return record;
+			}
 		}
 		return null;	
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		XPAwardTable table = XPAwardTable.getInstance();
 
@@ -183,4 +205,3 @@ public class XPAwardTable {
 		System.out.println();
 	}
 }
-

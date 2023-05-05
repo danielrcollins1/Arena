@@ -50,9 +50,19 @@ public class Armor extends Equipment {
 	//  Methods
 	//--------------------------------------------------------------------------
 
-	// Basic accessors.
-	public Type getArmorType() { return armorType; }
-	public int getBaseArmor() { return baseArmor; }
+	/**
+		Get the type of armor.
+	*/
+	public Type getArmorType() { 
+		return armorType; 
+	}
+	
+	/**
+		Get the base protective points for this armor.
+	*/
+	public int getBaseArmor() { 
+		return baseArmor; 
+	}
 
 	/**
 		Is this armor made of metal?

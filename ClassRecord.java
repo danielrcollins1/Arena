@@ -1,11 +1,12 @@
-import java.util.*;
+import java.util.Set;
+import java.util.EnumSet;
 
-/******************************************************************************
-*  Record of one class gained by a character (XP, level, hit points, etc.).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-05-22
-******************************************************************************/
+/**
+	Record of one class gained by a character (XP, level, hit points, etc.).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-05-22
+*/
 
 public class ClassRecord {
 
@@ -21,38 +22,38 @@ public class ClassRecord {
 	//--------------------------------------------------------------------------
 
 	/** Character reference. */
-	Character character;
+	private Character character;
 
 	/** Class type for this class. */
-	ClassType classType;
+	private ClassType classType;
 
 	/** Level in this class. */
-	int level;
+	private int level;
 
 	/** Hit points earned for this class. */
-	int hitPoints;
+	private int hitPoints;
 
 	/** Experience points earned towards this class. */
-	int XP;
+	private int xp;
 
 	/** Spells known for this class. */
-	SpellMemory spellsKnown;
+	private SpellMemory spellsKnown;
 
 	/** Feats known for this class. */
-	Set<Feat> featsKnown;
+	private Set<Feat> featsKnown;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (by ClassInfo, level, random hit points).
+		Constructor (by ClassInfo, level, random hit points).
 	*/
-	public ClassRecord (Character character, ClassType type, int level) {
+	public ClassRecord(Character character, ClassType type, int level) {
 		this.character = character;
 		this.classType = type;
 		this.level = level;
-		this.XP = type.getXpReq(level);
+		this.xp = type.getXpReq(level);
 		rollFullHitPoints();
 		addAllFeats();
 		addAllSpells();
@@ -61,35 +62,35 @@ public class ClassRecord {
 	//--------------------------------------------------------------------------
 	//  Methods
 	//--------------------------------------------------------------------------
-	public ClassType getClassType () { return classType; }
-	public int getLevel () { return level; }
-	public int getHitPoints () { return hitPoints; }
-	public int getXP () { return XP; }
+	public ClassType getClassType() { return classType; }
+	public int getLevel() { return level; }
+	public int getHitPoints() { return hitPoints; }
+	public int getXP() { return xp; }
 
 	/**
-	*  Return the base attack bonus for this class/level.
+		Return the base attack bonus for this class/level.
 	*/
-	public int attackBonus () {
+	public int attackBonus() {
 		return classType.getAttackBonus(level);
 	}
 
 	/**
-	*  Add XP to this class.
+		Add XP to this class.
 	*/
-	public void addXP (int awardXP) {
-		XP += awardXP;
-		if (XP >= classType.getXpReqNext(level)) {
+	public void addXP(int awardXP) {
+		xp += awardXP;
+		if (xp >= classType.getXpReqNext(level)) {
 			addLevel();
 		}
 	}
 
 	/**
-	*  Increment the level.
-	*  Cap XP at one less than the next level.
+		Increment the level.
+		Cap XP at one less than the next level.
 	*/
-	public void addLevel () {
+	public void addLevel() {
 		level++;	
-		XP = Math.min(XP, classType.getXpReqNext(level) - 1);
+		xp = Math.min(xp, classType.getXpReqNext(level) - 1);
 		addNewHitPoints(level, false);
 		if (isFeatLevel(level)) {
 			addFeat();
@@ -97,46 +98,50 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Decrement the level.
+		Decrement the level.
 	*/
-	public void loseLevel () {
+	public void loseLevel() {
 
 		// At level 0, death/lose class
 		if (level < 1) {
 			hitPoints = 0;		
 			level = -1;
-			XP = Integer.MIN_VALUE;
+			xp = Integer.MIN_VALUE;
 		}
 
 		// Else reduce hit points proportionally
 		else {
-			if (isFeatLevel(level))
+			if (isFeatLevel(level)) {
 				loseFeat();
-			if (hasSpells())
+			}
+			if (hasSpells()) {
 				spellsKnown.loseSpellLevel(level);
+			}
 			Dice diceInc = classType.getHitDiceInc(level);
-			if (diceInc.getAdd() > 0)
+			if (diceInc.getAdd() > 0) {
 				hitPoints -= diceInc.getAdd();
-			else
-				hitPoints = hitPoints * (level - 1)/level;
+			}
+			else {
+				hitPoints = hitPoints * (level - 1) / level;
+			}
 			level--;
-			XP = classType.getXpMidpoint(level);
+			xp = classType.getXpMidpoint(level);
 		}
 	}
 
 	/**
-	*  Is this a level where we gain a feat?
+		Is this a level where we gain a feat?
 	*/
-	boolean isFeatLevel (int newLevel) {
+	private boolean isFeatLevel(int newLevel) {
 		return Character.useFeats()
 			&& classType.usesFeats()
 			&& newLevel % 4 == 0;
 	}
 
 	/**
-	*  Choose all feats for new character.
+		Choose all feats for new character.
 	*/
-	void addAllFeats () {
+	private void addAllFeats() {
 		if (Character.useFeats() && classType.usesFeats()) {
 			featsKnown = EnumSet.noneOf(Feat.class);
 			for (int i = 1; i <= level; i++) {
@@ -148,9 +153,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Add a random feat to this character.
+		Add a random feat to this character.
 	*/
-	void addFeat () {
+	private void addFeat() {
 		if (featsKnown.size() < Feat.size()) {
 			Feat newFeat;
 			do {
@@ -162,9 +167,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Lose a random feat for this character.
+		Lose a random feat for this character.
 	*/
-	void loseFeat () {
+	private void loseFeat() {
 		for (Feat f: featsKnown) {
 			featsKnown.remove(f);
 			break;
@@ -172,24 +177,26 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Is this feat known by this class record?
+		Is this feat known by this class record?
 	*/
-	public boolean hasFeat (Feat f) {
-		if (featsKnown == null) return false;
-		return featsKnown.contains(f);
+	public boolean hasFeat(Feat f) {
+		return featsKnown == null 
+			? false : featsKnown.contains(f);
 	}
 
 	/**
-	*  String representation of feats known.
+		String representation of feats known.
 	*/
-	String featsString () {
-		if (featsKnown == null)
+	public String featsString() {
+		if (featsKnown == null) {
 			return null;
+		}
 		else {
 			String s = "";
 			for (Feat feat: featsKnown) {
-				if (s.length() > 0)
+				if (s.length() > 0) {
 					s += ", ";
+				}
 				s += Feat.formatName(feat);
 			}
 			return s;
@@ -197,18 +204,22 @@ public class ClassRecord {
 	}
 
 	/**
-	*  String representation of skills known.
+		String representation of skills known.
 	*/
-	String skillsString () {
+	public String skillsString() {
 		if (!classType.usesSkills()) {
 			return null;
 		}
 		else {
-			int skillBonus = level + character.getAbilityBonus(Ability.Dexterity);
-			int hearBonus = 1 + level/4 + character.getAbilityBonus(Ability.Intelligence);
-			int climbBonus = 1 + level/4 + character.getAbilityBonus(Ability.Dexterity);
-			int backstabMult = level/4 + 2;
-			return "Pick, disarm, filch, sneak, hide " + Dice.formatBonus(skillBonus) + "; "
+			int skillBonus = level 
+				+ character.getAbilityBonus(Ability.Dexterity);
+			int hearBonus = 1 + level / 4 
+				+ character.getAbilityBonus(Ability.Intelligence);
+			int climbBonus = 1 + level / 4 
+				+ character.getAbilityBonus(Ability.Dexterity);
+			int backstabMult = 2 + level / 4;
+			return "Pick, disarm, filch, sneak, hide " 
+				+ Dice.formatBonus(skillBonus) + "; "
 				+ "hear " + Dice.formatBonus(hearBonus) + ", "
 				+ "climb " + Dice.formatBonus(climbBonus) + ", "
 				+ "backstab " + Dice.formatMultiplier(backstabMult);
@@ -216,9 +227,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Add all expected wizard spells.
+		Add all expected wizard spells.
 	*/
-	void addAllSpells() {
+	private void addAllSpells() {
 		if (classType.usesSpells()) {
 			spellsKnown = new SpellMemory();
 			spellsKnown.addSpellsForWizard(level);
@@ -226,30 +237,31 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Does this class have spells?
+		Does this class have spells?
 	*/
 	public boolean hasSpells() {
 		return spellsKnown != null;
 	}
 
 	/**
-	*  Access our spell memory. 
+		Access our spell memory.
 	*/
-	public SpellMemory getSpellMemory () {
+	public SpellMemory getSpellMemory() {
 		return spellsKnown;
 	}
 
 	/**
-	*  String representation of spells known.
+		String representation of spells known.
 	*/
-	String spellsString () {
-		return spellsKnown == null ? null : spellsKnown.toString();
+	public String spellsString() {
+		return spellsKnown == null 
+			? null : spellsKnown.toString();
 	}
 
 	/**
-	*  Get adjusted hit dice for this class.
+		Get adjusted hit dice for this class.
 	*/
-	public Dice getHitDice () {
+	public Dice getHitDice() {
 		Dice dice = new Dice(classType.getHitDiceTotal(level));
 		int conBonus = character.getAbilityBonus(Ability.Constitution);
 		int hpBonus = conBonus * dice.getNum();
@@ -258,9 +270,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Roll full hit points from start to current level.
+		Roll full hit points from start to current level.
 	*/
-	void rollFullHitPoints () {
+	private void rollFullHitPoints() {
 		hitPoints = 0;
 		boolean boost = Character.getBoostInitialAbilities();
 		for (int newLevel = 0; newLevel <= level; newLevel++) {
@@ -269,17 +281,18 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Add hit points for a given level.
-	*  Per OED rules, at initial generation,
-	*    we do not accept 1 or 2 hp die-rolls.
+		Add hit points for a given level.
+		Per OED rules, at initial generation,
+		we do not accept 1 or 2 hp die-rolls.
 	*/
-	void addNewHitPoints (int newLevel, boolean initBoost) {
+	private void addNewHitPoints(int newLevel, boolean initBoost) {
 		int hpBonus = character.getAbilityBonus(Ability.Constitution);
 
 		if (newLevel == 0) {  // Roll d6 for any class
 			Dice newDice = new Dice(1, LEVEL_ZERO_HIT_DIE, hpBonus);
-			if (initBoost)
+			if (initBoost) {
 				newDice = boostInitHitDice(newDice);
+			}
 			hitPoints += newDice.boundRoll(1);
 		}
 		else if (newLevel == 1) {  // Pro-rate to new class die
@@ -291,8 +304,9 @@ public class ClassRecord {
 			Dice newDice = classType.getHitDiceInc(newLevel);
 			if (newDice.getNum() > 0) {  // Roll new die
 				newDice.modifyAdd(hpBonus);
-				if (initBoost)
+				if (initBoost) {
 					newDice = boostInitHitDice(newDice);
+				}
 				hitPoints += newDice.boundRoll(1);
 			}
 			else {  // Add constant for high level
@@ -302,9 +316,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Convert hit dice for init boost (no 1's or 2's).
+		Convert hit dice for init boost (no 1's or 2's).
 	*/
-	private Dice boostInitHitDice (Dice hitDice) {
+	private Dice boostInitHitDice(Dice hitDice) {
 		Dice boostDice = new Dice(hitDice);	
 		boostDice.setSides(boostDice.getSides() - 2);
 		boostDice.modifyAdd(boostDice.getNum() * 2);
@@ -312,9 +326,9 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Handle a Constitution change to hit points.
+		Handle a Constitution change to hit points.
 	*/
-	public void handleConChange (int oldCon) {
+	public void handleConChange(int oldCon) {
 		int oldBonus = Ability.getBonus(oldCon);
 		int newBonus = character.getAbilityBonus(Ability.Constitution);
 		int diffBonus = newBonus - oldBonus;
@@ -323,11 +337,10 @@ public class ClassRecord {
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
 	public String toString() {
 		return classType.getName() 
-		 + "(" + level + ", " + hitPoints + ", " + XP + ")";
+			+ "(" + level + ", " + hitPoints + ", " + xp + ")";
 	}	
 }
-

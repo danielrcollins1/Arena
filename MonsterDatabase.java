@@ -1,12 +1,14 @@
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.IOException; 
 
-/******************************************************************************
-*  Database of available monster types (singleton pattern).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-07-18
-******************************************************************************/
+/**
+	Database of available monster types (singleton pattern).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-07-18
+*/
 
 public class MonsterDatabase implements Iterable<Monster> {
 
@@ -15,29 +17,30 @@ public class MonsterDatabase implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 
 	/** Default file with monster information. */
-	final static String MONSTER_FILE_DEFAULT = "MonsterDatabase.csv";
+	private static final String MONSTER_FILE_DEFAULT = "MonsterDatabase.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** Name of file with monster information. */
-	static String monsterFile = MONSTER_FILE_DEFAULT;
+	private static String monsterFile = MONSTER_FILE_DEFAULT;
 
 	/** The singleton class instance. */
-	static MonsterDatabase instance = null;
+	private static MonsterDatabase instance = null;
 	
 	/** List of Monster records. */
-	List<Monster> monsterList;
+	private List<Monster> monsterList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected MonsterDatabase () throws IOException {
+	protected MonsterDatabase() throws IOException {
 		String[][] table = CSVReader.readFile(monsterFile);
 		monsterList = new ArrayList<Monster>(table.length - 1);
 		for (int i = 1; i < table.length; i++) {
@@ -50,7 +53,7 @@ public class MonsterDatabase implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static MonsterDatabase getInstance() {
 		if (instance == null) {
@@ -72,9 +75,9 @@ public class MonsterDatabase implements Iterable<Monster> {
 	}
 
 	/**
-	*  Get a monster by matching its race.
+		Get a monster by matching its race.
 	*/
-	public Monster getByRace (String race) {
+	public Monster getByRace(String race) {
 		for (Monster m: monsterList) {
 			if (m.getRace().equalsIgnoreCase(race)) {
 				return m;
@@ -85,27 +88,27 @@ public class MonsterDatabase implements Iterable<Monster> {
 	}
 
 	/**
-	*  Get a random monster from the database.
+		Get a random monster from the database.
 	*/
-	public Monster getRandom () {
+	public Monster getRandom() {
 		int index = Dice.roll(monsterList.size()) - 1;
 		return monsterList.get(index);
 	}
 
 	/**
-	*  Set an alternate monster database filename.
+		Set an alternate monster database filename.
 	*/
-	public static void setDatabaseFilename (String filename) {
+	public static void setDatabaseFilename(String filename) {
 		monsterFile = filename;	
 	}
 
 	/**
-	*  Main test method.
-	*
-	*  Prints stat blocks for all monsters in database.
-	*  Takes alternate database file from command line.
+		Main test method.
+
+		Prints stat blocks for all monsters in database.
+		Takes alternate database file from command line.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		if (args.length > 0) {
 			setDatabaseFilename(args[0]);

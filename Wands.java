@@ -1,7 +1,7 @@
 import java.io.IOException; 
 
 /**
-		List of wands and staves.
+	List of wands and staves.
 
 	@author Daniel R. Collins (dcollins@superdan.net)
 	@since 2018-12-04

@@ -1,11 +1,14 @@
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
 
-/******************************************************************************
-*  One party (force, team, band, or group) of Monsters.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-01-31
-******************************************************************************/
+/**
+	One party (force, team, band, or group) of Monsters.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-01-31
+*/
 
 public class Party implements Iterable<Monster> {
 
@@ -14,25 +17,25 @@ public class Party implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 
 	/** List of party members. */
-	List<Monster> members;
+	private List<Monster> members;
 
 	/** List of fallen members. */
-	List<Monster> fallen;
+	private List<Monster> fallen;
 
 	/** List of incoming members. */
-	List<Monster> incoming;
+	private List<Monster> incoming;
 
 	/** List of outgoing members. */
-	List<Monster> outgoing;
+	private List<Monster> outgoing;
 
 	//--------------------------------------------------------------------------
 	//  Constructor
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Empty constructor
+		Empty constructor.
 	*/
-	Party () {
+	public Party() {
 		members = new ArrayList<Monster>();
 		fallen = new ArrayList<Monster>();
 		incoming = new ArrayList<Monster>();
@@ -40,17 +43,17 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Solo party
+		Solo party constructor.
 	*/
-	Party (Monster monster) {
+	public Party(Monster monster) {
 		this();
 		members.add(monster);
 	}
 
 	/**
-	*  Spawn copies of a monster
+		Spawn copies of monster constructor.
 	*/
-	Party (Monster monster, int count) {
+	public Party(Monster monster, int count) {
 		this();
 		for (int i = 0; i < count; i++) {
 			members.add(monster.spawn());
@@ -58,9 +61,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  List constructor
+		List constructor.
 	*/
-	Party (List<Monster> list) {
+	public Party(List<Monster> list) {
 		this();
 		members = list;
 	}
@@ -70,34 +73,34 @@ public class Party implements Iterable<Monster> {
 	//--------------------------------------------------------------------------
 
 	// Basic accessors
-	public int size () { return members.size(); }
-	public Monster get (int idx) { return members.get(idx); }
-	public int sizeFallen () { return fallen.size(); } 
-	public Monster getFallen (int idx) { return fallen.get(idx); }
+	public int size() { return members.size(); }
+	public Monster get(int idx) { return members.get(idx); }
+	public int sizeFallen() { return fallen.size(); } 
+	public Monster getFallen(int idx) { return fallen.get(idx); }
 
 	// Basic mutators
-	public void add (Monster m) { members.add(m); }
+	public void add(Monster m) { members.add(m); }
 
 	/**
-	*  Is this party operational? 
+		Is this party operational?
 	*/
-	public boolean isLive () { 
+	public boolean isLive() { 
 		return !members.isEmpty(); 
 	}
 
 	/**
-	*  Clear records of attacks taken.
+		Clear records of attacks taken.
 	*/
-	public void clearTimesMeleed () {
+	public void clearTimesMeleed() {
 		for (Monster m: this) {
 			m.clearTimesMeleed();
 		} 
 	}
 
 	/**
-	*  Pick a random party member.
+		Pick a random party member.
 	*/
-	public Monster random () {
+	public Monster random() {
 		if (isLive()) {
 			return get(Dice.roll(size()) - 1);
 		}
@@ -105,9 +108,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Pick a target for melee.
+		Pick a target for melee.
 	*/
-	public Monster getRandomMeleeTarget () {
+	public Monster getRandomMeleeTarget() {
 		if (isOpenToMelee()) {
 			while (true) {
 				Monster m = random();
@@ -120,20 +123,21 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Check if any members are yet un-melee'd.
+		Check if any members are yet un-melee'd.
 	*/
-	public boolean isOpenToMelee () {
+	public boolean isOpenToMelee() {
 		for (Monster m: this) {
-			if (m.isOpenToMelee()) 
+			if (m.isOpenToMelee())  {
 				return true;
+			}
 		} 
 		return false;
 	}
 
 	/**
-	*  Get a random subset of this party.
+		Get a random subset of this party.
 	*/
-	public List<Monster> randomGroup (int number) {
+	public List<Monster> randomGroup(int number) {
 
 		// Make a copy of members & shuffle it
 		List<Monster> shuffledMembers 
@@ -150,9 +154,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Prepare for battle against an enemy.
+		Prepare for battle against an enemy.
 	*/
-	public void prepBattle (Party enemy) {
+	public void prepBattle(Party enemy) {
 		summonAllMinions();
 		for (Monster m: members) {
 			m.drawBestWeapon(enemy.random());
@@ -161,28 +165,29 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Make all summons possible (add to party).
-	*  Caution: Must not be recursive.
+		Make all summons possible (add to party).
+		Caution: Must not be recursive.
 	*/
-	private void summonAllMinions () {
+	private void summonAllMinions() {
 		int num = size();
-		for (int i = 0 ; i < num; i++) {
+		for (int i = 0; i < num; i++) {
 			get(i).summonMinions(this);
 		}
 	}
 
 	/**
-	*  Add a number of some monster race to this party.
+		Add a number of some monster race to this party.
 	*/
- 	public void addMonsters (Monster monster, int count) {
-		for (int i = 0; i < count; i++)
-			add(monster.spawn());  
+ 	public void addMonsters(Monster monster, int count) {
+		for (int i = 0; i < count; i++) {
+			add(monster.spawn());
+		}
 	}
 
 	/**
-	*  Make special attacks against an enemy party.
+		Make special attacks against an enemy party.
 	*/
-	public void makeSpecialAttacks (Party enemy) {
+	public void makeSpecialAttacks(Party enemy) {
 		if (enemy.isLive()) {
 			for (Monster m: this) {
 				m.makeSpecialAttack(this, enemy);
@@ -192,9 +197,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Have each member take its turn against an enemy.
+		Have each member take its turn against an enemy.
 	*/
-	public void takeTurn (Party enemy) {
+	public void takeTurn(Party enemy) {
 		if (enemy.isLive()) {
 			enemy.clearTimesMeleed();
 			for (Monster m: this) {
@@ -205,9 +210,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Move dead members to list of fallen.
+		Move dead members to list of fallen.
 	*/
-	public void bringOutYourDead () {
+	public void bringOutYourDead() {
 		for (int i = size() - 1; i > -1; i--) {
 			Monster member = get(i); 
 			if (member.horsDeCombat()) {
@@ -218,46 +223,46 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Clear out the list of fallen.
+		Clear out the list of fallen.
 	*/
-	public void clearFallen () {
+	public void clearFallen() {
 		fallen.clear();
 	}
 
 	/**
-	*  Sort the list of members by increasing level/hit dice.
+		Sort the list of members by increasing level/hit dice.
 	*/
-	public void sortMembers () {
+	public void sortMembers() {
 		members.sort((a, b) -> a.getHD() - b.getHD());
 	}
 
 	/**
-	*  Sort the list of members by decreasing level/hit dice.
+		Sort the list of members by decreasing level/hit dice.
 	*/
-	public void sortMembersDown () {
+	public void sortMembersDown() {
 		members.sort((a, b) -> b.getHD() - a.getHD());
 	}
 
 	/**
-	*  Shuffle the list of members.
+		Shuffle the list of members.
 	*/
-	public void shuffleMembers () {
+	public void shuffleMembers() {
 		Collections.shuffle(members);
 	}
 
 	/**
-	*  Heal the party fully.
+		Heal the party fully.
 	*/
-	public void healAll () {
+	public void healAll() {
 		for (Monster m: this) {
 			m.setPerfectHealth();
 		}
 	}
 
 	/**
-	*  Get max level in the party.
+		Get max level in the party.
 	*/
-	public int getMaxLevels () {
+	public int getMaxLevels() {
 		int max = 0; 
 		for (Monster m: this) {
 			max = Math.max(max, m.getLevel());
@@ -266,9 +271,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Get total levels in the party.
+		Get total levels in the party.
 	*/
-	public int getSumLevels () {
+	public int getSumLevels() {
 		int sum = 0; 
 		for (Monster m: this) {
 			sum += m.getLevel(); 
@@ -277,9 +282,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Is this party mostly 1st level?
+		Is this party mostly 1st level?
 	*/
-	public boolean isModeFirstLevel () {
+	public boolean isModeFirstLevel() {
 		int countFirst = 0;
 		for (Monster m: this) {
 			if (m.getLevel() <= 1) {
@@ -290,9 +295,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	*  Get a list of the top party members.
+		Get a list of the top party members.
 	*/
-	public List<Monster> getTopMembers (int number) {
+	public List<Monster> getTopMembers(int number) {
 		sortMembersDown();
 		number = Math.min(number, members.size());
 		List<Monster> list = new ArrayList<Monster>(number);
@@ -303,7 +308,7 @@ public class Party implements Iterable<Monster> {
 	}	
 
 	/**
-	* Identify this object as a string.
+		Identify this object as a string.
 	*/
 	public String toString() {
 		if (size() == 0) {
@@ -322,9 +327,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	* Make a list of the party's hit points.
+		Make a list of the party's hit points.
 	*/
-	public List<Integer> getHitPointList () {
+	public List<Integer> getHitPointList() {
 		List<Integer> list = new ArrayList<Integer>(size());
 		for (Monster m: this) {
 			list.add(m.getHP());    
@@ -333,50 +338,51 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	* Do all members of this party have a given conditon?
+		Do all members of this party have a given conditon?
 	*/
-	public boolean allHaveCondition (SpecialType condition) {
+	public boolean allHaveCondition(SpecialType condition) {
 		for (Monster m: this) {
-			if (!m.hasCondition(condition))
+			if (!m.hasCondition(condition)) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	/**
-	* Return iterator for the iterable interface.
+		Return iterator for the iterable interface.
 	*/
 	public Iterator<Monster> iterator() {        
 		return members.iterator();
 	}
 
 	/**
-	* Get ratio of original party still alive.
+		Get ratio of original party still alive.
 	*/
-	public double getRatioLive () {
-		assert(!(members.isEmpty() && fallen.isEmpty()));
+	public double getRatioLive() {
+		assert !(members.isEmpty() && fallen.isEmpty());
 		int total = members.size() + fallen.size();
 		return (double) members.size() / total;
 	}
 
 	/**
-	* Add new monster to our incoming list.
+		Add new monster to our incoming list.
 	*/
-	public void queueIncoming (Monster m) {
+	public void queueIncoming(Monster m) {
 		incoming.add(m);	
 	}
 
 	/**
-	* Add new monster to our outgoing list.
+		Add new monster to our outgoing list.
 	*/
-	public void queueOutgoing (Monster m) {
+	public void queueOutgoing(Monster m) {
 		outgoing.add(m);	
 	}
 
 	/**
-	* Handle all incoming & outgoing monsters.
+		Handle all incoming & outgoing monsters.
 	*/
-	public void handleMemberChanges () {
+	public void handleMemberChanges() {
 		this.members.addAll(incoming);
 		this.members.removeAll(outgoing);
 		incoming.clear();
@@ -384,9 +390,9 @@ public class Party implements Iterable<Monster> {
 	}
 
 	/**
-	* Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		Monster m = new Monster("Orc", 6, 9, 
 			new Dice(1, 6), new Attack(1, 1));

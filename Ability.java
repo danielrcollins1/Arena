@@ -103,21 +103,11 @@ public enum Ability {
 		Return bonus percent of XP for prime requisite.
 	*/
 	public static int bonusPercentXP(int score) {
-		if (score >= 15) {
-			return 10;
-		}
-		else if (score >= 13) {
-			return 5;
-		}
-		else if (score >= 9) {
-			return 0;
-		}
-		else if (score >= 7) {
-			return -10;
-		}
-		else {
-			return -20;
-		}
+		if (score >= 15) { return 10; }
+		else if (score >= 13) { return 5; }
+		else if (score >= 9) { return 0; }
+		else if (score >= 7) { return -10; }
+		else { return -20; }
 	}
 	
 	/**

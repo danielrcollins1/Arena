@@ -1,11 +1,11 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  List of NPC men encounters.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-02-14
-******************************************************************************/
+/**
+	List of NPC men encounters (per Vol-2).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-02-14
+*/
 
 public class MenTypeList {
 
@@ -14,26 +14,27 @@ public class MenTypeList {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with information. */
-	final String MENTYPES_FILE = "MenTypes.csv";
+	private static final String MENTYPES_FILE = "MenTypes.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static MenTypeList instance = null;
+	private static MenTypeList instance = null;
 	
 	/** List of MenTypes. */
-	MenType[] typeList;
+	private MenType[] typeList;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected MenTypeList () throws IOException {
+	protected MenTypeList() throws IOException {
 		String[][] table = CSVReader.readFile(MENTYPES_FILE);
 		typeList = new MenType[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -46,7 +47,7 @@ public class MenTypeList {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static MenTypeList getInstance() {
 		if (instance == null) {
@@ -61,11 +62,11 @@ public class MenTypeList {
 	}
 
 	/**
-	*  Get a MenType from string description.
+		Get a MenType from string description.
 	*/
-	MenType getCategory (String category) {
+	public MenType getCategory(String name) {
 		for (MenType m: typeList) {
-			if (m.category.equalsIgnoreCase(category)) {
+			if (m.getName().equalsIgnoreCase(name)) {
 				return m;
 			}		
 		}	
@@ -73,19 +74,18 @@ public class MenTypeList {
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		MenTypeList mt = MenTypeList.getInstance();
 		for (MenType m: mt.typeList) {
 			System.out.println(m + ", " + m.getAlignment());
 			MenType.Component[] comp = m.createComponents(80);
 			for (MenType.Component c: comp) {
-				System.out.println("- " + c.number + " " + c.description);			
+				System.out.println("- " + c.getNumber() + " " + c.getDescription());
 			}
 			System.out.println();
 		}
 	}
 }
-

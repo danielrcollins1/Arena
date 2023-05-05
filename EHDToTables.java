@@ -1,11 +1,15 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  Table of conversions from EHD to Monster Level Table.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2017-11-19
-******************************************************************************/
+/**
+	Table of conversions from EHD to Monster Level Table.
+	
+	We use this to create monster encounter tables dynamically
+	for any monsters present in our database.
+	EHD: Equivalent Hit Dice record for each monster.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2017-11-19
+*/
 
 public class EHDToTables {
 
@@ -14,22 +18,30 @@ public class EHDToTables {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with treasure information. */
-	final String EHD_TO_TABLE_FILE = "EHDToTable.csv";
+	private static final String EHD_TO_TABLE_FILE = "EHDToTable.csv";
 
 	//--------------------------------------------------------------------------
 	//  Inner class
 	//--------------------------------------------------------------------------
 
+	/** One EHD to Monster Level Table key. */
 	private class EHDTableRecord {
-		int EHD, tableIdx;
+
+		/** Minimum EHD for this key. */
+		private int equivHD;
+
+		/** Associated monster level table. */		
+		private int tableIdx;
 	
-		EHDTableRecord (String[] s) {
-			EHD = Integer.parseInt(s[0]);
+		/** Constructor. */
+		private EHDTableRecord(String[] s) {
+			equivHD = Integer.parseInt(s[0]);
 			tableIdx = Integer.parseInt(s[1]);
 		}	
 	
-		public String toString () {
-			return "EHD " + EHD + ", Table " + tableIdx;
+		/** String representation. */
+		public String toString() {
+			return "EHD " + equivHD + ", Table " + tableIdx;
 		}
 	}
 
@@ -38,19 +50,20 @@ public class EHDToTables {
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static EHDToTables instance = null;
+	private static EHDToTables instance = null;
 	
 	/** Array of EHDTableRecords. */
-	EHDTableRecord[] convertMatrix;
+	private EHDTableRecord[] convertMatrix;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected EHDToTables () throws IOException {
+	protected EHDToTables() throws IOException {
 		String[][] table = CSVReader.readFile(EHD_TO_TABLE_FILE);
 		convertMatrix = new EHDTableRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -63,7 +76,7 @@ public class EHDToTables {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static EHDToTables getInstance() {
 		if (instance == null) {
@@ -78,20 +91,21 @@ public class EHDToTables {
 	}
 
 	/**
-	*  Map an EHD to a monster level table.
+		Map an EHD to a monster level table.
 	*/
-	int mapEHDToTable (int EHD) {
+	public int mapEHDToTable(int equivHD) {
 		for (int i = convertMatrix.length - 1; i > -1; i--) {
-			if (EHD >= convertMatrix[i].EHD)
+			if (equivHD >= convertMatrix[i].equivHD) {
 				return convertMatrix[i].tableIdx;
+			}
 		}	
 		return -1;
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		EHDToTables matrix = EHDToTables.getInstance();
 		System.out.println("EHD To Tables:");
 		for (int ehd = 0; ehd <= 20; ehd++) {
@@ -101,4 +115,3 @@ public class EHDToTables {
 		System.out.println();
 	}
 }
-

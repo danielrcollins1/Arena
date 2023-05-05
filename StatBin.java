@@ -1,12 +1,12 @@
 import java.util.List;
 import java.util.ArrayList;
 
-/******************************************************************************
-*  Statistical bin for a given group of characters.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-07-01
-******************************************************************************/
+/**
+	Statistical bin for a given group of characters.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-07-01
+*/
 
 public class StatBin {
 	//--------------------------------------------------------------------------
@@ -14,16 +14,16 @@ public class StatBin {
 	//--------------------------------------------------------------------------
 
 	/** List of characters included. */
-	List<Character> bin; 
+	private List<Character> bin; 
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor.
+		Constructor.
 	*/
-	public StatBin () {
+	public StatBin() {
 		bin = new ArrayList<Character>();
 	}
 
@@ -32,62 +32,61 @@ public class StatBin {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Add a new character into these stats.
+		Add a new character into these stats.
 	*/
-	public void addCharacter (Character c) {
+	public void addCharacter(Character c) {
 		bin.add(c);
 	}
 
 	/**
-	*  Get size of the bin.
+		Get size of the bin.
 	*/
-	public int size () { 
+	public int size() { 
 		return bin.size(); 
 	}
 
 	/**
-	*  Compute mean hit points.
+		Compute mean hit points.
 	*/
-	double getMeanHp () {
+	public double getMeanHp() {
 		long sum = 0;
 		for (Character c: bin) {
 			sum += c.getHitPoints();
 		}
-		return (double) sum/size();
+		return (double) sum / size();
 	}
 
 	/**
-	*  Compute mean hit points rolled.
+		Compute mean hit points rolled.
 	*/
-	double getMeanHpRoll () {
+	public double getMeanHpRoll() {
 		long sum = 0;
 		for (Character c: bin) {
 			sum += c.getHitPoints() 
 				- c.getAbilityBonus(Ability.Constitution) * c.getLevel();
 		}
-		return (double) sum/size();
+		return (double) sum / size();
 	}
 
 	/**
-	*  Compute mean age.
+		Compute mean age.
 	*/
-	double getMeanAge () {
+	public double getMeanAge() {
 		long sum = 0;
 		for (Character c: bin) {
 			sum += c.getAge();
 		}
-		return (double) sum/size();
+		return (double) sum / size();
 	}
 
 	/**
-	*  Compute mean ability score.
+		Compute mean ability score.
 	*/
-	double getMeanAbility (Ability a) {
+	public double getMeanAbility(Ability a) {
 		long sum = 0;
 		for (Character c: bin) {
 			sum += c.getAbilityScore(a);
 		}
-		return (double) sum/size();
+		return (double) sum / size();
 	}
 }
-

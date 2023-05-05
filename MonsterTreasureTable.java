@@ -1,13 +1,13 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  Treasure based on monster type association (Vol-2, p. 22).
-*  Note that this should be used for wilderness encounters only.
-*  (For clarification of that point, see AD&D MM, p. 5.)
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2017-10-15
-******************************************************************************/
+/**
+	Treasure based on monster type association (Vol-2, p. 22).
+	Note that this should be used for wilderness encounters only.
+	(For clarification of that point, see AD&D MM, p. 5.)
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2017-10-15
+*/
 
 public class MonsterTreasureTable {
 
@@ -16,7 +16,7 @@ public class MonsterTreasureTable {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with treasure information. */
-	final String MONSTER_TREASURE_FILE = "MonsterTreasure.csv";
+	private static final String MONSTER_TREASURE_FILE = "MonsterTreasure.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -33,9 +33,10 @@ public class MonsterTreasureTable {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected MonsterTreasureTable () throws IOException {
+	protected MonsterTreasureTable() throws IOException {
 		String[][] table = CSVReader.readFile(MONSTER_TREASURE_FILE);
 		treasureTable = new TreasureType[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -48,7 +49,7 @@ public class MonsterTreasureTable {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static MonsterTreasureTable getInstance() {
 		if (instance == null) {
@@ -64,11 +65,11 @@ public class MonsterTreasureTable {
 
 
 	/**
-	*  Get a treasure type by matching its character code.
+		Get a treasure type by matching its character code.
 	*/
-	private TreasureType getByCode (char code) {
+	private TreasureType getByCode(char code) {
 		for (TreasureType tt: treasureTable) {
-			if (tt.getKey() == code) {
+			if (tt.getCode() == code) {
 				return tt;
 			}
 		}
@@ -76,17 +77,17 @@ public class MonsterTreasureTable {
 	}
 
 	/**
-	*  Get random treasure value by code.
+		Get random treasure value by code.
 	*/
-	public int randomValueByCode (char code) {
+	public int randomValueByCode(char code) {
 		TreasureType tt = getByCode(code);
 		return tt == null ? 0 : tt.randomValue();
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();		
 		MonsterTreasureTable table = MonsterTreasureTable.getInstance();
 
@@ -100,7 +101,7 @@ public class MonsterTreasureTable {
 		// Random sample values
 		System.out.println("Treasure Sample Values");
 		for (TreasureType tt: table.treasureTable) {
-			char code = tt.getKey();
+			char code = tt.getCode();
 			System.out.print(code + ": ");
 			for (int j = 0; j < 6; j++) {
 				System.out.print(table.randomValueByCode(code) + " ");
@@ -111,16 +112,15 @@ public class MonsterTreasureTable {
 		
 		// Estimated average values
 		System.out.println("Estimated Average Values");
-		final int SAMPLE_SIZE = 10000;
+		final int sampleSize = 10000;
 		for (TreasureType tt: table.treasureTable) {
 			long total = 0;
-			char code = tt.getKey();
-			for (int j = 0; j < SAMPLE_SIZE; j++) {
+			char code = tt.getCode();
+			for (int j = 0; j < sampleSize; j++) {
 				total += table.randomValueByCode(code);
 			}
-			System.out.println(code + ": " + total/SAMPLE_SIZE);
+			System.out.println(code + ": " + total / sampleSize);
 		}
 		System.out.println();
 	}
 }
-

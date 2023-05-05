@@ -1,12 +1,12 @@
 import java.util.Map;
 import java.util.TreeMap;
 
-/******************************************************************************
-*  List of special abilities found in database but not recognized.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2017-07-31
-******************************************************************************/
+/**
+	List of special abilities found in database but not recognized.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2017-07-31
+*/
 
 public class SpecialUnknownList {
 
@@ -15,19 +15,19 @@ public class SpecialUnknownList {
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static SpecialUnknownList instance = null;
+	private static SpecialUnknownList instance = null;
 	
-	/** Associated array of item records. */
-	Map<String, Integer> unknownArray;
+	/** Record of unknown abilities and counts of appearances. */
+	private Map<String, Integer> unknownArray;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor.
+		Constructor.
 	*/
-	protected SpecialUnknownList () {
+	protected SpecialUnknownList() {
 		unknownArray = new TreeMap<String, Integer>();
 	}
 
@@ -36,7 +36,7 @@ public class SpecialUnknownList {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static SpecialUnknownList getInstance() {
 		if (instance == null) {
@@ -46,29 +46,29 @@ public class SpecialUnknownList {
 	}
 
 	/**
-	*  Record an unhandled name.
+		Record an unhandled name.
 	*/
-	public void recordName (String name) {
+	public void recordName(String name) {
 		Integer count = unknownArray.get(name);
 		count = (count == null ? 1 : ++count);
 		unknownArray.put(name, count);
 	}
 
 	/**
-	*  Convert to a string (in decreasing value order)
+		Convert to a string.
+		Entries appear in decreasing count-value order.
 	*/
-	public String toString () {
+	public String toString() {
 		return MapUtil.entriesSortedByValues(unknownArray, true).toString();
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();		
 		MonsterDatabase db = MonsterDatabase.getInstance();
 		SpecialUnknownList list = SpecialUnknownList.getInstance();
 		System.out.println(list);
 	}
 }
-

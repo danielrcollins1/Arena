@@ -1,11 +1,13 @@
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
-/******************************************************************************
-*  Manages one RPG fight (one encounter). 
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-02-10
-******************************************************************************/
+/**
+	Manages one RPG fight (one encounter).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-02-10
+*/
 
 public class FightManager {
 
@@ -33,7 +35,7 @@ public class FightManager {
 	private Party party2;
 
 	/** Parties ordered by initiative. */
-	List<Party> initOrder;
+	private List<Party> initOrder;
 
 	/** Winner of this fight. */
 	private Party winner;
@@ -43,18 +45,18 @@ public class FightManager {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor for parties
+		Constructor for parties.
 	*/
-	FightManager (Party party1, Party party2) {
+	public FightManager(Party party1, Party party2) {
 		this.party1 = party1;
 		this.party2 = party2;
 		setInitiativeOrder();
 	}
 	
 	/**
-	*  Constructor for solo monsters
+		Constructor for solo monsters.
 	*/
-	FightManager (Monster mon1, Monster mon2) {
+	public FightManager(Monster mon1, Monster mon2) {
 		this(new Party(mon1), new Party(mon2));	
 	}
 
@@ -63,33 +65,33 @@ public class FightManager {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Set play-by-play reporting.
+		Set play-by-play reporting.
 	*/
-	public static void setPlayByPlayReporting (boolean report) {
+	public static void setPlayByPlayReporting(boolean report) {
 		reportPlayByPlay = report; 
 	}
 
 	/**
-	*  Get play-by-play reporting.
+		Get play-by-play reporting.
 	*/
-	public static boolean getPlayByPlayReporting () {
+	public static boolean getPlayByPlayReporting() {
 		return reportPlayByPlay; 
 	}
 
 	/**
-	*  Report play-by-play status. 
+		Report play-by-play status.
 	*/
-	private void reportPlayByPlay () {
+	private void reportPlayByPlay() {
 		if (reportPlayByPlay) {
 			System.out.println(this);
 		}
 	}
 
 	/**
-	*  Fight a duel between parties.
-	*  @return the winner of the fight
+		Fight a duel between parties.
+		@return the winner of the fight
 	*/
-	public Party fight () {
+	public Party fight() {
 
 		// Prepare for battle
 		party1.prepBattle(party2);
@@ -119,9 +121,9 @@ public class FightManager {
 	}
 
 	/**
-	*  Set the initiative order.
+		Set the initiative order.
 	*/
-	private void setInitiativeOrder () {
+	private void setInitiativeOrder() {
 		initOrder = new ArrayList<Party>();
 		initOrder.add(party1);
 		initOrder.add(party2);
@@ -131,18 +133,18 @@ public class FightManager {
 	}
 
 	/**
-	*  Handle membership changes for both sides
-	*  (e.g., new creatures conjured or dispelled)
+		Handle membership changes for both sides.
+		E.g., new creatures conjured or dispelled.
 	*/
-	private void handleMemberChanges () {
+	private void handleMemberChanges() {
 		party1.handleMemberChanges();
 		party2.handleMemberChanges();
 	}
 
 	/**
-	*  Decide on the winner of a fight.
+		Decide on the winner of a fight.
 	*/
-	private void callWinner () {
+	private void callWinner() {
 
 		// Get ratio alive
 		double ratioLive1 = party1.getRatioLive();
@@ -166,30 +168,30 @@ public class FightManager {
 	}
 
 	/**
-	*  Get current turn count.
+		Get current turn count.
 	*/
-	public int getTurnCount () {
+	public int getTurnCount() {
 		return turnCount;
 	}
 
 	/**
-	*  Get the winner.
+		Get the winner.
 	*/
 	public Party getWinner() {
 		return winner;
 	}
 
 	/**
-	*  Check if winner was first-mover?
+		Check if winner was first-mover?
 	*/
-	public boolean winnerWonInit () {
+	public boolean winnerWonInit() {
 		return winner == initOrder.get(0);
 	}
 
 	/**
-	*  Identify this object as a string.
+		Identify this object as a string.
 	*/
-	public String toString () {
+	public String toString() {
 		return party1 + " vs. " + party2;	
 	}
 }

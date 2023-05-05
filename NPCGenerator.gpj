@@ -68,7 +68,7 @@ a%\011NPCGenerator_doc%s	b	c1	d0!500;g
 %\011Wands.java
 %\011Character.java
 %\011Ability.java
-!538;t
-jgrCheckstyle0xr	%\011BaseClassType.java	1682867712566:P	%\011Weapon.java	1682838252194:P	%\011Armor.java	1682826564707:P	%\011Alignment.java	1682825652996:P	%\011ClassIndex.java	1682906158656:P	%\011Equipment.java	1682838501742:P	%\011Dice.java	1682837792210:P	%\011ClassType.java	1682903657873:P	%\011Feat.java	1682837831066:P	%\011Attack.java	1682829038644:P	%\011Wands.java	1682838769522:P	%\011Character.java	1682906265505:P	%\011EnergyType.java	1682833854401:P	%\011CSVReader.java	1682829115322:P	%\011Ability.java	1682905243685:P	
+!918;t
+jgrCheckstyle0xr	%\011BaseClassType.java	1683308189329:P	%\011Weapon.java	1683308189329:P	%\011Armor.java	1683308189329:P	%\011ClassIndex.java	1683308189329:P	%\011ClassType.java	1683308189329:P	%\011Feat.java	1683308189329:P	%\011ClassRecord.java	1683308189329:P	%\011Spell.java	1683308189329:P	%\011SpellsDaily.java	1683308189329:P	%\011EnergyType.java	1683308189329:P	%\011CSVReader.java	1683308189329:P	%\011SpecialType.java	1683308189329:P	%\011NameGenerator.java	1683308189329:P	%\011CharacterPDF.java	1683308189329:P	%\011Alignment.java	1683308189329:P	%\011SpellsIndex.java	1683308189329:P	%\011Monster.java	1683308189329:P	%\011Equipment.java	1683308189329:P	%\011PersonalityTraits.java	1683308189329:P	%\011Dice.java	1683308189329:P	%\011Attack.java	1683308189329:P	%\011NPCGenerator.java	1683308189329:P	%\011Wands.java	1683308189329:P	%\011Character.java	1683308189329:P	%\011Ability.java	1683308189329:P	
 !35;m
 RunSelect	APPLICATION:NPCGenerator

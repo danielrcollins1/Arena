@@ -1,15 +1,12 @@
-import java.io.File; 
-import java.io.IOException; 
+/**
+	Generates random NPCs to user specification.
 
-/******************************************************************************
-*  Generates random NPCs to user specification.
-*
-*  Optionally take name of output file, so we can see user prompts 
-*  in console, while final output goes to text file. 
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2018-12-04
-******************************************************************************/
+	Optionally take name of output file, so we can see user prompts
+	in console, while final output goes to text file.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2018-12-04
+*/
 
 public class NPCGenerator {
 
@@ -28,11 +25,27 @@ public class NPCGenerator {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Record for user NPC specification.
+		Record for user NPC specification.
 	*/
-	static class GenProfile {
-		String race, class1, class2, align;
-		int level1, level2;
+	private class GenProfile {
+	
+		/** Racial descriptor. */
+		private String race;
+
+		/** Alignment descriptor. */
+		private String align;
+		
+		/** Primary class descriptor. */
+		private String class1;
+		
+		/** Secondary class descriptor. */
+		private String class2;
+
+		/** Primary class level. */
+		private int level1;
+		
+		/** Secondary class level. */
+		private int level2;
 	}
 
 	//--------------------------------------------------------------------------
@@ -40,28 +53,28 @@ public class NPCGenerator {
 	//--------------------------------------------------------------------------
 
 	/** Profile input by user. */
-	GenProfile inputProfile;
+	private GenProfile inputProfile;
 
 	/** Number of NPCs to create. */
-	int numNPCs; 
+	private int numNPCs; 
 
-	/** Print PDF character sheets */
-	boolean printPDFs;
+	/** Number of line breaks between NPCs. */
+	private int lineBreaks;
 
-	/** Line breaks between NPCs */
-	int lineBreaks;
+	/** Flag to print PDF character sheets. */
+	private boolean printPDFs;
 
 	/** Flag to escape after parsing arguments. */
-	boolean exitAfterArgs;
+	private boolean exitAfterArgs;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor.
+		Constructor.
 	*/
-	NPCGenerator () {
+	public NPCGenerator() {
 		Dice.initialize();
 		inputProfile = new GenProfile();
 		Character.setFeatUsage(true);
@@ -75,17 +88,17 @@ public class NPCGenerator {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Print program banner.
+		Print program banner.
 	*/
-	void printBanner () {
+	private void printBanner() {
 		System.out.println("OED NPC Generator");
 		System.out.println("-----------------");
 	}
 
 	/**
-	*  Print usage.
+		Print usage.
 	*/
-	void printUsage () {
+	private void printUsage() {
 		System.out.println("Usage: NPCGenerator [options]");
 		System.out.println("  where options include:");
 		System.out.println("\t-a alignment (=[L, N, C])");
@@ -99,9 +112,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Parse arguments.
+		Parse arguments.
 	*/
-	void parseArgs (String[] args) {
+	private void parseArgs(String[] args) {
 		for (String s: args) {
 			if (s.length() > 1 && s.charAt(0) == '-') {
 				switch (s.charAt(1)) {
@@ -122,9 +135,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Get integer following equals sign in command parameter.
+		Get integer following equals sign in command parameter.
 	*/
-	int getParamInt (String s) {
+	private int getParamInt(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			try {
 				return Integer.parseInt(s.substring(3));
@@ -137,52 +150,55 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Parse the race command-line parameter.
+		Parse the race command-line parameter.
 	*/
-	void parseRace (String s) {
+	private void parseRace(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'M': inputProfile.race = "Human"; return;
 				case 'D': inputProfile.race = "Dwarf"; return;
 				case 'E': inputProfile.race = "Elf"; return;
 				case 'H': inputProfile.race = "Halfling"; return;
+				default: System.err.println("Unknown race code.");
 			}
 		}
 		exitAfterArgs = true;
 	}
 
 	/**
-	*  Parse the class command-line parameter.
+		Parse the class command-line parameter.
 	*/
-	void parseClass (String s) {
+	private void parseClass(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'F': inputProfile.class1 = "Fighter"; return;
 				case 'T': inputProfile.class1 = "Thief"; return;
 				case 'W': inputProfile.class1 = "Wizard"; return;
+				default: System.err.println("Unknown class code.");
 			}
 		}
 		exitAfterArgs = true;
 	}
 
 	/**
-	*  Parse the alignment command-line parameter.
+		Parse the alignment command-line parameter.
 	*/
-	void parseAlignment (String s) {
+	private void parseAlignment(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
 			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'L': inputProfile.align = "Lawful"; return;
 				case 'N': inputProfile.align = "Neutral"; return;
 				case 'C': inputProfile.align = "Chaotic"; return;
+				default: System.err.println("Unknown alignment code.");
 			}
 		}
 		exitAfterArgs = true;
 	}
 
 	/**
-	*  Roll for a race.
+		Roll for a race.
 	*/
-	String rollRace () {
+	private String rollRace() {
 		switch (Dice.roll(6)) {
 			case 1: return "Dwarf";
 			case 2: return "Elf";
@@ -192,9 +208,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Roll for a class.
+		Roll for a class.
 	*/
-	String rollClass () {
+	private String rollClass() {
 		switch (Dice.roll(6)) {
 			case 1: return "Wizard";
 			case 2: case 3: return "Thief";
@@ -203,9 +219,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Roll for elf non-wizard class.
+		Roll for elf non-wizard class.
 	*/
-	String rollElfClass () {
+	private String rollElfClass() {
 		switch(Dice.roll(6)) {
 			case 1: case 2: return "Thief";
 			default: return "Fighter";
@@ -213,17 +229,17 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Create one fully-formed profile from incomplete source.
+		Create one fully-formed profile from incomplete source.
 	*/
-	GenProfile fillProfile (GenProfile ip) {
+	private GenProfile fillProfile(GenProfile p) {
 		GenProfile profile = new GenProfile();
- 		profile.race = ip.race != null ? ip.race: rollRace();
- 		profile.class1 = ip.class1 != null ? ip.class1: rollClass();
- 		profile.level1 = ip.level1 > 0 ? ip.level1: 1;
-		profile.class2 = ip.class2;
-		profile.level2 = ip.level2;
-		profile.align = ip.align != null ? ip.align : 
-			Alignment.randomNormal().toString();
+ 		profile.race = p.race != null ? p.race : rollRace();
+ 		profile.class1 = p.class1 != null ? p.class1 : rollClass();
+ 		profile.level1 = p.level1 > 0 ? p.level1 : 1;
+		profile.class2 = p.class2;
+		profile.level2 = p.level2;
+		profile.align = p.align != null ? p.align 
+			: Alignment.randomNormal().toString();
 		if (profile.race.equals("Elf")) {
 			fillElfProfile(profile);
 		}
@@ -231,28 +247,31 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Fill in 2nd class & level for an Elf profile.
+		Fill in 2nd class & level for an Elf profile.
 	*/
-	void fillElfProfile (GenProfile p) {
+	private void fillElfProfile(GenProfile p) {
 		if (p.class2 == null) {
 			p.class2 = (p.class1.equals("Wizard")) ? rollElfClass() : "Wizard"; 
 		}
 		if (p.level2 < 1) {
 			p.level2 = Dice.roll(p.level1);
-			if (p.class2.equals("Fighter") && p.level2 > 4)
+			if (p.class2.equals("Fighter") && p.level2 > 4) {
 				p.level2 = 4;
-			if (p.class2.equals("Wizard") && p.level2 > 8)
+			}
+			if (p.class2.equals("Wizard") && p.level2 > 8) {
 				p.level2 = 8;
+			}
 		}
 	}
 
 	/**
-	*  Make one NPC from a fully-formed profile.
+		Make one NPC from a fully-formed profile.
 	*/
-	Character makeNPCFromProfile (GenProfile p) {
-		Character c = (p.class2 == null) ?
-			new Character(p.race, p.class1, p.level1, p.align) :
-			new Character(p.race, p.class1, p.level1, p.class2, p.level2, p.align);
+	private Character makeNPCFromProfile(GenProfile p) {
+		Character c = (p.class2 == null) 
+			? new Character(p.race, p.class1, p.level1, p.align) 
+			: new Character(p.race, p.class1, p.level1, 
+				p.class2, p.level2, p.align);
 		c.setBasicEquipment();
 		c.boostMagicItemsToLevel();
 		c.drawBestWeapon(null);
@@ -260,9 +279,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Make multiple NPCs as per input profile.
+		Make multiple NPCs as per input profile.
 	*/
-	void makeAllNPCs () {
+	private void makeAllNPCs() {
 		for (int i = 0; i < numNPCs; i++) {
 			GenProfile p = fillProfile(inputProfile);
 			Character c = makeNPCFromProfile(p);
@@ -276,9 +295,9 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Print a character to the console.
+		Print a character to the console.
 	*/
-	void printToConsole (Character c) {
+	private void printToConsole(Character c) {
 		System.out.println(c);
 		for (int j = 0; j < lineBreaks; j++) {
 			System.out.println();
@@ -286,18 +305,18 @@ public class NPCGenerator {
 	}
 
 	/**
-	*  Print a character to a PDF file.
+		Print a character to a PDF file.
 	*/
-	void printToPDF (Character c) {
+	private void printToPDF(Character c) {
 		System.out.println("Writing " + c.getFilename() + ".pdf");
 		CharacterPDF cp = new CharacterPDF();
 		cp.writePDF(c);
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		NPCGenerator gen = new NPCGenerator();
 		gen.printBanner();
 		gen.parseArgs(args);
@@ -309,4 +328,3 @@ public class NPCGenerator {
 		}
 	}
 }
-

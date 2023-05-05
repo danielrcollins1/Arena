@@ -1,11 +1,11 @@
 import java.io.IOException; 
 
-/******************************************************************************
-*  Saving throws table (singleton pattern).
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2016-01-20
-******************************************************************************/
+/**
+	Saving throws table (singleton pattern).
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2016-01-20
+*/
 
 public class SavingThrows {
 
@@ -18,11 +18,11 @@ public class SavingThrows {
 		Death, Wands, Stone, Breath, Spells;
 
 		/** Total number of save types available. */
-		public static final int length = Type.values().length;
+		public static final int SIZE = Type.values().length;
 	};
 
 	/** Available saving throw rules. */
-	private enum SaveRule {ODD, OED};
+	private enum SaveRule { ODD, OED };
 
 	//--------------------------------------------------------------------------
 	//  Constants
@@ -43,24 +43,30 @@ public class SavingThrows {
 
 	/** Class to store save targets at one class level. */
 	class SaveRecord {
-		String className;
-		int minLevel;
-		int[] saveScore;
 
-		/** Constructor */
-		SaveRecord (String[] s) {
+		/** Name of the character class. */
+		private String className;
+
+		/** Minimum level for the row. */
+		private int minLevel;
+		
+		/** Save scores in each category. */
+		private int[] saveScore;
+
+		/** Constructor. */
+		SaveRecord(String[] s) {
 			className = s[0];
 			minLevel = Integer.parseInt(s[1]);
-			saveScore = new int[Type.length];
-			for (int i = 0; i < Type.length; i++) {
+			saveScore = new int[Type.SIZE];
+			for (int i = 0; i < Type.SIZE; i++) {
 				saveScore[i] = Integer.parseInt(s[i + 2]);
 			}
 		}
 
-		/** String representation */
+		/** String representation. */
 		public String toString() {
 			String s = className + ", " + minLevel;
-			for (int i = 0; i < Type.length; i++) {
+			for (int i = 0; i < Type.SIZE; i++) {
 				s += ", " + saveScore[i];			
 			}
 			return s;			
@@ -72,19 +78,20 @@ public class SavingThrows {
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static SavingThrows instance = null;
+	private static SavingThrows instance = null;
 
 	/** Table of saving throw targets. */
-	SaveRecord[] targetsTable;
+	private SaveRecord[] targetsTable;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Constructor (read from dedicated file).
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
 	*/
-	protected SavingThrows () throws IOException {
+	protected SavingThrows() throws IOException {
 		String[][] table = CSVReader.readFile(SAVING_THROWS_FILE);
 		targetsTable = new SaveRecord[table.length - 1];
 		for (int i = 1; i < table.length; i++) {
@@ -97,7 +104,7 @@ public class SavingThrows {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static SavingThrows getInstance() {
 		if (instance == null) {
@@ -112,12 +119,12 @@ public class SavingThrows {
 	}
 
 	/**
-	*  Roll a saving throw with a modifier.
-	*  @return True if the save was successful.
+		Roll a saving throw with a modifier.
+		@return True if the save was successful.
 	*/
-	public boolean rollSave (Type saveType, 
-			String asClass, int level, int modifier) {
-
+	public boolean rollSave(Type saveType, 
+		String asClass, int level, int modifier) 
+	{
 		int natRoll = Dice.roll(20);
 		int total = natRoll + modifier;
 		int target = getSaveTarget(saveType, asClass, level);
@@ -125,17 +132,17 @@ public class SavingThrows {
 	}
 
 	/**
-	*  Roll a saving throw without a modifier.
-	*  @return True if the save was successful.
+		Roll a saving throw without a modifier.
+		@return True if the save was successful.
 	*/
-	public boolean rollSave (Type saveType, String asClass, int level) {
+	public boolean rollSave(Type saveType, String asClass, int level) {
 		return rollSave(saveType, asClass, level, 0);	
 	}
 
 	/**
-	*  Get the target score for a saving throw.
+		Get the target score for a saving throw.
 	*/
-	public int getSaveTarget (Type saveType, String asClass, int level) {
+	public int getSaveTarget(Type saveType, String asClass, int level) {
 
 		// Use the OD&D book table
 		if (SAVE_RULE == SaveRule.ODD) {
@@ -156,22 +163,23 @@ public class SavingThrows {
 	}
 
 	/**
-	*  Find the correct SaveRecord for this class/level.
+		Find the correct SaveRecord for this class/level.
 	*/
-	private SaveRecord getSaveRecord (String asClass, int level) {
+	private SaveRecord getSaveRecord(String asClass, int level) {
 		level = Math.max(1, level);
 		for (int i = targetsTable.length - 1; i > -1; i--) {
 			SaveRecord record = targetsTable[i];
-			if (record.className.equals(asClass) && level >= record.minLevel)
+			if (record.className.equals(asClass) && level >= record.minLevel) {
 				return record;
+			}
 		}
 		return null;
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		SavingThrows st = SavingThrows.getInstance();
 
@@ -191,8 +199,9 @@ public class SavingThrows {
 		System.out.println("Test Ftr1 vs. Poison (45%?)");
 		success = 0;
 		for (int i = 0; i < numRolls; i++) {
-			if (st.rollSave(Type.Death, "Fighter", 1))
-				success++;		
+			if (st.rollSave(Type.Death, "Fighter", 1)) {
+				success++;
+			}
 		}
 		ratio = (double) success / numRolls;
 		System.out.println("Success ratio: " + ratio + "\n");
@@ -201,8 +210,9 @@ public class SavingThrows {
 		System.out.println("Test Wiz20 vs. Spells (90%?)");
 		success = 0;
 		for (int i = 0; i < numRolls; i++) {
-			if (st.rollSave(Type.Spells, "Wizard", 20))
-				success++;		
+			if (st.rollSave(Type.Spells, "Wizard", 20)) {
+				success++;
+			}
 		}
 		ratio = (double) success / numRolls;
 		System.out.println("Success ratio: " + ratio + "\n");

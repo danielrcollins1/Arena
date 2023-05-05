@@ -1,13 +1,15 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.IOException; 
-import java.util.*;
 
-/******************************************************************************
-*  Tables of monsters organized by level.
-*  For use in generating & data-tracking random encounters.
-*
-*  @author   Daniel R. Collins (dcollins@superdan.net)
-*  @since    2014-07-18
-******************************************************************************/
+/**
+	Tables of monsters organized by level.
+	For use in generating & data-tracking random encounters.
+
+	@author Daniel R. Collins (dcollins@superdan.net)
+	@since 2014-07-18
+*/
 
 public class MonsterTables implements Iterable<List<Monster>> {
 
@@ -16,29 +18,31 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	//--------------------------------------------------------------------------
 
 	/** Name of file with monster information. */
-	final String MONSTER_LEVEL_MATRIX_FILE = "MonsterLevelMatrix.csv";
+	private static final String 
+		MONSTER_LEVEL_MATRIX_FILE = "MonsterLevelMatrix.csv";
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** The singleton class instance. */
-	static MonsterTables instance = null;
+	private static MonsterTables instance = null;
 
 	/** Matrix of what level monster appears. */
-	List<List<Integer>> monsterLevelMatrix;
+	private List<List<Integer>> monsterLevelMatrix;
 
 	/** Tables of monsters at each level. */
-	List<List<Monster>> monsterTables;
+	private List<List<Monster>> monsterTables;
 
 	//--------------------------------------------------------------------------
 	//  Constructors
 	//--------------------------------------------------------------------------
 
- 	/**
- 	*  Constructor (read from dedicated file).
- 	*/
- 	protected MonsterTables () throws IOException {
+	/**
+		Constructor (read from dedicated file).
+		@throws IOException if file open/read fails
+	*/
+	protected MonsterTables() throws IOException {
 		readMonsterLevelMatrix();
 		compileMonsterTables();
 	}
@@ -48,7 +52,7 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	//--------------------------------------------------------------------------
 
 	/**
-	*  Access the singleton class instance.
+		Access the singleton class instance.
 	*/
 	public static MonsterTables getInstance() {
 		if (instance == null) {
@@ -70,9 +74,10 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Read in the monster level matrix.
+		Read in the monster level matrix.
+		@throws IOException if file open/read fails
 	*/
-	private void readMonsterLevelMatrix () throws IOException {
+	private void readMonsterLevelMatrix() throws IOException {
 		String[][] table = CSVReader.readFile(MONSTER_LEVEL_MATRIX_FILE);
 		monsterLevelMatrix = new ArrayList<List<Integer>>();
 		for (int i = 1; i < table.length; i++) {
@@ -85,15 +90,15 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Compile the table of monsters at each level.
+		Compile the table of monsters at each level.
 	*/
-	private void compileMonsterTables () {
+	private void compileMonsterTables() {
 
 		// Initialize the tables
 		int maxLevel = monsterLevelMatrix.get(0).size() - 1;
 		monsterTables = new ArrayList<List<Monster>>(maxLevel);
 		for (int i = 0; i < maxLevel; i++) {
-			 monsterTables.add(new ArrayList<Monster>());		
+			monsterTables.add(new ArrayList<Monster>());
 		}		
 		
 		// Sort monster database into these tables
@@ -109,31 +114,31 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Get the number of tables (i.e., max monster level).
+		Get the number of tables (i.e., max monster level).
 	*/
-	public int getNumTables () {
+	public int getNumTables() {
 		return monsterTables.size();	
 	}
 
 	/**
-	*  Access one of the monster tables (1-based).
+		Access one of the monster tables (1-based).
 	*/
-	public List<Monster> getTable (int level) {
+	public List<Monster> getTable(int level) {
 		return monsterTables.get(level - 1);
 	}
 
 	/**
-	*  Roll a new random monster on a given dungeon level.
+		Roll a new random monster on a given dungeon level.
 	*/
-	public Monster randomMonsterByDungeonLevel (int dungeonLevel) {
+	public Monster randomMonsterByDungeonLevel(int dungeonLevel) {
 		int monsterLevel = randomMonsterLevel(dungeonLevel);
 		return randomMonsterByTableLevel(monsterLevel);
 	}
 
 	/**
-	*  Roll a new random monster of a given table level.
+		Roll a new random monster of a given table level.
 	*/
-	private Monster randomMonsterByTableLevel (int tableLevel) {
+	private Monster randomMonsterByTableLevel(int tableLevel) {
 		List<Monster> table = getTable(tableLevel);
 		if (table.isEmpty()) {
 			System.err.println("Empty monster table! (level " 
@@ -147,34 +152,36 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Roll a random monster level for a given dungeon level.
+		Roll a random monster level for a given dungeon level.
 	*/
-	private int randomMonsterLevel (int dungeonLevel) {
+	private int randomMonsterLevel(int dungeonLevel) {
 		int roll = new Dice(6).roll();
 		List<Integer> matrixRow = getMatrixRow(dungeonLevel);
 		for (int level = matrixRow.size() - 1; level > 0; level--) {
 			int minRoll = matrixRow.get(level);
-			if (minRoll != 0 && minRoll <= roll) 
+			if (minRoll != 0 && minRoll <= roll) {
 				return level;
+			}
 		}
 		return -1;
 	}
 
 	/**
-	*  Convert dungeon level to row in matrix.
+		Convert dungeon level to row in matrix.
 	*/
-	private List<Integer> getMatrixRow (int dungeonLevel) {
+	private List<Integer> getMatrixRow(int dungeonLevel) {
 		for (int row = monsterLevelMatrix.size() - 1; row > -1; row--) {
-			if (dungeonLevel >= monsterLevelMatrix.get(row).get(0))
+			if (dungeonLevel >= monsterLevelMatrix.get(row).get(0)) {
 				return monsterLevelMatrix.get(row);
+			}
 		}
 		return null;
 	}
 
 	/**
-	*  Get total kills for a given monster table.
+		Get total kills for a given monster table.
 	*/
-	public int getTotalKillsAtLevel (int tableLevel) {
+	public int getTotalKillsAtLevel(int tableLevel) {
 		int total = 0;
 		for (Monster m: getTable(tableLevel)) {
 			total += m.getKillTally();
@@ -183,9 +190,9 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Get grand total monster kills.
+		Get grand total monster kills.
 	*/
-	public int getGrandTotalKills () {
+	public int getGrandTotalKills() {
 		int grandTotal = 0;
 		for (int i = 1; i <= getNumTables(); i++)	{
 			grandTotal += getTotalKillsAtLevel(i);
@@ -194,9 +201,9 @@ public class MonsterTables implements Iterable<List<Monster>> {
 	}
 
 	/**
-	*  Main test method.
+		Main test method.
 	*/
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Dice.initialize();
 		MonsterTables tables = MonsterTables.getInstance();
 		for (int level = 1; level <= tables.getNumTables(); level++) {
@@ -208,4 +215,3 @@ public class MonsterTables implements Iterable<List<Monster>> {
 		}
 	}
 }
-
