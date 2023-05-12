@@ -1116,7 +1116,7 @@ public class Character extends Monster {
 		// Basic stat string
 		String s = name + ", " + race + " " + classString(true);
 		s += ": AC " + getAC() + ", MV " + getMV() + ", HD " + getHD()
-			+ ", hp " + getHP() + ", Atk " + getAttack();
+			+ " (hp " + getHP() + "), Atk " + getAttack();
 		
 		// Optional stuff
 		if (printAbilities) {
