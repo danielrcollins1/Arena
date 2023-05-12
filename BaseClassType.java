@@ -29,7 +29,7 @@ public enum BaseClassType {
 	*/
    private static final Ability[][] ABILITY_PRIORITY = {
    	{Ability.Strength, Ability.Dexterity, Ability.Constitution},
-   	{Ability.Intelligence, Ability.Dexterity, Ability.Wisdom},
+   	{Ability.Intelligence, Ability.Dexterity, Ability.Constitution},
    	{Ability.Wisdom, Ability.Strength, Ability.Constitution},
    	{Ability.Dexterity, Ability.Strength, Ability.Intelligence}
    };
