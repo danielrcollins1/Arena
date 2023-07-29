@@ -72,5 +72,11 @@ as expressed in the Original Edition Delta (OED) House Rules set. In some
 cases, software switches allow toggling between different modes. See
 www.oedgames.com for more information. 
 
+When changes to the code are made, regression testing can be done by running **java MonsterMetrics -r**.
+This tests the current EHD of all the monsters in the database and displays any that
+should have revised values. Generally no monsters should have revised EHD values unless gameplay
+rules are being intentionally changed. (A few false positives are expected due to sampling error;
+retest to confirm an observed change.)
+
 - Daniel R. Collins ("Delta")
 www.oedgames.com
