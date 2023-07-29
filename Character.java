@@ -31,7 +31,7 @@ public class Character extends Monster {
 	private static final Dice ABILITY_DICE = new Dice(3, 6);
 
 	/** How many ability boosts we give over level. */
-	private static final int ABILITY_BOOSTS_OVER_LEVEL = 1;
+	private static final int ABILITY_BOOSTS_OVER_LEVEL = 2;
 
 	/** Maximum score to which we can boost an ability. */
 	private static final int MAX_ABILITY_SCORE = 18;
