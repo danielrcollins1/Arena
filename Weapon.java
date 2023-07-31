@@ -72,9 +72,9 @@ public class Weapon extends Equipment {
 		switch (Dice.roll(8)) {
 			case 1: return new Weapon("Sword", new Dice(8), ONE_THIRD, 1);
 			case 2: return new Weapon("Two-handed sword", new Dice(10), 1, 2);
-			case 3: return new Weapon("Battle axe", new Dice(8), 1, 1);
+			case 3: return new Weapon("Battle axe", new Dice(8), ONE_THIRD, 1);
 			case 4: return new Weapon("Halberd", new Dice(10), 1, 2);
-			case 5: return new Weapon("Morning star", new Dice(8), 1, 1);
+			case 5: return new Weapon("Morning star", new Dice(8), ONE_THIRD, 1);
 			case 6: return new Weapon("Flail", new Dice(8), 1, 2);
 			default: return new Weapon("Sword", new Dice(8), ONE_THIRD, 1);
 		}
