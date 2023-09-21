@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.function.Function;
@@ -115,6 +117,9 @@ public class MonsterMetrics {
 
 	/** Flag to display unknown special abilities. */
 	private boolean displayUnknownSpecials;
+
+	/** Flag to display specials in alphabetical order. */
+	private boolean displaySpecialsAlphaOrder;
 
 	/** Flag to display only revised EHD values. */
 	private boolean displayOnlyRevisions; 
@@ -302,6 +307,7 @@ public class MonsterMetrics {
 					case 'v': Monster.setPrintEHDs(true); break;
 					case 'w': Character.setSweepAttacks(true); break;
 					case 'x': expectedPartySize = getParamInt(s); break;
+					case 'y': displaySpecialsAlphaOrder = true; break;
 					case 'z': wizardFrequency = getParamInt(s); break;
 					default: exitAfterArgs = true; break;
 				}
@@ -833,11 +839,25 @@ public class MonsterMetrics {
 	/**
 		Display unknown special abilities if desired.
 	*/
-	private  void displayUnknownSpecials() {
+	private void displayUnknownSpecials() {
 		if (displayUnknownSpecials) {
 			MonsterDatabase db = MonsterDatabase.getInstance();
 			SpecialUnknownList list = SpecialUnknownList.getInstance();
 			System.out.println("Unknown specials: " + list + "\n");
+		}
+	}
+
+	/**
+		Display specials in alphabetical order if desired.
+	*/
+	private void displaySpecialsAlphaOrder() {
+		if (displaySpecialsAlphaOrder) {
+			ArrayList<String> specialNames = new ArrayList<String>();
+			for (SpecialType t: SpecialType.values()) {
+				specialNames.add(t.name());			
+			}
+			Collections.sort(specialNames);
+			System.out.println("Special types: " + specialNames + "\n");
 		}
 	}
 
@@ -1196,6 +1216,7 @@ public class MonsterMetrics {
 				waitForEnterKey();
 			}
 			metrics.startClock();
+			metrics.displaySpecialsAlphaOrder();
 			metrics.displayUnknownSpecials();
 			if (metrics.doPrintStatBlocks) {
 				metrics.printStatBlocks();
