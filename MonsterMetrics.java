@@ -157,6 +157,9 @@ public class MonsterMetrics {
 	/** Flag to make a table of best-number-match values. */
 	private boolean makeBNMTable;
 
+	/** Flag to compare monsters to other monsters. */
+	private boolean compareMonsters;
+
 	/** Should we wait for a keypress to start (for profiler)? */
 	private boolean waitForKeypress;
 
@@ -227,6 +230,7 @@ public class MonsterMetrics {
 		println("\t-g graph power per level for each monster");
 		println("\t-h assess matchup given monster number, party level (-h:#:#)");
 		println("\t-i print average hit points in stat blocks");
+		println("\t-j compare monsters vs. monsters (use small database)");
 		println("\t-k wait for keypress to start processing");		
 		println("\t-l show suggested best level match for expected-size party");
 		println("\t-m chance for magic weapon bonus per level " 
@@ -243,6 +247,7 @@ public class MonsterMetrics {
 		println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
 		println("\t-x set expected size of PC party " 
 			+ "(default =" + DEFAULT_PARTY_SIZE + ")");
+		println("\t-y display specials in alphabetical order");
 		println("\t-z fraction of wizards in party " 
 			+ "(default =" + DEFAULT_WIZARD_RATIO + ")");
 		println("");
@@ -292,6 +297,7 @@ public class MonsterMetrics {
 					case 'g': graphEquatedFightersHD = true; break;
 					case 'h': parseSingleMatchupOption(s); break;
 					case 'i': Monster.setPrintHitPoints(true); break;
+					case 'j': compareMonsters = true; break;
 					case 'k': waitForKeypress = true; break;
 					case 'l': showBestLevelMatch = true; break;
 					case 'm': pctMagicPerLevel = getParamInt(s); break;
@@ -506,7 +512,7 @@ public class MonsterMetrics {
 		point between two integers that would trigger a report half the time, 
 		if we compared integer values, and had an error bar below 1.
 
-		Therefore, we compare decimal values, and only trigger a report only if 
+		Therefore, we compare decimal values, and only trigger a report if 
 		there's at least a 2/3 unit difference. For the monsters in question, 
 		we made the manual choice in the database of leaning toward the actual HD.
 		In some cases this may mask the fact that the true EHD is under the 
@@ -1153,6 +1159,51 @@ public class MonsterMetrics {
 	}
 
 	/**
+		Make table comparing monsters to other monsters.
+		Shows win percentage for each matchup.
+	*/
+	private void compareMonsters() {
+		MonsterDatabase mdb = MonsterDatabase.getInstance();
+
+		// Header
+		for (Monster def: mdb) {
+			final int maxNickLength = 5;
+			String name = def.getRace();
+			int nicknameLength = Math.min(name.length(), maxNickLength);
+			String nickname = name.substring(0, nicknameLength);
+			System.out.print("\t" + nickname);
+		}
+		System.out.println();
+
+		// Body		
+		for (Monster atk: mdb) {
+			System.out.print(atk.getRace());
+			for (Monster def: mdb) {
+				double winRatio = getWinRatio(atk, def);
+				System.out.print("\t" + (int) (winRatio * 100));
+			}
+			System.out.println();
+		}
+		System.out.println();	
+	}
+
+	/**
+		Get win ratio for one solo monster vs. another.
+	*/
+	double getWinRatio(Monster atkType, Monster defType) {
+		int wins = 0;
+		for (int fight = 0; fight < numberOfFights; fight++) {
+			Party atkParty = new Party(atkType, 1);
+			Party defParty = new Party(defType, 1);
+			FightManager manager = new FightManager(atkParty, defParty);
+			if (manager.fight() == atkParty) {
+				wins++;
+			}			
+		}
+		return (double) wins / numberOfFights;
+	}
+
+	/**
 		Print stat blocks.
 	*/
 	private void printStatBlocks() {
@@ -1232,6 +1283,9 @@ public class MonsterMetrics {
 			}	
 			else if (metrics.showQuickBattleStats) { 
 				metrics.printQuickBattleStats();
+			}
+			else if (metrics.compareMonsters) {
+				metrics.compareMonsters();			
 			}
 			else {
 				metrics.reportMonsters();
