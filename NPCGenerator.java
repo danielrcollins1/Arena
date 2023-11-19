@@ -154,7 +154,7 @@ public class NPCGenerator {
 	*/
 	private void parseRace(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'M': inputProfile.race = "Human"; return;
 				case 'D': inputProfile.race = "Dwarf"; return;
 				case 'E': inputProfile.race = "Elf"; return;
@@ -170,7 +170,7 @@ public class NPCGenerator {
 	*/
 	private void parseClass(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'F': inputProfile.class1 = "Fighter"; return;
 				case 'T': inputProfile.class1 = "Thief"; return;
 				case 'W': inputProfile.class1 = "Wizard"; return;
@@ -185,7 +185,7 @@ public class NPCGenerator {
 	*/
 	private void parseAlignment(String s) {
 		if (s.length() > 3 && s.charAt(2) == '=') {
-			switch(java.lang.Character.toUpperCase(s.charAt(3))) {
+			switch (java.lang.Character.toUpperCase(s.charAt(3))) {
 				case 'L': inputProfile.align = "Lawful"; return;
 				case 'N': inputProfile.align = "Neutral"; return;
 				case 'C': inputProfile.align = "Chaotic"; return;
@@ -222,7 +222,7 @@ public class NPCGenerator {
 		Roll for elf non-wizard class.
 	*/
 	private String rollElfClass() {
-		switch(Dice.roll(6)) {
+		switch (Dice.roll(6)) {
 			case 1: case 2: return "Thief";
 			default: return "Fighter";
 		}	

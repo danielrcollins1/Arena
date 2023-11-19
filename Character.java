@@ -732,7 +732,7 @@ public class Character extends Monster {
 	*/
 	public void setBasicEquipment() {
 		if (hasBaseClassType(BaseClassType.Fighter)) {
-			switch(getLevel()) {
+			switch (getLevel()) {
 				case 0: setArmor(Armor.makeType(Armor.Type.Leather)); break;
 				case 1: setArmor(Armor.makeType(Armor.Type.Chain)); break;
 				default: setArmor(Armor.makeType(Armor.Type.Plate)); break;
@@ -983,7 +983,7 @@ public class Character extends Monster {
 		Adjust ability scores on reaching a new age category.
 	*/
 	private void ageAdjustAbilities() {
-		switch(getAgeCategory()) {
+		switch (getAgeCategory()) {
 			case Child: break;
 			case YoungAdult: adjustAllAbilityScores(0, 0, -1, 0, +1, 0); break;
 			case Mature:     adjustAllAbilityScores(+1, 0, +1, 0, 0, 0); break;
@@ -1002,7 +1002,7 @@ public class Character extends Monster {
 	private void ageAdjustLevels() {
 		if (age > 40) {
 			for (ClassRecord record: classList) {
-				switch(record.getClassType().getBaseClassType()) {
+				switch (record.getClassType().getBaseClassType()) {
 					case Fighter:
 						if (age % 2 == 0) {
 							record.loseLevel(); 
