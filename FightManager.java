@@ -15,15 +15,18 @@ public class FightManager {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Maximum number of turns allowed in a fight. */
-	private static final int MAX_TURNS = 20;
+	/** Default maximum turns allowed in a fight. */
+	private static final int DEFAULT_MAX_TURNS = 20;
 
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
 
 	/** Report play-by-play action for fights. */
-	private static boolean reportPlayByPlay = false;
+	private static boolean reportPlayByPlay;
+
+	/** Maximum turns allowed in thus fight. */
+	private int maxTurns = DEFAULT_MAX_TURNS;
 
 	/** Count turns/rounds in current fight. */
 	private int turnCount;
@@ -88,6 +91,13 @@ public class FightManager {
 	}
 
 	/**
+		Set maximum turns.
+	*/
+	public void setMaxTurns(int turns) {
+		maxTurns = turns;
+	}
+
+	/**
 		Fight a duel between parties.
 		@return the winner of the fight
 	*/
@@ -105,7 +115,7 @@ public class FightManager {
 		handleMemberChanges();
 
 		// Alternate turns
-		while (turnCount < MAX_TURNS
+		while (turnCount < maxTurns
 			&& party1.isLive() && party2.isLive()) 
 		{
 			turnCount++;

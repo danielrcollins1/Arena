@@ -604,7 +604,7 @@ public class Arena {
 		Print every individual fighter (for testing small groups).
 	*/
 	private void reportFighterData() {
-		fighterList.sortMembers();
+		fighterList.sortMembersUp();
 		for (Monster fighter: fighterList) {
 			System.out.println(fighter);
 		}

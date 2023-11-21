@@ -232,7 +232,7 @@ public class Party implements Iterable<Monster> {
 	/**
 		Sort the list of members by increasing level/hit dice.
 	*/
-	public void sortMembers() {
+	public void sortMembersUp() {
 		members.sort((a, b) -> a.getHD() - b.getHD());
 	}
 
@@ -335,6 +335,21 @@ public class Party implements Iterable<Monster> {
 			list.add(m.getHP());    
 		} 
 		return list;
+	}
+
+	/**
+		Get total hit points eliminated.
+		Members fallen count for full hit points.
+	*/
+	public int getHitPointsLost() {
+		int totalLoss = 0;
+		for (Monster m: fallen) {
+			totalLoss += m.getMaxHitPoints();
+		}
+		for (Monster m: members) {
+			totalLoss = m.getDamageTaken();
+		}
+		return totalLoss;
 	}
 
 	/**

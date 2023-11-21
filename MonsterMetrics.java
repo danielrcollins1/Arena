@@ -159,6 +159,9 @@ public class MonsterMetrics {
 
 	/** Flag to compare monsters to other monsters. */
 	private boolean compareMonsters;
+	
+	/** Flag to find chance of damage in monsters vs. monsters. */
+	private boolean findMonsterDamageChance;	
 
 	/** Should we wait for a keypress to start (for profiler)? */
 	private boolean waitForKeypress;
@@ -250,6 +253,7 @@ public class MonsterMetrics {
 		println("\t-y display specials in alphabetical order");
 		println("\t-z fraction of wizards in party " 
 			+ "(default =" + DEFAULT_WIZARD_RATIO + ")");
+		println("\t-A find monster vs. monster chance for damage");
 		println("");
 	}
 
@@ -315,6 +319,7 @@ public class MonsterMetrics {
 					case 'x': expectedPartySize = getParamInt(s); break;
 					case 'y': displaySpecialsAlphaOrder = true; break;
 					case 'z': wizardFrequency = getParamInt(s); break;
+					case 'A': findMonsterDamageChance = true; break;
 					default: exitAfterArgs = true; break;
 				}
 			}
@@ -1204,6 +1209,55 @@ public class MonsterMetrics {
 	}
 
 	/**
+		Make table comparing monsters to other monsters.
+		Shows chance to score significant damage in a few rounds.
+	*/
+	void findMonsterDamageChance() {
+		MonsterDatabase mdb = MonsterDatabase.getInstance();
+
+		// Header
+		for (Monster def: mdb) {
+			final int maxNickLength = 5;
+			String name = def.getRace();
+			int nicknameLength = Math.min(name.length(), maxNickLength);
+			String nickname = name.substring(0, nicknameLength);
+			System.out.print("\t" + nickname);
+		}
+		System.out.println();
+
+		// Body		
+		for (Monster atk: mdb) {
+			System.out.print(atk.getRace());
+			for (Monster def: mdb) {
+				double hitRatio = getDamageChance(atk, def);
+				System.out.print("\t" + (int) (hitRatio * 100));
+			}
+			System.out.println();
+		}
+		System.out.println();	
+	}
+	
+	/**
+		Get chance of one monster to score critical damage on another.
+		(i.e., eliminate 1 health in one Book of War turn)
+	**/		
+	double getDamageChance(Monster atkType, Monster defType) {
+		int successes = 0;
+		int maxTurns = 3;
+		int damageIncrement = 35;
+		for (int fight = 0; fight < numberOfFights; fight++) {
+			Party atkParty = new Party(atkType, 1);
+			Party defParty = new Party(defType, 1);
+			FightManager manager = new FightManager(atkParty, defParty);
+			manager.setMaxTurns(maxTurns);
+			manager.fight();
+			int damageAccrued = defParty.getHitPointsLost();
+			successes += damageAccrued / damageIncrement;
+		}
+		return (double) successes / numberOfFights;
+	}
+		
+	/**
 		Print stat blocks.
 	*/
 	private void printStatBlocks() {
@@ -1286,6 +1340,9 @@ public class MonsterMetrics {
 			}
 			else if (metrics.compareMonsters) {
 				metrics.compareMonsters();			
+			}
+			else if (metrics.findMonsterDamageChance) {
+				metrics.findMonsterDamageChance();			
 			}
 			else {
 				metrics.reportMonsters();

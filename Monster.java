@@ -520,6 +520,13 @@ public class Monster {
 	}
 
 	/**
+		Get damage taken.
+	*/
+	public int getDamageTaken() {
+		return maxHitPoints - hitPoints;
+	}
+
+	/**
 		Check if the monster is out of the fight.
 	*/
 	public boolean horsDeCombat() {
