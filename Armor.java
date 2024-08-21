@@ -12,7 +12,7 @@ public class Armor extends Equipment {
 	//--------------------------------------------------------------------------
 
 	/** Class of armor. */
-	public enum Type { Shield, Leather, Chain, Plate };
+	public enum Type { Shield, Leather, Chain, Plate, Helmet };
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -68,7 +68,8 @@ public class Armor extends Equipment {
 		Is this armor made of metal?
 	*/
 	public boolean isMetal() {
-		return armorType == Type.Chain || armorType == Type.Plate;
+		return armorType == Type.Chain || armorType == Type.Plate 
+			|| armorType == Type.Helmet;
 	}
 	
 	/**
@@ -81,8 +82,9 @@ public class Armor extends Equipment {
 				case Leather: return new Armor(type, Material.Leather, 2, 1, 0);
 				case Chain: return new Armor(type, Material.Steel, 4, 2, 0);
 				case Plate: return new Armor(type, Material.Steel, 6, 4, 0);
+				case Helmet: return new Armor(type, Material.Steel, 0, 0.3f, 0);
 				default: System.err.println("Armor type unknown value: " + type);
-			}	
+			}
 		}
 		return null;
 	}

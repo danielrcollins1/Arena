@@ -741,6 +741,7 @@ public class Character extends Monster {
 			if (primary.getHandsUsed() < 2) {
 				setShield(Armor.makeType(Armor.Type.Shield));
 			}
+			addEquipment(Armor.makeType(Armor.Type.Helmet));
 			addEquipment(primary);
 			addEquipment(Weapon.randomSecondary());
 			if (hasBaseClassType(BaseClassType.Wizard)) {

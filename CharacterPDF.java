@@ -189,7 +189,7 @@ public class CharacterPDF {
 	}
 
 	/**
-		Add one pre-formatted lins to the special ability section.
+		Add one pre-formatted line to the special ability section.
 		@throws IOException if PDF form access fails
 	*/
 	private void addLineToSpecial(PDAcroForm form, String s) 
