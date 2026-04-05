@@ -30,34 +30,30 @@ public class DungeonTreasureTable {
 		private int startLevel;
 		
 		/** Base amount of silver. */
-		private int silverAmount;
+		private int amtSilver;
 
 		/** Base amount of gold. */
-		private int goldAmount;
+		private int amtGold;
 		
-		/** Chance of gems. */
-		private int gemsChance;
+		/** Percent chance of gems & jewelry. */
+		private int pctGemsJewelry;
 
-		/** Chance of jewelry. */
-		private int jewelryChance;
-
-		/** Chance of magic. */
-		private int magicChance;
+		/** Percent chance of magic. */
+		private int pctMagic;
 
 		/** Constructor. */
 		private TreasureParams(String[] s) {
 			startLevel = Integer.parseInt(s[0]);
-			silverAmount = Integer.parseInt(s[1]);
-			goldAmount = Integer.parseInt(s[2]);
-			gemsChance = Integer.parseInt(s[3]);
-			jewelryChance = Integer.parseInt(s[4]);
-			magicChance = Integer.parseInt(s[5]);
+			amtSilver = Integer.parseInt(s[1]);
+			amtGold = Integer.parseInt(s[2]);
+			pctGemsJewelry = Integer.parseInt(s[3]);
+			pctMagic = Integer.parseInt(s[4]);
 		}
 		
 		/** String representation. */
 		public String toString() {
-			return startLevel + ", " + silverAmount + ", " + goldAmount + ", "
-				+ gemsChance + ", " + jewelryChance + ", " + magicChance;
+			return startLevel + ", " + amtSilver + ", " + amtGold + ", "
+				+ pctGemsJewelry + ", " + pctMagic;
 		}
 	}
 
@@ -107,52 +103,49 @@ public class DungeonTreasureTable {
 	}
 
 	/**
-		Get a treasure record by matching its level code.
+		Get array index from level.
 	*/
-	private TreasureParams getRecordByLevel(int level) {
-		for (int i = treasureTable.length - 1; i > -1; i--) {
-			TreasureParams tr = treasureTable[i];
-			if (level >= tr.startLevel) {
-				return tr;
+	private int getIndexFromLevel(int level) {
+		for (int i = treasureTable.length - 1; i >= 0; i--) {
+			if (level >= treasureTable[i].startLevel) {
+				return i;
 			}
 		}
-		return null;
+		return 0;
 	}
 
 	/**
-		Get random value for one treasure record.
+		Roll random treasure for given dungeon level.
 	*/
-	private int randomValueByRecord(TreasureParams params) {
-		int total = 0;
-		total += params.silverAmount * Dice.roll(6) / 10;
-		if (Dice.roll(100) <= 50) {
-			total += params.goldAmount * Dice.roll(6);
-		}
-		Dice gemJewelryDice = params.gemsChance < 40 
-			? new Dice(1, 6) : new Dice(2, 6);
-		if (Dice.roll(100) <= params.gemsChance) {
-			int num = gemJewelryDice.roll();
-			total += num * GemsAndJewelry.randomGemValue();
-		}
-		if (Dice.roll(100) <= params.jewelryChance) {
-			int num = gemJewelryDice.roll();
-			Dice valueDice = 
-				GemsAndJewelry.randomJewelryClassDice(); 
-			for (int i = 0; i < num; i++) {
-				total += valueDice.roll();
-			}
-		}
-		return total;
-	}
-
-	/**
-		Generate random treasure based on level indicator.
-		@param level Level beneath surface of dungeon
-	*/
-	public int randomValueByLevel(int level) {
+	private Treasure pvtRollTreasureForLevel(int level) {
 		assert level > 0;
-		TreasureParams tr = getRecordByLevel(level);
-		return randomValueByRecord(tr);
+		Treasure treas = new Treasure();
+		TreasureParams params = treasureTable[getIndexFromLevel(level)];
+		treas.set(Treasure.Category.Silver, params.amtSilver * Dice.roll(6));
+		if (Dice.rollPct() <= 50) {
+			treas.set(Treasure.Category.Gold, params.amtGold * Dice.roll(6));
+		}
+		Dice numGemJewelry = params.pctGemsJewelry < 40
+			? new Dice(1, 6) : new Dice(1, 12);
+		if (Dice.rollPct() <= params.pctGemsJewelry) {
+			treas.set(Treasure.Category.Gems, 
+				numGemJewelry.roll() * GemsAndJewelry.randomGemValue());
+		}
+		if (Dice.rollPct() <= params.pctGemsJewelry) {
+			treas.set(Treasure.Category.Jewelry, 
+				numGemJewelry.roll() * GemsAndJewelry.randomJewelryValue());
+		}
+		if (Dice.rollPct() <= params.pctMagic) {
+			treas.set(Treasure.Category.Magic, 1);
+		}
+		return treas;
+	}
+
+	/**
+		Static random treasure for given dungeon level.
+	*/
+	public static Treasure rollTreasureForLevel(int level) {
+		return getInstance().pvtRollTreasureForLevel(level);
 	}
 
 	/**
@@ -175,7 +168,8 @@ public class DungeonTreasureTable {
 			int level = record.startLevel;
 			System.out.print(level + ": ");
 			for (int j = 0; j < 6; j++) {
-				int value = table.randomValueByLevel(level);
+				Treasure treas = rollTreasureForLevel(level);
+				int value = treas.getValue();
 				System.out.print(value + " ");
 			}
 			System.out.println();
@@ -189,7 +183,8 @@ public class DungeonTreasureTable {
 			long total = 0;
 			int level = record.startLevel;
 			for (int j = 0; j < sampleSize; j++) {
-				total += table.randomValueByLevel(level);
+				Treasure treas = rollTreasureForLevel(level);
+				total += treas.getValue();
 			}
 			System.out.println("Level " + level + ": " + total / sampleSize);
 		}

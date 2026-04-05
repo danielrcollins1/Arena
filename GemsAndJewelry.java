@@ -85,6 +85,6 @@ public class GemsAndJewelry {
 		Randomize one jewelry value.
 	*/
 	static int randomJewelryValue() {
-		return randomJewelryClassDice().roll();	
+		return randomJewelryClassDice().roll();
 	}
 }

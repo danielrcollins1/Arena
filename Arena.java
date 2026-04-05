@@ -40,8 +40,11 @@ public class Arena {
 	/** Default armor type fighters wear. */
 	private static final Armor.Type DEFAULT_ARMOR = Armor.Type.Plate;
 
-	/** Base XP per defeated monster EHD. */
+	/** Baseline XP per defeated monster EHD. */
 	private static final int BASE_XP_PER_EHD = 100;
+
+	/** Baseline system adventuring party size. */
+	private static final int NOMINAL_PARTY_SIZE = 4;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -440,16 +443,16 @@ public class Arena {
 		In tabletop practice, we would like to assume a party size of 4,
 		and roll 1d6 * dungeonLevel / monsterEHD (round to closest, possibly 0).
 		Note E(1d6) ~ expected nominal party size of 4.
+		And this is also the average EHD-per-level in the M&TA encounters list.
 		Extra calculations here are to scale for different party sizes.
 	*/
 	private int getMonsterNumber(
 		Monster monster, int dungeonLevel, int numFighters) 
 	{
 		int roll = Dice.roll(6);
-		final int nominalParty = 4;
 		int numMonsters = (int) Math.round((double) 
 			roll * dungeonLevel * numFighters
-				/ (monster.getEHD() * nominalParty));
+				/ (monster.getEHD() * NOMINAL_PARTY_SIZE));
 		return numMonsters;
 	}
 
@@ -544,7 +547,7 @@ public class Arena {
 		(Officially valid for underworld only.)
 	*/
 	private int treasureValueByDungeon(Party party, int level) {
-		return DungeonTreasureTable.getInstance().randomValueByLevel(level);
+		return DungeonTreasureTable.rollTreasureForLevel(level).getValue();
 	}
 
 	/**
