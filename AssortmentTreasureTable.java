@@ -28,8 +28,9 @@ public class AssortmentTreasureTable {
 			case 5: return level * 100 * 5;
 			case 6: return Dice.roll(level, 4) * rollGemValue(level);
 			case 7: return Dice.roll(level) * rollJewelryValue(level);
-			default: return 0;
+			default: System.err.println("Invalid treasure assortment entry");
 		}
+		return 0;
 	}
 
 	/**

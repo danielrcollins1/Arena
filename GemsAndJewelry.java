@@ -29,15 +29,15 @@ public class GemsAndJewelry {
 		Get gem value for class.
 	*/
 	static int getGemClassValue(int gemClass) {
-		assert 1 <= gemClass && gemClass <= 5;
 		switch (gemClass) {
 			case 1: return 10;
 			case 2: return 50;
 			case 3: return 100;
 			case 4: return 500;
 			case 5: return 1000;
-			default: return 0;					
+			default: System.err.println("Invalid gem class");
 		}
+		return 0;
 	}
 
 	/**
@@ -65,13 +65,13 @@ public class GemsAndJewelry {
 		Get jewelry value dice for class.
 	*/
 	static Dice getJewelryClassDice(int jewelryClass) {
-		assert 1 <= jewelryClass && jewelryClass <= 3;
 		switch (jewelryClass) {
 			case 1: return new Dice(3, 6, 100, 0);
 			case 2: return new Dice(1, 6, 1000, 0);
 			case 3: return new Dice(1, 10, 1000, 0);
-			default: return null;
+			default: System.err.println("Invalid jewelry class");
 		}
+		return null;
 	}
 
 	/**
