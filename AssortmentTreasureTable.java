@@ -54,22 +54,7 @@ public class AssortmentTreasureTable {
 		}
 		
 		// Return value
-		return getGemClassValue(gemClass);
-	}
-
-	/**
-		Get value of gem by class (per Vol-2, p. 40).
-	*/
-	private static int getGemClassValue(int gemClass) {
-		assert 1 <= gemClass && gemClass <= 5;	
-		switch (gemClass) {
-			case 1: return 10;
-			case 2: return 50;
-			case 3: return 100;
-			case 4: return 500;
-			case 5: return 1000;
-			default: return 0;
-		}
+		return GemsAndJewelry.getGemClassValue(gemClass);
 	}
 
 	/**

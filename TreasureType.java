@@ -115,9 +115,9 @@ public class TreasureType {
 		}
 		if (pct.roll() <= jewelry.percent) {
 			int number = jewelry.dice.roll();
-			Dice valueClass = GemsAndJewelry.randomJewelryClass(); 
+			Dice valueDice = GemsAndJewelry.randomJewelryClassDice(); 
 			for (int i = 0; i < number; i++) {
-				total += valueClass.roll();
+				total += valueDice.roll();
 			}
 		}
 		return total;

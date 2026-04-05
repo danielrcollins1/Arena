@@ -136,10 +136,10 @@ public class DungeonTreasureTable {
 		}
 		if (Dice.roll(100) <= params.jewelryChance) {
 			int num = gemJewelryDice.roll();
-			Dice valueClass = 
-				GemsAndJewelry.randomJewelryClass(); 
+			Dice valueDice = 
+				GemsAndJewelry.randomJewelryClassDice(); 
 			for (int i = 0; i < num; i++) {
-				total += valueClass.roll();
+				total += valueDice.roll();
 			}
 		}
 		return total;
