@@ -549,10 +549,9 @@ public class Arena {
 
 	/**
 		Get treasure value as per Monster & Treasure Assortment system.
-		(Interpolated by DRC.)
 	*/
 	private int treasureValueByAssortment(Party party, int level) {
-		return AssortmentTreasureTable.randomValueByLevel(level);
+		return AssortmentTreasureTable.rollTreasureForLevel(level).getValue();
 	}
 
 	/**
