@@ -1,7 +1,8 @@
 /**
 	Treasure based on Monster & Treasure Assortment system.
 	
-	This system is shown as interpolated by DRC.
+	This system is given as interpolated by DRC.
+	M&TA coin have a somewhat nonlinear progression, smoothed out here.
 	Note official system only goes up to level 9.
 
 	@author Daniel R. Collins (dcollins@superdan.net)
