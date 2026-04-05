@@ -145,6 +145,17 @@ public class Dice {
 	}
 
 	/** 
+		Roll multiple dice from a static context.
+	*/
+	public static int roll(int num, int sides) {
+		int total = 0;
+		for (int i = 0; i < num; i++) {
+			total += roll(sides);
+		}
+		return total;	
+	}
+
+	/** 
 		Flip a coin from a static context.
 		@return true if coin is heads
 	*/
@@ -178,11 +189,7 @@ public class Dice {
 		Rolls the dice.
 	*/
 	public int roll() {
-		int total = 0;
-		for (int i = 0; i < number; i++) {
-			total += roll(sides);
-		}
-		return adjustRoll(total);
+		return adjustRoll(Dice.roll(number, sides));
 	}
 
 	/** 

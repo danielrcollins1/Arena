@@ -144,7 +144,7 @@ public class Marshal {
 		Run Arena to develop leader figures.
 	*/
 	private void runArena() {
-		arena = new Arena(menTotal, false, true);
+		arena = new Arena(menTotal, false, Arena.TreasureModel.Monster);
 		arena.setBaseArmor(menType.getLeaderArmor());
 		arena.setTypicalAlignment(menType.getAlignment());
 		arena.setFightCycles(menTotal * FIGHTS_PER_MAN);

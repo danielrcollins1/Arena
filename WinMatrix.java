@@ -25,7 +25,7 @@ public class WinMatrix {
 		Main test method.
 	*/
 	public static void main(String[] args) {
-		Arena arena = new Arena(1, false, true);
+		Arena arena = new Arena(1, false, Arena.TreasureModel.Dungeon);
 		for (int i = 1; i <= MAX_LEVEL; i++) {
 			for (int j = 1; j <= MAX_LEVEL; j++) {
 				int numFtr1Wins = 0;

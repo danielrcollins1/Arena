@@ -150,6 +150,7 @@ public class DungeonTreasureTable {
 		@param level Level beneath surface of dungeon
 	*/
 	public int randomValueByLevel(int level) {
+		assert level > 0;
 		TreasureParams tr = getRecordByLevel(level);
 		return randomValueByRecord(tr);
 	}

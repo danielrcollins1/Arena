@@ -12,6 +12,13 @@ import java.util.Comparator;
 public class Arena {
 
 	//--------------------------------------------------------------------------
+	//  Enumeration
+	//--------------------------------------------------------------------------
+
+	/** Treasure award models. */
+	public enum TreasureModel { Monster, Dungeon, Assortment };
+
+	//--------------------------------------------------------------------------
 	//  Constants
 	//--------------------------------------------------------------------------
 
@@ -32,6 +39,9 @@ public class Arena {
 
 	/** Default armor type fighters wear. */
 	private static final Armor.Type DEFAULT_ARMOR = Armor.Type.Plate;
+
+	/** Base XP per defeated monster EHD. */
+	private static final int BASE_XP_PER_EHD = 100;
 
 	//--------------------------------------------------------------------------
 	//  Fields
@@ -58,8 +68,8 @@ public class Arena {
 	/** Fight man vs. monster? */
 	private boolean fightManVsMonster;
 
-	/** Treasure award by monster type? */
-	private boolean useMonsterTreasureType;
+	/** Treasure award model. */
+	private TreasureModel treasureModel;
 
 	/** XP awards use revised table from Sup-I? */
 	private boolean useRevisedXPAwards;
@@ -122,6 +132,7 @@ public class Arena {
 		fightsPerYear = DEFAULT_FIGHTS_PER_YEAR;
 		fighterPopSize = DEFAULT_NUM_FIGHTERS;
 		fighterPartySize = DEFAULT_PARTY_SIZE;
+		treasureModel = TreasureModel.Dungeon;
 		baseArmorType = DEFAULT_ARMOR;
 		Character.setPctMagicPerLevel(DEFAULT_PCT_MAGIC_PER_LEVEL);
 		typicalAlignment = Alignment.Neutral;
@@ -132,11 +143,11 @@ public class Arena {
 	/**
 		Constructor (set size, sim modes).
 	*/
-	public Arena(int numFighters, boolean manVsMon, boolean monTreas) {
+	public Arena(int numFighters, boolean manVsMon, TreasureModel treasMod) {
 		this();
 		this.fighterPopSize = numFighters;
 		this.fightManVsMonster = manVsMon;
-		this.useMonsterTreasureType = monTreas;
+		this.treasureModel = treasMod;
 	}
 
 	//--------------------------------------------------------------------------
@@ -180,7 +191,7 @@ public class Arena {
 		println("\t\td detailed data\t\tk monster kills");
 		println("\t\tt total monster kills\tx xp award ratios");
 		println("\t-s start level for fighters (default =0)");  
-		println("\t-t treasure awards by monster (default by dungeon)");
+		println("\t-t treasure model (m, d, or a)");
 		println("\t-u create matrix of win percentages");
 		println("\t-v man-vs-monster (default man-vs-man)");
 		println("\t-w use fighter sweep attacks (by level vs. 1 HD)");
@@ -209,7 +220,7 @@ public class Arena {
 					case 'p': FightManager.setPlayByPlayReporting(true); break;
 					case 'r': setReportingFromParamCode(s); break;
 					case 's': startLevel = getParamInt(s); break;
-					case 't': useMonsterTreasureType = true; break;
+					case 't': setTreasureModelFromParamCode(s); break;
 					case 'u': makeWinPercentMatrix = true; break;
 					case 'v': fightManVsMonster = true; break;
 					case 'w': Character.setSweepAttacks(true); break;
@@ -278,6 +289,23 @@ public class Arena {
 				default: exitAfterArgs = true;   
 			}
 		} 
+	}
+
+	/**
+		Set the treasure model for param char code.
+	*/
+	private void setTreasureModelFromParamCode(String s) {
+		if (s.length() >= 3) {
+			switch (s.charAt(2)) {
+				case 'm': treasureModel = TreasureModel.Monster; break;
+				case 'd': treasureModel = TreasureModel.Dungeon; break;
+				case 'a': treasureModel = TreasureModel.Assortment; break;
+				default: exitAfterArgs = true;
+			}
+		}
+		else {
+			exitAfterArgs = true;   
+		}
 	}
 
 	/**
@@ -373,10 +401,10 @@ public class Arena {
 			}
 			Monster chiefMonster = monsters.get(0); // for kill tally
 			manager.fight();
-			grantFightAwards(fighters, monsters, dungeonLevel);
 			if (fighter.horsDeCombat()) {
 				addToKillTally(chiefMonster);
 			}
+			grantFightAwards(fighters, monsters, dungeonLevel);
 		}
 	}
 
@@ -444,7 +472,8 @@ public class Arena {
 
 		// Compute total awards 
 		int monsterXP = partyFallenXPValue(loser);
-		int treasureXP = treasureValue(loser, level);
+		int treasureXP = loser.isLive() 
+			? 0 : treasureValue(loser, level);
 		totalMonsterXP += monsterXP;
 		totalTreasureXP += treasureXP;
 
@@ -471,54 +500,60 @@ public class Arena {
 		for (int i = 0; i < party.sizeFallen(); i++) {
 			Monster monster = party.getFallen(i);
 			total += useRevisedXPAwards 
-				? xpt.getXPAward(monster) : monster.getEHD() * 100;
+				? xpt.getXPAward(monster) 
+				: monster.getEHD() * BASE_XP_PER_EHD;
 		}
 		return total; 
 	}
 
 	/**
-		Value of treasure award (nominally in gold pieces).
-		Conditional on using monster treasure type.
+		Value of treasure award (in gold piece standard).
 	*/
 	private int treasureValue(Party party, int level) {
-		if (useMonsterTreasureType) {
-			return treasureValueByMonster(party);
+		assert party.sizeFallen() > 0;
+		
+		// Mock dungeon level by character level
+		if (level < 0) {
+			level = party.getFallen(0).getLevel();
 		}
-		else {
-			return treasureValueByDungeon(party, level);
+		
+		// If 0-level, individual coins as Pirates (Vol-2, p. 23)
+		if (level == 0) {
+			return Dice.roll(2, 6) * party.sizeFallen();
+		}
+
+		// Consult general treasure model
+		switch (treasureModel) {
+			case Monster: return treasureValueByMonster(party);
+			case Dungeon: return treasureValueByDungeon(party, level);
+			case Assortment: return treasureValueByAssortment(party, level);
+			default: return 0;
 		}
 	}
 
 	/**
-		Get treasure value as per monster treasure type.
+		Get treasure value as per Vol-2 monster treasure type.
 		(Recommended for wilderness encounters only.)
 	*/
 	private int treasureValueByMonster(Party party) {
-		if (party.sizeFallen() == 0) {
-			return 0;
-		}
-		else {
-			return party.sizeFallen() 
-				* party.getFallen(0).getTreasureValue();
-		}
+		return party.sizeFallen() * party.getFallen(0).getTreasureValue();
 	}
 
 	/**
-		Get treasure value as per level beneath surface.
+		Get treasure value as per Vol-3 dungeon level.
 		(Officially valid for underworld only.)
 	*/
 	private int treasureValueByDungeon(Party party, int level) {
-		if (party.sizeFallen() == 0) {
-			return 0;
-		}
-		else {
-			if (level < 1) { // mock arena prize by leader level
-				level = Math.max(party.getFallen(0).getLevel(), 1);
-			}
-			return DungeonTreasureTable.getInstance()
-				.randomValueByLevel(level);
-		}
-	} 
+		return DungeonTreasureTable.getInstance().randomValueByLevel(level);
+	}
+
+	/**
+		Get treasure value as per Monster & Treasure Assortment system.
+		(Interpolated by DRC.)
+	*/
+	private int treasureValueByAssortment(Party party, int level) {
+		return AssortmentTreasureTable.randomValueByLevel(level);
+	}
 
 	/**
 		Award XP and magic to one creature/character.
@@ -573,7 +608,7 @@ public class Arena {
 			+ ", numYears " + numYears
 			+ ", fights/year " + fightsPerYear 
 			+ ", party size " + fighterPartySize
-			+ ", treasure by " + (useMonsterTreasureType ? "monster" : "dungeon")
+			+ ", treasure by " + treasureModel
 			+ "\n");
 	}
 
