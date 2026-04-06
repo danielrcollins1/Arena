@@ -774,7 +774,8 @@ public class Character extends Monster {
 				if (weaponInHand == null) {
 					drawBestWeapon(null);
 				}
-				if (weaponInHand.getMagicBonus() < newItem.getMagicBonus()) {
+				if (weaponInHand == null
+					|| weaponInHand.getMagicBonus() < newItem.getMagicBonus()) {
 					drawWeapon((Weapon) newItem);
 				}
 			}
