@@ -298,6 +298,9 @@ public class Monster {
 	/** Add experience points (to override). */
 	public void addXP(int xp) { }
 
+	/** Take a new pice of equipment (to override). */
+	protected void takeEquipment(Equipment e) { }
+
 	/** Lose a given piece of equipment (to override). */
 	protected void loseEquipment(Equipment e) { }
 	

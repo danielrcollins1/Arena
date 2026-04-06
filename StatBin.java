@@ -89,4 +89,46 @@ public class StatBin {
 		}
 		return (double) sum / size();
 	}
+
+	/**
+		Compute average weapon magic bonus.
+	*/
+	public double getMeanWeaponBonus() {
+		long sum = 0;
+		for (Character c: bin) {
+			Weapon weapon = c.getWeapon();
+			if (weapon != null) {
+				sum += weapon.getMagicBonus();			
+			}
+		}
+		return (double) sum / size();
+	}
+
+	/**
+		Compute average armor magic bonus.
+	*/
+	public double getMeanArmorBonus() {
+		long sum = 0;
+		for (Character c: bin) {
+			Armor armor = c.getArmor();
+			if (armor != null) {
+				sum += armor.getMagicBonus();			
+			}
+		}
+		return (double) sum / size();
+	}
+	
+	/**
+		Compute average shield magic bonus.
+	*/
+	public double getMeanShieldBonus() {
+		long sum = 0;
+		for (Character c: bin) {
+			Armor shield = c.getShield();
+			if (shield != null) {
+				sum += shield.getMagicBonus();			
+			}
+		}
+		return (double) sum / size();
+	}
 }

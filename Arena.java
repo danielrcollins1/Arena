@@ -22,7 +22,7 @@ public class Arena {
 	//  Constants
 	//--------------------------------------------------------------------------
 
-	/** Number of years to run the arena. */
+		/** Number of years to run the arena. */
 	private static final int DEFAULT_NUM_YEARS = 50;
 	
 	/** Number of fights for each man in a year. */	
@@ -104,6 +104,9 @@ public class Arena {
 	/** Create win percent matrix? */
 	private boolean makeWinPercentMatrix;
 
+	/** Award magic from treasure drops? */
+	private boolean awardMagicTreasureDrops;
+
 	/** Base armor type for fighters. */
 	private Armor.Type baseArmorType;
 
@@ -180,6 +183,7 @@ public class Arena {
 		println("  where options include:");
 		println("\t-a apply aging effects");
 		println("\t-b base type of armor (=0-3, default 3)");
+		println("\t-d award magic treasure drops");
 		println("\t-e report every encounter");
 		println("\t-f fights per year (default =" 
 			+ DEFAULT_FIGHTS_PER_YEAR + ")");
@@ -215,6 +219,7 @@ public class Arena {
 				switch (s.charAt(1)) {
 					case 'a': Character.setApplyAgingEffects(true); break;
 					case 'b': setBaseArmorFromInt(getParamInt(s)); break;
+					case 'd': awardMagicTreasureDrops = true; break;
 					case 'e': reportEveryEncounter = true; break;
 					case 'f': fightsPerYear = getParamInt(s); break; 
 					case 'l': reportAllXPAwards = true; break;
@@ -473,11 +478,17 @@ public class Arena {
 	*/
 	private void grantVictorAwards(Party victor, Party loser, int level) {
 
-		// Compute total awards 
+		// Get monster award
 		int monsterXP = partyFallenXPValue(loser);
-		int treasureXP = loser.isLive() 
-			? 0 : treasureValue(loser, level);
 		totalMonsterXP += monsterXP;
+
+		// Get treasure award
+		Treasure treas = new Treasure();
+		if (!loser.isLive()) {
+			treas = treasureDrop(loser, level);
+			distributeMagicTreasure(victor, treas);
+		}
+		int treasureXP = treas.getValue();
 		totalTreasureXP += treasureXP;
 
 		// Divide into shares per member
@@ -510,9 +521,9 @@ public class Arena {
 	}
 
 	/**
-		Value of treasure award (in gold piece standard).
+		Get treasure dropped by a fallen party.
 	*/
-	private int treasureValue(Party party, int level) {
+	private Treasure treasureDrop(Party party, int level) {
 		assert party.sizeFallen() > 0;
 		
 		// Mock dungeon level by character level
@@ -522,44 +533,48 @@ public class Arena {
 		
 		// If 0-level, individual coins as Pirates (Vol-2, p. 23)
 		if (level == 0) {
-			return Dice.roll(2, 6) * party.sizeFallen();
+			Treasure treas = new Treasure();
+			treas.set(Treasure.Category.Gold, 
+				Dice.roll(2, 6) * party.sizeFallen());
+			return treas;
 		}
 
 		// Consult general treasure model
 		switch (treasureModel) {
-			case Monster: return treasureValueByMonster(party);
-			case Dungeon: return treasureValueByDungeon(party, level);
-			case Assortment: return treasureValueByAssortment(party, level);
-			default: return 0;
+			case Monster: return treasureByMonster(party);
+			case Dungeon: return treasureByDungeon(party, level);
+			case Assortment: return treasureByAssortment(party, level);
+			default: System.err.println("Unhandled treasure model");
 		}
+		return null;
 	}
 
 	/**
-		Get treasure value as per Vol-2 monster treasure type.
+		Get treasure as per Vol-2 monster treasure type.
 		(Recommended for wilderness encounters only.)
 	*/
-	private int treasureValueByMonster(Party party) {
+	private Treasure treasureByMonster(Party party) {
 		Monster boss = party.getFallen(0);
-		return boss.rollTreasureType(party.sizeFallen()).getValue();
+		return boss.rollTreasureType(party.sizeFallen());
 	}
 
 	/**
-		Get treasure value as per Vol-3 dungeon level.
+		Get treasure as per Vol-3 dungeon level.
 		(Officially valid for underworld only.)
 	*/
-	private int treasureValueByDungeon(Party party, int level) {
-		return DungeonTreasureTable.rollTreasureForLevel(level).getValue();
+	private Treasure treasureByDungeon(Party party, int level) {
+		return DungeonTreasureTable.rollTreasureForLevel(level);
 	}
 
 	/**
-		Get treasure value as per Monster & Treasure Assortment system.
+		Get treasure as per Monster & Treasure Assortment system.
 	*/
-	private int treasureValueByAssortment(Party party, int level) {
-		return AssortmentTreasureTable.rollTreasureForLevel(level).getValue();
+	private Treasure treasureByAssortment(Party party, int level) {
+		return AssortmentTreasureTable.rollTreasureForLevel(level);
 	}
 
 	/**
-		Award XP and magic to one creature/character.
+		Award XP and possibly magic to one creature/character.
 	*/
 	private void awardXP(Monster monster, int xp) {
 
@@ -570,8 +585,48 @@ public class Arena {
 		// Check for level-up
 		if (monster.getLevel() > oldLevel) {
 			assert monster.getLevel() == oldLevel + 1;
-			monster.boostMagicItemsOneLevel();
+			if (!awardMagicTreasureDrops) {
+				monster.boostMagicItemsOneLevel();
+			}
 		}
+	}
+
+	/**
+  		Distribute magic item treasure to winning party.
+		
+		Handle items only to lead persistent fighter in party.
+	*/
+	private void distributeMagicTreasure(Party party, Treasure treas) {
+		if (awardMagicTreasureDrops) {
+			assert party.isLive();
+			Monster boss = party.get(0);
+			int numMagic = treas.get(Treasure.Category.Magic);
+			for (int i = 0; i < numMagic; i++) {
+				ArrayList<Equipment> list = rollMagicItems();
+				for (Equipment item: list) {
+					boss.takeEquipment(item);
+				}
+			}		
+		}	
+	}
+
+	/**
+		Roll for a magic item.
+		
+		Handles only fighter-based items.
+		Returns array in case of armor & shield sets.
+		Models limited part of magic items table in Vol-2.
+	*/
+	private ArrayList<Equipment> rollMagicItems() {
+		ArrayList<Equipment> list = new ArrayList<Equipment>();
+		int roll = Dice.rollPct();
+		if (roll <= 20) {
+			list.add(Weapon.randomMagicSword());
+		}
+		else if (roll <= 35) {
+			list.addAll(Armor.randomMagicArmor());
+		}
+		return list;
 	}
 
 	/**
@@ -654,8 +709,10 @@ public class Arena {
 	*/
 	public void reportFighterStatistics() {
 		StatBin[] statBins = compileStatBins();
-		System.out.println("Level Number Age HPs Str Int Wis Dex Con Cha");
-		System.out.println("----- ------ --- --- --- --- --- --- --- ---");
+		System.out.println(
+			"Level Number Age HPs Str Int Wis Dex Con Cha W+ A+ S+");
+		System.out.println(
+			"----- ------ --- --- --- --- --- --- --- --- -- -- --");
 		int maxLevel = fighterList.getMaxLevels();
 		for (int level = 0; level <= maxLevel; level++) {
 			StatBin bin = statBins[level];
@@ -665,6 +722,9 @@ public class Arena {
 				for (Ability a: Ability.values()) {
 					System.out.print(String.format("%3.0f ", bin.getMeanAbility(a)));
 				}
+				System.out.print(String.format("%2.0f %2.0f %2.0f ",
+					bin.getMeanWeaponBonus(), bin.getMeanArmorBonus(), 
+					bin.getMeanShieldBonus()));
 				System.out.println();
 			}
 		}

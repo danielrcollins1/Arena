@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
 	Armor on a character.
 
@@ -87,5 +89,49 @@ public class Armor extends Equipment {
 			}
 		}
 		return null;
+	}
+	
+	/**
+		Make a random set of armor.
+		This is a simplified version of the armor table in Sup-I.
+		Returns an array because it may return armor & shield set.
+		Assumes every armor is plate.
+	*/
+	public static ArrayList<Armor> randomMagicArmor() {
+
+		// Find bonuses
+		int armorBonus = 0, shieldBonus = 0;
+		int roll = Dice.rollPct();
+		if (roll <= 20)      { shieldBonus = +1; }
+		else if (roll <= 40) { armorBonus = +1; }
+		else if (roll <= 50) { armorBonus = +1; shieldBonus = +1; }
+		else if (roll <= 57) { shieldBonus = +2; }
+		else if (roll <= 64) { armorBonus = +2; }
+		else if (roll <= 70) { armorBonus = +2; shieldBonus = +2; }
+		else if (roll <= 73) { shieldBonus = +3; }
+		else if (roll <= 76) { armorBonus = +3; }
+		else if (roll <= 78) { armorBonus = +3; shieldBonus = +3; }
+		else if (roll <= 80) { shieldBonus = +4; }
+		else if (roll <= 82) { armorBonus = +4; }
+		else if (roll <= 83) { armorBonus = +4; shieldBonus = +4; }
+		else if (roll <= 85) { shieldBonus = +5; }
+		else if (roll <= 86) { armorBonus = +5; }
+		else if (roll <= 87) { armorBonus = +5; shieldBonus = +5; }
+		else if (roll <= 93) { shieldBonus = -1; }
+		else                 { armorBonus = -1; }		
+
+		// Make armor items
+		ArrayList<Armor> list = new ArrayList<Armor>();
+		if (armorBonus != 0) {
+			Armor armor = makeType(Type.Plate);
+			armor.setMagicBonus(armorBonus);
+			list.add(armor);
+		}
+		if (shieldBonus != 0) {
+			Armor shield = makeType(Type.Shield);
+			shield.setMagicBonus(shieldBonus);
+			list.add(shield);
+		}
+		return list;
 	}
 }

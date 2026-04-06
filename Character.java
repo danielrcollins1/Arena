@@ -68,7 +68,7 @@ public class Character extends Monster {
 	private Armor shieldHeld;
 
 	/** Weapon in hand. */
-	private Weapon weaponInHand;	
+	private Weapon weaponInHand;
 
 	/** Magic ring. */
 	private Equipment ringWorn;
@@ -746,7 +746,7 @@ public class Character extends Monster {
 			addEquipment(Weapon.randomSecondary());
 			if (hasBaseClassType(BaseClassType.Wizard)) {
 				setArmor(Armor.makeType(Armor.Type.Chain));
-				setShield(null);			
+				setShield(null);
 			}
 		}
 		else if (hasBaseClassType(BaseClassType.Thief)) {
@@ -759,6 +759,42 @@ public class Character extends Monster {
 		}
 		else {
 			System.err.println("Unhandled base class type.");		
+		}
+	}
+
+	/**
+		Receive possibly magic equipment (as from treasure).
+		
+		Handle only fighter magic items at this time.
+	*/
+	@Override
+	protected void takeEquipment(Equipment newItem) {
+		if (hasBaseClassType(BaseClassType.Fighter)) {
+			if (newItem instanceof Weapon) {
+				if (weaponInHand == null) {
+					drawBestWeapon(null);
+				}
+				if (weaponInHand.getMagicBonus() < newItem.getMagicBonus()) {
+					drawWeapon((Weapon) newItem);
+				}
+			}
+			else if (newItem instanceof Armor) {
+				Armor newArmor = (Armor) newItem;
+				if (newArmor.getArmorType() == Armor.Type.Shield) {
+					if (shieldHeld == null 
+						|| shieldHeld.getMagicBonus() < newArmor.getMagicBonus()) 
+					{
+						setShield(newArmor);
+					}
+				}
+				else {
+					if (armorWorn == null 
+						|| armorWorn.getMagicBonus() < newArmor.getMagicBonus()) 
+					{
+						setArmor(newArmor);
+					}
+				}
+			}
 		}
 	}
 
@@ -802,7 +838,7 @@ public class Character extends Monster {
 		Check if a magic item boost is gained. 
 	*/
 	boolean getMagicBoost() {
-		return Dice.roll(100) <= pctMagicPerLevel;
+		return Dice.rollPct() <= pctMagicPerLevel;
 	}
 
 	/**

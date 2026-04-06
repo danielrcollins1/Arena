@@ -132,11 +132,27 @@ public class Weapon extends Equipment {
 	}
 
 	/**
-	Make a torch.
+		Make a torch.
 	*/
 	public static Weapon torch() {
 		return new Weapon("Torch", Material.Wood, ONE_THIRD, 0,
 			new Dice(4), EnergyType.Fire, 1);
+	}
+
+	/**
+		Make a random magic sword.
+		This is a simplified version of the swords table in Sup-I.
+	*/
+	public static Weapon randomMagicSword() {
+		int bonus = 0;
+		int roll = Dice.rollPct();
+		if (roll <= 65)      { bonus = +1; }
+		else if (roll <= 75) { bonus = +2; }
+		else if (roll <= 80) { bonus = +3; }
+		else if (roll <= 81) { bonus = +4; }
+		else if (roll <= 82) { bonus = +5; }
+		else                 { bonus = -1; }
+		return sword(bonus);				
 	}
 
 	/**
