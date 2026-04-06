@@ -2012,14 +2012,15 @@ public class Monster {
 	}
 
 	/**
-		Generate random treasure value by treasure type,
-		for one monster, scaled by nominal number appearing.
+		Roll a random treasure by treasure type,
+		for a given number of monsters of this type,
+		scaled by average number appearing.
 		(Recommended for wilderness encounters only.)
 	*/
-	public int getTreasureValue() {
-		int avgNum = numberAppearing.avgRoll();
-		return MonsterTreasureTable.getInstance()
-			.randomValueByCode(treasureType) / avgNum;
+	public Treasure rollTreasureType(int numMonsters) {
+		Treasure treas = MonsterTreasureTable.randomTreasureByCode(treasureType);
+		treas.scaleByRatio(numMonsters, numberAppearing.avgRoll());
+		return treas;
 	}
 
 	/**

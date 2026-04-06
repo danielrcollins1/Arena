@@ -73,15 +73,22 @@ public class MonsterTreasureTable {
 				return tt;
 			}
 		}
+		System.err.println("Invalid treasure type code");
 		return null;
 	}
 
 	/**
-		Get random treasure value by code.
+		Get random treasure by code.
 	*/
-	public int randomValueByCode(char code) {
-		TreasureType tt = getByCode(code);
-		return tt == null ? 0 : tt.randomValue();
+	private Treasure pvtRandomTreasureByCode(char code) {
+		return getByCode(code).rollTreasure();
+	}
+
+	/**
+		Public random treasure by code.
+	*/
+	public static Treasure randomTreasureByCode(char code) {
+		return getInstance().pvtRandomTreasureByCode(code);
 	}
 
 	/**
@@ -104,7 +111,8 @@ public class MonsterTreasureTable {
 			char code = tt.getCode();
 			System.out.print(code + ": ");
 			for (int j = 0; j < 6; j++) {
-				System.out.print(table.randomValueByCode(code) + " ");
+				System.out.print(
+					randomTreasureByCode(code).getValue() + " ");
 			}
 			System.out.println();
 		}
@@ -117,7 +125,7 @@ public class MonsterTreasureTable {
 			long total = 0;
 			char code = tt.getCode();
 			for (int j = 0; j < sampleSize; j++) {
-				total += table.randomValueByCode(code);
+				total += randomTreasureByCode(code).getValue();
 			}
 			System.out.println(code + ": " + total / sampleSize);
 		}

@@ -28,6 +28,9 @@ public class TreasureType {
 
 	/** Parameters for jewelry. */
 	private TreasureParams jewelry;
+	
+	/** Parameters for magic. */
+	private TreasureParams magic;
 
 	//--------------------------------------------------------------------------
 	//  Inner class
@@ -69,6 +72,7 @@ public class TreasureType {
 		gold = new TreasureParams(s[5], s[6]);
 		gems = new TreasureParams(s[7], s[8]);
 		jewelry = new TreasureParams(s[9], s[10]);
+		magic = new TreasureParams(s[11], s[12]);
 	}	
 	
 	//--------------------------------------------------------------------------
@@ -91,35 +95,35 @@ public class TreasureType {
 			+ "SP " + silver.dice + ":" + silver.percent + "%, "
 			+ "GP " + gold.dice + ":" + gold.percent + "%, "
 			+ "Gems " + gems.dice + ":" + gems.percent + "%, "
-			+ "Jewelry " + jewelry.dice + ":" + jewelry.percent + "%, ";
+			+ "Jewelry " + jewelry.dice + ":" + jewelry.percent + "%, "
+			+ "Magic " + magic.dice + ":" + magic.percent + "%";
 	}
 	
 	/**
-		Get random treasure value.
-		@return total treasure value in gold pieces
+		Get random treasure for this type.
 	*/
-	public int randomValue() {
-		int total = 0;
-		Dice pct = new Dice(100);
-		if (pct.roll() <= copper.percent) {
-			total += copper.dice.roll() * 1000 / 50;
+	public Treasure rollTreasure() {
+		Treasure treas = new Treasure();
+		if (Dice.rollPct() <= copper.percent) {
+			treas.set(Treasure.Category.Copper, copper.dice.roll() * 1000);
 		}
-		if (pct.roll() <= silver.percent) {
-			total += silver.dice.roll() * 1000 / 10;
+		if (Dice.rollPct() <= silver.percent) {
+			treas.set(Treasure.Category.Silver, silver.dice.roll() * 1000);
 		}
-		if (pct.roll() <= gold.percent) {
-			total += gold.dice.roll() * 1000;
+		if (Dice.rollPct() <= gold.percent) {
+			treas.set(Treasure.Category.Gold, gold.dice.roll() * 1000);
 		}
-		if (pct.roll() <= gems.percent) {
-			total += gems.dice.roll() * GemsAndJewelry.randomGemValue();
+		if (Dice.rollPct() <= gems.percent) {
+			treas.set(Treasure.Category.Gems, 
+				gems.dice.roll() * GemsAndJewelry.randomGemValue());
 		}
-		if (pct.roll() <= jewelry.percent) {
-			int number = jewelry.dice.roll();
-			Dice valueDice = GemsAndJewelry.randomJewelryClassDice(); 
-			for (int i = 0; i < number; i++) {
-				total += valueDice.roll();
-			}
+		if (Dice.rollPct() <= jewelry.percent) {
+			treas.set(Treasure.Category.Jewelry, 
+				jewelry.dice.roll() * GemsAndJewelry.randomJewelryValue());
 		}
-		return total;
+		if (Dice.rollPct() <= magic.percent) {
+			treas.set(Treasure.Category.Magic, magic.dice.roll());
+		}
+		return treas;
 	}
 }

@@ -539,7 +539,8 @@ public class Arena {
 		(Recommended for wilderness encounters only.)
 	*/
 	private int treasureValueByMonster(Party party) {
-		return party.sizeFallen() * party.getFallen(0).getTreasureValue();
+		Monster boss = party.getFallen(0);
+		return boss.rollTreasureType(party.sizeFallen()).getValue();
 	}
 
 	/**

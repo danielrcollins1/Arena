@@ -31,24 +31,33 @@ public class Treasure {
 	//--------------------------------------------------------------------------
 
 	/**
-		Get one amount.
+		Get one category amount.
 	*/
 	public int get(Category cat) {
 		return catAmount[cat.ordinal()];	
 	}
 
 	/**
-		Set one amount.
+		Set one category amount.
 	*/
 	public void set(Category cat, int amount) {
 		catAmount[cat.ordinal()] = amount;
 	}
 
 	/**
-		Add to one amount.
+		Add to one category amount.
 	*/
 	public void add(Category cat, int amount) {
 		catAmount[cat.ordinal()] += amount;
+	}
+
+	/**
+		Scale a treasure by a given ratio.
+	*/
+	public void scaleByRatio(int numer, int denum) {
+		for (int i = 0; i < Category.VALUES.length; i++) {
+			catAmount[i] = catAmount[i] * numer / denum;
+		}
 	}
 
 	/**
