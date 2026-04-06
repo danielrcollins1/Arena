@@ -1029,7 +1029,8 @@ public class Character extends Monster {
 		scaled by level and nominal men number appearing.
 		(Recommended for wilderness encounters only.)
 	*/
-	@Override public Treasure rollTreasureType(int numMen) {
+	@Override 
+	public Treasure rollTreasureType(int numMen) {
 		Treasure treas = MonsterTreasureTable.randomTreasureByCode('A');
 		treas.scaleByRatio(getLevel() * numMen, 165);
 		return treas;
