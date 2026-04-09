@@ -766,9 +766,10 @@ public class Character extends Monster {
 		Receive possibly magic equipment (as from treasure).
 		
 		Handle only fighter magic items at this time.
+		Returns true if equipment accepted.
 	*/
 	@Override
-	protected void takeEquipment(Equipment newItem) {
+	protected boolean takeEquipment(Equipment newItem) {
 		if (hasBaseClassType(BaseClassType.Fighter)) {
 			if (newItem instanceof Weapon) {
 				if (weaponInHand == null) {
@@ -777,6 +778,7 @@ public class Character extends Monster {
 				if (weaponInHand == null
 					|| weaponInHand.getMagicBonus() < newItem.getMagicBonus()) {
 					drawWeapon((Weapon) newItem);
+					return true;
 				}
 			}
 			else if (newItem instanceof Armor) {
@@ -786,6 +788,7 @@ public class Character extends Monster {
 						|| shieldHeld.getMagicBonus() < newArmor.getMagicBonus()) 
 					{
 						setShield(newArmor);
+						return true;
 					}
 				}
 				else {
@@ -793,10 +796,12 @@ public class Character extends Monster {
 						|| armorWorn.getMagicBonus() < newArmor.getMagicBonus()) 
 					{
 						setArmor(newArmor);
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -830,7 +835,7 @@ public class Character extends Monster {
 	*/
 	public void boostMagicItemsToLevel() {
 		int level = getLevel();
-		for (int i = 1; i < level; i++) {
+		for (int i = 0; i < level; i++) {
 			boostMagicItemsOneLevel();
 		}
 	}

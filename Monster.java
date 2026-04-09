@@ -299,7 +299,7 @@ public class Monster {
 	public void addXP(int xp) { }
 
 	/** Take a new pice of equipment (to override). */
-	protected void takeEquipment(Equipment e) { }
+	protected boolean takeEquipment(Equipment e) { return false; }
 
 	/** Lose a given piece of equipment (to override). */
 	protected void loseEquipment(Equipment e) { }
