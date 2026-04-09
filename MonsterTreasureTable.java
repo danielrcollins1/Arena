@@ -81,7 +81,8 @@ public class MonsterTreasureTable {
 		Get random treasure by code.
 	*/
 	private Treasure pvtRandomTreasureByCode(char code) {
-		return getByCode(code).rollTreasure();
+		return code == '-' 
+			? new Treasure() : getByCode(code).rollTreasure();
 	}
 
 	/**
