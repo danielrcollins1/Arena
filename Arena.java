@@ -43,9 +43,6 @@ public class Arena {
 	/** Baseline XP per defeated monster EHD. */
 	private static final int BASE_XP_PER_EHD = 100;
 
-	/** Baseline system adventuring party size. */
-	private static final int NOMINAL_PARTY_SIZE = 4;
-
 	//--------------------------------------------------------------------------
 	//  Fields
 	//--------------------------------------------------------------------------
@@ -445,19 +442,20 @@ public class Arena {
 	/**
 		Get number of monsters for encounter (a la Vol-3, p. 11).
 
-		In tabletop practice, we would like to assume a party size of 4,
-		and roll 1d6 * dungeonLevel / monsterEHD (round to closest, possibly 0).
-		Note E(1d6) ~ expected nominal party size of 4.
-		And this is also the average EHD-per-level in the M&TA encounters list.
-		Extra calculations here are to scale for different party sizes.
+		Standard number is 1d6 (avg 3.5 ~ 4) if monsters match dungeon level.
+		See the D&D pre-draft (1d6), and also M&TA (average 4 EHD per level).
+		In general this is NOT scaled to party size, but we do scale down here
+			for below-average party sizes (so we can simulate 1-1 man vs. monster).
+		We also scale for varying EHD monsters on different levels.
 	*/
 	private int getMonsterNumber(
 		Monster monster, int dungeonLevel, int numFighters) 
 	{
 		int roll = Dice.roll(6);
-		int numMonsters = (int) Math.round((double) 
-			roll * dungeonLevel * numFighters
-				/ (monster.getEHD() * NOMINAL_PARTY_SIZE));
+		final double avgNumMonsters = 4;
+		double partyScale = Math.min((double) numFighters / avgNumMonsters, 1.0);
+		double dangerScale = (double) dungeonLevel / monster.getEHD();
+		int numMonsters = (int) Math.round(roll * partyScale * dangerScale);		
 		return numMonsters;
 	}
 
@@ -593,18 +591,22 @@ public class Arena {
 
 	/**
   		Distribute magic item treasure to winning party.
-		
-		Handle items only to lead persistent fighter in party.
+
+		For each magic item, offer it to several party members to take.
 	*/
 	private void distributeMagicTreasure(Party party, Treasure treas) {
 		if (awardMagicTreasureDrops) {
 			assert party.isLive();
-			Monster boss = party.get(0);
+			int size = party.size();
 			int numMagic = treas.get(Treasure.Category.Magic);
 			for (int i = 0; i < numMagic; i++) {
 				ArrayList<Equipment> list = rollMagicItems();
 				for (Equipment item: list) {
-					boss.takeEquipment(item);
+					for (int j = 0; j < size; j++) {
+						int rcvIdx = Dice.roll(size) - 1;
+						boolean taken = party.get(rcvIdx).takeEquipment(item);
+						if (taken) { break; }
+					}
 				}
 			}		
 		}	

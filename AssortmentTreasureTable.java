@@ -1,9 +1,11 @@
 /**
 	Treasure based on Monster & Treasure Assortment system.
 	
-	This system is given as interpolated by DRC.
+	This system is given as interpolated & modified by DRC.
 	M&TA coin have a somewhat nonlinear progression, smoothed out here.
-	Note official system only goes up to level 9.
+	Swap chances for copper vs. magic (as high-level throughout).
+	Delete option for combo multi-coin treasure.
+	Roll 1-3 (avg 2) treasure units in each treasure (as EGG modules).
 
 	@author Daniel R. Collins (dcollins@superdan.net)
 	@since 2026-04-04
@@ -21,14 +23,14 @@ public class AssortmentTreasureTable {
 	*/
 	private static Treasure.Category rollCategory() {
 		int roll = Dice.rollPct();
-		if (roll <= 25)      { return Treasure.Category.Copper; }
+		if (roll <= 25)      { return Treasure.Category.Magic; }
 		else if (roll <= 50) { return Treasure.Category.Silver; }
 		else if (roll <= 65) { return Treasure.Category.Electrum; }
 		else if (roll <= 80) { return Treasure.Category.Gold; }
 		else if (roll <= 90) { return Treasure.Category.Platinum; }
 		else if (roll <= 94) { return Treasure.Category.Gems; }
 		else if (roll <= 97) { return Treasure.Category.Jewelry; }
-		else                 { return Treasure.Category.Magic; }		
+		else                 { return Treasure.Category.Copper; }
 	}
 
 	/**
@@ -76,40 +78,19 @@ public class AssortmentTreasureTable {
 	}
 
 	/**
-		Roll a combination treasure.
-	*/
-	private static Treasure rollCombo(int level) {
-		assert level >= 6;
-		Treasure treasure = new Treasure();
-		int maxEntry = level <= 9 ? level - 5 : 4;
-		for (int i = 0; i <= maxEntry; i++) {
-			Treasure.Category cat = Treasure.Category.VALUES[i];
-			treasure.set(cat, rollAmount(cat, level));
-		}		
-		return treasure;
-	}
-
-	/**
 		Roll a random treasure.
 	*/
 	public static Treasure rollTreasureForLevel(int level) {
 		assert level > 0;
-		Treasure.Category cat = rollCategory();
-		
-		// Copper may turn to magic
-		if (cat == Treasure.Category.Copper && Dice.roll(6) <= level) {
-			cat = Treasure.Category.Magic;
-		}
 
-		// Silver may become combo treasure
-		if (cat == Treasure.Category.Silver && level >= 6 && Dice.coinFlip()) {
-			return rollCombo(level);		
-		}
-
-		// Standard handler
+		// Make 1-3 units
+		int numUnits = Dice.roll(3);
 		Treasure treasure = new Treasure();
-		treasure.set(cat, rollAmount(cat, level));
-		return treasure;		
+		for (int i = 0; i < numUnits; i++) {
+	 		Treasure.Category cat = rollCategory();
+			treasure.add(cat, rollAmount(cat, level));
+		}
+		return treasure;
 	}
 
 	/**
