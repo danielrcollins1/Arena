@@ -53,7 +53,7 @@ public enum Feat {
 		System.out.println("Feats");
 		System.out.println("-----");
 		for (int i = 0; i < Feat.SIZE; i++) {
-			System.out.println(Feat.values()[i]);		
+			System.out.println(formatName(Feat.values()[i]));
 		}
 		System.out.println();
 	}

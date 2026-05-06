@@ -1271,6 +1271,24 @@ public class Character extends Monster {
 	}
 
 	/**
+		String representation of spell counts.
+	*/
+	public String spellCounts() {
+		String s = "";
+		for (ClassRecord cr: classList) {
+			if (cr.getClassType().usesSpells()) {
+				if (s == "") {
+					s = addItem(s, cr.spellCounts());
+				}
+				else {
+					System.err.println("Error: Multiple classes with spells.");
+				}
+			}
+		}
+		return s;
+	}
+
+	/**
 		Add item to a string if not null.
 	*/
 	private String addItem(String s, Object item) {

@@ -1,7 +1,8 @@
-import java.io.IOException; 
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
-	Matrix of how many spells can be memorized daily.
+	Matrix of how many wizard spells can be memorized daily.
 
 	@author Daniel R. Collins (dcollins@superdan.net)
 	@since 2018-12-05
@@ -81,30 +82,56 @@ public class SpellsDaily {
 	/**
 		Get spells memorizable at class and spell level.
 	*/
-	public int getSpellsDaily(int classLevel, int spellLevel) {
+	public int getSpellsAtLevel(int wizLevel, int spellLevel) {
 		assert 1 <= spellLevel && spellLevel <= maxSpellLevel;
 
 		// Before matrix data
-		if (classLevel < 1) {
+		if (wizLevel < 1) {
 			return 0;
 		}
 
 		// Inside matrix data
-		else if (classLevel <= maxDataClassLevel) {
-			return spellsDailyData[classLevel - 1][spellLevel - 1];
+		else if (wizLevel <= maxDataClassLevel) {
+			return spellsDailyData[wizLevel - 1][spellLevel - 1];
 		}
 
 		// After matrix data (pattern per Vol-1, p. 19)
 		else { 
 			int spellsAtMatrixEnd = 
 				spellsDailyData[maxDataClassLevel - 1][spellLevel - 1];
-			int levelsPastMatrix = classLevel - maxDataClassLevel;
+			int levelsPastMatrix = wizLevel - maxDataClassLevel;
 			int spells = spellsAtMatrixEnd + levelsPastMatrix / 2;
-			if (classLevel % 2 == 1 && spellLevel <= maxSpellLevel / 2) {
+			if (wizLevel % 2 == 1 && spellLevel <= maxSpellLevel / 2) {
 				spells++;
 			}
 			return spells;			
 		}
+	}
+
+	/**
+		Get a list of memorizable spell counts.
+	*/
+	public ArrayList<Integer> getSpellCounts(int wizLevel) {
+		ArrayList<Integer> spells = new ArrayList<Integer>();
+		for (int level = 1; level <= maxSpellLevel; level++) {
+			int count = getSpellsAtLevel(wizLevel, level);
+			if (count > 0) {
+				spells.add(count);			
+			}
+		}
+		return spells;
+	}
+	
+	/**
+		Get a list of memorizable spell counts as a string.
+	*/
+	public String getSpellCountString(int wizLevel) {
+		ArrayList<Integer> spells = getSpellCounts(wizLevel);
+		String s = "" + spells.get(0);
+		for (int i = 1; i < spells.size(); i++) {
+			s += "/" + spells.get(i);
+		}
+		return s;
 	}
 	
 	/**
@@ -114,12 +141,9 @@ public class SpellsDaily {
 		Dice.initialize();
 		SpellsDaily matrix = SpellsDaily.getInstance();
 		System.out.println("Spells Daily:");
-		for (int i = 1; i <= 30; i++) {
-			System.out.print("Level " + i + ": ");
-			for (int j = 1; j <= matrix.getMaxSpellLevel(); j++) {
-				System.out.print(matrix.getSpellsDaily(i, j) + " ");
-			}
-			System.out.println();
+		for (int level = 1; level <= 30; level++) {
+			System.out.println("Level " + level
+				+ ": " + matrix.getSpellCountString(level));
 		}
 		System.out.println();
 	}

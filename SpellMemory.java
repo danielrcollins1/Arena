@@ -1,5 +1,6 @@
 import java.util.Set;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 /**
@@ -159,12 +160,13 @@ public class SpellMemory implements Iterable<Spell> {
 		Add all spells for a wizard of a given level.
 	*/
 	public void addSpellsForWizard(int level) {
-		SpellsDaily spellsDaily = SpellsDaily.getInstance();
-		int maxPower = spellsDaily.getMaxSpellLevel();
-		for (int power = 1; power <= maxPower; power++) {
-			int numSpells = spellsDaily.getSpellsDaily(level, power);
-			for (int num = 0; num < numSpells; num++) {
-				addRandom(power);
+		ArrayList<Integer> counts = 
+			SpellsDaily.getInstance().getSpellCounts(level);
+		for (int index = 0; index < counts.size(); index++) {
+			int spellLevel = index + 1;
+			int numAtLevel = counts.get(index);
+			for (int num = 0; num < numAtLevel; num++) {
+				addRandom(spellLevel);
 			}
 		}
 	}
@@ -182,7 +184,7 @@ public class SpellMemory implements Iterable<Spell> {
 		int maxPower = spellsDaily.getMaxSpellLevel();
 		for (int power = 1; power <= maxPower; power++) {
 			int inMemory = countAtLevel(power);
-			int maxAllowed = spellsDaily.getSpellsDaily(level - 1, power);
+			int maxAllowed = spellsDaily.getSpellsAtLevel(level - 1, power);
 			int numToWipe = inMemory - maxAllowed;
 			for (int i = 0; i < numToWipe; i++) {
 				Spell spell = getAtLevel(power);

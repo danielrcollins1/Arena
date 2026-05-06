@@ -213,16 +213,11 @@ public class ClassRecord {
 		else {
 			int skillBonus = level 
 				+ character.getAbilityBonus(Ability.Dexterity);
-			int hearBonus = 1 + level / 4 
-				+ character.getAbilityBonus(Ability.Intelligence);
-			int climbBonus = 1 + level / 4 
-				+ character.getAbilityBonus(Ability.Dexterity);
+			int hearClimbBonus = 1 + level / 4;
 			int backstabMult = 2 + level / 4;
-			return "Pick, disarm, filch, sneak, hide " 
-				+ Dice.formatBonus(skillBonus) + "; "
-				+ "hear " + Dice.formatBonus(hearBonus) + ", "
-				+ "climb " + Dice.formatBonus(climbBonus) + ", "
-				+ "backstab " + Dice.formatMultiplier(backstabMult);
+			return "Burgle " + Dice.formatBonus(skillBonus) + " (d20), "
+				+ "hear & climb " + Dice.formatBonus(hearClimbBonus) + " (d6), "
+				+ "backstab " + Dice.formatMultiplier(backstabMult) + " damage";
 		}
 	}
 
@@ -256,6 +251,14 @@ public class ClassRecord {
 	public String spellsString() {
 		return spellsKnown == null 
 			? null : spellsKnown.toString();
+	}
+
+	/**
+		String representation of spells counts.
+	*/
+	public String spellCounts() {
+		return spellsKnown == null 
+			? null : SpellsDaily.getInstance().getSpellCountString(level);
 	}
 
 	/**

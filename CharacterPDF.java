@@ -20,7 +20,7 @@ public class CharacterPDF {
 	static final String CHAR_SHEET_FILE = "OED-CharacterSheet.pdf";
 
 	/** Estimated characters per special ability line. */
-	static final int SPECIAL_LINE_LENGTH = 30;
+	static final int SPECIAL_LINE_LENGTH = 32;
 
 	/** Maximum special ability lines on the sheet. */
 	static final int NUM_SPECIAL_LINES = 9;
@@ -70,9 +70,9 @@ public class CharacterPDF {
 
 			// Special abilities
 			addStringToSpecial(form, getRacialAbilities(c.getRace()));
-			addSegmentToSpecial(form, "Feats: ", c.featString());
-			addSegmentToSpecial(form, "Skills: ", c.skillString());
-			addSegmentToSpecial(form, "Spells: ", c.spellString());
+			addSegmentToSpecial(form, "Fighter feats: ", c.featString());
+			addSegmentToSpecial(form, "Thief skills: ", c.skillString());
+			addSegmentToSpecial(form, "Wizard spells: ", c.spellCounts());
 
 			// Attacks
 			int atkNum = 0;
@@ -134,16 +134,19 @@ public class CharacterPDF {
 	*/
 	private String getRacialAbilities(String race) {
 		if (race.equals("Dwarf")) {
-			return "Infravision 60', resist magic +4, "
-				+ "dodge giants +4, find stone traps +1";
+			return "Dwarf traits: Infravision 60', "
+				+ "resist magic/giants +4,     "
+				+ "find stone traps +1";
 		}	
 		else if (race.equals("Elf")) {
-			return "Multi-classed, infravision 60', "
-				+ "hide in woods (4/6), find wood traps +1";
+			return "Elf traits: Infravision 60', "
+				+ "hide in woods 4-in-6,     "
+				+ "find wood traps +1";
 		}
 		else if (race.equals("Halfling")) {
-			return "Hide in woods (4-in-6), resist magic +4, "
-				+ "ranged attacks +4";
+			return "Halfling traits: Hide 4-in-6, "
+				+ "ranged attacks +4,     "
+				+ "resist magic +4";
 		}
 		else {
 			return "";
@@ -159,7 +162,7 @@ public class CharacterPDF {
 		throws IOException 
 	{
 		if (!segment.isEmpty()) {
-			addStringToSpecial(form, label + Character.toSentenceCase(segment));
+			addStringToSpecial(form, label + segment);
 		}	
 	}
 
