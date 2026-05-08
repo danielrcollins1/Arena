@@ -25,6 +25,9 @@ public class CharacterPDF {
 	/** Maximum special ability lines on the sheet. */
 	static final int NUM_SPECIAL_LINES = 9;
 
+	/** Maximum language lines on the sheet. */
+	static final int NUM_LANGUAGE_LINES = 8;
+
 	/** Maximum attack mode lines on the sheet. */
 	static final int NUM_ATTACK_LINES = 3;
 
@@ -73,6 +76,16 @@ public class CharacterPDF {
 			addSegmentToSpecial(form, "Fighter feats: ", c.featString());
 			addSegmentToSpecial(form, "Thief skills: ", c.skillString());
 			addSegmentToSpecial(form, "Wizard spells: ", c.spellCounts());
+
+			// Languages
+			int langNum = 0;
+			for (Languages.Language lang: c.getLanguages()) {
+				langNum++;
+				if (langNum > NUM_LANGUAGE_LINES) {
+					break;
+				}
+				form.getField("Language" + langNum).setValue(lang.toString());
+			}
 
 			// Attacks
 			int atkNum = 0;

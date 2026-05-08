@@ -17,10 +17,11 @@ s#j0pdfbox-app.jar
 s#l0
 !148;u
 a0	b68	c255	d%\\011pdfbox-app.jar	f%\011NPCGenerator.jar	g%\011NPCGenerator.zip	hManifest-Version\0111.0\011Main-Class\011NPCGenerator	iNPCGenerator!32;a
-a%\011NPCGenerator_doc%s	b	c1	d0!500;g
+a%\011NPCGenerator_doc%s	b	c1	d0!520;g
 %\011BaseClassType.java
 %\011Weapon.java
 %\011Armor.java
+%\011Languages.java
 %\011ClassIndex.java
 %\011Feat.java
 %\011ClassType.java
@@ -43,10 +44,11 @@ a%\011NPCGenerator_doc%s	b	c1	d0!500;g
 %\011Wands.java
 %\011Character.java
 %\011Ability.java
-!500;f
+!520;f
 %\011BaseClassType.java
 %\011Weapon.java
 %\011Armor.java
+%\011Languages.java
 %\011ClassIndex.java
 %\011Feat.java
 %\011ClassType.java
@@ -69,7 +71,7 @@ a%\011NPCGenerator_doc%s	b	c1	d0!500;g
 %\011Wands.java
 %\011Character.java
 %\011Ability.java
-!918;t
-jgrCheckstyle0xr	%\011BaseClassType.java	1724214476706:P	%\011Weapon.java	1724214476706:P	%\011Armor.java	1724215204103:P	%\011ClassIndex.java	1724214476706:P	%\011ClassType.java	1724214476706:P	%\011Feat.java	1724214476706:P	%\011ClassRecord.java	1724214476706:P	%\011Spell.java	1724214476706:P	%\011SpellsDaily.java	1724214476706:P	%\011EnergyType.java	1724214476706:P	%\011CSVReader.java	1724214476706:P	%\011SpecialType.java	1724214476706:P	%\011NameGenerator.java	1724214476706:P	%\011CharacterPDF.java	1724214887718:P	%\011Alignment.java	1724214476706:P	%\011SpellsIndex.java	1724214476706:P	%\011Monster.java	1724214476706:P	%\011Equipment.java	1724214476706:P	%\011PersonalityTraits.java	1724214476706:P	%\011Dice.java	1724214476706:P	%\011Attack.java	1724214476706:P	%\011NPCGenerator.java	1724214476706:P	%\011Wands.java	1724214476706:P	%\011Character.java	1724215273052:P	%\011Ability.java	1724214476706:P	
+!954;t
+jgrCheckstyle0xr	%\011BaseClassType.java	1778038324947:P	%\011Weapon.java	1778038324947:P	%\011Armor.java	1778038324947:P	%\011Languages.java	1778206502904:P	%\011ClassIndex.java	1778038324947:P	%\011ClassType.java	1778038324947:P	%\011Feat.java	1778038324947:P	%\011ClassRecord.java	1778038324947:P	%\011Spell.java	1778038324947:P	%\011SpellsDaily.java	1778038324947:P	%\011EnergyType.java	1778038324947:P	%\011CSVReader.java	1778038324947:P	%\011SpecialType.java	1778038324947:P	%\011NameGenerator.java	1778038324947:P	%\011CharacterPDF.java	1778038324947:P	%\011Alignment.java	1778038324947:P	%\011SpellsIndex.java	1778038324947:P	%\011Monster.java	1778038324947:P	%\011Equipment.java	1778038324947:P	%\011PersonalityTraits.java	1778038324947:P	%\011Dice.java	1778038324947:P	%\011Attack.java	1778038324947:P	%\011NPCGenerator.java	1778038324947:P	%\011Wands.java	1778038324947:P	%\011Character.java	1778038324947:P	%\011Ability.java	1778038324947:P	
 !35;m
 RunSelect	APPLICATION:NPCGenerator

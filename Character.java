@@ -79,6 +79,9 @@ public class Character extends Monster {
 	/** Equipment carried. */
 	private List<Equipment> equipList;
 
+	/** Languages known. */
+ 	private List<Languages.Language> languageList;
+	
 	/** Primary personality trait. */
 	private PersonalityTraits.PersonalityTrait primaryPersonality;
 	
@@ -156,6 +159,7 @@ public class Character extends Monster {
 		alignment = getAlignmentFromString(align);
 		primaryPersonality = PersonalityTraits.getInstance().getRandom(alignment);
 		secondaryPersonality = PersonalityTraits.getInstance().getRandom(null);
+		languageList = getLanguageList();
 		age = BASE_AGE;
 		sweepRate = 0;
 		updateStats();
@@ -182,6 +186,7 @@ public class Character extends Monster {
 		}
 		classList.add(new ClassRecord(this, classType1, level1));
 		classList.add(new ClassRecord(this, classType2, level2));
+		languageList = getLanguageList();
 		updateStats();
 		setPerfectHealth();
 	}
@@ -203,6 +208,9 @@ public class Character extends Monster {
 	public Equipment getEquipment(int i) { return equipList.get(i); }
 	public void addEquipment(Equipment equip) { equipList.add(equip); }
 	public void dropAllEquipment() { equipList.clear(); }
+	
+	// Access languages known
+	public List<Languages.Language> getLanguages() { return languageList; }
 
 	/**
 		Roll base random ability scores.
@@ -1013,7 +1021,7 @@ public class Character extends Monster {
 		Get the age category of the character.
 		Caution: Works for Humans only.
 	*/
-	AgeCategory getAgeCategory() {
+	private AgeCategory getAgeCategory() {
 		if (age <= 13) { return AgeCategory.Child; }
 		else if (age <= 20) { return AgeCategory.YoungAdult; }
 		else if (age <= 40) { return AgeCategory.Mature; }
@@ -1081,13 +1089,25 @@ public class Character extends Monster {
 	/**
 		Convert string to alignment (random if null).
 	*/
-	Alignment getAlignmentFromString(String s) {
+	private Alignment getAlignmentFromString(String s) {
 		Alignment align = Alignment.getFromString(s);
 		if (align == null) {
 			align = Alignment.randomNormal();
 		}
 		return align;	
 	}
+
+	/**
+		Set languages known.
+
+		See rule by Intelligene in OD&D Vol-1, p. 12.
+		We ignore Common & Alignment tongues here.
+	*/
+	private List<Languages.Language> getLanguageList() {
+		int intScore = getAbilityScore(Ability.Intelligence);
+		return intScore <= 10 ? new ArrayList<Languages.Language>() 
+			: Languages.getInstance().getRandom(intScore - 10);
+	}	
 
 	/**
 		Mutator to initial ability/hp boost switch.
