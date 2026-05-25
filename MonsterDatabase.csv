@@ -109,7 +109,7 @@ Green Dragon,1d4,2,9,8,60,H,2,2d6,N,B,14,8,D,O,"Flight (24), Detection (15), Fea
 Water Naga,1,5,15,7,60,H,1,1d4,N,B,15,7,U,"SR3, M1","Poison, Spells (5)"
 Blue Dragon,1d4,2,9,9,60,H,2,2d6,N,B,15,9,D,O,"Flight (24), Detection (15), Fear (2), VoltBreath"
 Flesh Golem,1,9,9,12,-,-,1,2d6,N,B,15,12,D,S1,"MagicToHit (1), MagicImmunity"
-Mind Flayer,1d4,5,12,8+3,50,F,4,0,N,B,16,8.9,D,SR1,"MagicResistance (90), MindBlast, Constriction, BrainConsumption"
+Mind Flayer,1d4,5,12,8+3,50,F,4,0,N,B,16,8.9,D,"SR1, S3","MagicResistance (90), MindBlast, Constriction, BrainConsumption"
 Ten-Headed Hydra,1,5,12,10,25,B,10,1d6,N,B,17,10,D,O,ManyHeads
 Shambling Mound,1d3,0,6,8,25,I,2,1d6+2,N,B,18,8,W,"SR3, M1","Smothering, FireImmunity, VoltImmunity, ColdResistance, ChopResistance"
 Balrog,1d6,2,6,10,25,F,2,2d6,C,B,18,10,D,O,"Flight (15), MagicResistance (75), Immolation"
