@@ -637,6 +637,7 @@ public class Monster {
 		checkSlowing(enemies);
 		if (checkAttachment()) { return true; }
 		if (checkManyEyesSalvo(enemies)) { return true; }
+		if (checkDroning(enemies)) { return true; }
 		return false;
 	}
 
@@ -648,6 +649,7 @@ public class Monster {
 		if (checkWebbing()) { return true; }
 		if (checkConfusion(friends)) { return true; }
 		if (checkSwallowed()) { return true; }
+		if (checkSlowAttacking()) { return true; }
 		return false;
 	}
 
@@ -1880,6 +1882,19 @@ public class Monster {
 	}
 
 	/**
+		Check if slow attacking prevents us from an action.
+		@return true if we cannot fight
+	*/
+	private boolean checkSlowAttacking() {
+		if (hasSpecial(SpecialType.SlowAttacking)) {
+	
+			// We only attack every other round
+			return Dice.coinFlip();
+		}
+		return false;			
+	}
+
+	/**
 		Attach ourselves to some creature (e.g., blood drain).
 	*/
 	private void setHost(Monster host) {
@@ -2377,6 +2392,25 @@ public class Monster {
 	}
 
 	/**
+		Check for a droning attack.
+		- Say 2-in-6 to use this instead of melee.
+	*/
+	private boolean checkDroning(Party enemy) {
+		if (hasSpecial(SpecialType.Droning)) {
+			if (Dice.roll(6) <= 2) {
+				Monster target = enemy.random();
+				if (target != null) {
+					if (Dice.roll(10) > target.getLevel()) {
+						target.addCondition(SpecialType.Sleep);
+					}
+					return true;
+				}
+			}
+		}			
+		return false;
+	}	
+
+	/**
 		Get this monster's spell memory.
 	*/
 	public SpellMemory getSpellMemory() { 
@@ -2432,6 +2466,17 @@ public class Monster {
 			spellMemory.addByName("Sleep");
 			spellMemory.addByName("Charm Person");
 			spellMemory.addByName("Ice Storm");
+		}
+		
+		// Bar-lgura Demon
+		if (race.equals("Bar-lgura Demon")) {
+			spellMemory.addByName("Darkness");
+			spellMemory.addByName("Dispel Magic");
+		}
+		
+		// Chasme Demon
+		if (race.equals("Chasme Demon")) {
+			spellMemory.addByName("Darkness");
 		}
 		
 		// Cleric class equivalences
