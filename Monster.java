@@ -941,6 +941,12 @@ public class Monster {
 						}
 					}
 					break;
+
+				case DeathTouch:
+					if (!isLastAttack) {
+						throwCondition(target, SpecialType.Death);
+					}
+					break;
 					
 				default:
 					// Not a special on hit (silence style check).
@@ -2468,17 +2474,47 @@ public class Monster {
 			spellMemory.addByName("Ice Storm");
 		}
 		
-		// Bar-lgura Demon
-		if (race.equals("Bar-lgura Demon")) {
+		// Demons
+		if (race.endsWith("Demon")) {
 			spellMemory.addByName("Darkness");
-			spellMemory.addByName("Dispel Magic");
+
+			// Sub-types
+			if (race.startsWith("Type II ")) {
+				spellMemory.addByName("Fear");
+			}
+			else if (race.startsWith("Type III ")) {
+				spellMemory.addByName("Fear");
+				spellMemory.addByName("Dispel Magic");
+			}
+			else if (race.startsWith("Type IV ")) {
+				spellMemory.addByName("Dispel Magic");
+			}
+			else if (race.startsWith("Type V ")) {
+				spellMemory.addByName("Charm Person");
+			}
+			else if (race.startsWith("Type VI ")) {
+				spellMemory.addByName("Fear");
+				spellMemory.addByName("Dispel Magic");
+			}
+			else if (race.startsWith("Succubus")) {
+				spellMemory.addByName("Charm Person");
+			}
+			else if (race.startsWith("Bar-lgura")) {
+				spellMemory.addByName("Dispel Magic");
+			}
 		}
-		
-		// Chasme Demon
-		if (race.equals("Chasme Demon")) {
+
+		// Demon Princes
+		if (race.equals("Orcus") || race.equals("Demogorgon")) {
+			spellMemory.addByName("Fear");
 			spellMemory.addByName("Darkness");
+			spellMemory.addByName("Charm Person");
+			spellMemory.addByName("Displ Magic");
+			spellMemory.addByName("Charm Monster");
+			spellMemory.addByName("Feeblemind");
+			spellMemory.addByName("Polymorph Other");
 		}
-		
+				
 		// Cleric class equivalences
 		// - We ignore these types here (post-melee recovery only)
 		if (race.equals("Lammasu") 

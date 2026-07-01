@@ -1,0 +1,10 @@
+Monster,Number,AC,MV,HD,Lair%,Treas,Atk,Dam,Align,Type,EHD,HDD,Env,Source,Special
+Type I Demon,1d6,0,12,8,5,B,3,1d6,C,X,13,8,X,S3,"MagicResistance (50), Spells, Flight (18)"
+Type II Demon,1d6,-2,6,9,10,C,3,1d6,C,X,36,9,X,S3,"MagicResistance (55), Spells"
+Type III Demon,1d6,-4,6,10,15,D,3,1d6,C,X,50,10,X,S3,"MagicResistance (60), Spells"
+Type IV Demon,1d6,4,9,9,20,E,3,1d6,C,X,12,9,X,S3,"MagicResistance (65), Spells, Flight (12), HitBonus (2), MagicToHit"
+Type V Demon,1d6,7,12,7,10,G,7,1d6+1,C,X,14,7,X,S3,"MagicResistance (80), Spells, MagicToHit"
+Type VI Demon,1d6,2,6,10,25,F,2,2d6,C,X,37,10,X,"O, S3","MagicResistance (75), Spells, Flight (15), MagicToHit, Immolation"
+Succubus Demon,1,9,12,6,2,I,1,1d6,C,X,7,6,X,S3,"MagicResistance (70), Spells, Flight (18), EnergyDrain (1)"
+Orcus,1,-6,9,18,75,E,2,1d8+3,C,X,380,18,X,S3,"MagicResistance (85), Spells, Flight (18), Poison (-4), MagicToHit (3), DeathTouch"
+Demogorgon,1,-8,15,24,75,B,3,1d6,C,X,390,24,X,S3,"MagicResistance (95), Spells, HitBonus (4), MagicToHit (2), EnergyDrain (3), MassHypnosis, Beguiling, InsanityGaze, Rotting"
