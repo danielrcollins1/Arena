@@ -1689,13 +1689,13 @@ public class Monster {
 	/**
 		Compute maximum number of victims in a cone area.
 
-		Following red dragon breath, cone width is one-third the length.
+		Per Vol-2, all cone attacks have fixed 3" base width.
+		(See white dragon, red dragon, fear wand, etc.)
 		We assume that number of targets is same as area.
-		Hence: Targets = 1/2 * L * (1/3 * L) = L^2/6 (round up).
-		See AreasOfEffect experiment images for confirmation.
+		Hence: Targets = 1/2 * B * L = 3/2 * L (round up).
 	*/
 	private int getMaxVictimsInCone(int length) {
-		return length * length / 6 + 1;
+		return (int) (length * 3 / 2 + 1);
 	}
 
 	/**
