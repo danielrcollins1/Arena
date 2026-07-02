@@ -38,7 +38,7 @@ public enum SpecialType {
 	FireVulnerability, ColdVulnerability, AcidVulnerability, 
 	VoltVulnerability, PoisonSpit, DeathGaze, Smothering, Stunning,
 	Shrieking, Conjuration, DropAttack, Slime, JointType, SetAttackBonus,
-	SlowAttacking, Droning, DeathTouch;
+	SlowAttacking, Droning, DeathTouch, FearTouch;
 	
 	//--------------------------------------------------------------------------
 	//  Methods

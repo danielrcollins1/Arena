@@ -947,6 +947,12 @@ public class Monster {
 						throwCondition(target, SpecialType.Death);
 					}
 					break;
+
+				case FearTouch:
+					if (!isLastAttack) {
+						throwCondition(target, SpecialType.Fear);
+					}
+					break;
 					
 				default:
 					// Not a special on hit (silence style check).
