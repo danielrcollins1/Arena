@@ -979,6 +979,16 @@ public class Monster {
 				target.throwCondition(this, SpecialType.SporeCloud);
 			}  
 		}
+		
+		// Check target explodes on hit
+		// Technically this should blow up whole party,
+		// but that's not accessible here.
+		if (target.hasSpecial(SpecialType.Exploding)) {
+			int numDice = target.getSpecialParam(SpecialType.Exploding);
+			int damage = Dice.roll(numDice, 6);
+			target.throwEnergy(this, damage, EnergyType.Other, 
+				SavingThrows.Type.Wands);
+		}
 	}
 
 	/**
