@@ -126,7 +126,7 @@ public class SpellCasting {
 		new CloudkillCasting(), new HoldMonsterCasting(), 
 		new DeathSpellCasting(), new DisintegrateCasting(),
 		new ConjureElementalCasting(), new FeeblemindCasting(), 
-		new DispelMagicCasting()
+		new DispelMagicCasting(), new PhantasmalForceCasting()
 	};
 
 	//--------------------------------------------------------------------------
@@ -270,6 +270,23 @@ public class SpellCasting {
 	}
 	
 	/** 
+		Phantasmal Force effect.
+	*/
+	static class PhantasmalForceCasting extends Casting {
+	
+		/** Constructor. */
+		private PhantasmalForceCasting() {
+			indirect = true;
+			maxTargetNum = 0;
+		}
+		
+		@Override
+		public void cast(Monster caster, Party friends, Party enemies) {
+			caster.createPhantasm(friends);
+		}
+	}
+
+	/** 
 		Fireball spell effect.
 	*/
 	static class FireballCasting extends Casting {
@@ -358,7 +375,7 @@ public class SpellCasting {
 	/** 
 		Dispel Magic effect.
 
-		Used to remove enemy conjured elementals.
+		Used to remove enemy elementals & phantasms.
 	*/
 	static class DispelMagicCasting extends Casting {
 	
@@ -370,7 +387,8 @@ public class SpellCasting {
 		@Override
 		public boolean isThreatTo(Monster m) {
 			return super.isThreatTo(m) 
-				&& m.hasCondition(SpecialType.Conjuration);
+				&& (m.isIllusion() 
+					|| m.hasCondition(SpecialType.Conjuration));
 		}
 		
 		@Override

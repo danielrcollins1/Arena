@@ -404,7 +404,8 @@ public class Monster {
 			hasSpecial(SpecialType.Golem)
 			|| hasSpecial(SpecialType.Undead)
 			|| hasSpecial(SpecialType.Slime)
-			|| hasSpecial(SpecialType.BlankMind);
+			|| hasSpecial(SpecialType.BlankMind)
+			|| isIllusion();
 		return !nonSentient;
 	}
 
@@ -414,8 +415,16 @@ public class Monster {
 	public boolean isLivingType() {
 		boolean nonLiving =
 			hasSpecial(SpecialType.Golem)
-			|| hasSpecial(SpecialType.Undead);
+			|| hasSpecial(SpecialType.Undead)
+			|| isIllusion();
 		return !nonLiving;
+	}
+
+	/**
+		Is this monster really an illusion?
+	*/
+	public boolean isIllusion() {
+		return hasCondition(SpecialType.Illusion);	
 	}
 
 	/**
@@ -1819,13 +1828,28 @@ public class Monster {
 	}
 
 	/**
+		Create a Phantasmal Force under our control.
+	*/
+	public void createPhantasm(Party party) {
+		String phanDesc = "Phantasm,1,9,12,1/6"
+			+ ",-,-,1,1d6,N,X,1,0.2,D,O,-";
+		Monster phantasm = new Monster(phanDesc.split(","));
+		phantasm.addCondition(SpecialType.Illusion);
+		phantasm.master = this;
+		this.puppet = phantasm;
+		party.queueIncoming(phantasm);
+	}
+
+	/**
 		Catch a dispel magic effect.
 	*/
 	public void catchDispel(Party party) {
 
 		// For brevity, assume this works 
-		// automatically vs. conjured creatures.
-		if (hasCondition(SpecialType.Conjuration)) {
+		// automatically vs. conjurations & illusions.
+		if (isIllusion()
+			|| hasCondition(SpecialType.Conjuration))
+		{
 			party.queueOutgoing(this);	
 			if (FightManager.getPlayByPlayReporting()) {
 				System.out.println(getRace() + " is dispelled");
@@ -2344,6 +2368,7 @@ public class Monster {
 		@return true if we cast a spell.
 	*/
 	private boolean checkCastSpellInMelee(Party friends, Party enemies) {
+		assert !checkConcentration();
 		return tryCastAttackSpell(friends, enemies, false);
 	}
 
@@ -2657,7 +2682,12 @@ public class Monster {
 		Lose concentration when taking damage.
 	*/
 	private void loseConcentration() {
-		puppet = null;
+		if (puppet != null) {
+			puppet = null;
+			if (FightManager.getPlayByPlayReporting()) {
+				System.out.println(getRace() + " loses concentration");
+			}
+		}
 	}
 
 	/**
@@ -2677,11 +2707,13 @@ public class Monster {
 		if (master != null) {
 			if (master.horsDeCombat() || master.puppet != this) {
 				master = null;
-				friends.queueOutgoing(this);
-				enemies.queueIncoming(this);
-				if (FightManager.getPlayByPlayReporting()) {
-					System.out.println(getRace() + " goes out of control");
-				}			
+				if (hasCondition(SpecialType.Conjuration)) {
+					friends.queueOutgoing(this);
+					enemies.queueIncoming(this);
+					if (FightManager.getPlayByPlayReporting()) {
+						System.out.println(getRace() + " goes out of control");
+					}
+				}
 				return true;
 			}
 		}

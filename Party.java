@@ -216,8 +216,10 @@ public class Party implements Iterable<Monster> {
 		for (int i = size() - 1; i > -1; i--) {
 			Monster member = get(i); 
 			if (member.horsDeCombat()) {
-				fallen.add(member); 
 				members.remove(i);
+				if (!member.isIllusion()) {
+					fallen.add(member); 
+				}
 			}  
 		}
 	}
