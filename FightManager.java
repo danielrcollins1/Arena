@@ -77,14 +77,23 @@ public class FightManager {
 	/**
 		Get play-by-play reporting.
 	*/
-	public static boolean getPlayByPlayReporting() {
+	private static boolean getPlayByPlayReporting() {
 		return reportPlayByPlay; 
+	}
+
+	/**
+		Report a special event.
+	*/
+	public static void report(String s) {
+		if (reportPlayByPlay) {
+			System.out.println(s);
+		}
 	}
 
 	/**
 		Report play-by-play status.
 	*/
-	private void reportPlayByPlay() {
+	private void reportState() {
 		if (reportPlayByPlay) {
 			System.out.println(this);
 		}
@@ -109,7 +118,7 @@ public class FightManager {
 
 		// Make special attacks on entry
 		turnCount = 0;
-		reportPlayByPlay();
+		reportState();
 		initOrder.get(0).makeSpecialAttacks(initOrder.get(1));
 		initOrder.get(1).makeSpecialAttacks(initOrder.get(0));
 		handleMemberChanges();
@@ -119,7 +128,7 @@ public class FightManager {
 			&& party1.isLive() && party2.isLive()) 
 		{
 			turnCount++;
-			reportPlayByPlay();
+			reportState();
 			initOrder.get(0).takeTurn(initOrder.get(1));
 			initOrder.get(1).takeTurn(initOrder.get(0));
 			handleMemberChanges();

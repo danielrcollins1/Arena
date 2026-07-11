@@ -1195,9 +1195,7 @@ public class Monster {
 	*/
 	private void addCondition(SpecialType type) {
 		conditionList.add(type);
-		if (FightManager.getPlayByPlayReporting()) {
-			System.out.println(this.race + " takes condition " + type);
-		}
+		FightManager.report(this.race + " takes condition " + type);
 	}
 
 	/**
@@ -1205,9 +1203,7 @@ public class Monster {
 	*/
 	private void removeCondition(SpecialType type) {
 		conditionList.remove(type);
-		if (FightManager.getPlayByPlayReporting()) {
-			System.out.println(this.race + " loses condition " + type);
-		}
+		FightManager.report(this.race + " loses condition " + type);
 	}
 
 	/**
@@ -1340,10 +1336,8 @@ public class Monster {
 	*/
 	private void takeEnergyDamage(EnergyType energy, int damage) {
 		takeDamage(damage);
-		if (FightManager.getPlayByPlayReporting()) {
-			System.out.println(this.race + " takes damage from " 
-				+ energy + " (" + damage + " points)");
-		}
+		FightManager.report(this.race + " takes damage from " 
+			+ energy + " (" + damage + " points)");
 	}
 
 	/**
@@ -1803,10 +1797,8 @@ public class Monster {
 			// Add the summoned types to party
 			if (minionType != null) {
 				party.addMonsters(minionType, minionNum);
-				if (FightManager.getPlayByPlayReporting()) {
-					System.out.println(getRace() + " summons "
-						+ minionType.getNameWithNum(minionNum));
-				}			
+				FightManager.report(getRace() + " summons "
+					+ minionType.getNameWithNum(minionNum));
 			}
 		}
 	}
@@ -1851,9 +1843,7 @@ public class Monster {
 			|| hasCondition(SpecialType.Conjuration))
 		{
 			party.queueOutgoing(this);	
-			if (FightManager.getPlayByPlayReporting()) {
-				System.out.println(getRace() + " is dispelled");
-			}			
+			FightManager.report(getRace() + " is dispelled");
 		}
 	}
 
@@ -1945,9 +1935,8 @@ public class Monster {
 	*/
 	private void setHost(Monster host) {
 		this.host = host;
-		if (FightManager.getPlayByPlayReporting()) {
-			System.out.println(getRace() + " is attached to " + host.getRace());
-		}
+		FightManager.report(getRace() 
+			+ " is attached to " + host.getRace());
 	}
 
 	/**
@@ -2334,9 +2323,7 @@ public class Monster {
 		{
 			Spell spell = getBestAttackSpell(enemies, area);
 			if (spell != null) {
-				if (FightManager.getPlayByPlayReporting()) {
-					System.out.println(this.race + " casts " + spell);
-				}
+				FightManager.report(this.race + " casts " + spell);
 				spell.cast(this, friends, enemies);
 				wipeSpellFromMemory(spell);
 				return true;
@@ -2684,9 +2671,7 @@ public class Monster {
 	private void loseConcentration() {
 		if (puppet != null) {
 			puppet = null;
-			if (FightManager.getPlayByPlayReporting()) {
-				System.out.println(getRace() + " loses concentration");
-			}
+			FightManager.report(getRace() + " loses concentration");
 		}
 	}
 
@@ -2710,9 +2695,7 @@ public class Monster {
 				if (hasCondition(SpecialType.Conjuration)) {
 					friends.queueOutgoing(this);
 					enemies.queueIncoming(this);
-					if (FightManager.getPlayByPlayReporting()) {
-						System.out.println(getRace() + " goes out of control");
-					}
+					FightManager.report(getRace() + " goes out of control");
 				}
 				return true;
 			}
